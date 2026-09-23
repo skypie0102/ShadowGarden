@@ -16,7 +16,7 @@
 | Permanent B2 purge | Unavailable | Verify object reachability and original retention semantics first |
 | Undocumented recovery POST | Unavailable | Recover its request/response contract and mutation semantics |
 | Git history before recovery | Missing | An original Git clone/bundle or accessible GitHub repository |
-| Target repository | Resolved | User continued with the proposed skypie0102/ShadowGarden destination; publication in progress |
+| Target repository | Published and verified | skypie0102/ShadowGarden main; reconstruction commit 20dd2ec, CI passed |
 
 No credential values, private object paths, file contents or historical commits
 were invented. Original public IDs and metadata were preserved.

@@ -38,8 +38,8 @@ private object paths. No access control is bypassed to obtain those files.
 **Repository access:** project instruction names
 `https://github.com/shdwmnrchbks/ShadowGarden`; authenticated lookup returns 404
 and git cannot authenticate. Repository discovery also finds a new empty
-`skypie0102/ShadowGarden` with write access. Destination clarification is pending;
-no existing remote history has been overwritten.
+`skypie0102/ShadowGarden` with write access. Destination clarification was pending at that checkpoint; see the publication
+entry below. No existing remote history has been overwritten.
 
 Implementation and audit results are appended as work completes.
 
@@ -93,7 +93,7 @@ that proposed destination. The next
 production step is to restore actual bindings and private media/mappings, then
 perform real-browser and provider integration checks before switching traffic.
 
-## 2026-09-24 — publication resumed
+## 2026-09-23 — publication resumed (UTC)
 
 - Continued with `skypie0102/ShadowGarden` after the user’s response to the
   destination question. Verified it is still empty and the connection has write access.
@@ -102,3 +102,19 @@ perform real-browser and provider integration checks before switching traffic.
   shell Git credential helper. Remote commits therefore receive new identities;
   file/blob hashes will be compared to the local tree to verify exact content.
 - No original Cloudflare deployment, database, B2 bucket or private book was changed.
+
+## 2026-09-23 — publication verified (UTC)
+
+- Published all 197 project files to `skypie0102/ShadowGarden`, branch `main`.
+- Reconstruction commit: `20dd2ec78939f42638e0758f8f510f21675372f4`.
+- Remote tree: `4e5be36752df1177242f40a374eb7fa0c7295737`, exactly equal to the
+  local publication tree. All ten binary image blob hashes also matched.
+- GitHub Actions run `35930710273` passed installation and `npm run check` on
+  Ubuntu with Node 24, including all 22 tests, asset audit, static build and
+  Pages Functions compilation.
+- Local `main` now tracks `origin/main`. The earlier local commit history remains
+  on `reconstruction-local-checkpoint` and in the previously saved Git bundle.
+- The repository is recovered to this documented checkpoint. Private EPUBs,
+  original object mappings, production credentials, browser/live-service QA and
+  the unsupported recovery/purge semantics remain outstanding. No production
+  Cloudflare deployment or original storage was modified.

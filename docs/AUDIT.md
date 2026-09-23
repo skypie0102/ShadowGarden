@@ -14,7 +14,7 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend tests | 22/22 pass; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend tests | 22/22 pass locally and on GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
@@ -23,7 +23,7 @@ production equivalence or complete private-data recovery**.
 | Real-browser visual checks | Unverified: Chromium absent; its download returned invalid/truncated data |
 | Full local preview | Wrangler dev failed on `uv_interface_addresses`; direct Miniflare probes did not initialize and were stopped |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
-| Remote Git commit/push | New destination resolved as skypie0102/ShadowGarden; publication in progress |
+| Remote Git commit/push | Published to skypie0102/ShadowGarden main at 20dd2ec; remote tree exactly matches the verified local source |
 
 ## Defects found and fixed during reconstruction
 
@@ -79,3 +79,13 @@ Original archive hashes preserve evidence identity. The historical recovery
 report's “missing literal references” are retained as evidence; most are variable
 names misidentified by the crawler. The new audit checks actual imports and
 HTML/CSS asset references instead.
+
+## GitHub verification
+
+[Reconstruction commit](https://github.com/skypie0102/ShadowGarden/commit/20dd2ec78939f42638e0758f8f510f21675372f4)
+and [successful CI run](https://github.com/skypie0102/ShadowGarden/actions/runs/35930710273).
+
+Git tree `4e5be36752df1177242f40a374eb7fa0c7295737` matched the local
+publication tree exactly. All 197 project files, including ten binary images,
+were verified through Git hashes. The following documentation commit records
+this outcome without changing application behavior.
