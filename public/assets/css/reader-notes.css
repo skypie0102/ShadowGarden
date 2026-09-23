@@ -1,0 +1,21 @@
+/* Shadow Garden v2.8 — footnote/endnote overlay. */
+.reader-note-dialog{width:min(520px,calc(100vw - 32px));max-width:none;max-height:min(70vh,640px);margin:auto;padding:0;border:1px solid rgba(181,163,229,.24);border-radius:16px;color:var(--text);background:linear-gradient(160deg,#171220,#0d0a12 72%);box-shadow:0 28px 90px rgba(0,0,0,.62);font-family:var(--sans);overflow:hidden}
+.reader-note-dialog::backdrop{background:rgba(3,2,5,.64);backdrop-filter:blur(4px)}
+.reader-note-card{display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-height:min(70vh,640px)}
+.reader-note-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+.reader-note-kicker{margin:0 0 4px;color:var(--leaf);font-size:.6rem;font-weight:750;letter-spacing:.15em;text-transform:uppercase}
+.reader-note-head h2{margin:0;color:var(--text);font:500 1.35rem/1.2 Georgia,serif}
+.reader-note-close{width:42px;height:42px;flex:0 0 auto;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:transparent;cursor:pointer;font-size:1.25rem}
+.reader-note-close:hover{color:var(--text);background:rgba(255,255,255,.035)}
+.reader-note-body{overflow:auto;padding:16px 20px 20px;color:var(--text);font:400 .9rem/1.7 Georgia,serif;overscroll-behavior:contain}
+.reader-note-body p{margin:0}.reader-note-body p+p{margin-top:1em}
+.reader-note-foot{padding:10px 20px 14px;border-top:1px solid var(--line);color:var(--muted);font-size:.62rem;line-height:1.45}
+body.adult-reader .reader-note-dialog{border-color:rgba(210,160,173,.25);background:linear-gradient(160deg,#211218,#10090d 72%)}
+body.adult-reader .reader-note-kicker{color:#d9a7b4}
+body.reader-theme-paper .reader-note-dialog{color:#302b25;border-color:rgba(80,68,49,.22);background:linear-gradient(160deg,#fffdf7,#f3ecdd 78%);box-shadow:0 28px 80px rgba(49,40,28,.28)}
+body.reader-theme-paper .reader-note-dialog::backdrop{background:rgba(34,29,23,.42)}
+body.reader-theme-paper .reader-note-head h2,body.reader-theme-paper .reader-note-body{color:#302b25}
+body.reader-theme-paper .reader-note-foot{color:#746b60}
+@media(max-width:520px){.reader-note-dialog{width:calc(100vw - 20px);max-height:78vh;border-radius:14px}.reader-note-card{max-height:78vh}.reader-note-head{padding:15px 16px 10px}.reader-note-body{padding:14px 16px 18px;font-size:.92rem}.reader-note-foot{padding:9px 16px 12px}.reader-note-close{width:44px;height:44px}}
+@media(forced-colors:active){.reader-note-dialog,.reader-note-close{forced-color-adjust:auto;border:1px solid ButtonText!important}.reader-note-head,.reader-note-foot{border-color:ButtonText!important}}
+@media(prefers-reduced-motion:reduce){.reader-note-dialog,.reader-note-close{transition:none!important}}

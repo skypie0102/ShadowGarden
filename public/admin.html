@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0910">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Garden Keeper — Shadow Garden</title>
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/site.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/nav.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-preflight.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-batch.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-maintenance.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-series-editor.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-layout.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-components.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-version.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-presentation.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/admin-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
+  <script src="/assets/vendor/jszip.min.js?v=2.11.0" defer></script>
+  <script src="/assets/js/admin/core.js?v=2.11.0" defer></script>
+  <script src="/assets/js/admin/app.js?v=2.11.0" defer></script>
+</head>
+<body class="admin-page">
+  <header class="site-header admin-header">
+    <a class="brand" href="/">
+      <span class="brand-mark">✦</span>
+      <span><strong>Shadow Garden</strong><small>GARDEN KEEPER</small></span>
+    </a>
+    <a class="header-back" href="/">◀ Library</a>
+  </header>
+
+  <main class="admin-shell">
+    <section id="lockedView" class="locked-view">
+      <section class="admin-card auth-card" id="authCard">
+        <div class="auth-mark">✦</div>
+        <p class="kicker">KEEPER'S GATE</p>
+        <h1>Garden Keeper</h1>
+        <p class="auth-copy">The Keeper's gate is sealed. Present your key before tending the shelves.</p>
+        <div class="admin-card-head auth-head">
+          <div><span>01</span><h2>Open the Keeper's Gate</h2></div>
+          <strong id="authState" class="state-pill">LOCKED</strong>
+        </div>
+        <label class="admin-field">
+          <span>Admin token</span>
+          <input id="adminToken" type="password" autocomplete="current-password" placeholder="Keeper token">
+        </label>
+        <p class="field-note">Your Keeper token remains only in this open tab. It is never planted in an EPUB or catalog.</p>
+        <button id="unlockButton" class="admin-primary" type="button">Open the Keeper's Gate</button>
+      </section>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <section id="manageView" class="admin-workspace">
+        <div class="workspace-head manage-home-head">
+          <div class="manage-window-actions" aria-label="Garden Keeper tools">
+            <button id="openMaintenance" class="workspace-back manage-tool-button" type="button">Maintenance</button>
+            <button id="openNewBooks" class="admin-primary manage-tool-button" type="button">＋ New Books</button>
+          </div>
+          <div class="manage-home-copy">
+            <p class="kicker">GARDEN KEEPER</p>
+            <h1>Tend the Garden</h1>
+            <p>Tend series, plant new volumes, search the shelves, or inspect the Garden's deeper roots.</p>
+          </div>
+          <button id="lockButton" class="admin-ghost manage-lock" type="button" aria-label="Lock Garden Keeper" title="Lock Garden Keeper"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></button>
+        </div>
+
+        <div class="manage-summary">
+          <div><strong id="manageSeriesCount">0</strong><span>Series</span></div>
+          <div><strong id="manageVolumeCount">0</strong><span>Volumes</span></div>
+          <div><strong id="manageAdultCount">0</strong><span>18+ Series</span></div>
+        </div>
+
+        <section class="admin-card manage-toolbar">
+          <label class="admin-field manage-search"><span>Search library</span><input id="manageSearch" type="search" placeholder="Series, author, volume…"></label>
+          <div class="manage-tabs" role="tablist" aria-label="Library section">
+            <button class="active" type="button" data-manage-scope="all">All</button>
+            <button type="button" data-manage-scope="main">Main</button>
+            <button type="button" data-manage-scope="adult">18+</button>
+          </div>
+          <button id="refreshLibrary" class="admin-secondary compact-button" type="button">Refresh library</button>
+        </section>
+
+        <div id="manageLoading" class="admin-card manage-message">Walking the rows…</div>
+        <div id="manageEmpty" class="admin-card manage-message hidden">No shelf answers this view.</div>
+        <div id="seriesManagerList" class="manager-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="addBooksDialog" class="admin-dialog keeper-dialog keeper-add-dialog">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <div><p class="kicker">NEW BOOKS</p><h2 id="addBooksHeading">Plant new volumes</h2></div>
+        <button id="closeAddBooks" class="dialog-close" type="button" aria-label="Close New Books">×</button>
+      </div>
+      <div class="dialog-scroll">
+        <div id="addSeriesTarget" class="add-series-target hidden" role="status">
+          <span class="add-series-target-mark">＋</span>
+          <div><strong id="addSeriesTargetTitle">Adding to series</strong><small id="addSeriesTargetMeta"></small></div>
+        </div>
+
+        <section id="addView" class="admin-workspace">
+          <section class="admin-card">
+            <div class="admin-card-head">
+              <div><span>01</span><h2>Choose books to plant</h2></div>
+              <strong id="fileState" class="state-pill">WAITING</strong>
+            </div>
+            <label class="file-picker" for="epubFile">
+              <input id="epubFile" type="file" multiple accept=".epub,application/epub+zip">
+              <span class="file-picker-mark">＋</span>
+              <strong id="filePickerTitle">Choose EPUBs from this device</strong>
+              <small id="filePickerMeta">Select one or many EPUBs · 50 MB maximum per file</small>
+            </label>
+          </section>
+
+          <section id="preflightCard" class="admin-card preflight-card hidden" data-status="checking">
+            <div class="admin-card-head">
+              <div><span>CHECK</span><h2>EPUB preflight</h2></div>
+              <strong id="preflightState" class="state-pill">CHECKING</strong>
+            </div>
+            <div class="preflight-lead">
+              <span class="preflight-mark">◇</span>
+              <div><strong id="preflightTitle">Inspecting EPUB structure…</strong><p id="preflightSummary">The volume is inspected on this device before it ever reaches the private vault.</p></div>
+            </div>
+            <div id="preflightChecks" class="preflight-checks"></div>
+            <div id="preflightStats" class="preflight-stats"></div>
+            <details id="preflightDetails" class="preflight-details">
+              <summary id="preflightDetailsSummary">Validation details</summary>
+              <ul id="preflightIssues" class="preflight-issues"></ul>
+            </details>
+          </section>
+
+          <section id="metadataCard" class="admin-card hidden">
+            <div class="admin-card-head">
+              <div><span>02</span><h2>Shape the selected volume</h2></div>
+              <strong class="state-pill ready">EDITABLE</strong>
+            </div>
+
+            <div class="book-preview">
+              <div class="admin-cover"><img id="coverPreview" alt="Extracted EPUB cover" class="hidden"><span id="coverFallback">✦</span></div>
+              <div><strong id="previewTitle">Untitled</strong><span id="previewSeries">Unknown series</span></div>
+            </div>
+
+            <div class="admin-grid">
+              <label class="admin-field wide"><span>Series</span><input id="seriesInput" type="text" required></label>
+              <label class="admin-field"><span>Volume</span><input id="volumeInput" type="number" min="0.01" step="0.01" inputmode="decimal" required></label>
+              <label class="admin-field"><span>Year</span><input id="yearInput" type="number" min="0" max="9999" inputmode="numeric"></label>
+              <label class="admin-field wide"><span>Book title</span><input id="titleInput" type="text" required></label>
+              <label class="admin-field wide"><span>Author</span><input id="authorInput" type="text"></label>
+              <label class="admin-field wide"><span>Genres</span><input id="genresInput" type="text" placeholder="Fantasy, Adventure, Romance"><small class="field-note">Canonical Novel Updates genres. EPUB subjects are normalized here automatically.</small></label>
+              <label class="admin-field wide"><span>Tags</span><input id="tagsInput" type="text" placeholder="Academy, Reincarnation, Light Novel"><small class="field-note">Flexible descriptive tags. Unknown EPUB subjects are preserved here for review.</small></label>
+              <label class="admin-field wide"><span>Description</span><textarea id="descriptionInput" rows="5"></textarea></label>
+            </div>
+
+            <label class="adult-toggle">
+              <input id="adultInput" type="checkbox">
+              <span class="toggle-track"><i></i></span>
+              <span><strong>18+ / Adult Library</strong><small>Shelve this title in the restricted wing, away from the main Garden.</small></span>
+            </label>
+          </section>
+
+          <section id="uploadCard" class="admin-card hidden">
+            <div class="admin-card-head">
+              <div><span>03</span><h2>Set the new growth into the Garden</h2></div>
+              <strong id="uploadState" class="state-pill">READY</strong>
+            </div>
+            <div class="upload-status">
+              <span id="statusMark">✦</span>
+              <div><strong id="statusTitle">Ready to upload</strong><p id="statusDetail">The private vault stays sealed. Readers receive protected copies through Cloudflare.</p></div>
+            </div>
+            <button id="uploadButton" class="admin-primary" type="button">Upload</button>
+            <a id="openSeries" class="admin-secondary hidden" href="#">Open uploaded series ▶</a>
+          </section>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="maintenanceDialog" class="admin-dialog keeper-dialog keeper-maintenance-dialog">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <div><p class="kicker">GARDEN MAINTENANCE</p><h2>Tend the Garden's roots</h2></div>
+        <button id="closeMaintenance" class="dialog-close" type="button" aria-label="Close Maintenance">×</button>
+      </div>
+      <div class="dialog-scroll">
+        <section id="maintenanceView" class="admin-workspace">
+          <div id="maintenanceSummary" class="maintenance-summary">
+            <div><strong id="maintenanceSeries">—</strong><span>Series</span></div>
+            <div><strong id="maintenanceVolumes">—</strong><span>Volumes</span></div>
+            <div><strong id="maintenanceLegacyCovers">—</strong><span>Legacy covers</span></div>
+            <div><strong id="maintenanceTrashCount">—</strong><span>Trash</span></div>
+          </div>
+
+          <section class="admin-card maintenance-card" id="gardenHealthCard">
+            <div class="admin-card-head">
+              <div><span>HEALTH</span><h2>Garden Health</h2></div>
+              <strong id="gardenHealthState" class="state-pill">LOADING</strong>
+            </div>
+            <p class="maintenance-copy">Inspect the living catalogs, then trace every referenced EPUB and cover into the private vault when a deeper check is needed.</p>
+            <div id="gardenHealthMetrics" class="maintenance-metrics"></div>
+            <div class="maintenance-actions">
+              <button id="refreshMaintenance" class="admin-secondary compact-button" type="button">Refresh health</button>
+              <button id="deepHealthCheck" class="admin-primary inline-button" type="button">Deep B2 check</button>
+            </div>
+            <div id="deepHealthProgress" class="maintenance-progress hidden"></div>
+            <div id="gardenHealthIssues" class="maintenance-list"></div>
+          </section>
+
+          <section class="admin-card maintenance-card" id="coverMaintenanceCard">
+            <div class="admin-card-head">
+              <div><span>COVERS</span><h2>Optimize Existing Covers</h2></div>
+              <strong id="coverMaintenanceState" class="state-pill">—</strong>
+            </div>
+            <p class="maintenance-copy">Refine older covers that still lack lightweight thumbnails. Work proceeds one at a time on this device to keep memory use low.</p>
+            <div id="coverMaintenanceDetail" class="maintenance-callout">Surveying the cover beds…</div>
+            <button id="optimizeLegacyCovers" class="admin-primary" type="button">Optimize legacy covers</button>
+            <div id="coverMaintenanceProgress" class="maintenance-progress hidden"></div>
+          </section>
+
+          <section class="admin-card maintenance-card" id="taxonomyMaintenanceCard">
+            <div class="admin-card-head">
+              <div><span>TAXONOMY</span><h2>Genre & Tag Audit</h2></div>
+              <strong id="taxonomyMaintenanceState" class="state-pill">LOADING</strong>
+            </div>
+            <p class="maintenance-copy">Preview how legacy EPUB subjects and mixed tags map into canonical Novel Updates Genres plus flexible Tags. Unknown descriptive values are preserved.</p>
+            <div id="taxonomyMaintenanceDetail" class="maintenance-callout">Loading taxonomy audit…</div>
+            <div id="taxonomyMaintenancePreview" class="maintenance-list"></div>
+            <button id="normalizeCatalogTaxonomy" class="admin-primary" type="button">Normalize catalog taxonomy</button>
+          </section>
+
+          <section class="admin-card maintenance-card" id="backupMaintenanceCard">
+            <div class="admin-card-head">
+              <div><span>BACKUPS</span><h2>Catalog History</h2></div>
+              <strong id="backupCount" class="state-pill">0</strong>
+            </div>
+            <p class="maintenance-copy">Before major changes, Shadow Garden preserves a snapshot of both catalogs. The newest 15 are kept as stepping stones back.</p>
+            <button id="createCatalogBackup" class="admin-secondary" type="button">Create backup now</button>
+            <div id="backupList" class="maintenance-list"></div>
+          </section>
+
+          <section class="admin-card maintenance-card danger-zone" id="trashMaintenanceCard">
+            <div class="admin-card-head">
+              <div><span>TRASH</span><h2>Trash & Recovery</h2></div>
+              <strong id="trashCount" class="state-pill">0</strong>
+            </div>
+            <p class="maintenance-copy">Removed series and volumes rest here without losing their files. Return them to the shelves, or uproot them permanently only when you are certain.</p>
+            <div id="trashList" class="maintenance-list"></div>
+            <button id="purgeAllTrash" class="danger-button maintenance-purge-all" type="button">Purge all Trash permanently</button>
+          </section>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="seriesEditor" class="admin-dialog">
+    <form method="dialog" class="dialog-shell" id="seriesEditorForm">
+      <div class="dialog-head">
+        <div><p class="kicker">SERIES EDITOR</p><h2 id="seriesEditorHeading">Edit series</h2></div>
+        <button class="dialog-close" value="cancel" aria-label="Close editor">×</button>
+      </div>
+
+      <div class="dialog-scroll">
+        <div class="manager-editor-cover"><img id="managerCover" alt="Series cover"><span id="managerCoverFallback">✦</span></div>
+        <div class="admin-grid">
+          <label class="admin-field wide"><span>Series title</span><input id="manageTitle" type="text" required></label>
+          <label class="admin-field wide"><span>Author</span><input id="manageAuthor" type="text"></label>
+          <label class="admin-field"><span>Year</span><input id="manageYear" type="number" min="0" max="9999"></label>
+          <label class="admin-field"><span>Status</span><input id="manageStatus" type="text" placeholder="Ongoing, Complete…"></label>
+          <label class="admin-field wide"><span>Genres</span><input id="manageGenres" type="text" placeholder="Fantasy, Romance"><small class="field-note">Restricted to Shadow Garden's canonical Novel Updates genre vocabulary.</small></label>
+          <label class="admin-field wide"><span>Tags</span><input id="manageTags" type="text" placeholder="Academy, Reincarnation, Light Novel"></label>
+          <label class="admin-field wide"><span>Description</span><textarea id="manageDescription" rows="5"></textarea></label>
+        </div>
+        <label class="adult-toggle">
+          <input id="manageAdult" type="checkbox">
+          <span class="toggle-track"><i></i></span>
+          <span><strong>18+ / Adult Library</strong><small>Move this entire series between the Main and Adult catalogs.</small></span>
+        </label>
+
+        <div class="dialog-section-head"><h3>Volumes</h3><span id="manageVolumeLabel"></span></div>
+        <div id="manageVolumes" class="manage-volumes"></div>
+      </div>
+
+      <div class="dialog-actions">
+        <button id="deleteSeries" class="danger-button" type="button">Move series to Trash</button>
+        <button id="saveSeries" class="admin-primary inline-button" type="button">Save series</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

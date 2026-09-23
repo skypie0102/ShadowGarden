@@ -1,0 +1,205 @@
+/* Shadow Garden v1.10.3 — full reader-interface theme palettes.
+ * Theme classes follow the reader setting. The surrounding chrome consumes the same motif:
+ * header, footer, drawers, controls, progress/seek UI, loading/end pages, toast, and overlays.
+ */
+
+body.reader-theme-garden{
+  color-scheme:dark;
+  --text:#ede9f2;
+  --muted:#9e96a8;
+  --leaf:#b5a3e5;
+  --gold:#b99d6b;
+  --line:rgba(196,184,225,.14);
+  --sg-ui-root:#0b0910;
+  --sg-ui-chrome:rgba(11,9,16,.96);
+  --sg-ui-panel:#100c16;
+  --sg-ui-panel-2:#15101c;
+  --sg-ui-page:#120e19;
+  --sg-ui-control:#0c0911;
+  --sg-ui-hover:rgba(185,168,227,.07);
+  --sg-ui-accent:#9a86d3;
+  --sg-ui-accent-line:rgba(154,134,211,.34);
+  --sg-ui-overlay:rgba(4,2,7,.56);
+}
+body.reader-theme-garden.adult-reader{
+  --text:#eadde1;
+  --muted:#a99aa0;
+  --leaf:#d2a0ad;
+  --line:rgba(209,163,176,.14);
+  --sg-ui-root:#10090c;
+  --sg-ui-chrome:rgba(16,9,12,.96);
+  --sg-ui-panel:#120b0e;
+  --sg-ui-panel-2:#1a1014;
+  --sg-ui-page:#140d10;
+  --sg-ui-control:#120a0e;
+  --sg-ui-hover:rgba(183,121,139,.08);
+  --sg-ui-accent:#b7798b;
+  --sg-ui-accent-line:rgba(183,121,139,.36);
+  --sg-ui-overlay:rgba(8,2,5,.60);
+}
+
+body.reader-theme-night{
+  color-scheme:dark;
+  --text:#e7ebf7;
+  --muted:#98a3bd;
+  --leaf:#a8b9eb;
+  --gold:#c1a774;
+  --line:rgba(157,176,232,.16);
+  --sg-ui-root:#070a12;
+  --sg-ui-chrome:rgba(8,12,23,.96);
+  --sg-ui-panel:#0d1322;
+  --sg-ui-panel-2:#121a2d;
+  --sg-ui-page:#0c1020;
+  --sg-ui-control:#0a0f1d;
+  --sg-ui-hover:rgba(139,162,226,.09);
+  --sg-ui-accent:#8fa7e4;
+  --sg-ui-accent-line:rgba(143,167,228,.38);
+  --sg-ui-overlay:rgba(2,5,12,.62);
+}
+
+body.reader-theme-black{
+  color-scheme:dark;
+  --text:#e7e7e7;
+  --muted:#969696;
+  --leaf:#c5c5c5;
+  --gold:#c0a46d;
+  --line:rgba(255,255,255,.13);
+  --sg-ui-root:#000;
+  --sg-ui-chrome:rgba(0,0,0,.97);
+  --sg-ui-panel:#070707;
+  --sg-ui-panel-2:#0d0d0d;
+  --sg-ui-page:#000;
+  --sg-ui-control:#080808;
+  --sg-ui-hover:rgba(255,255,255,.07);
+  --sg-ui-accent:#b9a8e3;
+  --sg-ui-accent-line:rgba(185,168,227,.35);
+  --sg-ui-overlay:rgba(0,0,0,.72);
+}
+body.reader-theme-black.adult-reader{
+  --leaf:#d2a0ad;
+  --sg-ui-accent:#c88da0;
+  --sg-ui-accent-line:rgba(200,141,160,.38);
+}
+
+body.reader-theme-paper{
+  color-scheme:light;
+  --text:#29261f;
+  --muted:#70695e;
+  --leaf:#63785d;
+  --gold:#8f7241;
+  --line:rgba(73,63,48,.18);
+  --sg-ui-root:#e6dfd1;
+  --sg-ui-chrome:rgba(238,233,220,.97);
+  --sg-ui-panel:#e2dbce;
+  --sg-ui-panel-2:#f4efe5;
+  --sg-ui-page:#fff;
+  --sg-ui-control:#f7f2e8;
+  --sg-ui-hover:rgba(75,93,68,.09);
+  --sg-ui-accent:#667b60;
+  --sg-ui-accent-line:rgba(102,123,96,.38);
+  --sg-ui-overlay:rgba(54,47,38,.26);
+}
+
+html,
+body,
+.reader-app{background:var(--sg-ui-root)!important;color:var(--text)!important}
+.reader-app{transition:background-color .16s ease,color .16s ease}
+.reader-topbar,
+.reader-bottombar{
+  border-color:var(--line)!important;
+  background:var(--sg-ui-chrome)!important;
+  color:var(--text)!important;
+}
+.reader-brand,.reader-title strong{color:var(--text)!important}
+.reader-title span,.reader-icon,.reader-bottombar>button,.drawer-close,.drawer-tabs button{color:var(--muted)!important}
+.reader-icon:hover,.drawer-close:hover,.drawer-tabs button:hover,.reader-bottombar>button:hover{
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+  background:var(--sg-ui-hover)!important;
+}
+.reader-icon.bookmarked{color:var(--gold)!important}
+
+.viewer-shell,.reader-loading,.volume-end-page{background:var(--sg-ui-page)!important;color:var(--text)!important}
+.reader-loading span,.volume-complete-mark,.volume-complete-kicker{color:var(--leaf)!important}
+.volume-end-page h2{color:var(--text)!important}
+.volume-complete-mark{border-color:var(--sg-ui-accent-line)!important;background:var(--sg-ui-hover)!important}
+.volume-complete-detail{color:var(--muted)!important}
+.volume-complete-next{
+  border-color:var(--sg-ui-accent-line)!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--sg-ui-accent) 72%,#000),var(--sg-ui-accent))!important;
+  color:#f8f7f2!important;
+}
+.volume-complete-return{border-color:var(--line)!important;background:var(--sg-ui-hover)!important;color:var(--leaf)!important}
+
+.reader-drawer,.drawer-head{
+  border-color:var(--line)!important;
+  background:var(--sg-ui-panel)!important;
+  color:var(--text)!important;
+}
+.drawer-tabs .active{
+  color:var(--text)!important;
+  background:var(--sg-ui-hover)!important;
+}
+.toc-link,.toc-leaf .toc-link,.toc-branch>.toc-row>.toc-link,.bookmark-label{color:var(--muted)!important}
+.toc-link:hover,.toc-expander:hover{color:var(--leaf)!important;background:var(--sg-ui-hover)!important}
+.toc-entry-label:hover{color:var(--muted)!important;background:transparent!important}
+.toc-entry-link.active,.toc-entry-link[aria-current="location"]{
+  color:var(--text)!important;
+  background:color-mix(in srgb,var(--sg-ui-accent) 14%,transparent)!important;
+  box-shadow:inset 2px 0 0 var(--sg-ui-accent)!important;
+}
+.toc-expander,.toc-expander-spacer,.bookmark-meta,.bookmark-empty{color:color-mix(in srgb,var(--muted) 78%,transparent)!important}
+.bookmark-row{border-color:var(--line)!important}
+
+.settings-panel label>span{color:var(--muted)!important}
+.settings-panel select{
+  border-color:var(--line)!important;
+  color:var(--text)!important;
+  background:var(--sg-ui-control)!important;
+}
+.settings-panel select option{color:var(--text);background:var(--sg-ui-control)}
+.settings-panel input[type=range],.progress-wrap input,.settings-panel .reader-toggle-setting input[type=checkbox]{accent-color:var(--sg-ui-accent)!important}
+.settings-panel .reader-toggle-setting b{color:var(--text)!important}
+.settings-panel .reader-toggle-setting small{color:var(--muted)!important}
+.reader-reset{
+  border-color:var(--line)!important;
+  color:var(--muted)!important;
+  background:var(--sg-ui-control)!important;
+}
+.reader-reset:hover{color:var(--text)!important;border-color:var(--sg-ui-accent-line)!important}
+
+.progress-wrap span{color:var(--muted)!important}
+.drawer-backdrop{background:var(--sg-ui-overlay)!important}
+.toast{
+  border-color:var(--line)!important;
+  color:var(--text)!important;
+  background:var(--sg-ui-panel-2)!important;
+}
+.reader-skip-link{
+  border-color:var(--line)!important;
+  background:var(--sg-ui-panel-2)!important;
+  color:var(--text)!important;
+}
+.reader-skip-link:focus,
+:where(.reader-app a,.reader-app button,.reader-app input,.reader-app select,.reader-app [tabindex]):focus-visible{
+  outline-color:var(--leaf)!important;
+}
+
+body.reader-flow-scrolled{
+  --sg-seek-accent:var(--sg-ui-accent)!important;
+  --sg-seek-line:var(--sg-ui-accent-line)!important;
+}
+body.reader-flow-scrolled .continuous-seek{color:var(--muted)!important}
+body.reader-flow-scrolled .continuous-seek-thumb{
+  background:var(--sg-ui-accent)!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--sg-ui-root) 72%,transparent)!important;
+}
+body.reader-flow-scrolled .continuous-seek-track::before{background:var(--sg-ui-accent-line)!important}
+body.reader-flow-scrolled .continuous-seek-text{color:var(--muted)!important}
+body.reader-flow-scrolled .continuous-seek:hover,
+body.reader-flow-scrolled .continuous-seek:focus-visible{--sg-seek-line:color-mix(in srgb,var(--sg-ui-accent) 62%,transparent)!important}
+
+body.reader-theme-paper .page-hit:hover{color:rgba(45,53,39,.32)}
+body.reader-theme-paper .drawer-backdrop{backdrop-filter:blur(2px)}
+
+@media(prefers-reduced-motion:reduce){.reader-app{transition:none}}

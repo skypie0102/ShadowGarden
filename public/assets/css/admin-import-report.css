@@ -1,0 +1,36 @@
+/* Shadow Garden v2.9 — aggregate upload preflight report presentation. */
+.import-preflight-report{margin-top:14px;padding-top:14px;border-top:1px solid rgba(196,184,225,.1)}
+.import-report-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.import-report-head>div{display:grid;gap:2px}
+.import-report-head span{color:#81778d;font-size:.56rem;font-weight:800;letter-spacing:.15em}
+.import-report-head strong{color:#d7cfdf;font-size:.82rem}
+.import-report-head>b{padding:5px 8px;border:1px solid rgba(196,184,225,.1);border-radius:999px;color:#a69caf;background:rgba(8,6,12,.26);font-size:.62rem;font-weight:700;white-space:nowrap}
+.import-report-metrics{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.import-report-metrics span{padding:4px 7px;border:1px solid rgba(196,184,225,.09);border-radius:999px;color:#8f869a;background:rgba(8,6,12,.22);font-size:.6rem}
+.import-report-metrics .warning{color:#d8ba84;border-color:rgba(214,181,119,.2);background:rgba(123,86,31,.08)}
+.import-report-metrics .decision{color:#d2b276;border-color:rgba(205,174,111,.2);background:rgba(111,78,29,.08)}
+.import-report-metrics .blocked{color:#dc99aa;border-color:rgba(215,116,142,.22);background:rgba(142,44,70,.08)}
+.import-report-items{display:grid;gap:8px;margin-top:11px}
+.import-report-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 11px;border:1px solid rgba(196,184,225,.09);border-radius:11px;background:rgba(8,6,12,.25)}
+.import-report-item.warning{border-color:rgba(214,181,119,.16)}
+.import-report-item.decision{border-color:rgba(205,174,111,.2)}
+.import-report-item.blocked{border-color:rgba(215,116,142,.22);background:rgba(142,44,70,.045)}
+.import-report-item-copy{min-width:0;display:grid;gap:4px}
+.import-report-item-head{display:flex;align-items:center;gap:7px;min-width:0}
+.import-report-item-head span{flex:0 0 auto;padding:3px 5px;border:1px solid rgba(196,184,225,.1);border-radius:6px;color:#91869f;font-size:.52rem;font-weight:800;letter-spacing:.08em}
+.import-report-item.warning .import-report-item-head span{color:#d8ba84;border-color:rgba(214,181,119,.2)}
+.import-report-item.decision .import-report-item-head span{color:#d2b276;border-color:rgba(205,174,111,.2)}
+.import-report-item.blocked .import-report-item-head span{color:#dc99aa;border-color:rgba(215,116,142,.24)}
+.import-report-item-head strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d1c8da;font-size:.72rem}
+.import-report-item p,.import-report-item small,.import-report-item em{margin:0;line-height:1.45}
+.import-report-item p{color:#aaa0b4;font-size:.66rem}
+.import-report-item small{display:block;color:#776f82;font-size:.59rem;overflow-wrap:anywhere}
+.import-report-item em{display:block;color:#8c8297;font-size:.61rem;font-style:normal}
+.import-report-item button{width:auto!important;min-width:72px!important;min-height:36px!important;margin:0!important;padding:7px 10px!important;border:1px solid rgba(184,160,229,.18)!important;border-radius:8px!important;background:rgba(123,91,177,.07)!important;color:#b9add0!important;font-size:.64rem!important;cursor:pointer}
+.import-report-item button:hover,.import-report-item button:focus-visible{border-color:rgba(184,160,229,.36)!important;background:rgba(123,91,177,.13)!important;color:#d2c6e5!important}
+.import-report-clean{display:flex;gap:9px;align-items:flex-start;margin-top:11px;padding:10px 11px;border:1px solid rgba(120,200,151,.14);border-radius:10px;background:rgba(45,104,66,.05)}
+.import-report-clean>span{color:#98caaa;font-size:.78rem}
+.import-report-clean strong,.import-report-clean small{display:block}.import-report-clean strong{color:#abc9b4;font-size:.68rem}.import-report-clean small{margin-top:3px;color:#75847a;font-size:.59rem;line-height:1.4}
+.import-report-overflow{margin:8px 0 0;color:#776f82;font-size:.6rem;line-height:1.45}
+@media(max-width:620px){.import-report-item{grid-template-columns:1fr;gap:8px}.import-report-item button{width:100%!important}.import-report-head{align-items:flex-start}.import-report-item-head strong{white-space:normal}}
+@media(forced-colors:active){.import-report-item,.import-report-clean,.import-report-head>b,.import-report-metrics span,.import-report-item button{border:1px solid CanvasText!important}.import-report-item button:focus-visible{outline:2px solid Highlight!important}}

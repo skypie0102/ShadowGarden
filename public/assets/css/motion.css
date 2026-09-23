@@ -1,0 +1,56 @@
+/* Shadow Garden v2.5 — shared motion language.
+   Motion explains state and continuity; it never owns application state. */
+:root{
+  --sg-motion-press:110ms;
+  --sg-motion-fast:160ms;
+  --sg-motion-ui:210ms;
+  --sg-motion-layout:280ms;
+  --sg-motion-page:320ms;
+  --sg-ease-standard:cubic-bezier(.2,.7,.2,1);
+  --sg-ease-enter:cubic-bezier(.16,1,.3,1);
+  --sg-ease-exit:cubic-bezier(.4,0,1,1);
+  --sg-ease-emphasized:cubic-bezier(.2,.8,.2,1);
+}
+
+.sg-motion-control{
+  transition-property:transform,opacity,color,background-color,border-color,box-shadow;
+  transition-duration:var(--sg-motion-press),var(--sg-motion-fast),var(--sg-motion-ui),var(--sg-motion-ui),var(--sg-motion-ui),var(--sg-motion-ui);
+  transition-timing-function:var(--sg-ease-standard);
+}
+.sg-motion-control:active{transform:scale(.98)}
+
+@keyframes sg-motion-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes sg-motion-fade-out{from{opacity:1}to{opacity:0}}
+@keyframes sg-motion-rise-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sg-motion-soft-scale-in{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+@keyframes sg-motion-forward-old{to{opacity:0;transform:translateX(-12px)}}
+@keyframes sg-motion-forward-new{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sg-motion-backward-old{to{opacity:0;transform:translateX(12px)}}
+@keyframes sg-motion-backward-new{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sg-motion-lateral-old{to{opacity:0;transform:translateY(4px)}}
+@keyframes sg-motion-lateral-new{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+@supports(view-transition-name:root){
+  ::view-transition-old(root){animation:sg-motion-fade-out var(--sg-motion-fast) var(--sg-ease-exit) both}
+  ::view-transition-new(root){animation:sg-motion-fade-in var(--sg-motion-page) var(--sg-ease-enter) both}
+  html[data-sg-nav-direction="forward"]::view-transition-old(root){animation:sg-motion-forward-old var(--sg-motion-fast) var(--sg-ease-exit) both}
+  html[data-sg-nav-direction="forward"]::view-transition-new(root){animation:sg-motion-forward-new var(--sg-motion-page) var(--sg-ease-enter) both}
+  html[data-sg-nav-direction="backward"]::view-transition-old(root){animation:sg-motion-backward-old var(--sg-motion-fast) var(--sg-ease-exit) both}
+  html[data-sg-nav-direction="backward"]::view-transition-new(root){animation:sg-motion-backward-new var(--sg-motion-page) var(--sg-ease-enter) both}
+  html[data-sg-nav-direction="lateral"]::view-transition-old(root){animation:sg-motion-lateral-old var(--sg-motion-fast) var(--sg-ease-exit) both}
+  html[data-sg-nav-direction="lateral"]::view-transition-new(root){animation:sg-motion-lateral-new var(--sg-motion-page) var(--sg-ease-enter) both}
+}
+
+@media(prefers-reduced-motion:reduce){
+  :root{
+    --sg-motion-press:.01ms;
+    --sg-motion-fast:.01ms;
+    --sg-motion-ui:.01ms;
+    --sg-motion-layout:.01ms;
+    --sg-motion-page:.01ms;
+  }
+  html{scroll-behavior:auto!important}
+  .sg-motion-control{transition-duration:.01ms!important}
+  .sg-motion-control:active{transform:none!important}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:.01ms!important;animation-iteration-count:1!important}
+}

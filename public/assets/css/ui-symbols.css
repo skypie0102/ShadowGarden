@@ -1,0 +1,13 @@
+/* Shadow Garden v1.6.0 — unified dropdown disclosure symbol. */
+select{
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239b93a7' d='M1 1h10L6 7z'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right .72rem center!important;
+  background-size:12px 8px!important;
+  padding-right:2.25rem!important;
+}
+body.adult-library select{background-color:#160d12!important}
+.admin-page select{background-color:#100c16}
+.reader-app select{background-color:var(--sg-ui-control)!important}

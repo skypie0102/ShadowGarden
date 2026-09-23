@@ -1,0 +1,118 @@
+/* Shadow Garden R7 — Reader paper surface, loading motion, and flow-specific control visibility. */
+
+body.reader-theme-paper{--sg-ui-page:#fff}
+body.reader-theme-paper .viewer-shell,
+body.reader-theme-paper .reader-loading,
+body.reader-theme-paper .volume-end-page{background:#fff!important}
+
+.reader-loading span{display:inline-block;transform-origin:50% 50%;animation:sg-reader-loading-spin .9s linear infinite}
+@keyframes sg-reader-loading-spin{to{transform:rotate(360deg)}}
+
+#textWidthSetting[hidden]{display:none!important}
+
+.reader-external-dialog{width:min(440px,calc(100vw - 32px));max-width:none;margin:auto;padding:0;border:1px solid rgba(181,163,229,.24);border-radius:18px;color:var(--text);background:linear-gradient(160deg,#171220,#0d0a12 72%);box-shadow:0 28px 90px rgba(0,0,0,.62);font-family:var(--sans);overflow:hidden}
+.reader-external-dialog::backdrop{background:rgba(3,2,5,.72);backdrop-filter:blur(5px)}
+.reader-external-dialog[open]{animation:sg-reader-external-in .16s ease-out}
+.reader-external-card{padding:28px 28px 24px;text-align:center}
+.reader-external-mark{width:44px;height:44px;margin:0 auto 14px;display:grid;place-items:center;border:1px solid rgba(181,163,229,.22);border-radius:50%;color:var(--leaf);background:rgba(181,163,229,.07);font-size:1.08rem}
+.reader-external-kicker{margin:0 0 8px;color:var(--leaf);font-size:.62rem;font-weight:750;letter-spacing:.18em;text-transform:uppercase}
+.reader-external-card h2{margin:0;color:var(--text);font:500 1.65rem/1.15 Georgia,serif}
+.reader-external-copy{max-width:34em;margin:13px auto 0;color:var(--muted);font-size:.78rem;line-height:1.6}
+.reader-external-destination{min-width:0;margin:18px 0 20px;padding:11px 13px;display:grid;gap:4px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);text-align:left}
+.reader-external-destination span{color:var(--muted);font-size:.58rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
+.reader-external-destination strong{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);font-size:.74rem;font-weight:600}
+.reader-external-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.reader-external-actions button{min-height:42px;padding:0 14px;border-radius:10px;cursor:pointer;font-size:.75rem;font-weight:650}
+.reader-external-stay{border:1px solid var(--line);color:var(--muted);background:transparent}
+.reader-external-open{border:1px solid rgba(181,163,229,.32);color:#f0ebff;background:rgba(154,134,211,.16)}
+.reader-external-stay:hover{color:var(--text);background:rgba(255,255,255,.035)}
+.reader-external-open:hover{border-color:rgba(181,163,229,.5);background:rgba(154,134,211,.24)}
+.reader-external-actions button:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+@keyframes sg-reader-external-in{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+
+body.adult-reader .reader-external-dialog{border-color:rgba(210,160,173,.25);background:linear-gradient(160deg,#211218,#10090d 72%)}
+body.adult-reader .reader-external-mark{border-color:rgba(210,160,173,.24);color:#d9a7b4;background:rgba(183,121,139,.09)}
+body.adult-reader .reader-external-kicker{color:#d9a7b4}
+body.adult-reader .reader-external-open{border-color:rgba(210,160,173,.34);color:#fff0f4;background:rgba(183,121,139,.17)}
+body.adult-reader .reader-external-open:hover{background:rgba(183,121,139,.25)}
+
+body.reader-theme-paper .reader-external-dialog{color:#302b25;border-color:rgba(80,68,49,.22);background:linear-gradient(160deg,#fffdf7,#f3ecdd 78%);box-shadow:0 28px 80px rgba(49,40,28,.28)}
+body.reader-theme-paper .reader-external-dialog::backdrop{background:rgba(34,29,23,.46)}
+body.reader-theme-paper .reader-external-card h2,body.reader-theme-paper .reader-external-destination strong{color:#302b25}
+body.reader-theme-paper .reader-external-copy,body.reader-theme-paper .reader-external-destination span{color:#746b60}
+body.reader-theme-paper .reader-external-destination{border-color:rgba(80,68,49,.18);background:rgba(80,68,49,.035)}
+body.reader-theme-paper .reader-external-stay{border-color:rgba(80,68,49,.2);color:#746b60}
+body.reader-theme-paper .reader-external-stay:hover{color:#302b25;background:rgba(80,68,49,.06)}
+body.reader-theme-paper .reader-external-open{border-color:rgba(92,80,131,.28);color:#302647;background:rgba(118,99,170,.12)}
+
+/* v2.4 interaction feedback and immersive mobile chrome. */
+.reader-icon,.reader-bottombar>button,.drawer-close,.drawer-tabs button,.reader-reset,.reader-external-actions button{transition:transform .1s ease,color .14s ease,border-color .14s ease,background .14s ease,opacity .14s ease}
+.reader-icon:active,.reader-bottombar>button:active,.drawer-close:active,.drawer-tabs button:active,.reader-reset:active,.reader-external-actions button:active{transform:scale(.96)}
+.page-hit:active{color:rgba(220,235,224,.55);background:linear-gradient(90deg,rgba(154,134,211,.16),transparent)}
+.page-next:active{background:linear-gradient(-90deg,rgba(154,134,211,.16),transparent)}
+.reader-loading p{min-height:1.4em;margin:0;text-align:center;transition:opacity .14s ease}
+
+/* v2.4 plan completion — make Reader chrome legible at a glance without changing
+   pagination, progress calculation, or EPUB typography preferences. */
+.reader-topbar{column-gap:12px;padding-inline:12px}
+.reader-left,.reader-actions{min-width:0}
+.reader-brand{font-size:.88rem;opacity:.94;transition:color .14s ease,opacity .14s ease}
+.reader-brand:hover,.reader-brand:focus-visible{color:var(--leaf);opacity:1}
+.reader-title{display:grid;align-content:center;gap:2px;line-height:1.2}
+.reader-title strong{font-size:.8rem;font-weight:680;letter-spacing:.01em}
+.reader-title span{margin-top:0;font-size:.64rem;line-height:1.25;color:color-mix(in srgb,var(--muted) 88%,transparent)}
+.reader-actions{gap:4px}
+.reader-actions .reader-icon{position:relative}
+.reader-actions .reader-return{margin-left:3px;border-left-color:var(--line);background:rgba(255,255,255,.015)}
+.reader-icon:focus-visible,.reader-bottombar>button:focus-visible,.progress-wrap input:focus-visible,.continuous-seek:focus-visible{outline:2px solid var(--leaf);outline-offset:2px}
+.reader-bottombar{gap:14px;padding-inline:16px}
+.reader-bottombar>button{min-width:74px;min-height:34px;padding:0 10px;border-radius:8px;transition:color .14s ease,background .14s ease,transform .1s ease}
+.reader-bottombar>button:hover,.reader-bottombar>button:focus-visible{background:rgba(255,255,255,.025)}
+.progress-wrap{grid-template-columns:minmax(120px,1fr) auto;gap:12px;min-width:0}
+.progress-wrap input{height:24px;margin:0;cursor:pointer}
+.progress-wrap span{min-width:48px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.022);color:var(--muted);font-size:.66rem;font-weight:720;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+body.reader-flow-scrolled .progress-wrap{opacity:.78}
+body.reader-flow-scrolled #progressText{width:32px;min-width:32px;padding:4px 2px;border-radius:7px;font-weight:700}
+body.reader-flow-scrolled .continuous-seek-text{font-weight:700;font-variant-numeric:tabular-nums}
+.page-hit:focus-visible{outline:0;color:rgba(220,235,224,.45);background:linear-gradient(90deg,rgba(154,134,211,.10),transparent)}
+.page-next:focus-visible{background:linear-gradient(-90deg,rgba(154,134,211,.10),transparent)}
+.drawer-head{font-weight:650}.drawer-tabs button{min-height:34px}.settings-panel{line-height:1.45}.settings-panel label>span{line-height:1.35}.reader-reset{font-weight:620}
+
+@media(max-width:700px){
+  /* Mobile Reader chrome overlays a full-height reading surface in both flows. Continuous
+     previously kept the top bar as a 54px grid row, leaving a permanent blank band after
+     the bar auto-hid. Keeping the viewer full-height avoids that layout-owned gap. */
+  body.reader-flow-paginated .reader-app,
+  body.reader-flow-scrolled .reader-app{grid-template-rows:minmax(0,1fr)}
+  body.reader-flow-paginated .viewer-shell,
+  body.reader-flow-scrolled .viewer-shell{grid-row:1;min-height:100dvh}
+  body.reader-flow-paginated .reader-topbar,
+  body.reader-flow-scrolled .reader-topbar{position:fixed;top:0;left:0;right:0;height:54px;z-index:32;transform:translateY(0);transition:transform .2s ease,opacity .16s ease}
+  body.reader-flow-paginated .reader-bottombar{position:fixed;left:0;right:0;bottom:0;height:48px;z-index:31;transform:translateY(0);transition:transform .2s ease,opacity .16s ease}
+  body.reader-flow-paginated.reader-chrome-hidden .reader-topbar,
+  body.reader-flow-scrolled.reader-chrome-hidden .reader-topbar{transform:translateY(-105%);opacity:0;pointer-events:none}
+  body.reader-flow-paginated.reader-chrome-hidden .reader-bottombar{transform:translateY(105%);opacity:0;pointer-events:none}
+  .reader-topbar{column-gap:5px;padding-inline:7px}
+  .reader-title{padding-inline:5px}
+  .reader-title strong{font-size:.75rem}.reader-title span{font-size:.61rem}
+  .reader-actions{gap:1px}.reader-actions .reader-return{margin-left:1px}
+  .reader-bottombar{gap:4px;padding-inline:7px}
+  .reader-bottombar>button{min-width:42px;min-height:38px;padding:0 5px}
+  .progress-wrap{grid-template-columns:minmax(0,1fr) 44px;gap:7px}
+  .progress-wrap span{min-width:44px;padding-inline:5px}
+}
+
+@media(max-width:520px){.reader-external-dialog{width:min(420px,calc(100vw - 22px));border-radius:15px}.reader-external-card{padding:24px 18px 18px}.reader-external-actions{grid-template-columns:1fr}.reader-external-actions button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.reader-loading span{animation-duration:1.8s}.reader-external-dialog[open]{animation:none}.reader-icon,.reader-bottombar>button,.drawer-close,.drawer-tabs button,.reader-reset,.reader-external-actions button,.reader-loading p,body.reader-flow-paginated .reader-topbar,body.reader-flow-paginated .reader-bottombar,body.reader-flow-scrolled .reader-topbar,.reader-brand{transition:none}.reader-icon:active,.reader-bottombar>button:active,.drawer-close:active,.drawer-tabs button:active,.reader-reset:active,.reader-external-actions button:active{transform:none}}
+
+/* v2.8 Slice 2 — expose canonical page, volume percentage, and chapter context without
+   growing a second progress owner. The full summary is available on roomy screens; narrow
+   mobile chrome uses the formatter's compact data attribute while retaining the full text
+   and aria-valuetext for assistive technology. */
+.progress-wrap{grid-template-columns:minmax(120px,1fr) minmax(110px,auto)}
+#progressText{max-width:min(42vw,280px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+@media(max-width:700px){
+  .progress-wrap{grid-template-columns:minmax(0,1fr) minmax(88px,104px)}
+  #progressText{max-width:104px;font-size:0;text-align:center}
+  #progressText::after{content:attr(data-compact);font-size:.66rem}
+}

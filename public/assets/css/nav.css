@@ -1,0 +1,57 @@
+.site-header{grid-template-columns:1fr auto!important}
+html{scrollbar-gutter:stable}
+.brand-mark{cursor:pointer;user-select:none;transition:transform var(--sg-motion-ui,.18s) var(--sg-ease-standard,ease),border-color var(--sg-motion-ui,.18s) var(--sg-ease-standard,ease),background var(--sg-motion-ui,.18s) var(--sg-ease-standard,ease)}.brand-mark:hover,.brand-mark:focus-visible{outline:none;border-color:rgba(190,173,229,.40);background:#171020}.brand-mark.menu-open{transform:rotate(45deg);color:var(--leaf2)}
+/* The drawer is body-level so fixed positioning resolves against the viewport. While it is
+   open, promote the sticky header to its own viewport layer as well; otherwise scroll-locking
+   html/body can leave the sticky header painted below the sibling overlay in WebKit/Chromium.
+   The body spacer preserves the header's normal-flow height, preventing an open/close jump. */
+body.site-nav-open{padding-top:72px}
+.site-nav-open .site-header{position:fixed;top:0;left:0;right:0;width:100%;z-index:70!important;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.site-nav-drawer{position:fixed!important;top:72px;bottom:0;left:0;width:min(360px,calc(100vw - 24px));height:auto;padding:22px 18px max(22px,env(safe-area-inset-bottom));display:flex!important;flex-direction:column;align-items:stretch!important;gap:7px!important;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;border-right:1px solid var(--line2);border-top:1px solid var(--line);background:rgba(11,8,16,.98);backdrop-filter:blur(22px);box-shadow:24px 0 70px rgba(0,0,0,.44);transform:translateX(-104%);opacity:0;visibility:hidden;pointer-events:none;transition:transform var(--sg-motion-layout,.22s) var(--sg-ease-enter,ease),opacity var(--sg-motion-fast,.18s) var(--sg-ease-standard,ease),visibility var(--sg-motion-layout,.22s);z-index:60}
+.site-nav-drawer.nav-open{transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto}
+.site-nav-drawer:before{content:"SHADOW GARDEN";display:block;margin:3px 10px 13px;color:var(--dim);font-size:.62rem;font-weight:750;letter-spacing:.22em}
+.site-nav-drawer a{position:relative;width:100%;min-height:44px;padding:11px 12px!important;display:flex;align-items:center;justify-content:space-between;text-align:left;border:1px solid transparent!important;border-radius:10px!important;color:var(--muted);text-decoration:none;background:transparent;cursor:pointer;transition:color var(--sg-motion-fast,.16s) var(--sg-ease-standard,ease),background var(--sg-motion-fast,.16s) var(--sg-ease-standard,ease),border-color var(--sg-motion-fast,.16s) var(--sg-ease-standard,ease),transform var(--sg-motion-fast,.16s) var(--sg-ease-standard,ease)}
+.site-nav-drawer.nav-open a{animation:sg-nav-item-in var(--sg-motion-ui,.21s) var(--sg-ease-enter,ease) both}
+.site-nav-drawer.nav-open a:nth-child(2){animation-delay:28ms}
+.site-nav-drawer.nav-open a:nth-child(3){animation-delay:48ms}
+.site-nav-drawer a:hover,.site-nav-drawer a:focus-visible,.site-nav-drawer .active{color:var(--text);border-color:var(--line)!important;background:rgba(162,135,211,.07)!important;outline:none}
+.site-nav-drawer a:hover{transform:translateX(2px)}
+.site-nav-drawer a[aria-current="page"],.site-nav-drawer .active{padding-left:15px!important}
+.site-nav-drawer a[aria-current="page"]::before,.site-nav-drawer .active::before{content:"";position:absolute;left:6px;top:12px;bottom:12px;width:2px;border-radius:999px;background:var(--leaf2)}
+.site-nav-drawer a:focus-visible,.brand-mark:focus-visible{outline:2px solid color-mix(in srgb,var(--leaf2) 72%,transparent);outline-offset:2px}
+.site-nav-backdrop{position:fixed;inset:72px 0 0;z-index:35;background:rgba(4,2,7,.60);backdrop-filter:blur(3px);opacity:1;transition:opacity var(--sg-motion-fast,.18s) var(--sg-ease-standard,ease);touch-action:none;overscroll-behavior:none}.site-nav-backdrop[hidden]{display:none}.site-nav-open{overflow:hidden!important;overscroll-behavior:none}
+@keyframes sg-nav-item-in{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:translateX(0)}}
+
+/* Shadow-violet primary theme */
+:root{--panel:#13101a;--panel2:#181420;--line:rgba(196,184,225,.12);--line2:rgba(196,184,225,.22);--text:#f0edf5;--muted:#aaa2b5;--dim:#7b7385;--leaf:#9a86d3;--leaf2:#c3b4ee}
+body:not(.adult-library){background:radial-gradient(circle at 85% 4%,rgba(109,79,158,.11),transparent 30rem),radial-gradient(circle at 8% 44%,rgba(83,58,116,.06),transparent 26rem),linear-gradient(180deg,#09080d,#0d0a12 50%,#08070b)}
+body:not(.adult-library) .site-header{background:rgba(10,8,14,.88)}
+body:not(.adult-library) .brand-mark{background:#130f1b}
+body:not(.adult-library) .continue-mark{background:linear-gradient(145deg,#211932,#100d17)}
+body:not(.adult-library) .search-field,body:not(.adult-library) .filter-group select{background:#0e0b13}
+body:not(.adult-library) .genre-chips button:hover,body:not(.adult-library) .genre-chips button.active{border-color:rgba(154,134,211,.38);background:rgba(154,134,211,.08)}
+body:not(.adult-library) .cover{background:radial-gradient(circle at 72% 22%,rgba(132,104,183,.17),transparent 23%),linear-gradient(150deg,#1a1523,#0f0c14 70%,#17111d)}
+body:not(.adult-library) .cover-fallback:before{color:rgba(190,172,231,.27)}
+body:not(.adult-library) .volume-pill{background:rgba(6,4,10,.80);color:#e0d9eb}
+body:not(.adult-library) .series-hero:has(.series-backdrop) .series-backdrop:after{background:linear-gradient(180deg,rgba(9,7,13,.45),#09080d 88%)}
+body:not(.adult-library) .series-cover{background:#15111c}
+body:not(.adult-library) .series-cover-fallback{background:linear-gradient(145deg,#1c1627,#0f0c14)}
+body:not(.adult-library) .primary-button{border-color:#b9a8e3;color:#0d0914;background:linear-gradient(#cbbdf0,#9a86d3)}
+body:not(.adult-library) .tag{color:#a99bc2;background:rgba(132,104,183,.06)}
+body:not(.adult-library) .volume-cover{background:#14101a}
+body:not(.adult-library) .volume-actions a.read{border-color:rgba(154,134,211,.28)}
+
+/* Adult section remains rose / wine */
+.adult-library{--leaf:#b7798b;--leaf2:#d6a0ad;--gold:#c09a76;--line:rgba(209,163,176,.13);--line2:rgba(209,163,176,.22);--panel:#171014;--panel2:#1d1318}
+.adult-library .brand-mark:hover,.adult-library .brand-mark:focus-visible{border-color:rgba(205,139,159,.36);background:#1a0e13}
+.adult-library .site-nav-drawer{background:rgba(16,8,12,.98);border-right-color:rgba(196,120,145,.18)}
+.adult-library .site-nav-drawer a:hover,.adult-library .site-nav-drawer a:focus-visible,.adult-library .site-nav-drawer .active{background:rgba(190,119,139,.07)!important}
+.adult-library .site-nav-backdrop{background:rgba(8,2,5,.62)}
+.adult-library .primary-button{border-color:#c28b9a;color:#17080d;background:linear-gradient(#d6a0ad,#b7798b)}
+.adult-library .genre-chips button:hover,.adult-library .genre-chips button.active{border-color:rgba(190,119,139,.34);background:rgba(190,119,139,.08)}
+.adult-library .tag{color:#c39aa6;background:rgba(190,119,139,.055)}
+.adult-library .volume-actions a.read{border-color:rgba(190,119,139,.28)}
+
+@media(max-width:980px){.site-nav-drawer{display:flex!important}}
+@media(max-width:720px){body.site-nav-open{padding-top:62px}.site-nav-drawer{top:62px;bottom:0;height:auto;width:min(330px,calc(100vw - 18px));padding:18px 14px max(18px,env(safe-area-inset-bottom))}.site-nav-backdrop{inset:62px 0 0}.brand-mark{width:38px;height:38px}}
+@media(prefers-reduced-motion:reduce){.site-nav-drawer,.brand-mark,.site-nav-backdrop,.site-nav-drawer a{transition:none}.site-nav-drawer.nav-open a{animation:none}.site-nav-drawer a:hover{transform:none}}

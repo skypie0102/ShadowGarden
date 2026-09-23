@@ -1,0 +1,23 @@
+/* Shadow Garden R7 — Garden Keeper Series Editor dialog stability, Adult target controls, and toast presentation. */
+.admin-dialog{box-sizing:border-box;overflow:hidden}
+.admin-dialog .dialog-shell{max-height:min(88dvh,900px);min-height:0;overflow:hidden}
+.admin-dialog .dialog-scroll{min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+#seriesEditor{height:min(88dvh,900px);max-height:min(88dvh,900px)}
+#seriesEditor .dialog-shell{display:grid;grid-template-rows:auto minmax(0,1fr) auto;width:100%;height:100%;max-height:none;min-height:0}
+#seriesEditor .dialog-head,#seriesEditor .dialog-actions{min-height:0}
+#seriesEditor .dialog-scroll{min-height:0;height:auto;overflow-y:auto}
+.adult-toggle{position:relative}
+.adult-toggle>input{position:absolute!important;width:1px!important;height:1px!important;margin:0!important;padding:0!important;opacity:0!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.adult-toggle:focus-within{border-color:rgba(214,160,173,.34);box-shadow:0 0 0 3px rgba(183,121,139,.08)}
+.keeper-targeted #metadataCard .adult-toggle{display:none!important}
+.add-series-target[data-scope="adult"]{border-color:rgba(214,160,173,.28);background:rgba(183,121,139,.08)}
+.add-series-target[data-scope="adult"] .add-series-target-mark{background:rgba(183,121,139,.12);color:#d6a0ad}
+.admin-toast-host{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:1000;display:grid;gap:8px;width:min(360px,calc(100vw - 36px));pointer-events:none}
+.admin-toast{box-sizing:border-box;padding:12px 14px;border:1px solid rgba(195,180,238,.22);border-radius:12px;background:rgba(20,15,28,.97);box-shadow:0 16px 45px rgba(0,0,0,.36);color:#f0edf5;font-size:.78rem;line-height:1.45;animation:adminToastIn .18s ease both}
+.admin-toast.success{border-color:rgba(115,176,132,.30)}
+.admin-toast.info{border-color:rgba(195,180,238,.24)}
+.admin-toast.leaving{animation:adminToastOut .16s ease both}
+@keyframes adminToastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes adminToastOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(6px)}}
+@media(max-width:560px){#seriesEditor{height:94dvh;max-height:94dvh}.admin-toast-host{right:18px;left:18px;width:auto}}
+@media(prefers-reduced-motion:reduce){.admin-toast,.admin-toast.leaving{animation:none}}

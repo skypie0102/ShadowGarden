@@ -1,0 +1,754 @@
+{
+  "archives": [
+    {
+      "name": "recovered-site.zip",
+      "sha256": "4675c4187488308917b7003102542c034d5e344b28b8da70ab9d79a81527953a"
+    },
+    {
+      "name": "shadowgarden-static-recovered.zip",
+      "sha256": "5da6be609951500f60b062d04d5f8721513e5ffe70c08c09ec486551294c47f1"
+    }
+  ],
+  "files": [
+    {
+      "path": "public/robots.txt",
+      "sha256": "65d1e304daf837b18540217cefd92e87eae0361c75ec28bad92a061acad2acde",
+      "bytes": 947
+    },
+    {
+      "path": "public/404.html",
+      "sha256": "d34b43071358c4a63a1546ddf9e1b51cacd5fe14d700aee7c14dafc4beaf19d6",
+      "bytes": 520
+    },
+    {
+      "path": "public/reader.html",
+      "sha256": "54f78bb653ac5c96433c8d7fdeb45b213490b829126d42107ba340c6a2f3ec4b",
+      "bytes": 12220
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "a783b4d8a485476b6a7682bbb37630bb21acbc7bae473106e24738c7d6326a16",
+      "bytes": 9500
+    },
+    {
+      "path": "public/series.html",
+      "sha256": "af0138b6dd1d99e8d68b28176135b179daa77839a2a672cd9ba9f1e3a3af804f",
+      "bytes": 4610
+    },
+    {
+      "path": "public/admin.html",
+      "sha256": "42cfeb669d1e04c6598abe6a8febf663a5402ac055ed6fe417941fb40a97a890",
+      "bytes": 18132
+    },
+    {
+      "path": "public/nsfw.html",
+      "sha256": "60c9701daaebb5ece937fd31d1ac1907b4cbd6fc7c762ca7982aa5365d205cb3",
+      "bytes": 10298
+    },
+    {
+      "path": "public/data/adult-catalog.json",
+      "sha256": "1cdc2fe42889d2867164bf31818da72632f5a5bdb4fbfc8130f839973b81969b",
+      "bytes": 64
+    },
+    {
+      "path": "public/data/version.json",
+      "sha256": "524fa8f4804c9f4bf42b08f14b69cb4dfa628ec2e77fcd25d0038e07af7d0262",
+      "bytes": 228
+    },
+    {
+      "path": "public/data/source.json",
+      "sha256": "723d57406697562b07b6b2fe8446983ecdd1e0bb92ac416d8365b2389988a111",
+      "bytes": 183
+    },
+    {
+      "path": "public/data/catalog.json",
+      "sha256": "1cdc2fe42889d2867164bf31818da72632f5a5bdb4fbfc8130f839973b81969b",
+      "bytes": 64
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-3-6fde0034-thumb.webp",
+      "sha256": "1da4bc76a410bd9606ec4a5bd0c396565b024249a33d4f217f66510fa143d23a",
+      "bytes": 41824
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-1-c32fd954-detail.webp",
+      "sha256": "773e14305baa877879fbedb8a92ad294072847d187bcc0874614ce30b630aeb8",
+      "bytes": 197628
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-2-75ff5db7-detail.webp",
+      "sha256": "8f414f9704cdd2acfa550c6e4956812679edfb147e504ee3b24eafe7815a3da7",
+      "bytes": 149330
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-5-006057c7-detail.webp",
+      "sha256": "9497c67d5f30da317798a4f5a03f74d122f1c715097d50587a7ebbb9bf9ab570",
+      "bytes": 110682
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-4-9a10ad77-thumb.webp",
+      "sha256": "38874fd5e58b78c450ad2fc3cc79c0d94436880628a5034488309c20b0061945",
+      "bytes": 58652
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-5-006057c7-thumb.webp",
+      "sha256": "edabb1b92933344ce0483827ab5b2c8876570c93122320942f5846a1a061dbea",
+      "bytes": 37590
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-1-c32fd954-thumb.webp",
+      "sha256": "4bc57579f7195cc0d9ab772d72be5cf163c4d48751754367961f93bb3cce8993",
+      "bytes": 62954
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-4-9a10ad77-detail.webp",
+      "sha256": "434f1bf97753777dd362febf46c058a9843382cd3b5a95142d2a6e9ca7b4aa7b",
+      "bytes": 183822
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-2-75ff5db7-thumb.webp",
+      "sha256": "369cd3e2f4e82464ddf5d93e6c9825be0c458551708be8a63b6ef421bcebad02",
+      "bytes": 48422
+    },
+    {
+      "path": "public/media/shadow-garden/covers/adult-adolescent-adam-3-6fde0034-detail.webp",
+      "sha256": "71bf9137217b87b7b9cda4470aa9f47f2fb5bd52877cbde9358c78effe6ea05b",
+      "bytes": 121484
+    },
+    {
+      "path": "public/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "43ff4af658398661d38c95a164a2b34abfd91d766c2f3a4452e05f6ad3024223",
+      "bytes": 4294
+    },
+    {
+      "path": "public/media/shadow-garden/data/catalog.json",
+      "sha256": "fc37fb434380afc60b43cb906d6d658aa56ea800a0ea75e2c571da233ab014de",
+      "bytes": 54
+    },
+    {
+      "path": "public/assets/css/admin-motion.css",
+      "sha256": "96cf2965f722e5da72846753a1aade61e07102339bebf53072809b04a1c0c18a",
+      "bytes": 3029
+    },
+    {
+      "path": "public/assets/css/library-motion.css",
+      "sha256": "e763ba07b6db70e7edb166265adf0c7ed68242aa0a2479c7fd1780bc6e743d6f",
+      "bytes": 5414
+    },
+    {
+      "path": "public/assets/css/reader-completion.css",
+      "sha256": "8f0c499946b1d4c6296c0922d8015f5e33c55bfb1b2d14239e448da85d47bbc7",
+      "bytes": 2214
+    },
+    {
+      "path": "public/assets/css/admin-series-editor.css",
+      "sha256": "f6d3377c87e14a05631513a7995260aa6aaf6f2e4db86257c1813da4cd9ae9f2",
+      "bytes": 2476
+    },
+    {
+      "path": "public/assets/css/admin-components.css",
+      "sha256": "407e2123d32ead1643146daf2a6b36b003c46cd9a96818834d4a5446b1b6979c",
+      "bytes": 9649
+    },
+    {
+      "path": "public/assets/css/reader-motion.css",
+      "sha256": "a7f00c5ba93bd70feb5e125168f5f14f084e39f13d391d517b741a5992d311c2",
+      "bytes": 2654
+    },
+    {
+      "path": "public/assets/css/admin.css",
+      "sha256": "ff9c3427c3f66805215f9336fc5d7ee2703abe694fc86c35a29f18799dd053c5",
+      "bytes": 12459
+    },
+    {
+      "path": "public/assets/css/reader-notes.css",
+      "sha256": "c910e708f0d0d3b4c375a9211a12b8b0b13fbb63ffc8e605c307bfd780ccf52f",
+      "bytes": 2768
+    },
+    {
+      "path": "public/assets/css/admin-layout.css",
+      "sha256": "b34ff755bb47c109ab8c390e13733bc72d1f350e662843b39d6d6dae53a29240",
+      "bytes": 4057
+    },
+    {
+      "path": "public/assets/css/ui-symbols.css",
+      "sha256": "e6fefdd3d1a4ada82a1fa10268fbc096aa868dd0571c8d5892c76f7dd634034d",
+      "bytes": 682
+    },
+    {
+      "path": "public/assets/css/admin-preflight.css",
+      "sha256": "a19e64f9b584a33925c2d8ae50bfb7b84658837f128b1e4d9768fbcd83c133e4",
+      "bytes": 3601
+    },
+    {
+      "path": "public/assets/css/public-components.css",
+      "sha256": "4fada2a999b98ea09e92cda020e7c12dd9093b8d529811e50e277d5bf1456dde",
+      "bytes": 10882
+    },
+    {
+      "path": "public/assets/css/reader-interface-themes.css",
+      "sha256": "b3c2c6256d07d470e5cd87719b463ca3749498b43e151305c92ed2fd6798d903",
+      "bytes": 7479
+    },
+    {
+      "path": "public/assets/css/motion.css",
+      "sha256": "7aa79ab0d919dda0510ad1b86dbe78f80a2bee37ae69870839b70dcb8d8d6bea",
+      "bytes": 3358
+    },
+    {
+      "path": "public/assets/css/series-motion.css",
+      "sha256": "68e8c277c070624e90664f2da3c97c36ee87d68a51c254267a73e3f7ec23613a",
+      "bytes": 2640
+    },
+    {
+      "path": "public/assets/css/admin-presentation.css",
+      "sha256": "3aef8669bf00b47dee6647da32b8f9069f33663bfbaee7486db9ca2451d6949d",
+      "bytes": 4952
+    },
+    {
+      "path": "public/assets/css/reader-presentation.css",
+      "sha256": "1e53a422df47513037db173808b11e9420e5e9783ed69a36f72f36669f41f5d7",
+      "bytes": 10925
+    },
+    {
+      "path": "public/assets/css/admin-maintenance.css",
+      "sha256": "153085026bf60efe16d9ad8618cd2548ae86afbc5d94ac4f96e611f234fd2732",
+      "bytes": 4465
+    },
+    {
+      "path": "public/assets/css/public-artwork.css",
+      "sha256": "12117756814189639f807cd925fa8a6bd96f6ee1fd9eb984b336f927eea3af54",
+      "bytes": 7032
+    },
+    {
+      "path": "public/assets/css/reader.css",
+      "sha256": "1e59624837f4fd4d273174ccd476bd7d4bb902cc6cb75a08a2cbbaa8b2673d87",
+      "bytes": 11590
+    },
+    {
+      "path": "public/assets/css/reading-status.css",
+      "sha256": "77f0c2856ab3b9635db9f7a4a763e6139e2da605ec6a9130999dd06aa414c17a",
+      "bytes": 3495
+    },
+    {
+      "path": "public/assets/css/library-features.css",
+      "sha256": "188964db7bb6ae7058ac67a91ad892b72e6a4be6eb0d459728da80a4d3e6a897",
+      "bytes": 13079
+    },
+    {
+      "path": "public/assets/css/admin-batch.css",
+      "sha256": "25596d2a6f34246e16922e4e6339326f8007e90aa0ac4d27e4f4de247c61e94c",
+      "bytes": 3904
+    },
+    {
+      "path": "public/assets/css/admin-import-report.css",
+      "sha256": "e762fb2f3a195c5df79e11f72cff24a9e3db1b94587386d41fa745c4b45e2c65",
+      "bytes": 4395
+    },
+    {
+      "path": "public/assets/css/reader-image-focus.css",
+      "sha256": "379df0310c4044fd7dd041f9c98222b6c9d26c923bc447777160e03128ed9850",
+      "bytes": 2998
+    },
+    {
+      "path": "public/assets/css/reader-end-page.css",
+      "sha256": "fe163ed9f56b5d1f8b74b5f068c5d65d6528c3a359c46ab6a6299b4033dbd495",
+      "bytes": 2165
+    },
+    {
+      "path": "public/assets/css/reader-page-map.css",
+      "sha256": "b8bab2898c450c8ff4d3c1f7ce1f213654b1cb4b3a4f7f147bd7bbdae94d9074",
+      "bytes": 3521
+    },
+    {
+      "path": "public/assets/css/library-layout.css",
+      "sha256": "9be0e19c4e95eaa18ffd1ad58e8187f7c00ed41d8e9d69cd1b59ad7c35e91867",
+      "bytes": 8194
+    },
+    {
+      "path": "public/assets/css/volume-actions.css",
+      "sha256": "73b8c7a5fad1c847cea8e977035c788c5d970a64878be3954bac6255fd670b2b",
+      "bytes": 2615
+    },
+    {
+      "path": "public/assets/css/site.css",
+      "sha256": "03c98aac9a08a337031109744809796747a6408c216acec2db13576a2f36d43e",
+      "bytes": 15656
+    },
+    {
+      "path": "public/assets/css/series-extra.css",
+      "sha256": "5e013d66cacfecbcf70898a2c3223596922ec26b9b94624c173153df9adbc9ed",
+      "bytes": 9801
+    },
+    {
+      "path": "public/assets/css/nav.css",
+      "sha256": "0aa949d3d7c1f9c41dfe697dafa406a5617b63ea37bd8e17f8211f0811ec9617",
+      "bytes": 7597
+    },
+    {
+      "path": "public/assets/css/reader-continuous-rail.css",
+      "sha256": "a7ca4e60d99ea9698f9407e1e80e075d0acc6aed2d09557b680366893e3387aa",
+      "bytes": 3667
+    },
+    {
+      "path": "public/assets/css/adult.css",
+      "sha256": "ed691a6cf4becbb5651d0280b0dbd25140dc276b957bd51b097b8bb95a51c2a3",
+      "bytes": 3899
+    },
+    {
+      "path": "public/assets/css/admin-version.css",
+      "sha256": "2d73bfb14bc6047d44422b8633b84e09047cf4b92584bcf422c6f2c6965e51c3",
+      "bytes": 473
+    },
+    {
+      "path": "public/assets/css/reader-a11y.css",
+      "sha256": "fd0590c169c4ab2544eb03c83c20bf337d95b11ee4f3c80fce98f2c86204bd98",
+      "bytes": 2108
+    },
+    {
+      "path": "public/assets/icons/favicon.svg",
+      "sha256": "7af1f542af1bf7fcc0b14d81fc3cd43b7d5fa9b824c930d9c8a8abb0b3d2f10d",
+      "bytes": 382
+    },
+    {
+      "path": "public/assets/vendor/jszip.min.js",
+      "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e",
+      "bytes": 97630
+    },
+    {
+      "path": "public/assets/vendor/epub.min.js",
+      "sha256": "06eae15745107b4aa508c95538275251f69bfb9f1175621fc458d9f42ed082d4",
+      "bytes": 223875
+    },
+    {
+      "path": "public/assets/js/site-a11y.js",
+      "sha256": "65837f4fd1304000b7dbe9d5ab843fe587a774b854fee09f475648546e0f328d",
+      "bytes": 1712
+    },
+    {
+      "path": "public/assets/js/nav-pinned.js",
+      "sha256": "f1c4c6d46c90fcf5d1436a20e835092fe4433b1f3ba752857c9621c3130d7cec",
+      "bytes": 3782
+    },
+    {
+      "path": "public/assets/js/reader-motion.js",
+      "sha256": "4f86857f49e5a26a998dfb94f4b4868558a3e3218d63cd92e9efee5c93ed2a9d",
+      "bytes": 1732
+    },
+    {
+      "path": "public/assets/js/library.js",
+      "sha256": "0f27a2e71b5a8ea9d65c585192cd927419233420ecd89354207779cd3fa20116",
+      "bytes": 21774
+    },
+    {
+      "path": "public/assets/js/reader-a11y.js",
+      "sha256": "cbfd5e2c529a1e8fb237e9eef30938af5801132aeb00e25041372673cf85d471",
+      "bytes": 3380
+    },
+    {
+      "path": "public/assets/js/reader-continuous-rail.js",
+      "sha256": "ec189d3340e5ebbc768896fc412b3d2994f4599ffd28bbe06f371229478ee100",
+      "bytes": 4496
+    },
+    {
+      "path": "public/assets/js/library-motion.js",
+      "sha256": "7b6efff256ca941d1884d355f90e9089ebb7f5152b1505a282baed1ce3d83ec8",
+      "bytes": 7812
+    },
+    {
+      "path": "public/assets/js/admin-upload-workflow.js",
+      "sha256": "3c513f75befaf3b62fce6b6d9b8910a25a2dea26eb1eefb27d1d07213e05379f",
+      "bytes": 16383
+    },
+    {
+      "path": "public/assets/js/series-renderers.js",
+      "sha256": "138954505bbb6d9ab4d4b5c0c260051d2d9f09e03c5fb88f0dc1c55e49c8979f",
+      "bytes": 9620
+    },
+    {
+      "path": "public/assets/js/reader-bootstrap.js",
+      "sha256": "9ff3cf628cd0f21f7ab51507e15078ad1764498ce357324519cb101f8a2fe41e",
+      "bytes": 1864
+    },
+    {
+      "path": "public/assets/js/admin-upload-completion.js",
+      "sha256": "614fc3365dbebc5cf6deefa863d69d9bc20a889f0bd9ae27bb8438e4e5d78071",
+      "bytes": 1503
+    },
+    {
+      "path": "public/assets/js/admin-upload-presentation.js",
+      "sha256": "dc1a5a03ebb8f1f7464e248b25833959e103e5836c909fe324cb500ea70ff723",
+      "bytes": 4028
+    },
+    {
+      "path": "public/assets/js/reader-visual-cache.js",
+      "sha256": "906a2531291317a52521d9ed529e5c63cdefd63a8495830b62356e5d6bac7194",
+      "bytes": 27051
+    },
+    {
+      "path": "public/assets/js/library-model.js",
+      "sha256": "c3c9bee171dae11e5ff261250c9115301ab048ae5b402da80fa2b3ab0862fc0f",
+      "bytes": 8379
+    },
+    {
+      "path": "public/assets/js/series-motion.js",
+      "sha256": "438bdceca39947b39e8d2bec167b6d199807323747d6a7fd6c48d41e8e34b9e3",
+      "bytes": 2953
+    },
+    {
+      "path": "public/assets/js/library-footer-version.js",
+      "sha256": "da74a1487baa0a5592cae6eb33a7d0c38a586df384cb394589009351e9b8c206",
+      "bytes": 913
+    },
+    {
+      "path": "public/assets/js/nav.js",
+      "sha256": "b9cdb9dc149d0d33c45dcc8725a46ab61cf539b57306dfe62c025683d3304a7e",
+      "bytes": 4572
+    },
+    {
+      "path": "public/assets/js/series.js",
+      "sha256": "4083aa36c6986139553d66b719d61524bb46d222ae766ff205a87a10b8986be9",
+      "bytes": 4199
+    },
+    {
+      "path": "public/assets/js/reader-epub-adapter.js",
+      "sha256": "fd8c641b041b465108fc1d33d5f1ea0018de63b1d131a6032f21c8c14e16dec4",
+      "bytes": 20495
+    },
+    {
+      "path": "public/assets/js/motion.js",
+      "sha256": "e940a9c1bd0c65cf3920cc83fea5c6c2912a224edc4562db42c0b1808235a406",
+      "bytes": 6223
+    },
+    {
+      "path": "public/assets/js/library-renderers.js",
+      "sha256": "a1f3e5d5c23874543a94decee802c075e6b10961dfc7788ec24f9c7001120ecd",
+      "bytes": 8194
+    },
+    {
+      "path": "public/assets/js/book-access.js",
+      "sha256": "1cb22a186b13965d46a99ee5534704def1a208a36b22dbf98f93a0da1b6b9348",
+      "bytes": 17478
+    },
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "sha256": "7ec4b33a573464d50f320ac9cce4fbc610c47e7016206e5cadb82231ba6c1108",
+      "bytes": 35565
+    },
+    {
+      "path": "public/assets/js/reader-paginated-visual-fit.js",
+      "sha256": "8462335288c29efc7604e156904da3604fa4254288ab08dad326323b0516528f",
+      "bytes": 11002
+    },
+    {
+      "path": "public/assets/js/admin-batch-editor.js",
+      "sha256": "9e2f40c23db50688005a84442b7187326892c4de63e9a5816c680e89ac074705",
+      "bytes": 2842
+    },
+    {
+      "path": "public/assets/js/library-mobile-filter.js",
+      "sha256": "eeae4824c63e120511921ef25eeadcafc43bae450edc9f3e1141ff79ebec0461",
+      "bytes": 3762
+    },
+    {
+      "path": "public/assets/js/reader-internal-links.js",
+      "sha256": "57ba0d271591a419832a3e7a8769bd10d4ef3d8f6fd56d037df0b9397d74e572",
+      "bytes": 7978
+    },
+    {
+      "path": "public/assets/js/reader-footnotes.js",
+      "sha256": "0c9ac98b56ce576500750f7c312feb822ef7b37daa4c2c3b65aefe719d3c671b",
+      "bytes": 13152
+    },
+    {
+      "path": "public/assets/js/site-flavor.js",
+      "sha256": "c294895c53837cd20407a4c989a5f0906e51fa73768a01859de21a9c2e97f3e5",
+      "bytes": 13420
+    },
+    {
+      "path": "public/assets/js/data-source.js",
+      "sha256": "4fb7447760a931c1994aa3d6269ce8a38a4a509e521269466e7c41d0d0bbac56",
+      "bytes": 2712
+    },
+    {
+      "path": "public/assets/js/ui-direction-triangles.js",
+      "sha256": "a6129f7e5773971a0cdfe3c9207564e6f69b242fc4ab340ec3b63020558aa1c1",
+      "bytes": 2183
+    },
+    {
+      "path": "public/assets/js/reader-continuous-core.js",
+      "sha256": "c9f1627b87ad53bbf718c81432b4d8cd90e86321ad85dccfd86ac4d3340b8d91",
+      "bytes": 24364
+    },
+    {
+      "path": "public/assets/js/domain/book-identity.js",
+      "sha256": "66be6a53434659456a04ffafa58c155797f87c22b9275f3a69fc9b01564e3ac6",
+      "bytes": 2993
+    },
+    {
+      "path": "public/assets/js/domain/preferences.js",
+      "sha256": "6910e15582b14d8a5efec229dd9bc8fdb137bd6f96bd1d961abfd5bcaea636c1",
+      "bytes": 3158
+    },
+    {
+      "path": "public/assets/js/domain/catalog-taxonomy.js",
+      "sha256": "c53ddff8c150942a302ca0668773369837843dec610a0aa2068a0296c18049a8",
+      "bytes": 4982
+    },
+    {
+      "path": "public/assets/js/domain/catalog.js",
+      "sha256": "0634ea44777686b93318819c0af5267f6abc1246a202cd5f0e7ee4e290b01c85",
+      "bytes": 4913
+    },
+    {
+      "path": "public/assets/js/domain/index.js",
+      "sha256": "6703e8383afce5dc9715eed885c9ff11c26f12c661c7450c7b5a910c9d304995",
+      "bytes": 507
+    },
+    {
+      "path": "public/assets/js/domain/reading-state.js",
+      "sha256": "c75ba5d7b85c798f75d76199f4148c205174246622eac129c81dc9811c190749",
+      "bytes": 9719
+    },
+    {
+      "path": "public/assets/js/domain/bookmarks.js",
+      "sha256": "b8a3b0a30bfba1006123a195ccd497926b56cd0a3f4eeccf0383e0cc51175225",
+      "bytes": 2048
+    },
+    {
+      "path": "public/assets/js/domain/format.js",
+      "sha256": "ec7c65c5a87b49022250c6309f4084d0cbddf61ab76f6dab7ff78faefe3d75b7",
+      "bytes": 971
+    },
+    {
+      "path": "public/assets/js/domain/storage.js",
+      "sha256": "4a3da9f979bb4d25f298efc7511df5e6e8566f4f1b39c1dd854a26b80c65efb4",
+      "bytes": 1943
+    },
+    {
+      "path": "public/assets/js/domain/progress.js",
+      "sha256": "90cfce06b69345e4fdc52cfefa192d8d45d7aad8803daae0ab6843fd1a9b1689",
+      "bytes": 4126
+    },
+    {
+      "path": "public/assets/js/domain/urls.js",
+      "sha256": "40df143d08c25720e63300560b5ff3f699c4a8504780886ba41dbf1c09b82b3d",
+      "bytes": 852
+    },
+    {
+      "path": "public/assets/js/domain/translations.js",
+      "sha256": "1fe8747fe478ef304515f8cbd7e16200b61687104243a47bf30bcf705bca39f8",
+      "bytes": 2910
+    },
+    {
+      "path": "public/assets/js/public/volume-actions.js",
+      "sha256": "a29f8fa5634ff4bbde31319f6cb0a48bbb24c49de558adf93c14a459863581d1",
+      "bytes": 5455
+    },
+    {
+      "path": "public/assets/js/admin/shell.js",
+      "sha256": "29908e74fb242f3f74ec236baf9436b54e39ab8956a1c0df313c335e473a1ec4",
+      "bytes": 7966
+    },
+    {
+      "path": "public/assets/js/admin/upload-preflight-report.js",
+      "sha256": "d7369b53f7372871014d9c112c857745365995c2eb9dcf5b56f602d2484196e6",
+      "bytes": 10021
+    },
+    {
+      "path": "public/assets/js/admin/auth-session.js",
+      "sha256": "87c592b68a6452b9330bc6081a499b3c0264c43f345f5e0bb84e7b5a9fda8932",
+      "bytes": 8784
+    },
+    {
+      "path": "public/assets/js/admin/abuse-workflow.js",
+      "sha256": "ffe8c2cbc6304d0b7aa3d9ca7e8df168e54e2cb4d275ca09149323727874c6d7",
+      "bytes": 5874
+    },
+    {
+      "path": "public/assets/js/admin/version.js",
+      "sha256": "9a04ed04fcd96801f459d51f64e54de068f6737407dea1b24e75fa29a49bc30d",
+      "bytes": 1242
+    },
+    {
+      "path": "public/assets/js/admin/core.js",
+      "sha256": "848b5889b33c4f56d0ca7b0c00dc3764555f23e890784504f245dba2751a31c0",
+      "bytes": 13953
+    },
+    {
+      "path": "public/assets/js/admin/motion.js",
+      "sha256": "571dce186cabb8d65cac849d93676fc2d4e1b046aad57e5685481d92b3be8360",
+      "bytes": 4144
+    },
+    {
+      "path": "public/assets/js/admin/library-workflow.js",
+      "sha256": "cdf2f9f09295d652b6bb191b4731fc285c87507c1d5b6c00b866fa4581ec7b38",
+      "bytes": 18324
+    },
+    {
+      "path": "public/assets/js/admin/history-workflow.js",
+      "sha256": "97254974277d61d663aebba7b4faeb84a42615824790ceb7414c864978c2cf10",
+      "bytes": 5628
+    },
+    {
+      "path": "public/assets/js/admin/translation-workflow.js",
+      "sha256": "ff26f0c65e2301b4a17ffa8663aa68c4a6c5ef2f4693e908425262d07fc92a33",
+      "bytes": 6662
+    },
+    {
+      "path": "public/assets/js/admin/maintenance-workflow.js",
+      "sha256": "10da3f7a9efa86287db3d49b355d71457592711eb3686d89e09d767be2b452b3",
+      "bytes": 18108
+    },
+    {
+      "path": "public/assets/js/admin/app.js",
+      "sha256": "9d89c9c52d2d9d04d61d71b6c51c02895359c9d85767f44e158ca604d8d1847a",
+      "bytes": 3714
+    },
+    {
+      "path": "public/assets/js/admin/recovery-readiness-workflow.js",
+      "sha256": "c1b12531270cf4de42091163420c9de99fc84726a2b03fd8363e92bc5ee4e736",
+      "bytes": 6649
+    },
+    {
+      "path": "public/assets/js/admin/upload-events.js",
+      "sha256": "14861788c0b1c1109b8dabb637f6be51cd6ef14bba4d8b772f33fd9a2baf7b53",
+      "bytes": 937
+    },
+    {
+      "path": "public/assets/js/admin/upload-similar-volume.js",
+      "sha256": "a3a23275666e1969172857d58e34222c60b3b15d23c3cf8bba87ec11a6e8c8be",
+      "bytes": 6137
+    },
+    {
+      "path": "public/assets/js/admin/upload-safety.js",
+      "sha256": "b48dbe8ce8f78cd98f83b76c6abce6ffec3d93653bebc7c6a627a9495a3bbe54",
+      "bytes": 4509
+    },
+    {
+      "path": "public/assets/js/admin/trash-workflow.js",
+      "sha256": "cef12000b9304a6975eeefc97574b4734c649eeedb357d9da46c43b2cd031cf4",
+      "bytes": 5266
+    },
+    {
+      "path": "public/assets/js/admin/editor-interactions.js",
+      "sha256": "854c43903a83fca4f0f1bb7654a2d04ecd0ee709be87a93cfb12f75de9e8ca18",
+      "bytes": 12190
+    },
+    {
+      "path": "public/assets/js/admin/upload-fields.js",
+      "sha256": "35d7a9de835fe8f099ea9c1f2e5557e95e19f1679f78f754cf17cfe72c296781",
+      "bytes": 1638
+    },
+    {
+      "path": "public/assets/js/reader/error-presentation.js",
+      "sha256": "8335a4c07ebd161aa82a069c2b16f3ccbbf668e78644e017378ec7251759bf25",
+      "bytes": 3154
+    },
+    {
+      "path": "public/assets/js/reader/image-focus.js",
+      "sha256": "2fcbae813776508a09788251671a841bf772cf2b4a7cb846f2f327db81ff8715",
+      "bytes": 18602
+    },
+    {
+      "path": "public/assets/js/reader/book-session.js",
+      "sha256": "32540181f506d4fe57359002b951b7bfe50af14c621734222ac6325066933d2d",
+      "bytes": 5956
+    },
+    {
+      "path": "public/assets/js/reader/paginated.js",
+      "sha256": "542e063bcd56bb340e14da1b210afdfdfdd304f33880a0d96abd9d6dfe3f8651",
+      "bytes": 4724
+    },
+    {
+      "path": "public/assets/js/reader/book-search.js",
+      "sha256": "b6a4116e3f88e6d60b5e477c132b95e949f414fd06094e1f623a456039bdcb9d",
+      "bytes": 5058
+    },
+    {
+      "path": "public/assets/js/reader/image-focus-touch-compat.js",
+      "sha256": "8eb6bed845e73cd639dd98c91364d53a53c79657cf7908ab12be684b3c4c4380",
+      "bytes": 3039
+    },
+    {
+      "path": "public/assets/js/reader/page-navigation-input.js",
+      "sha256": "8628ca002d23bd318a442e7f200fecc1398d691e68cc7a7a09860dc941e14329",
+      "bytes": 5163
+    },
+    {
+      "path": "public/assets/js/reader/progress-controller.js",
+      "sha256": "3fa0d00dffcf1ee1458a94a37550ed4a321ce27b2afef5e360eb142215dfca88",
+      "bytes": 10627
+    },
+    {
+      "path": "public/assets/js/reader/continuous.js",
+      "sha256": "1f58b6e817718e686f9a5a27ff6cdd03d6fc2e01552ea76df7a4daf815028a44",
+      "bytes": 2221
+    },
+    {
+      "path": "public/assets/js/reader/page-map.js",
+      "sha256": "a8cc595f56d77f4d3efd8381317d5e5225af22ae4908fe4fd04f07772c52e098",
+      "bytes": 26796
+    },
+    {
+      "path": "public/assets/js/reader/rendition.js",
+      "sha256": "9e9d5a8e96d7a6b0bd8b28af68d16ba19b8221d03bed87f9b2631e8b1c771501",
+      "bytes": 22629
+    },
+    {
+      "path": "public/assets/js/reader/app.js",
+      "sha256": "3e9561b1a76a45eea9bf567934046ab8fa80788ae8f924b658fab46f40dcb1fc",
+      "bytes": 22266
+    },
+    {
+      "path": "public/assets/js/reader/bookmarks-controller.js",
+      "sha256": "71640eddcfa8074806b3bcce1ce66d19b2d30e78e2b6ac6e79f6ebc35ad49d66",
+      "bytes": 4655
+    },
+    {
+      "path": "public/assets/js/reader/theme.js",
+      "sha256": "11d8a9a059f6b53a667f45263bae72f6af41e5f0fb7b37495c0fa9245a4fb6a8",
+      "bytes": 16542
+    },
+    {
+      "path": "public/assets/js/reader/settings.js",
+      "sha256": "72f0507eeb85806d9c3b2c7292c459c8e0d91919c57c52cd015168b5221d1d4b",
+      "bytes": 5266
+    },
+    {
+      "path": "public/assets/js/reader/toc.js",
+      "sha256": "76728c6cc59957495d0085741a6a62c3e28ddce376fe7b812cd766ddef864e51",
+      "bytes": 20638
+    },
+    {
+      "path": "public/assets/js/reader/completion.js",
+      "sha256": "9308959841d16d2b7956a97cd5b69047578119bd243cf8af0049e169cd67c4be",
+      "bytes": 8961
+    },
+    {
+      "path": "public/assets/js/reader/storage.js",
+      "sha256": "ceaa678e8e84d2a7e94e7cfe4664a562d62ddd1e84ec39e148adc5f256c76cd4",
+      "bytes": 2321
+    },
+    {
+      "path": "public/assets/js/reader/navigation-state.js",
+      "sha256": "d8c82376e1afd0bb4432c479011eaad2f3770aa05f4b16701be4020c4274b1a1",
+      "bytes": 643
+    },
+    {
+      "path": "public/assets/js/reader/interaction-controller.js",
+      "sha256": "157e33fbaa9761baca01813af734b212465de63593fe99ddfdb5e0a4912b8485",
+      "bytes": 6322
+    },
+    {
+      "path": "public/assets/js/reader/resume-controller.js",
+      "sha256": "268ee16cc0248bfcdeecdf15b8349ccfbc6b16344be56a9565900c151cbbd0b6",
+      "bytes": 8460
+    },
+    {
+      "path": "public/assets/js/reader/epub-lifecycle.js",
+      "sha256": "aa060fd87ee2958c7429e831586bb6e858c52eac44184ed55890d22dcf9de298",
+      "bytes": 7339
+    }
+  ]
+}

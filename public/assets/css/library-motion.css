@@ -1,0 +1,63 @@
+/* Shadow Garden v2.6 — Library motion and Library→Series continuity. */
+@view-transition{navigation:auto}
+
+@supports(view-transition-name:root){
+  ::view-transition-group(*){animation-duration:var(--sg-motion-layout);animation-timing-function:var(--sg-ease-emphasized)}
+  ::view-transition-group(root){animation-duration:var(--sg-motion-page)}
+  ::view-transition-group(series-cover){animation-duration:var(--sg-motion-page);animation-timing-function:var(--sg-ease-enter);overflow:clip}
+  ::view-transition-old(series-cover),::view-transition-new(series-cover){height:100%;object-fit:cover;border-radius:10px}
+  ::view-transition-group(library-suggestion),::view-transition-group(library-suggestion-art){animation-duration:var(--sg-motion-ui);animation-timing-function:var(--sg-ease-emphasized)}
+  ::view-transition-old(library-suggestion),::view-transition-old(library-suggestion-art){animation:sg-suggestion-old var(--sg-motion-ui) var(--sg-ease-standard) both}
+  ::view-transition-new(library-suggestion),::view-transition-new(library-suggestion-art){animation:sg-suggestion-new var(--sg-motion-ui) var(--sg-ease-enter) both}
+}
+
+/* The destination exists in first-paint Series skeleton markup, so an outgoing Library
+   cover has a stable target before asynchronous catalog hydration begins. */
+.series-loading-cover{view-transition-name:series-cover}
+
+.sg-library-motion-loading .catalog-grid .series-card{animation:sg-library-content-in var(--sg-motion-layout) var(--sg-ease-enter) both}
+@keyframes sg-library-content-in{from{opacity:0;transform:translateY(6px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes sg-suggestion-old{to{opacity:0;transform:translateY(-4px) scale(.995)}}
+@keyframes sg-suggestion-new{from{opacity:0;transform:translateY(5px) scale(.995)}}
+@keyframes sg-suggestion-fallback{from{opacity:.55;transform:translateY(3px)}to{opacity:1;transform:none}}
+@keyframes sg-suggestion-spin{from{transform:rotate(-100deg)}to{transform:rotate(0)}}
+
+/* Existing filter state still owns display. Motion only choreographs the expanded state. */
+.sg-motion-ready .filters:not(.filters-collapsed)>.filter-head,
+.sg-motion-ready .filters:not(.filters-collapsed)>.filter-group,
+.sg-motion-ready .filters:not(.filters-collapsed) .search-hint{animation:sg-filter-unfold var(--sg-motion-ui) var(--sg-ease-enter) both}
+.sg-motion-ready .filters:not(.filters-collapsed)>.filter-group:nth-of-type(3){animation-delay:15ms}
+.sg-motion-ready .filters:not(.filters-collapsed)>.filter-group:nth-of-type(4){animation-delay:30ms}
+.sg-motion-ready .filters:not(.filters-collapsed)>.filter-group:nth-of-type(n+5){animation-delay:45ms}
+@keyframes sg-filter-unfold{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+.active-filter-tags button,.empty-filter-actions button{animation:sg-filter-pill-in var(--sg-motion-fast) var(--sg-ease-enter) both}
+@keyframes sg-filter-pill-in{from{opacity:0;transform:translateY(4px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.view-switch button{transition:color var(--sg-motion-ui) var(--sg-ease-standard),background-color var(--sg-motion-ui) var(--sg-ease-standard),box-shadow var(--sg-motion-ui) var(--sg-ease-standard)}
+.catalog-grid .series-card,.catalog-grid .cover,.catalog-grid .card-copy,.compact-card-badges{contain:paint}
+
+/* Suggestion refresh remains controller-owned. This adapter only softens the visual swap
+   and provides local feedback when the canonical controller returns the same candidate. */
+.continue-panel{position:relative}
+.continue-panel.suggestion-refreshed{animation:sg-suggestion-fallback var(--sg-motion-ui) var(--sg-ease-enter) both}
+.continue-panel.suggestion-refreshed .another-suggestion{animation:sg-suggestion-spin var(--sg-motion-ui) var(--sg-ease-emphasized) both}
+.suggestion-notice{position:absolute;right:10px;bottom:calc(100% + 9px);z-index:3;max-width:min(320px,80vw);padding:8px 10px;border:1px solid var(--line2);border-radius:10px;background:rgba(9,14,10,.96);box-shadow:0 12px 30px rgba(0,0,0,.24);color:var(--muted);font-size:.69rem;line-height:1.35;white-space:normal;opacity:0;transform:translateY(5px);pointer-events:none;transition:opacity var(--sg-motion-fast) var(--sg-ease-standard),transform var(--sg-motion-fast) var(--sg-ease-enter)}
+.suggestion-notice.is-visible{opacity:1;transform:none}
+.adult-library .suggestion-notice{border-color:var(--adult-border-strong);background:rgba(18,10,14,.97);color:#b4969f}
+
+/* Keep native touch physics; a quiet trailing fade communicates that the rail continues. */
+@media(max-width:720px){
+  .recent-volumes{-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 24px),transparent 100%);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 24px),transparent 100%);scroll-padding-inline:2px 20px}
+  .suggestion-notice{right:8px;max-width:min(300px,88vw)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .sg-library-motion-loading .catalog-grid .series-card,
+  .sg-motion-ready .filters:not(.filters-collapsed)>.filter-head,
+  .sg-motion-ready .filters:not(.filters-collapsed)>.filter-group,
+  .sg-motion-ready .filters:not(.filters-collapsed) .search-hint,
+  .active-filter-tags button,.empty-filter-actions button,
+  .continue-panel.suggestion-refreshed,.continue-panel.suggestion-refreshed .another-suggestion{animation:none!important}
+  .suggestion-notice{transition:none!important;transform:none}
+}

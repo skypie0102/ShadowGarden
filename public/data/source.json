@@ -1,0 +1,6 @@
+{
+  "mode": "b2-private",
+  "provider": "backblaze-b2",
+  "catalogUrl": "/media/shadow-garden/data/catalog.json",
+  "adultCatalogUrl": "/media/shadow-garden/data/adult-catalog.json"
+}

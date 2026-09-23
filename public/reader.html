@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0910">
+  <title>Reader — Shadow Garden</title>
+  <script>
+    (()=>{try{
+      const saved=JSON.parse(localStorage.getItem("sg-reader-settings")||"{}")||{};
+      const theme=["garden","night","black","paper"].includes(saved.theme)?saved.theme:"garden";
+      const roots={garden:"#0b0910",night:"#070a12",black:"#000000",paper:"#e6dfd1"};
+      document.documentElement.style.backgroundColor=roots[theme];
+      document.documentElement.style.colorScheme=theme==="paper"?"light":"dark";
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content",roots[theme]);
+    }catch{}})();
+  </script>
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/reader.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-continuous-rail.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-page-map.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-completion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-end-page.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reading-status.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/volume-actions.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-image-focus.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-notes.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-a11y.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-interface-themes.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-presentation.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
+  <script src="/assets/vendor/jszip.min.js?v=2.11.0"></script>
+  <script src="/assets/vendor/epub.min.js?v=2.11.0"></script>
+  <script src="/assets/js/data-source.js?v=2.11.0"></script>
+  <script src="/assets/js/book-access.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-continuous-rail.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-epub-adapter.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-footnotes.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-internal-links.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-visual-cache.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-paginated-visual-fit.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-continuous-core.js?v=2.11.0"></script>
+  <script src="/assets/js/motion.js?v=2.11.0"></script>
+  <script src="/assets/js/reader-motion.js?v=2.11.0" defer></script>
+  <script src="/assets/js/reader-a11y.js?v=2.11.0" defer></script>
+  <script src="/assets/js/ui-direction-triangles.js?v=2.11.0" defer></script>
+  <script type="module" src="/assets/js/reader-bootstrap.js?v=2.11.0"></script>
+</head>
+<body>
+  <script>
+    (()=>{try{
+      const saved=JSON.parse(localStorage.getItem("sg-reader-settings")||"{}")||{};
+      const theme=["garden","night","black","paper"].includes(saved.theme)?saved.theme:"garden";
+      document.body.className=`reader-theme-${theme} ${saved.flow==="scrolled-doc"?"reader-flow-scrolled":"reader-flow-paginated"}`;
+      const seriesId=new URLSearchParams(location.search).get("series")||"";
+      if(seriesId.startsWith("adult-"))document.body.classList.add("adult-reader");
+    }catch{document.body.className="reader-theme-garden reader-flow-paginated"}})();
+  </script>
+  <a class="reader-skip-link" href="#viewerShell">Skip to book content</a>
+  <div id="readerApp" class="reader-app">
+    <header class="reader-topbar" aria-label="Reader controls">
+      <div class="reader-left">
+        <button id="tocToggle" class="reader-icon" type="button" aria-label="Table of contents" aria-controls="tocDrawer" aria-expanded="false">☰</button>
+        <a id="backLink" class="reader-brand" href="/">Shadow Garden</a>
+      </div>
+      <div class="reader-title">
+        <strong id="bookTitle">Opening the volume…</strong>
+        <span id="chapterTitle"></span>
+      </div>
+      <div class="reader-actions">
+        <button id="bookmarkButton" class="reader-icon" type="button" title="Bookmark this location" aria-label="Bookmark this location" aria-pressed="false">◇</button>
+        <button id="settingsToggle" class="reader-icon" type="button" aria-label="Reader settings" aria-controls="settingsDrawer" aria-expanded="false">Aa</button>
+        <button id="fullscreenButton" class="reader-icon" type="button" aria-label="Fullscreen" aria-pressed="false">⛶</button>
+        <a id="returnButton" class="reader-icon reader-return" href="/" title="Return to series" aria-label="Return to series">◀</a>
+      </div>
+    </header>
+
+    <aside id="tocDrawer" class="reader-drawer drawer-left" aria-label="Contents and bookmarks" aria-hidden="true">
+      <div class="drawer-head">
+        <div class="drawer-tabs">
+          <button class="active" data-panel="toc" type="button">Contents</button>
+          <button data-panel="bookmarks" type="button">Bookmarks</button>
+        </div>
+        <button class="drawer-close" data-close="tocDrawer" type="button" aria-label="Close contents drawer">×</button>
+      </div>
+      <div id="tocPanel" class="drawer-panel"></div>
+      <div id="bookmarksPanel" class="drawer-panel hidden"></div>
+    </aside>
+
+    <aside id="settingsDrawer" class="reader-drawer drawer-right" aria-label="Reading settings" aria-hidden="true">
+      <div class="drawer-head">
+        <strong>Reading settings</strong>
+        <button class="drawer-close" data-close="settingsDrawer" type="button" aria-label="Close reading settings">×</button>
+      </div>
+      <div class="settings-panel">
+        <label><span>Theme</span><select id="themeSelect"><option value="garden">Shadow Garden</option><option value="night">Night</option><option value="black">Black</option><option value="paper">Paper</option></select></label>
+        <label><span>Typeface</span><select id="fontSelect"><option value="default">Default</option><option value="pt-sans">Sans</option><option value="literata">Serif</option><option value="inter">Sans-Serif</option></select></label>
+        <label><span>Font size <output id="fontSizeValue">100%</output></span><input id="fontSizeRange" type="range" min="75" max="160" step="5" value="100"></label>
+        <label><span>Line height <output id="lineHeightValue">1.6</output></span><input id="lineHeightRange" type="range" min="1.25" max="2.1" step="0.05" value="1.6"></label>
+        <label id="textWidthSetting" hidden><span>Text width <output id="widthValue">760px</output></span><input id="widthRange" type="range" min="560" max="1050" step="10" value="760"></label>
+        <label><span>Reading flow</span><select id="flowSelect"><option value="paginated">Pages</option><option value="scrolled-doc">Continuous scroll</option></select></label>
+        <label class="reader-toggle-setting"><span><b>Swipe page turns</b><small>Swipe left or right over the book in Pages mode.</small></span><input id="swipeTurnsToggle" type="checkbox" checked aria-label="Swipe page turns"></label>
+        <button id="resetReader" class="reader-reset" type="button">Reset reader settings</button>
+      </div>
+    </aside>
+
+    <main id="viewerShell" class="viewer-shell" tabindex="-1" aria-label="EPUB reading area">
+      <button id="prevPage" class="page-hit page-prev" type="button" aria-label="Previous page">◀</button>
+      <div id="viewer" class="viewer"></div>
+      <button id="nextPage" class="page-hit page-next" type="button" aria-label="Next page">▶</button>
+      <div id="readerLoading" class="reader-loading" role="status" aria-live="polite"><span aria-hidden="true">✦</span><p>Authorizing the book…</p></div>
+    </main>
+
+    <footer class="reader-bottombar" aria-label="Reading navigation">
+      <button id="prevBottom" type="button" aria-label="Previous page">◀ Previous</button>
+      <div class="progress-wrap"><input id="progressRange" type="range" min="0" max="1000" value="0" aria-label="Reading progress"><span id="progressText">0%</span></div>
+      <button id="nextBottom" type="button" aria-label="Next page">Next ▶</button>
+    </footer>
+
+    <div id="continuousSeek" class="continuous-seek" role="slider" tabindex="0" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0%">
+      <div id="continuousSeekTrack" class="continuous-seek-track" aria-hidden="true"><span id="continuousSeekThumb" class="continuous-seek-thumb"></span></div>
+      <span id="continuousSeekText" class="continuous-seek-text">0%</span>
+    </div>
+
+    <section id="volumeEndPage" class="volume-end-page hidden" aria-labelledby="volumeCompleteHeading" aria-describedby="volumeCompleteDetail">
+      <div class="volume-complete-card">
+        <div class="volume-complete-mark" aria-hidden="true">✦</div>
+        <p class="volume-complete-kicker">VOLUME COMPLETE</p>
+        <h2 id="volumeCompleteHeading"><span id="volumeCompleteTitle">Volume complete</span></h2>
+        <p id="volumeCompleteDetail" class="volume-complete-detail">This volume rests complete. Another path waits beyond its final page.</p>
+        <div class="volume-complete-actions"><a id="nextVolumeLink" class="volume-complete-next" href="#">Read next volume ▶</a><a id="completeReturnLink" class="volume-complete-return" href="/">Return to series</a></div>
+      </div>
+    </section>
+
+    <div id="imageFocus" class="reader-image-focus hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Focused book image" tabindex="-1">
+      <button id="imageFocusClose" class="reader-image-focus-close" type="button" aria-label="Close focused image">×</button>
+      <div id="imageFocusViewport" class="reader-image-focus-viewport">
+        <div id="imageFocusLayer" class="reader-image-focus-layer"><img id="imageFocusImage" class="reader-image-focus-image" alt=""></div>
+      </div>
+      <p class="reader-image-focus-hint" id="imageFocusHint" data-hint-fine="Scroll to zoom · drag to inspect · double-click to return">Pinch to zoom · drag to inspect · tap again to return</p>
+    </div>
+
+    <dialog id="readerNoteDialog" class="reader-note-dialog" aria-labelledby="readerNoteHeading" aria-describedby="readerNoteBody">
+      <div class="reader-note-card">
+        <div class="reader-note-head">
+          <div><p class="reader-note-kicker">BOOK NOTE</p><h2 id="readerNoteHeading">Note</h2></div>
+          <button id="readerNoteClose" class="reader-note-close" type="button" aria-label="Close note">×</button>
+        </div>
+        <div id="readerNoteBody" class="reader-note-body"></div>
+        <div class="reader-note-foot">This note is shown without leaving your current reading position.</div>
+      </div>
+    </dialog>
+
+    <dialog id="externalLinkDialog" class="reader-external-dialog" aria-labelledby="externalLinkHeading" aria-describedby="externalLinkDescription">
+      <div class="reader-external-card">
+        <div class="reader-external-mark" aria-hidden="true">✦</div>
+        <p class="reader-external-kicker">PATH BEYOND THE GARDEN</p>
+        <h2 id="externalLinkHeading">Leave the Garden?</h2>
+        <p id="externalLinkDescription" class="reader-external-copy">This passage points to a website outside Shadow Garden. Open it in a new browser tab?</p>
+        <div class="reader-external-destination"><span>External destination</span><strong id="externalLinkDestination">External website</strong></div>
+        <div class="reader-external-actions">
+          <button id="externalLinkCancel" class="reader-external-stay" type="button">Remain Here</button>
+          <button id="externalLinkOpen" class="reader-external-open" type="button">Open New Tab ↗</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+  </div>
+</body>
+</html>

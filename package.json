@@ -1,0 +1,18 @@
+{
+  "name": "shadowgarden-reconstructed",
+  "version": "2.11.0-reconstructed.1",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.16" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler pages dev dist",
+    "audit": "node scripts/audit.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run audit && npm test && npm run build && npm run check:functions",
+    "check:functions": "wrangler pages functions build functions --outdir .wrangler/compiled",
+    "db:local": "wrangler d1 migrations apply DB --local",
+    "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql"
+  },
+  "devDependencies": { "wrangler": "4.136.3" }
+}

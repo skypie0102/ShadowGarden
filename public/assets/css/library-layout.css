@@ -1,0 +1,175 @@
+/* Shadow Garden R7 — stable compact-card columns and badge rail. */
+
+.catalog-grid:not(.compact) .series-card>.card-copy h2{
+  min-height:0!important;
+}
+.catalog-grid:not(.compact) .series-card>.card-copy p{
+  margin-top:4px;
+}
+
+.catalog-grid.compact .series-card{
+  --sg-compact-cover-width:68px;
+  position:relative;
+  overflow:hidden;
+  grid-template-columns:var(--sg-compact-cover-width) minmax(0,1fr) auto!important;
+  grid-template-rows:1fr!important;
+  column-gap:12px!important;
+  row-gap:0!important;
+  align-items:start!important;
+}
+.catalog-grid.compact .series-card>.cover{
+  grid-column:1;
+  grid-row:1;
+  width:var(--sg-compact-cover-width)!important;
+  min-width:var(--sg-compact-cover-width)!important;
+  max-width:var(--sg-compact-cover-width)!important;
+  height:100%!important;
+  max-height:100%;
+  justify-self:start;
+  align-self:stretch;
+}
+.catalog-grid.compact .series-card>.card-copy{
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  width:100%;
+  margin:0!important;
+  padding:0!important;
+  align-self:start;
+  justify-self:stretch;
+  display:block!important;
+}
+.catalog-grid.compact .series-card>.card-copy h2{
+  min-height:0!important;
+  max-height:2.5em;
+  margin:0!important;
+  line-height:1.25;
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+.catalog-grid.compact .series-card>.card-copy p{
+  min-height:0!important;
+  margin:4px 0 0!important;
+  line-height:1.2;
+}
+.catalog-grid.compact .series-card>.card-copy .card-meta{
+  min-height:0!important;
+  margin-top:4px!important;
+  line-height:1.2;
+  align-items:center;
+}
+.catalog-grid.compact .compact-card-badges{
+  grid-column:3!important;
+  grid-row:1!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:flex-end!important;
+  align-self:start!important;
+  justify-self:end!important;
+  flex-wrap:wrap;
+  gap:5px;
+  width:max-content;
+  max-width:min(34vw,230px)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible;
+}
+
+/* v2.4 first-paint skeletons keep the catalog footprint stable while data opens. */
+.catalog-skeleton-card{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.018);pointer-events:none}
+.catalog-skeleton-cover,.catalog-skeleton-line{position:relative;overflow:hidden;background:rgba(181,163,229,.075)}
+.catalog-skeleton-cover::after,.catalog-skeleton-line::after,.series-loading-block::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:sg-skeleton-sweep 1.35s ease-in-out infinite}
+.catalog-skeleton-cover{width:100%;aspect-ratio:2/3;background:linear-gradient(145deg,rgba(181,163,229,.09),rgba(255,255,255,.025))}
+.catalog-skeleton-copy{padding:11px;display:grid;gap:8px}.catalog-skeleton-line{height:9px;border-radius:999px}.catalog-skeleton-line.title{width:82%;height:12px}.catalog-skeleton-line.short{width:48%}.catalog-skeleton-line.meta{width:64%;height:7px}
+html.sg-library-initial-compact .catalog-grid:has(.catalog-skeleton-card){display:flex!important;flex-direction:column!important;gap:8px!important}
+html.sg-library-initial-compact .catalog-skeleton-card{min-height:94px;display:grid;grid-template-columns:68px minmax(0,1fr);align-items:stretch}.catalog-grid:has(.catalog-skeleton-card) .catalog-skeleton-card{}
+html.sg-library-initial-compact .catalog-skeleton-cover{width:68px;height:100%;aspect-ratio:auto}.sg-library-initial-compact .catalog-skeleton-copy{align-content:center;padding:12px}
+.adult-library .catalog-skeleton-card{border-color:rgba(210,160,173,.13);background:rgba(183,121,139,.018)}.adult-library .catalog-skeleton-cover,.adult-library .catalog-skeleton-line{background-color:rgba(210,160,173,.07)}
+@keyframes sg-skeleton-sweep{to{transform:translateX(110%)}}
+
+/* v2.4 plan completion — keep the mobile Search row stationary while the controls
+   unfold underneath it. First paint still uses the flash-free display:none contract in
+   library-features.css; these rules take over only after JavaScript removes that marker. */
+@media(max-width:720px){
+  .filters:not(.filters-mobile-initial-collapsed)>.filter-head,
+  .filters:not(.filters-mobile-initial-collapsed)>.filter-group,
+  .filters:not(.filters-mobile-initial-collapsed) .search-hint{
+    overflow:hidden;
+    opacity:1;
+    transform:translateY(0);
+    visibility:visible;
+    transition:max-height .22s ease,opacity .16s ease,transform .18s ease,padding .22s ease,margin .22s ease,border-color .18s ease;
+  }
+  .filters:not(.filters-mobile-initial-collapsed)>.filter-head{max-height:64px}
+  .filters:not(.filters-mobile-initial-collapsed)>.filter-group{max-height:420px}
+  .filters:not(.filters-mobile-initial-collapsed) .search-hint{max-height:42px}
+  .filters.filters-collapsed:not(.filters-mobile-initial-collapsed)>.filter-head{display:flex!important;max-height:0;min-height:0;padding-top:0;padding-bottom:0;margin:0;border-color:transparent;opacity:0;transform:translateY(-5px);visibility:hidden;pointer-events:none}
+  .filters.filters-collapsed:not(.filters-mobile-initial-collapsed)>.filter-group{display:grid!important;max-height:0;min-height:0;margin:0;padding-top:0;padding-bottom:0;opacity:0;transform:translateY(-5px);visibility:hidden;pointer-events:none}
+  .filters.filters-collapsed:not(.filters-mobile-initial-collapsed) .search-hint{display:block!important;max-height:0;min-height:0;margin:0;padding:0;opacity:0;transform:translateY(-5px);visibility:hidden;pointer-events:none}
+  .filters:not(.filters-collapsed):not(.filters-mobile-initial-collapsed){row-gap:12px}
+  .filters .search-stack{order:-2}
+  .filters .filter-head{order:-1}
+}
+
+/* Strong, consistent keyboard affordances for the Library interaction surface. */
+.filters select:focus-visible,.search-field:focus-within,.genre-chips button:focus-visible,.active-filter-tags button:focus-visible,.view-switch button:focus-visible,.recent-view-all:focus-visible,.catalog-sentinel button:focus-visible{
+  outline:2px solid color-mix(in srgb,var(--leaf2) 72%,transparent);
+  outline-offset:2px;
+}
+
+@media(max-width:720px){
+  .catalog-grid.compact .series-card{
+    --sg-compact-cover-width:74px;
+    grid-template-columns:var(--sg-compact-cover-width) minmax(0,1fr) auto!important;
+    grid-template-rows:1fr!important;
+    column-gap:12px!important;
+    row-gap:0!important;
+    align-items:start!important;
+  }
+  .catalog-grid.compact .series-card>.cover{
+    grid-column:1;
+    grid-row:1;
+    width:var(--sg-compact-cover-width)!important;
+    min-width:var(--sg-compact-cover-width)!important;
+    max-width:var(--sg-compact-cover-width)!important;
+  }
+  .catalog-grid.compact .series-card>.card-copy{
+    grid-column:2;
+    grid-row:1;
+    align-self:start;
+  }
+  .catalog-grid.compact .compact-card-badges{
+    grid-column:3!important;
+    grid-row:1!important;
+    align-self:start!important;
+    justify-self:end!important;
+    justify-content:flex-end!important;
+    width:max-content;
+    max-width:min(31vw,132px)!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  html.sg-library-initial-compact .catalog-skeleton-card{grid-template-columns:74px minmax(0,1fr)}html.sg-library-initial-compact .catalog-skeleton-cover{width:74px}
+}
+@media(max-width:430px){
+  .catalog-grid.compact .series-card{
+    --sg-compact-cover-width:70px;
+    column-gap:10px!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  .catalog-grid.compact .compact-card-badges{
+    max-width:112px!important;
+    gap:4px;
+  }
+  .catalog-grid.compact .compact-card-badge{
+    padding-inline:5px;
+  }
+  html.sg-library-initial-compact .catalog-skeleton-card{grid-template-columns:70px minmax(0,1fr)}html.sg-library-initial-compact .catalog-skeleton-cover{width:70px}
+}
+@media(prefers-reduced-motion:reduce){
+  .catalog-skeleton-cover::after,.catalog-skeleton-line::after,.series-loading-block::after{animation:none}
+  .filters:not(.filters-mobile-initial-collapsed)>.filter-head,.filters:not(.filters-mobile-initial-collapsed)>.filter-group,.filters:not(.filters-mobile-initial-collapsed) .search-hint{transition:none}
+}

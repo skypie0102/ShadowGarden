@@ -1,0 +1,54 @@
+/* Shadow Garden R7 — Garden Keeper workspace, tool layout, dialogs, and add-to-series context. */
+#dashboardView{display:block}
+#dashboardView.hidden{display:none!important}
+.manage-home-head{display:grid;grid-template-columns:150px minmax(0,1fr) auto;align-items:start;gap:22px;margin-bottom:24px}
+.manage-window-actions{display:grid;gap:9px;width:150px;flex:0 0 auto}
+.manage-tool-button{width:100%;min-height:42px;margin:0;padding:10px 13px;white-space:nowrap}
+.manage-window-actions .admin-primary{font-size:.78rem}
+.manage-home-copy{min-width:0}
+.manage-home-copy h1{margin:.08em 0 .18em;font-size:clamp(2rem,6vw,3.6rem);line-height:1}
+.manage-home-copy>p:last-child{margin:0;max-width:660px;color:#aaa2b5;line-height:1.55}
+.manage-lock{align-self:start;width:40px;height:40px;padding:0!important;display:grid!important;place-items:center}
+.manage-lock svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.backup-delete-icon{min-width:38px;width:38px;padding:0!important;display:inline-grid;place-items:center;font-size:0}
+.backup-delete-icon::before{content:"🗑";font-size:.88rem;line-height:1;filter:grayscale(1)}
+.manager-card-actions{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px}
+.manager-card-actions .manager-open,.manager-card-actions .manager-add{width:auto;min-height:36px;margin:0;padding:8px 11px}
+.manager-card-actions .manager-add{border:1px solid rgba(195,180,238,.22);background:rgba(154,134,211,.08);color:#cbbcf0;border-radius:11px;cursor:pointer;font:inherit;font-size:.75rem}
+.manager-card-actions .manager-add:hover{border-color:rgba(195,180,238,.38);background:rgba(154,134,211,.13);color:#f0edf5}
+.keeper-dialog{width:min(960px,calc(100% - 24px));max-width:none;max-height:min(92dvh,980px)}
+.keeper-dialog .dialog-shell{max-height:min(92dvh,980px)}
+.keeper-add-dialog{width:min(920px,calc(100% - 24px))}
+.keeper-maintenance-dialog{width:min(1040px,calc(100% - 24px))}
+.keeper-dialog .dialog-scroll{padding:20px}
+.keeper-dialog .admin-workspace{animation:none}
+.keeper-dialog .admin-card:last-child{margin-bottom:0}
+.add-series-target{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;margin:0 0 16px;padding:13px 14px;border:1px solid rgba(195,180,238,.22);border-radius:14px;background:rgba(154,134,211,.075)}
+.add-series-target-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:rgba(154,134,211,.12);color:#c3b4ee;font-size:1.1rem}
+.add-series-target strong,.add-series-target small{display:block}
+.add-series-target strong{color:#f0edf5;font-size:.86rem}
+.add-series-target small{margin-top:4px;color:#9d94a7;font-size:.7rem;line-height:1.45}
+.keeper-targeted #seriesInput{background:rgba(154,134,211,.055);color:#c8bfd4;cursor:not-allowed}
+.keeper-targeted .adult-toggle{opacity:.78}
+.keeper-targeted .adult-toggle input{cursor:not-allowed}
+#maintenanceView.hidden{display:block!important}
+.keeper-maintenance-dialog .maintenance-summary{margin-top:0}
+.keeper-maintenance-dialog .maintenance-card{box-shadow:none}
+@media(max-width:760px){
+  .manage-home-head{grid-template-columns:132px minmax(0,1fr);gap:16px}
+  .manage-window-actions{width:132px}
+  .manage-lock{grid-column:1/-1;justify-self:end;margin-top:-4px}
+  .manager-card-actions{flex-wrap:wrap}
+}
+@media(max-width:560px){
+  .manage-home-head{grid-template-columns:116px minmax(0,1fr);gap:13px}
+  .manage-window-actions{width:116px}
+  .manage-tool-button{min-height:39px;padding:8px 9px;font-size:.7rem}
+  .manage-home-copy h1{font-size:2.15rem}
+  .manage-home-copy>p:last-child{font-size:.76rem}
+  .keeper-dialog,.keeper-add-dialog,.keeper-maintenance-dialog{width:calc(100% - 14px);max-height:94dvh;border-radius:16px}
+  .keeper-dialog .dialog-shell{max-height:94dvh}
+  .keeper-dialog .dialog-scroll{padding:14px}
+  .manager-card-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .manager-card-actions .manager-open,.manager-card-actions .manager-add{width:100%}
+}

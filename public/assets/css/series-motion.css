@@ -1,0 +1,33 @@
+/* Shadow Garden v2.5 — Series state/progress continuity. */
+
+#seriesRoot.sg-series-hydrated .series-info,
+#seriesRoot.sg-series-hydrated .series-body{animation:sg-series-hydrate var(--sg-motion-layout) var(--sg-ease-enter) both}
+#seriesRoot.sg-series-hydrated .series-body{animation-delay:35ms}
+@keyframes sg-series-hydrate{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+.volume-card,
+.volume-state-pill,
+.cover-reading-progress,
+.cover-reading-progress>span{transition:background-color var(--sg-motion-ui) var(--sg-ease-standard),border-color var(--sg-motion-ui) var(--sg-ease-standard),color var(--sg-motion-ui) var(--sg-ease-standard),opacity var(--sg-motion-ui) var(--sg-ease-standard),box-shadow var(--sg-motion-ui) var(--sg-ease-standard)}
+
+.volume-card.sg-reading-state-changed{animation:sg-series-state-surface 360ms var(--sg-ease-enter) both}
+.volume-card.sg-reading-state-changed .volume-state-pill{animation:sg-series-state-pill 330ms var(--sg-ease-enter) both}
+@keyframes sg-series-state-surface{0%{box-shadow:0 0 0 0 rgba(181,163,229,0)}45%{box-shadow:0 0 0 2px rgba(181,163,229,.12),0 14px 34px rgba(0,0,0,.16)}100%{box-shadow:0 0 0 0 rgba(181,163,229,0)}}
+@keyframes sg-series-state-pill{0%{opacity:.35;transform:translateY(3px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.adult-library .volume-card.sg-reading-state-changed{animation-name:sg-series-state-surface-adult}
+@keyframes sg-series-state-surface-adult{0%{box-shadow:0 0 0 0 rgba(210,160,173,0)}45%{box-shadow:0 0 0 2px rgba(210,160,173,.12),0 14px 34px rgba(0,0,0,.16)}100%{box-shadow:0 0 0 0 rgba(210,160,173,0)}}
+
+/* Progress values come from the canonical renderer. JS only animates from the
+   previously-rendered width to the new renderer-owned width. */
+.cover-reading-progress>span{transform-origin:left center;will-change:transform}
+
+.series-actions .primary-button[data-volume-state]{transition:transform var(--sg-motion-fast) var(--sg-ease-standard),background-color var(--sg-motion-ui) var(--sg-ease-standard),border-color var(--sg-motion-ui) var(--sg-ease-standard),box-shadow var(--sg-motion-ui) var(--sg-ease-standard)}
+
+@media(prefers-reduced-motion:reduce){
+  #seriesRoot.sg-series-hydrated .series-info,
+  #seriesRoot.sg-series-hydrated .series-body,
+  .volume-card.sg-reading-state-changed,
+  .volume-card.sg-reading-state-changed .volume-state-pill{animation:none!important}
+  .volume-card,.volume-state-pill,.cover-reading-progress,.cover-reading-progress>span,.series-actions .primary-button[data-volume-state]{transition:none!important}
+  .cover-reading-progress>span{will-change:auto}
+}

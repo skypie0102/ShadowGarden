@@ -1,0 +1,11 @@
+/* Shadow Garden v1.0 — reader accessibility and reduced-motion polish. */
+.reader-skip-link{position:fixed;top:8px;left:10px;z-index:300;transform:translateY(-180%);padding:9px 13px;border:1px solid rgba(220,210,240,.28);border-radius:8px;background:#17121f;color:#f3eef8;text-decoration:none;font:700 .78rem/1 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.reader-skip-link:focus{transform:translateY(0);outline:2px solid #c3b4ee;outline-offset:2px}
+:where(.reader-app a,.reader-app button,.reader-app input,.reader-app select,.reader-app [tabindex]):focus-visible{outline:2px solid #c3b4ee;outline-offset:3px}
+.adult-reader :where(.reader-app a,.reader-app button,.reader-app input,.reader-app select,.reader-app [tabindex]):focus-visible{outline-color:#d6a0ad}
+.reader-drawer[aria-hidden="true"]{visibility:hidden}.reader-drawer.open[aria-hidden="false"]{visibility:visible}
+.reader-loading[role="status"]{text-align:center}
+@media(max-width:700px){.reader-icon{height:44px;min-width:44px;padding-inline:8px}.reader-bottombar>button{min-width:44px;min-height:44px!important}.page-hit{width:44px;z-index:25}.drawer-close{width:44px;height:44px}.drawer-tabs button,.toc-link,.reader-reset,.settings-panel select{min-height:44px}}
+@media(prefers-contrast:more){.reader-topbar,.reader-bottombar,.reader-drawer{border-color:rgba(255,255,255,.38)!important}.reader-icon,.reader-reset,.drawer-close,.drawer-tabs button{border-width:2px!important}}
+@media(forced-colors:active){.reader-icon,.reader-reset,.drawer-close,.drawer-tabs button,.page-hit{forced-color-adjust:auto;border:1px solid ButtonText!important}.toc-entry-link.active,.toc-entry-link[aria-current="location"]{border:1px solid Highlight!important}:where(.reader-app a,.reader-app button,.reader-app input,.reader-app select,.reader-app [tabindex]):focus-visible{outline-color:Highlight!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}}

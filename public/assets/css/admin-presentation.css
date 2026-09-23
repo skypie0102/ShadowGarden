@@ -1,0 +1,31 @@
+/* Shadow Garden R7 — Manage Series banner chooser and preview presentation. */
+.manage-banner-field{align-self:start}
+.manage-banner-field select,#manageStatus,#manageTranslationStatus,#translationStatusInput{width:100%;min-height:42px;padding:0 11px;border:1px solid var(--line);border-radius:9px;color:var(--text);background:#0d110e;font:inherit}
+.manage-banner-field select:focus-visible,#manageStatus:focus-visible,#manageTranslationStatus:focus-visible,#translationStatusInput:focus-visible{outline:2px solid var(--leaf2);outline-offset:2px}
+.manage-banner-field select:disabled,#manageStatus:disabled,#manageTranslationStatus:disabled,#translationStatusInput:disabled{opacity:.55;cursor:not-allowed}
+.manage-banner-preview{margin-top:9px;min-height:62px;padding:8px;display:grid;grid-template-columns:38px minmax(0,1fr);gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.018)}
+.manage-banner-preview img{width:38px;height:54px;display:block;object-fit:cover;border:1px solid var(--line);border-radius:5px;background:var(--panel)}
+.manage-banner-preview img.hidden{display:none}
+.manage-banner-preview-copy{min-width:0;display:grid;gap:3px}
+.manage-banner-preview-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.76rem}
+.manage-banner-preview-copy small{color:var(--dim);font-size:.66rem;line-height:1.35}
+.manage-banner-state[data-kind="saving"]{color:var(--gold)}
+.manage-banner-state[data-kind="saved"]{color:var(--leaf2)}
+.manage-banner-state[data-kind="error"]{color:var(--danger)}
+
+/* v2.4 Keeper interaction layer. */
+#seriesEditor .dialog-actions{position:relative;z-index:5;align-items:center;background:rgba(13,10,18,.96);backdrop-filter:blur(16px);box-shadow:0 -12px 28px rgba(0,0,0,.16)}
+#seriesEditor .dialog-actions #deleteSeries{background:transparent;border-color:rgba(214,120,143,.14);color:#b98693;opacity:.78;font-size:.72rem;padding:9px 11px}
+#seriesEditor .dialog-actions #deleteSeries:hover,#seriesEditor .dialog-actions #deleteSeries:focus-visible{opacity:1;color:#e4a6b5;border-color:rgba(214,120,143,.28);outline:none}
+#seriesEditor .dialog-actions #saveSeries{margin-left:auto;min-width:150px}
+#seriesEditor .dialog-actions #saveSeries[data-dirty="0"]{filter:saturate(.7)}
+.series-editor-save-state{margin-left:auto;color:var(--dim);font-size:.68rem;white-space:nowrap}.series-editor-dirty .series-editor-save-state{color:var(--gold)}
+.keeper-genre-source[readonly]{cursor:default;color:var(--muted);background:rgba(255,255,255,.015)}
+.keeper-genre-picker{grid-column:1/-1;margin-top:-8px;padding:11px;border:1px solid rgba(196,184,225,.11);border-radius:12px;background:rgba(9,7,13,.26)}
+.keeper-genre-picker-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.keeper-genre-picker-head span{color:var(--muted);font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}.keeper-genre-picker-head small{color:var(--dim);font-size:.62rem}
+.keeper-genre-chip-grid{max-height:154px;display:flex;flex-wrap:wrap;gap:6px;overflow:auto;overscroll-behavior:contain;padding:1px;scrollbar-gutter:stable}
+.keeper-genre-chip-grid button{min-height:30px;padding:5px 8px;border:1px solid rgba(196,184,225,.12);border-radius:999px;background:rgba(255,255,255,.018);color:var(--muted);font:inherit;font-size:.66rem;cursor:pointer}
+.keeper-genre-chip-grid button:hover,.keeper-genre-chip-grid button:focus-visible{border-color:rgba(195,180,238,.3);color:var(--text);outline:none}.keeper-genre-chip-grid button.active{border-color:rgba(181,163,229,.38);background:rgba(154,134,211,.14);color:#e8e0fb}
+.upload-review-summary{margin:0 0 16px;padding:13px;border:1px solid rgba(196,184,225,.12);border-radius:12px;background:rgba(9,7,13,.27)}.upload-review-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.upload-review-head>div{display:grid;gap:2px}.upload-review-head>div>span{color:var(--leaf2);font-size:.57rem;font-weight:800;letter-spacing:.13em}.upload-review-head strong{font-size:.8rem}.upload-review-head>b{color:var(--leaf2);font-size:.68rem}.upload-review-metrics,.upload-review-series{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.upload-review-metrics span,.upload-review-series span,.upload-review-series small{padding:5px 7px;border:1px solid rgba(196,184,225,.1);border-radius:999px;color:var(--muted);font-size:.61rem}.upload-review-metrics .warn{color:#e4a6b5;border-color:rgba(214,120,143,.22)}.upload-review-summary p{margin:9px 0 0;color:var(--dim);font-size:.66rem;line-height:1.45}
+@media(max-width:560px){#seriesEditor .dialog-actions{flex-wrap:wrap;padding-bottom:max(14px,env(safe-area-inset-bottom))}.series-editor-save-state{order:-1;width:100%;margin:0}.keeper-genre-chip-grid{max-height:190px}}
+@media(prefers-reduced-motion:reduce){.keeper-genre-chip-grid button,#seriesEditor .dialog-actions #deleteSeries{transition:none}}

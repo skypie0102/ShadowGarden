@@ -1,0 +1,4 @@
+/* Shadow Garden v1.15.3 — deployed version footer. */
+.admin-version-footer{width:min(920px,calc(100% - 28px));margin:0 auto;padding:22px 0 28px;border-top:1px solid rgba(196,184,225,.09);text-align:center;color:#746d7d}
+.admin-version{display:inline-block;font-size:.62rem;line-height:1.4;letter-spacing:.07em;font-variant-numeric:tabular-nums}
+@media(max-width:640px){.admin-version-footer{width:calc(100% - 24px);padding:18px 0 22px}.admin-version{font-size:.58rem}}

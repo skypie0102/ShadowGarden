@@ -1,0 +1,44 @@
+/* Shadow Garden v2.5 — Reader continuity without changing Reader state ownership. */
+@view-transition{navigation:auto}
+
+/* Reappearance is slightly gentler than dismissal. The v2.4 controller remains
+   the sole owner of reader-chrome-hidden. */
+@media(max-width:700px){
+  body.reader-flow-paginated .reader-topbar,
+  body.reader-flow-paginated .reader-bottombar,
+  body.reader-flow-scrolled .reader-topbar{
+    transition-property:transform,opacity;
+    transition-duration:var(--sg-motion-ui),var(--sg-motion-ui);
+    transition-timing-function:var(--sg-ease-enter),var(--sg-ease-standard)
+  }
+  body.reader-flow-paginated.reader-chrome-hidden .reader-topbar,
+  body.reader-flow-paginated.reader-chrome-hidden .reader-bottombar,
+  body.reader-flow-scrolled.reader-chrome-hidden .reader-topbar{
+    transition-duration:var(--sg-motion-fast),var(--sg-motion-fast);
+    transition-timing-function:var(--sg-ease-exit),var(--sg-ease-exit)
+  }
+}
+
+.reader-drawer{
+  transition:transform var(--sg-motion-layout) var(--sg-ease-enter)
+}
+.reader-drawer:not(.open){transition-duration:var(--sg-motion-ui);transition-timing-function:var(--sg-ease-exit)}
+.drawer-backdrop:not(.hidden){animation:sg-reader-backdrop-in var(--sg-motion-fast) var(--sg-ease-standard) both}
+@keyframes sg-reader-backdrop-in{from{opacity:0}to{opacity:1}}
+
+.reader-loading{transition:opacity var(--sg-motion-ui) var(--sg-ease-standard)}
+body.sg-reader-ready .viewer{animation:sg-reader-viewer-ready var(--sg-motion-layout) var(--sg-ease-enter) both}
+@keyframes sg-reader-viewer-ready{from{opacity:.2;transform:scale(.998)}to{opacity:1;transform:scale(1)}}
+
+#progressText.sg-progress-updated,.continuous-seek-text.sg-progress-updated{animation:sg-reader-progress-update 240ms var(--sg-ease-enter) both}
+@keyframes sg-reader-progress-update{0%{opacity:.55;transform:translateY(2px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+.reader-return,.volume-complete-return,.reader-brand{transition:color var(--sg-motion-ui) var(--sg-ease-standard),background-color var(--sg-motion-ui) var(--sg-ease-standard),border-color var(--sg-motion-ui) var(--sg-ease-standard),transform var(--sg-motion-press) var(--sg-ease-standard)}
+
+@media(prefers-reduced-motion:reduce){
+  body.reader-flow-paginated .reader-topbar,
+  body.reader-flow-paginated .reader-bottombar,
+  body.reader-flow-scrolled .reader-topbar,
+  .reader-drawer,.reader-loading,.reader-return,.volume-complete-return,.reader-brand{transition:none!important}
+  .drawer-backdrop:not(.hidden),body.sg-reader-ready .viewer,#progressText.sg-progress-updated,.continuous-seek-text.sg-progress-updated{animation:none!important}
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090d0b">
+  <title>Series — Shadow Garden</title>
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/site.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/nav.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/library-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/adult.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/series-extra.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/series-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/public-components.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/public-artwork.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reading-status.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/volume-actions.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
+  <script src="/assets/js/motion.js?v=2.11.0"></script>
+  <script src="/assets/js/series-motion.js?v=2.11.0" defer></script>
+  <script src="/assets/js/nav.js?v=2.11.0" defer></script>
+  <script src="/assets/js/site-a11y.js?v=2.11.0" defer></script>
+  <script src="/assets/js/data-source.js?v=2.11.0" defer></script>
+  <script src="/assets/js/book-access.js?v=2.11.0" defer></script>
+  <script src="/assets/js/series.js?v=2.11.0" defer></script>
+  <script src="/assets/js/nav-pinned.js?v=2.11.0" defer></script>
+  <script src="/assets/js/ui-direction-triangles.js?v=2.11.0" defer></script>
+</head>
+<body>
+  <script>
+    (()=>{
+      const id=new URLSearchParams(location.search).get("id")||"";
+      const adult=id.startsWith("adult-");
+      window.__SG_SERIES_ROUTE_ADULT__=adult;
+      if(!adult)return;
+      document.body.classList.add("adult-library");
+      const theme=document.querySelector('meta[name="theme-color"]');
+      if(theme)theme.content="#10090c";
+    })();
+  </script>
+  <a class="skip-link" href="#seriesRoot">Skip to series content</a>
+  <header class="site-header">
+    <div class="brand"><button class="brand-mark" type="button" aria-label="Open navigation" aria-controls="siteNav" aria-expanded="false">✦</button><a class="brand-home" href="/" aria-label="Shadow Garden home"><strong>Shadow Garden</strong><small>EPUB LIBRARY</small></a></div>
+    <nav id="siteNav" aria-label="Primary navigation"><a class="main-nav-link" href="/">Library</a><a class="adult-nav-link" href="/nsfw.html">Adult Library <span>18+</span></a></nav>
+    <a id="headerBack" class="header-back" href="/"><span class="series-back-main">◀ Back to archive</span><span class="series-back-adult">◀ Back to Adult Library</span></a>
+  </header>
+  <main id="seriesRoot" tabindex="-1" aria-busy="true"><section class="series-loading-skeleton"><p class="series-loading-status" role="status">Preparing this series and its volumes…</p><div class="series-loading-hero" aria-hidden="true"><div class="series-loading-cover series-loading-block"></div><div class="series-loading-copy"><i class="series-loading-title series-loading-block"></i><i class="series-loading-byline series-loading-block"></i><i class="series-loading-tags series-loading-block"></i></div></div><div class="series-loading-volumes" aria-hidden="true"><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div><div class="series-loading-volume"><i class="series-loading-volume-cover series-loading-block"></i><i class="series-loading-volume-line series-loading-block"></i></div></div></section></main>
+  <footer><span>Shadow Garden</span><span>Account-free · Your reading trail stays in this browser</span></footer>
+</body>
+</html>

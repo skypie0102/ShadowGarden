@@ -1,0 +1,84 @@
+/* Shadow Garden — end-of-volume page UI. */
+.volume-end-page{
+  box-sizing:border-box;
+  min-height:100%;
+  padding:clamp(28px,6vw,72px);
+  display:grid;
+  place-items:center;
+  background:#120e19;
+  color:var(--text,#ede9f2);
+}
+.volume-end-page.hidden{display:none!important}
+.volume-end-page .volume-complete-card{
+  width:min(620px,100%);
+  margin:auto;
+  text-align:center;
+}
+.volume-end-page h2{
+  margin:9px auto 8px;
+  max-width:410px;
+  font:600 clamp(1.5rem,5vw,2.25rem)/1.1 Georgia,serif;
+  color:#f0edf5;
+}
+body.reader-theme-paper .volume-end-page h2{color:#292a25}
+
+/* Completion actions are content-sized. Long next-volume titles wrap instead of
+   forcing the CTA into a single overflowing line on narrow/mobile screens. */
+.volume-end-page .volume-complete-actions{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  justify-content:stretch;
+  gap:9px;
+  width:100%;
+  max-width:100%;
+}
+.volume-end-page .volume-complete-actions a{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:46px;
+  height:auto;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.35;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.volume-end-page .volume-complete-next{text-wrap:pretty}
+
+body.reader-theme-night .volume-end-page{background:#11171a}
+body.reader-theme-black .volume-end-page{background:#000}
+body.reader-theme-paper .volume-end-page{background:#eee9dc;color:#292a25}
+body.adult-reader .volume-end-page{background:#140d10}
+body.reader-flow-paginated .volume-end-page{
+  position:fixed;
+  top:54px;
+  right:0;
+  bottom:48px;
+  left:0;
+  min-height:0;
+  z-index:8;
+}
+body.reader-flow-paginated.reader-chrome-hidden .volume-end-page{top:0;bottom:0}
+body.reader-flow-scrolled .volume-end-page.continuous-end{
+  position:relative;
+  inset:auto;
+  width:100%;
+  min-height:max(520px,calc(100dvh - 54px));
+  margin:0;
+  z-index:0;
+  flex:0 0 auto;
+}
+
+@media(max-width:700px){
+  .volume-end-page{padding:clamp(22px,5vw,36px)}
+  .volume-end-page .volume-complete-actions a{
+    min-height:58px;
+    padding:14px 15px;
+    font-size:.82rem;
+  }
+}

@@ -1,0 +1,113 @@
+/* Dedicated Continuous-mode seek rail. No native range track or grey chrome. */
+.continuous-seek{display:none}
+
+body.reader-flow-scrolled{--sg-seek-accent:#9a86d3;--sg-seek-line:rgba(154,134,211,.32)}
+body.adult-reader.reader-flow-scrolled{--sg-seek-accent:#b7798b;--sg-seek-line:rgba(183,121,139,.32)}
+
+body.reader-flow-scrolled .reader-bottombar{display:none!important}
+
+body.reader-flow-scrolled .continuous-seek{
+  --sg-progress:0%;
+  position:fixed;
+  z-index:19;
+  top:54px;
+  right:0;
+  bottom:0;
+  width:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  padding:9px 0 5px;
+  background:transparent;
+  color:var(--muted);
+  outline:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+body.reader-flow-scrolled .continuous-seek-track{
+  position:relative;
+  flex:1 1 auto;
+  width:100%;
+  min-height:120px;
+  cursor:pointer;
+  touch-action:none;
+}
+
+body.reader-flow-scrolled .continuous-seek-track::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:2px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:var(--sg-seek-line);
+}
+
+body.reader-flow-scrolled .continuous-seek-thumb{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  top:var(--sg-progress);
+  width:14px;
+  height:14px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:var(--sg-seek-accent);
+  box-shadow:0 0 0 2px rgba(11,9,16,.58);
+  pointer-events:none;
+}
+
+body.reader-flow-scrolled .continuous-seek-text{
+  align-self:flex-end;
+  width:max-content;
+  min-width:8ch;
+  max-width:none;
+  min-height:18px;
+  display:block;
+  margin-right:4px;
+  color:var(--muted);
+  background:transparent;
+  border:0;
+  font-size:.59rem;
+  line-height:18px;
+  text-align:right;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  pointer-events:none;
+}
+
+body.reader-flow-scrolled .continuous-seek:hover,
+body.reader-flow-scrolled .continuous-seek:focus-visible{
+  --sg-seek-line:rgba(154,134,211,.58);
+}
+body.adult-reader.reader-flow-scrolled .continuous-seek:hover,
+body.adult-reader.reader-flow-scrolled .continuous-seek:focus-visible{
+  --sg-seek-line:rgba(183,121,139,.58);
+}
+
+/* Owner decision for reopened #160 item 2: the reading canvas itself must end where the
+   seek rail begins instead of reserving space through publication padding alone. The
+   overlay-only approach left the EPUB viewport spanning underneath the fixed rail, so a
+   publication construct anchored against the initial containing block could still paint
+   into the gutter. Excluding the canvas structurally makes every inner width cap, clip,
+   or positioning trick unable to reach the rail zone by construction. Publication bodies
+   keep their own symmetric reading margins (see theme.js Continuous branch). */
+body.reader-flow-scrolled .viewer{right:34px}
+
+@media(max-width:700px){
+  /* The mobile book remains full viewport width for chrome, while a visible fixed top bar owns the
+     first 54px. Start the progress rail below that chrome so a near-zero thumb remains
+     visible; once chrome auto-hides, extend the rail back to the viewport top. The reader
+     canvas excludes the rail column (22px) on mobile as well. */
+  body.reader-flow-scrolled .viewer{right:22px}
+  body.reader-flow-scrolled .continuous-seek{top:54px;width:22px;padding-top:8px}
+  body.reader-flow-scrolled.reader-chrome-hidden .continuous-seek{top:0}
+  body.reader-flow-scrolled .continuous-seek-track::before{width:1px}
+  body.reader-flow-scrolled .continuous-seek-thumb{width:10px;height:10px;box-shadow:0 0 0 1px rgba(11,9,16,.55)}
+  body.reader-flow-scrolled .continuous-seek-text{min-width:8ch;margin-right:3px;font-size:.55rem}
+}
+

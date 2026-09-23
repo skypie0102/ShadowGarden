@@ -1,0 +1,18 @@
+/* Shadow Garden R4.1 — isolated focused-image overlay. */
+.reader-image-focus-hit{position:fixed;z-index:24;display:block;margin:0;padding:0;border:0;background:transparent;appearance:none;cursor:zoom-in;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.reader-image-focus-hit[hidden]{display:none!important}
+.reader-image-focus{position:fixed;inset:0;z-index:90;display:block;overflow:hidden;background:rgba(5,3,8,.94);backdrop-filter:blur(10px)}
+.reader-image-focus.hidden{display:none!important}
+.reader-image-focus-viewport{position:absolute;inset:0;overflow:hidden;touch-action:none;overscroll-behavior:none}
+.reader-image-focus-layer{position:absolute;inset:0;display:grid;place-items:center}
+.reader-image-focus-image{display:block;width:auto;height:auto;max-width:min(94vw,1500px);max-height:88vh;object-fit:contain;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;pointer-events:none;transform-origin:center center;will-change:transform;box-shadow:0 22px 70px rgba(0,0,0,.38)}
+.reader-image-focus-close{position:absolute;z-index:2;top:14px;right:14px;width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.17);border-radius:50%;background:rgba(11,9,16,.72);color:#f3eef8;font-size:1.45rem;line-height:1;cursor:pointer;backdrop-filter:blur(8px);transition:opacity .18s ease,visibility 0s linear}
+.reader-image-focus-close:hover,.reader-image-focus-close:focus-visible{border-color:rgba(181,163,229,.42);background:rgba(31,25,43,.88)}
+.reader-image-focus-hint{position:absolute;z-index:2;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);margin:0;padding:8px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(11,9,16,.68);color:#c8c0d2;font-size:.68rem;letter-spacing:.01em;white-space:nowrap;pointer-events:none;backdrop-filter:blur(8px);transition:opacity .18s ease,visibility 0s linear}
+/* v2.6.6 owner request: the control hint fades out after three seconds on every platform. */
+.reader-image-focus-hint.reader-image-focus-hint-faded{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease,visibility 0s linear .45s}
+.reader-image-focus.reader-image-focus-zoomed .reader-image-focus-close,
+.reader-image-focus.reader-image-focus-zoomed .reader-image-focus-hint{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility 0s linear .18s}
+body.adult-reader .reader-image-focus-close:hover,body.adult-reader .reader-image-focus-close:focus-visible{border-color:rgba(225,151,173,.34);background:rgba(39,22,28,.88)}
+@media(max-width:700px){.reader-image-focus-image{max-width:96vw;max-height:86vh}.reader-image-focus-close{top:max(10px,env(safe-area-inset-top));right:10px}.reader-image-focus-hint{max-width:calc(100vw - 32px);white-space:normal;text-align:center}}
+@media(prefers-reduced-motion:reduce){.reader-image-focus-image{will-change:auto}.reader-image-focus-close,.reader-image-focus-hint{transition:none}}

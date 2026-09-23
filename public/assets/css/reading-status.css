@@ -1,0 +1,21 @@
+/* Shadow Garden v1.15.5 — finished reading indicators. */
+.volume-finished-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;padding:10px 14px;border:1px solid rgba(137,205,156,.25);border-radius:12px;background:rgba(61,116,78,.08);color:inherit;cursor:pointer;box-sizing:border-box}
+.volume-finished-toggle input{width:18px;height:18px;margin:0;accent-color:#4fa56b}
+.volume-finished-toggle span{font-weight:700;line-height:1.25}
+.volume-finished-toggle.is-finished{border-color:rgba(106,211,137,.45);background:rgba(47,132,72,.14)}
+.volume-finished-toggle.is-finished span{color:#86d99d}
+.finished-volume-badge,.finished-series-badge{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid rgba(96,204,129,.44);border-radius:999px;background:rgba(27,96,49,.88);color:#d8ffe1;font-weight:800;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 5px 18px rgba(0,0,0,.22)}
+.finished-volume-badge{position:absolute;top:8px;right:8px;z-index:2;min-width:28px;height:28px;padding:0 7px;font-size:.7rem}
+.finished-series-badge{position:absolute;left:8px;bottom:8px;z-index:2;padding:6px 9px;font-size:.58rem}
+.volume-cover,.series-card .cover{position:relative}
+.reading-status-chips{display:flex;gap:7px;flex-wrap:wrap}
+.reading-status-chips button{border:1px solid rgba(173,162,196,.16);border-radius:999px;background:rgba(255,255,255,.025);color:inherit;padding:7px 10px;cursor:pointer}
+.reading-status-chips button.active{border-color:rgba(97,203,129,.45);background:rgba(41,119,64,.16);color:#a7e7b9}
+.compact-card-badge.finished{border-color:rgba(96,204,129,.35)!important;background:rgba(36,112,58,.18)!important;color:#98dfaa!important}
+.catalog-grid.compact .finished-series-badge{display:none!important}
+
+/* v2.4 — quiet progress rails and scannable Series volume states. */
+.cover-reading-progress{position:absolute;z-index:3;left:0;right:0;bottom:0;height:3px;overflow:hidden;border-radius:0 0 inherit inherit;background:rgba(0,0,0,.32);pointer-events:none}.cover-reading-progress>span{display:block;height:100%;background:var(--leaf2);box-shadow:0 0 9px rgba(151,128,208,.32)}
+.adult-library .cover-reading-progress>span{background:var(--adult-accent-strong,#d98ca3);box-shadow:0 0 9px rgba(217,140,163,.28)}
+.volume-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.volume-title-row .volume-title{min-width:0}.volume-state-pill{flex:0 0 auto;margin-top:2px;padding:4px 7px;border:1px solid var(--line);border-radius:999px;color:var(--dim);font-size:.56rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}.volume-state-pill.progress,.volume-state-pill.up-next{border-color:var(--line2);color:var(--leaf2);background:rgba(162,135,211,.07)}.volume-state-pill.finished{border-color:rgba(96,204,129,.34);color:#98dfaa;background:rgba(36,112,58,.12)}.volume-card.is-up-next{border-color:var(--line2);box-shadow:0 0 0 1px rgba(162,135,211,.06),0 16px 32px rgba(0,0,0,.13)}.adult-library .volume-state-pill.progress,.adult-library .volume-state-pill.up-next{color:var(--adult-accent-strong,#e0a8b8);background:rgba(190,119,139,.07)}.adult-library .volume-card.is-up-next{border-color:var(--adult-border-strong,rgba(190,119,139,.34))}
+@media(max-width:720px){.volume-finished-toggle{min-height:52px;padding:11px 12px}.finished-series-badge{font-size:.54rem}.volume-title-row{gap:6px}.volume-state-pill{font-size:.52rem;padding:4px 6px}}

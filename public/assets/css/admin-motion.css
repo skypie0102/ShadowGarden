@@ -1,0 +1,78 @@
+/* Shadow Garden v2.5 — Garden Keeper motion.
+   This layer observes Keeper-owned state; it never performs requests, saves, uploads, or routing. */
+@view-transition{navigation:auto}
+
+.admin-page .admin-card,
+.admin-page .manager-card,
+.admin-page .maintenance-callout,
+.admin-page .upload-status,
+.admin-page .state-pill{
+  transition:opacity var(--sg-motion-ui) var(--sg-ease-standard),transform var(--sg-motion-ui) var(--sg-ease-standard),border-color var(--sg-motion-ui) var(--sg-ease-standard),background-color var(--sg-motion-ui) var(--sg-ease-standard),box-shadow var(--sg-motion-ui) var(--sg-ease-standard);
+}
+
+.admin-dialog[open] .dialog-shell{
+  animation:sg-keeper-dialog-in var(--sg-motion-layout) var(--sg-ease-enter) both;
+}
+.admin-dialog[open]::backdrop{
+  animation:sg-keeper-backdrop-in var(--sg-motion-ui) var(--sg-ease-standard) both;
+}
+#dashboardView:not(.hidden) .admin-workspace{
+  animation:sg-keeper-workspace-in var(--sg-motion-page) var(--sg-ease-enter) both;
+}
+
+.sg-keeper-state-changed{
+  animation:sg-keeper-state-pulse 360ms var(--sg-ease-emphasized) both;
+}
+.sg-keeper-action-busy{
+  transform:translateY(-1px);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--leaf2) 22%,transparent),0 10px 26px rgba(0,0,0,.16);
+}
+.sg-keeper-action-settled{
+  animation:sg-keeper-action-settle 420ms var(--sg-ease-enter) both;
+}
+.sg-keeper-list-updated > .manager-card{
+  animation:sg-keeper-card-in var(--sg-motion-layout) var(--sg-ease-enter) both;
+}
+.sg-keeper-complete{
+  animation:sg-keeper-complete 520ms var(--sg-ease-emphasized) both;
+}
+
+@keyframes sg-keeper-dialog-in{
+  from{opacity:0;transform:translateY(12px) scale(.992)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes sg-keeper-backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes sg-keeper-workspace-in{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes sg-keeper-state-pulse{
+  0%{transform:scale(.985);filter:brightness(1)}
+  45%{transform:scale(1.012);filter:brightness(1.12)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+@keyframes sg-keeper-action-settle{
+  0%{transform:translateY(-1px)}
+  55%{transform:translateY(1px)}
+  100%{transform:translateY(0)}
+}
+@keyframes sg-keeper-card-in{
+  from{opacity:.35;transform:translateY(7px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes sg-keeper-complete{
+  0%{transform:scale(.99);box-shadow:0 0 0 0 color-mix(in srgb,var(--leaf2) 0%,transparent)}
+  45%{transform:scale(1.006);box-shadow:0 0 0 2px color-mix(in srgb,var(--leaf2) 22%,transparent)}
+  100%{transform:scale(1);box-shadow:0 0 0 0 color-mix(in srgb,var(--leaf2) 0%,transparent)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .admin-dialog[open] .dialog-shell,
+  .admin-dialog[open]::backdrop,
+  #dashboardView:not(.hidden) .admin-workspace,
+  .sg-keeper-state-changed,
+  .sg-keeper-action-settled,
+  .sg-keeper-list-updated > .manager-card,
+  .sg-keeper-complete{animation:none!important}
+  .sg-keeper-action-busy{transform:none!important;box-shadow:none!important}
+}

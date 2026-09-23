@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090d0b">
+  <meta name="description" content="Shadow Garden — a dark, curated EPUB library.">
+  <title>Shadow Garden — Library</title>
+  <script>(()=>{try{if(localStorage.getItem("sg-view:main")==="compact")document.documentElement.classList.add("sg-library-initial-compact")}catch{}})();</script>
+  <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/site.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/nav.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/library-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/library-features.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/public-components.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/public-artwork.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/library-layout.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reading-status.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/volume-actions.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
+  <script src="/assets/js/motion.js?v=2.11.0"></script>
+  <script src="/assets/js/library-motion.js?v=2.11.0" defer></script>
+  <script src="/assets/js/nav.js?v=2.11.0" defer></script>
+  <script src="/assets/js/data-source.js?v=2.11.0" defer></script>
+  <script src="/assets/js/library.js?v=2.11.0" defer></script>
+  <script src="/assets/js/nav-pinned.js?v=2.11.0" defer></script>
+  <script src="/assets/js/library-mobile-filter.js?v=2.11.0" defer></script>
+  <script src="/assets/js/library-footer-version.js?v=2.11.0" defer></script>
+  <script src="/assets/js/site-a11y.js?v=2.11.0" defer></script>
+  <script src="/assets/js/ui-direction-triangles.js?v=2.11.0" defer></script>
+</head>
+<body data-library-scope="main">
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <header class="site-header">
+    <div class="brand">
+      <button class="brand-mark" type="button" aria-label="Open navigation" aria-controls="siteNav" aria-expanded="false">✦</button>
+      <a class="brand-home" href="/" aria-label="Shadow Garden home"><strong>Shadow Garden</strong><small>EPUB LIBRARY</small></a>
+    </div>
+    <nav id="siteNav" aria-label="Primary navigation">
+      <a class="active" aria-current="page" href="/">Library</a>
+      <a class="adult-nav-link" href="/nsfw.html">Adult Section <span>18+</span></a>
+    </nav>
+    <div class="header-actions">
+      <div class="header-stat"><span id="headerVolumes">0</span> volumes</div>
+      <a class="header-adult-link" href="/nsfw.html" aria-label="Enter the Adult Section">Enter the Adult Section <span>18+</span> ▶</a>
+    </div>
+  </header>
+
+  <main id="mainContent" class="library-shell" tabindex="-1">
+    <section class="library-intro">
+      <div>
+        <p class="kicker">THE MOONLIT EDEN</p>
+        <h1>Library</h1>
+        <p class="intro-copy">A moonlit archive of stories, cultivated beneath quiet shadows.</p>
+      </div>
+      <div id="continuePanel" class="continue-panel hidden"></div>
+    </section>
+
+    <section id="catalogSection" class="catalog-layout" aria-label="Library catalog">
+      <aside class="filters filters-mobile-initial-collapsed" aria-label="Library filters">
+        <div class="filter-head"><strong>Filter archive</strong><button id="clearFilters" type="button">Reset</button></div>
+        <div class="search-stack"><div class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Title, author, tag, volume…" autocomplete="off" aria-label="Search library"><button id="filterToggle" class="filter-toggle mobile-filter-toggle" type="button" aria-expanded="false" aria-label="Expand library filters" title="Expand filters">▼</button></div><div id="activeTags" class="active-filter-tags" aria-label="Active library filters"></div><p class="search-hint">Follow any thread—title, author, tag, or volume. Each added word narrows the path.</p></div>
+        <div class="filter-group"><label for="authorSelect">Author</label><select id="authorSelect"><option value="">Any author</option></select></div>
+        <div class="filter-group"><label for="translatorSelect">Fan translator</label><select id="translatorSelect"><option value="">Any translator</option></select></div>
+        <div class="filter-group"><label for="genreSelect">Genre</label><select id="genreSelect"><option value="">Any genre</option></select></div>
+        <div class="filter-group"><label for="yearSelect">Year</label><select id="yearSelect"><option value="">Any year</option></select></div>
+        <div class="filter-group"><label for="volumeCountSelect">Volume count</label><select id="volumeCountSelect"><option value="">Any size</option><option value="1">Single volume</option><option value="2-5">2–5 volumes</option><option value="6-10">6–10 volumes</option><option value="11+">11+ volumes</option></select></div>
+        <div class="filter-group filter-tags"><span class="filter-sub-label">Reading status</span><div id="readingStatusChips" class="genre-chips reading-status-chips"><button type="button" data-reading-status="finished">✓ Finished</button><button type="button" data-reading-status="unfinished">Unfinished</button></div></div>
+        <div class="filter-group"><label for="sortSelect">Sort</label><select id="sortSelect"><option value="recent">Recently added</option><option value="oldest">Oldest added</option><option value="title">Title A–Z</option><option value="title-desc">Title Z–A</option><option value="author">Author A–Z</option><option value="author-desc">Author Z–A</option><option value="year">Year newest</option><option value="year-asc">Year oldest</option><option value="volumes">Most volumes</option><option value="volumes-asc">Fewest volumes</option></select></div>
+        <div class="filter-group filter-tags"><label for="tagSelect">Exact tags</label><div class="tag-picker"><select id="tagSelect"><option value="">Add a tag…</option></select></div><span class="filter-sub-label">Popular tags</span><div id="genreChips" class="genre-chips"></div></div>
+      </aside>
+
+      <div class="catalog-main">
+        <section id="recentSection" class="recent-section hidden" aria-labelledby="recentHeading"><div class="recent-head"><div><p class="kicker">NEW GROWTH</p><h2 id="recentHeading">Recently Added</h2></div><button id="recentViewAll" class="recent-view-all" type="button">View newest in archive ▶</button></div><div id="recentVolumes" class="recent-volumes"></div></section>
+        <div class="catalog-bar"><p id="resultCount" role="status" aria-live="polite" aria-atomic="true">Opening the main archive…</p><div class="view-switch" role="group" aria-label="View style"><button class="active" data-view="grid" type="button" aria-pressed="true">Grid</button><button data-view="compact" type="button" aria-pressed="false">Compact</button></div></div>
+        <div id="catalogGrid" class="catalog-grid" aria-busy="true"><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div><div class="catalog-skeleton-card" aria-hidden="true"><div class="catalog-skeleton-cover"></div><div class="catalog-skeleton-copy"><i class="catalog-skeleton-line title"></i><i class="catalog-skeleton-line short"></i><i class="catalog-skeleton-line meta"></i></div></div></div>
+        <div id="catalogSentinel" class="catalog-sentinel hidden"><button id="loadMore" type="button">Load more</button></div>
+        <div id="emptyState" class="empty-state hidden" role="status"><span aria-hidden="true">✦</span><h2>The Garden is quiet.</h2><p id="emptyMessage">No shelf answers the current path.</p><div id="emptyActions" class="empty-filter-actions"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>Shadow Garden<span id="libraryVersion"></span></span><span><a href="https://nyaa.si/user/Shadow_Monarch">Torrent Downloads</a> · Reading data stays in this browser</span></footer>
+</body>
+</html>
