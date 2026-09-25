@@ -83,6 +83,7 @@ test('the real admin form rejects stale edits after background reads and saves a
   await openKeeper(page,context);
   await page.locator('[data-manager-open]').click();
   await expect(page.locator('#manageBanner')).toBeEnabled();
+  await expect(page.locator('#seriesSaveState')).toHaveText('No changes');
   const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
   const original=initial.adult[0].title;
   const changed=await post(context.request,'/admin-api/library',{action:'update-series',id:seriesId,title:'External fixture edit'},initial.revision);
@@ -90,9 +91,9 @@ test('the real admin form rejects stale edits after background reads and saves a
   await page.evaluate(()=>window.ShadowGardenKeeper.client.request('/admin-api/maintenance'));
   await page.locator('#manageTitle').fill('Stale form edit');
   const denied=page.waitForResponse(response=>response.url().endsWith('/admin-api/library')&&response.request().method()==='POST');
-  const alert=page.waitForEvent('dialog');
+  const alert=page.waitForEvent('dialog').then(async dialog=>{const message=dialog.message();await dialog.accept();return message});
   await page.locator('#saveSeries').click();
-  const dialog=await alert;expect(dialog.message()).toMatch(/catalog changed/i);await dialog.accept();
+  expect(await alert).toMatch(/catalog changed/i);
   expect((await denied).status()).toBe(409);
   await expect(page.locator('#seriesEditor')).toBeVisible();
   await page.evaluate(async()=>{
@@ -101,6 +102,7 @@ test('the real admin form rejects stale edits after background reads and saves a
   });
   await page.locator('[data-manager-open]').click();
   await expect(page.locator('#manageTitle')).toHaveValue('External fixture edit');
+  await expect(page.locator('#seriesSaveState')).toHaveText('No changes');
   await page.locator('#manageTitle').fill(original);
   const saved=page.waitForResponse(response=>response.url().endsWith('/admin-api/library')&&response.request().method()==='POST');
   await page.locator('#saveSeries').click();expect((await saved).status()).toBe(200);

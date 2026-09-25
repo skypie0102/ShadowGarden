@@ -159,3 +159,15 @@ perform real-browser and provider integration checks before switching traffic.
   Wrangler source: Pages commands do not accept arbitrary config paths.
 - The follow-up CI run must verify these corrections; no passing browser result
   is claimed yet. Production resources remain untouched.
+
+### Second browser run
+
+- Run `36123276345` correctly loaded all fixture bindings and passed eight of ten
+  browser cases, including desktop/mobile navigation, the corrected adult gate,
+  explicit missing-book denial, and trash restoration against real local D1.
+- Both admin cases proved stale saves return 409, then timed out on the retry:
+  the test filled the reopened form while its recovered dirty-state layer still
+  displayed “Loading series…”. The harness now waits for “No changes” before
+  editing and accepts the expected conflict alert as soon as it appears.
+- This is test synchronization with the existing readiness indicator, without
+  forcing disabled buttons or weakening the expected conflict/success checks.
