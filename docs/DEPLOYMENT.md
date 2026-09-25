@@ -84,9 +84,11 @@ Run `npm run check`; test an actual Turnstile unlock on the intended hostname;
 check unauthenticated admin and raw EPUB URLs are denied; test one upload,
 replacement, backup and restore against non-production B2/D1 resources; verify
 all five original EPUBs in the reader after restoring their mappings. Exercise
-desktop and mobile layouts in a real browser. The reconstruction environment
-could compile the worker and run D1 locally, but could not complete real-browser
-visual verification or authenticate to the original Cloudflare/B2 account.
+desktop and mobile layouts in a real browser. GitHub Actions run `36123630092`
+passed all ten automated desktop/mobile workflows against real local Pages/D1.
+The CI report includes successful-page screenshots for visual review. These
+isolated checks do not authenticate to the original Cloudflare/B2 account or
+verify the missing original books and live Turnstile flow.
 
 Retain the old Cloudflare deployment and B2 objects while validating the new
 project. The current D1 catalog is authoritative for this reconstruction; other

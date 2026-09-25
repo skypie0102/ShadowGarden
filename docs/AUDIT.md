@@ -14,17 +14,17 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 25/25 pass locally; original 22 also passed GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 25/25 passed locally and in GitHub Actions run 36123630092; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-23 |
-| Real-browser visual checks | Unverified: Chromium absent; its download returned invalid/truncated data |
-| Browser/Pages integration suite | Ten desktop/mobile cases added; CI execution pending at this commit |
+| Real-browser visual checks | Successful-page screenshots are now retained for review; visual sign-off remains pending |
+| Browser/Pages integration suite | 10/10 passed on desktop/mobile Chromium in GitHub Actions run 36123630092 at commit 929c5d5 |
 | Full local preview | Wrangler dev failed on `uv_interface_addresses`; direct Miniflare probes did not initialize and were stopped |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
-| Remote Git commit/push | Published to skypie0102/ShadowGarden main at 20dd2ec; remote tree exactly matches the verified local source |
+| Remote Git commit/push | Published to skypie0102/ShadowGarden main; browser-readiness fix 929c5d5 verified remotely with a passing CI run |
 
 ## Defects found and fixed during reconstruction
 
@@ -117,4 +117,15 @@ Functions with fixture credentials. Application API responses are not mocked.
 Third-party browser requests are excluded. Authentication uses a normally signed,
 D1-backed fixture session; this does not verify live Turnstile. The suite checks
 the missing-book error rather than claiming actual EPUB reading was restored.
-CI execution and results must be recorded before treating this gap as closed.
+Run [36123630092](https://github.com/skypie0102/ShadowGarden/actions/runs/36123630092)
+at commit `929c5d59142e2ce049085d0c9d347c3ad5ffe4d1` passed all ten cases
+in 19.8 seconds, plus all 25 backend/client tests, the asset audit, static build
+and Functions compilation. The previous eight-of-ten result is superseded by
+this run. Both stale-editor cases now verify the 409 conflict and successful
+save after reload without retries or forced clicks.
+
+Successful runs now attach screenshots of the empty main library, adult
+acknowledgement, recovered series, missing-book reader and Keeper series editor
+on both screen sizes. These are render evidence, not pixel-baseline assertions.
+Fonts and other third-party requests remain excluded by the isolated harness;
+live-provider and original-EPUB checks remain separate.

@@ -56,7 +56,8 @@ developer database, or remote resources. It checks public navigation, the adult
 gate, missing-book errors, admin edits/conflicts, and trash restoration. Admin
 tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
 separate integration checks. GitHub Actions runs both test suites and retains
-the browser report for seven days.
+the browser report for seven days. Reports also include successful-page captures
+of the public screens and Keeper editor for desktop/mobile visual review.
 
 ## Layout
 

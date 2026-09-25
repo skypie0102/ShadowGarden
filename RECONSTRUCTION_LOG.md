@@ -171,3 +171,20 @@ perform real-browser and provider integration checks before switching traffic.
   editing and accepts the expected conflict alert as soon as it appears.
 - This is test synchronization with the existing readiness indicator, without
   forcing disabled buttons or weakening the expected conflict/success checks.
+
+### Browser verification completed and visual evidence added
+
+- Confirmed main at `929c5d59142e2ce049085d0c9d347c3ad5ffe4d1` and inspected
+  GitHub Actions run `36123630092`, job `108034635056`. All 25 backend/client
+  tests and all ten desktop/mobile browser cases passed; the browser suite
+  completed in 19.8 seconds without retries. Asset audit, build and Functions
+  compilation also passed.
+- The two stale-editor cases now prove both conflict rejection and successful
+  save after a fresh load. This closes the interrupted browser-test checkpoint.
+- Updated the audit/deployment documentation to remove stale pending-CI claims.
+- Added successful-page screenshot attachments for five screens on desktop and
+  mobile to make the outstanding visual review possible from CI artifacts.
+  Screenshot review is pending at this commit. The harness blocks third-party
+  requests, so these captures use fallback fonts and do not verify live services.
+- Kept this work in an isolated Git worktree after independent upload-test edits
+  appeared in the shared checkout; those edits were left intact.

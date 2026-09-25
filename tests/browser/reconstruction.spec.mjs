@@ -10,6 +10,12 @@ function cookie(name,kind,claims={}) {
 const auth={authorization:`Bearer ${adminToken}`};
 const post=(request,path,data,revision)=>request.post(path,{headers:{...auth,'if-match':String(revision)},data});
 
+async function capture(page,name) {
+  // Keep successful render evidence as well as failure screenshots. Reviewers
+  // can inspect the real recovered layouts even when local Chromium is absent.
+  await test.info().attach(name,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
+}
+
 test.beforeEach(async({page})=>{
   const errors=[];
   page.on('pageerror',error=>errors.push(error.message));
@@ -44,6 +50,7 @@ test('public pages and catalog are served by Pages with the recovered empty main
   await expect(page.locator('#emptyState')).toBeVisible();
   await expect(page.locator('#headerVolumes')).toHaveText('0');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await capture(page,'empty-main-library');
   const catalog=await request.get('/media/shadow-garden/data/adult-catalog.json');
   expect(catalog.status()).toBe(200);
   const data=await catalog.json();expect(data.series).toHaveLength(1);expect(data.series[0].volumes).toHaveLength(5);
@@ -59,6 +66,7 @@ test('adult acknowledgement returns to the recovered series with five readable l
   // Catalog initialization rewrites the filter URL. Return navigation must still
   // work when acknowledgement happens afterwards, including on mobile.
   await expect(page.locator('#headerVolumes')).toHaveText('5');
+  await capture(page,'adult-acknowledgement');
   await page.locator('#adultEnter').click();
   await expect(page.locator('#seriesRoot .volume-card')).toHaveCount(5);
   const links=page.locator('.volume-card a.read[data-volume-action="open"]');
@@ -66,6 +74,7 @@ test('adult acknowledgement returns to the recovered series with five readable l
   for(const link of await links.all())expect(await link.getAttribute('href')).toMatch(/\/reader\.html\?book=bk_/);
   const cover=page.locator('.volume-card img').first();await cover.scrollIntoViewIfNeeded();
   await expect.poll(()=>cover.evaluate(image=>image.complete&&image.naturalWidth>0)).toBe(true);
+  await capture(page,'recovered-series');
 });
 
 test('the reader reports missing recovered mappings without serving private bytes',async({page,context})=>{
@@ -76,6 +85,7 @@ test('the reader reports missing recovered mappings without serving private byte
   const response=await ticket;
   expect(response.status()).toBe(503);expect((await response.json()).code).toBe('book_mapping_missing');
   await expect(page.locator('#readerLoading')).toContainText('Shadow Garden could not authorize this EPUB.');
+  await capture(page,'missing-book-reader');
   expect((await context.request.get('/media/shadow-garden/books/missing.epub')).status()).toBe(404);
 });
 
@@ -84,6 +94,7 @@ test('the real admin form rejects stale edits after background reads and saves a
   await page.locator('[data-manager-open]').click();
   await expect(page.locator('#manageBanner')).toBeEnabled();
   await expect(page.locator('#seriesSaveState')).toHaveText('No changes');
+  await capture(page,'keeper-series-editor');
   const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
   const original=initial.adult[0].title;
   const changed=await post(context.request,'/admin-api/library',{action:'update-series',id:seriesId,title:'External fixture edit'},initial.revision);
