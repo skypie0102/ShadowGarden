@@ -9,7 +9,7 @@ production equivalence or complete private-data recovery**.
 | Check | Result |
 | --- | --- |
 | Archive integrity/provenance | SHA-256 recorded for both source archives and all 148 recovered public files |
-| Retained public files | 148/148 present; 145/148 byte-identical; 3 intentional admin script edits |
+| Retained public files | 148/148 present; 144/148 byte-identical; 4 intentional browser script edits |
 | Syntax, JSON, literal static dependencies | Passed; 207 checked literal references resolve |
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
@@ -50,6 +50,11 @@ production equivalence or complete private-data recovery**.
    precondition. Editor requests now retain the revision of the displayed data;
    successful edits advance that form's revision. Caller-supplied `If-Match`
    headers are preserved. Three client-to-backend regression tests pass.
+9. Adult-gate return navigation: browser testing exposed a recovered client race.
+   Catalog initialization rewrites the URL, discarding the requested series
+   before the acknowledgement click. The gate now captures the destination
+   before initialization and permits only same-origin paths. The browser case
+   explicitly waits for catalog initialization before acknowledging.
 
 ## Important remaining limits
 
@@ -79,6 +84,9 @@ editors retain their own revision across background reads.
 
 `public/assets/js/admin/library-workflow.js`: retain the loaded library revision
 and bind it to the series editor when opening a form.
+
+`public/assets/js/library.js`: preserve the adult-gate return destination across
+filter URL rewrites and reject external return destinations.
 
 `public/assets/js/admin/trash-workflow.js`: disable permanent purge controls and
 explain its unavailability.

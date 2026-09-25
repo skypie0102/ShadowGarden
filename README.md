@@ -7,7 +7,7 @@ supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 145 remain byte-identical; three admin
+148 deployed files were recovered. Of those, 144 remain byte-identical; four browser
 scripts have documented compatibility/safety changes. The archive contains one
 cataloged series, five opaque book IDs and ten cover images. **The five EPUBs,
 private object mappings, production credentials and original server code were

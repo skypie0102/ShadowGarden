@@ -56,9 +56,12 @@ test('public pages and catalog are served by Pages with the recovered empty main
 test('adult acknowledgement returns to the recovered series with five readable links and cover assets',async({page})=>{
   await page.goto(`/series?id=${seriesId}`,{waitUntil:'domcontentloaded'});
   await expect(page.locator('#adultGate')).toBeVisible();
+  // Catalog initialization rewrites the filter URL. Return navigation must still
+  // work when acknowledgement happens afterwards, including on mobile.
+  await expect(page.locator('#headerVolumes')).toHaveText('5');
   await page.locator('#adultEnter').click();
   await expect(page.locator('#seriesRoot .volume-card')).toHaveCount(5);
-  const links=page.locator('.volume-card a[data-volume-action="open"]');
+  const links=page.locator('.volume-card a.read[data-volume-action="open"]');
   await expect(links).toHaveCount(5);
   for(const link of await links.all())expect(await link.getAttribute('href')).toMatch(/\/reader\.html\?book=bk_/);
   const cover=page.locator('.volume-card img').first();await cover.scrollIntoViewIfNeeded();

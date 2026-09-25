@@ -26,7 +26,9 @@ async function run(args) {
   if(code!==0&&!stopping)throw new Error(`Browser preview command failed (${code})`);
 }
 try {
-  for(const folder of ['dist','functions','server','public'])await cp(resolve(root,folder),resolve(project,folder),{recursive:true});
+  // Wrangler anchors its temporary worker/config lookup at the nearest package.
+  // Copy the package manifest too, so it cannot resolve back to the developer app.
+  for(const entry of ['dist','functions','server','public','package.json'])await cp(resolve(root,entry),resolve(project,entry),{recursive:true});
   await writeFile(resolve(project,'wrangler.json'),JSON.stringify({
     name:'shadowgarden-browser-test',pages_build_output_dir:'./dist',compatibility_date:'2026-09-23',
     d1_databases:[{binding:'DB',database_name:'browser-fixture',database_id:'00000000-0000-0000-0000-000000000000'}],

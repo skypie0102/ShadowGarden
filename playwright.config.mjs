@@ -11,5 +11,5 @@ export default defineConfig({
     {name:'mobile-chromium',use:{...devices['Pixel 7']}}
   ],
   webServer:{command:'node scripts/browser-server.mjs',url:baseURL,ignoreHTTPSErrors:true,
-    reuseExistingServer:false,timeout:120000,gracefulShutdown:{signal:'SIGTERM',timeout:5000}}
+    reuseExistingServer:false,timeout:120000,stdout:'pipe',gracefulShutdown:{signal:'SIGTERM',timeout:5000}}
 });

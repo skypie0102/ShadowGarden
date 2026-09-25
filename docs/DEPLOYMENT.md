@@ -17,7 +17,10 @@ No production deployment or remote database changes were made during reconstruct
 The committed Wrangler file is for local reconstruction. Its all-zero D1 ID is
 an intentional placeholder, not a usable remote database. Make a private copy
 as `wrangler.production.jsonc`, replace the Pages project name and database
-identifiers with the actual target values, and use `--config` with Wrangler.
+identifiers with the actual target values. D1 commands support `--config` for
+this private file. Pages dev/deploy do **not** support a custom config path in
+the pinned Wrangler version: use an isolated checkout with the reviewed values
+in its standard `wrangler.jsonc` when deploying manually.
 For Git-based Pages builds, deliberately update the committed non-secret config
 to the intended resource names/IDs before reconnecting the production branch.
 Do not apply this new schema to an unidentified original database.

@@ -249,8 +249,12 @@
   function setupAdultGate(){
     if(scope!=="nsfw")return;
     const gate=$("#adultGate"),enter=$("#adultEnter"),reset=$("#adultReset"),accepted=domain.preferences.adultAcknowledged();
+    // Keep the requested destination before catalog/filter initialization rewrites
+    // the query string. Only same-origin paths may receive the acknowledgement.
+    let returnPath="";
+    try{const value=new URLSearchParams(location.search).get("return")||"",target=new URL(value,location.origin);if(value.startsWith("/")&&target.origin===location.origin)returnPath=target.pathname+target.search+target.hash}catch{}
     gate?.classList.toggle("hidden",accepted);document.body.classList.toggle("adult-locked",!accepted);
-    enter?.addEventListener("click",()=>{domain.preferences.setAdultAcknowledged(true);gate?.classList.add("hidden");document.body.classList.remove("adult-locked");const ret=new URLSearchParams(location.search).get("return");if(ret&&ret.startsWith("/"))location.href=ret});
+    enter?.addEventListener("click",()=>{domain.preferences.setAdultAcknowledged(true);gate?.classList.add("hidden");document.body.classList.remove("adult-locked");if(returnPath)location.href=returnPath});
     reset?.addEventListener("click",()=>{domain.preferences.setAdultAcknowledged(false);gate?.classList.remove("hidden");document.body.classList.add("adult-locked")});
   }
 

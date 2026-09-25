@@ -141,3 +141,21 @@ perform real-browser and provider integration checks before switching traffic.
 - Still missing: original EPUBs/object mappings, credentials, original backend
   sources/history, live provider verification, and undocumented purge/recovery
   semantics. The harness does not invent any of these components.
+
+### First browser run and follow-up corrections
+
+- Run `36122693738` successfully launched Chromium and the real Pages runtime,
+  but the ten cases failed. The harness omitted `package.json` in its temporary
+  project; Wrangler consequently resolved its compiled worker's configuration
+  from the parent project and lost the fixture bindings. The package boundary is
+  now copied along with the app. A selector also counted both cover and read links;
+  it now selects the five primary read links.
+- The mobile case exposed a genuine recovered-client bug: library initialization
+  replaced the query string before acknowledgement, dropping the series return
+  destination. The gate now captures that destination beforehand and rejects
+  external destinations. The test waits for catalog initialization deliberately.
+- Documented the fourth recovered script edit; 144/148 original files are now
+  byte-identical. Corrected deployment instructions after inspecting the pinned
+  Wrangler source: Pages commands do not accept arbitrary config paths.
+- The follow-up CI run must verify these corrections; no passing browser result
+  is claimed yet. Production resources remain untouched.
