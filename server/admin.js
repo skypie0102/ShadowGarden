@@ -1,7 +1,7 @@
 import {bodyJson, boundedBytes, fail, json, method, required, safeUrl, text} from './http.js';
 import {database, digest, now, requireAdmin} from './security.js';
 import {adminLibrary, counts, loadState, saveState, snapshots} from './state.js';
-import {bookIdForKey, BOOK_ID} from './books.js';
+import {activeBooks, bookIdForKey} from './books.js';
 import {getObject, objectKey, storageConfigured, uploadObject} from './storage.js';
 import {validateEpub} from './epub.js';
 import {CANONICAL_GENRES, normalizeSeriesTaxonomy, taxonomyDiff} from '../public/assets/js/domain/catalog-taxonomy.js';
@@ -112,9 +112,11 @@ export async function catalog(context) {
   const target=s.volumes.find(v=>v.bookId===p.replaceTargetFile || (doc.books[v.bookId] && `/media/${doc.books[v.bookId]}`===p.replaceTargetFile));
   if (policy==='replace' && !target) fail(409,'replacement_missing','Replacement target is no longer present.');
   if (policy==='reject' && s.volumes.some(v=>Number(v.number)===n || (p.sha256&&v.sha256===p.sha256))) fail(409,'duplicate_volume','A matching volume already exists.');
-  const key=objectKey(p.epubKey,'book'),stored=await requireObject(context.env,key,'book');
+  const key=objectKey(p.epubKey,'book');
   const bookId=target&&policy==='replace'?target.bookId:await bookIdForKey(key);
+  if (Object.entries(doc.books).some(([id,mapped])=>mapped===key&&id!==bookId)) fail(409,'object_already_mapped','This EPUB object is already associated with another book. Upload a new object for replacement.');
   if (allSeries(doc).some(other=>other.volumes.some(v=>v.bookId===bookId&&v!==target))) fail(409,'duplicate_book','This book is already cataloged.');
+  const stored=await requireObject(context.env,key,'book');
   const v={title:required(p.title,'Volume title'),number:n,bookId,added:new Date().toISOString().slice(0,10)};
   setVolumeMetadata(v,p);
   v.size=Number(stored.headers.get('content-length'))||Math.max(0,Number(p.size)||0);v.sha256=/^[a-f0-9]{64}$/i.test(p.sha256||'')?p.sha256:'';v.originalFilename=text(p.originalFilename,255);
@@ -202,13 +204,14 @@ export async function maintenance(context) {
     row=await saveState(context.env,row,JSON.parse(saved.document),'before-restore-backup');
   } else if (p.action==='restore-trash') {
     const item=doc.trash.find(t=>t.id===p.id);if (!item) fail(404,'trash_not_found','Trash item not found.');
+    const active=activeBooks(doc),restoring=item.type==='series'?item.series.volumes:[item.volume];
+    if (restoring.some(v=>active.has(v.bookId))) fail(409,'restore_conflict','A book from this trash item is already present in the active library.');
     const existing=allSeries(doc).find(s=>s.id===item.seriesId);
     if (item.type==='series') {
       if (existing) fail(409,'restore_conflict','A series with this identity already exists.');
       doc[item.scope].push(item.series);
     } else {
       const s=existing||{...item.series,volumes:[]};
-      if (s.volumes.some(v=>v.bookId===item.volume.bookId)) fail(409,'restore_conflict','This volume is already present.');
       s.volumes.push(item.volume);s.volumes.sort((a,b)=>a.number-b.number);
       if (!existing) doc[item.scope].push(s);
     }

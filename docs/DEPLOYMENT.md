@@ -80,15 +80,16 @@ the referenced EPUB objects actually exist and are accessible using B2 first.
 
 ## Verification before production traffic
 
-Run `npm run check`; test an actual Turnstile unlock on the intended hostname;
+Run `npm run check` and `npm run test:browser`; test an actual Turnstile unlock on the intended hostname;
 check unauthenticated admin and raw EPUB URLs are denied; test one upload,
 replacement, backup and restore against non-production B2/D1 resources; verify
 all five original EPUBs in the reader after restoring their mappings. Exercise
-desktop and mobile layouts in a real browser. GitHub Actions run `36123630092`
-passed all ten automated desktop/mobile workflows against real local Pages/D1.
-The CI report includes successful-page screenshots for visual review. These
-isolated checks do not authenticate to the original Cloudflare/B2 account or
-verify the missing original books and live Turnstile flow.
+desktop and mobile layouts with the real books in a browser. GitHub CI now passes
+ten desktop/mobile Chromium workflow cases against real local HTTPS Pages/D1.
+Those cases use fixture sessions and test the missing-book error; manual visual
+review, live Turnstile/B2, and original-book rendering remain separate checks.
+CI reports retain successful-page screenshots on both screen sizes; third-party
+fonts are excluded by the fixture harness.
 
 Retain the old Cloudflare deployment and B2 objects while validating the new
 project. The current D1 catalog is authoritative for this reconstruction; other

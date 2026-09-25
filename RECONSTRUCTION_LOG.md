@@ -188,3 +188,24 @@ perform real-browser and provider integration checks before switching traffic.
   requests, so these captures use fallback fonts and do not verify live services.
 - Kept this work in an isolated Git worktree after independent upload-test edits
   appeared in the shared checkout; those edits were left intact.
+
+### Continued catalog identity audit
+
+- Reproduced two more reconstruction defects: an EPUB replacement could reuse
+  another book's mapped object; a trash restore could duplicate an identity
+  already re-cataloged under a different series. Both returned 200 in failing
+  regression tests before the fixes.
+- Added server guards returning 409 before mutation. Replacement preserves the
+  existing distinct mappings, and both series/volume restore conflicts preserve
+  the trash item and catalog revision. No media is deleted or remapped silently.
+- All 27 local backend/client tests now pass, including both new regressions;
+  the asset audit, static build and Functions compilation also pass.
+- Full `npm audit` reports zero vulnerabilities on 2026-09-25. This covers the
+  new dependency graph, not the recovered vendor bundles' missing provenance.
+- Updated the API contract, deployment guide, audit and missing-components matrix
+  to distinguish verified browser workflows from still-missing private resources.
+- Recovered evidence remains 148 files (144 byte-identical), 15 function routes,
+  five original book IDs and no recovered EPUB bytes/private mappings. Backend
+  changes remain inferred replacements, not newly recovered original source.
+- Integrated remote checkpoint `3ebea88` before publication, retaining its
+  successful-page screenshot captures and audit documentation.

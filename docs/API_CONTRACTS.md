@@ -51,6 +51,11 @@ original object retention, snapshot reachability and B2 deletion rules are absen
 - Retired catalog entries cannot be downloaded even with an old valid ticket.
 - D1 revision-guarded writes plus snapshots protect overlapping edits. `If-Match`
   adds a client revision guard. It does not implement a full multi-editor merge.
+  Open admin forms keep the revision of their displayed data across background
+  refreshes; successful form writes advance that revision.
+- Catalog writes reject EPUB keys already mapped to another book identity (409
+  `object_already_mapped`). Trash restores reject any book identity already active
+  in either library (409 `restore_conflict`), leaving the trash item recoverable.
 - No automatic expiry or deletion of media objects or snapshots. Failed uploads
   can leave unused objects/reservations; cleanup requires a verified retention policy.
 

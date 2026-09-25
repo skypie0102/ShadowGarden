@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {fixture,context,adminHeaders} from './helpers.mjs';
 import {endpoint} from '../server/http.js';
-import {upload,catalog,maintenance,backup,abuse,statusEndpoint} from '../server/admin.js';
+import {upload,catalog,maintenance,backup,abuse,statusEndpoint,library} from '../server/admin.js';
 import {validateEpub} from '../server/epub.js';
 import {loadState} from '../server/state.js';
 import {rateLimit,clientId} from '../server/security.js';
@@ -53,6 +53,37 @@ test('missing objects cannot be cataloged and unsupported media cannot be upload
   const env=fixture(),headers=await adminHeaders(env);mockStorage(t,env);
   const result=await endpoint(catalog)(context(env,'/admin-api/catalog','POST',{series:'Missing',title:'Missing',number:1,epubKey:'shadow-garden/books/missing.epub'},headers));assert.equal(result.status,400);assert.equal((await loadState(env)).document.main.length,0);
   const response=await endpoint(upload)({env,request:new Request('https://garden.test/admin-api/upload?key=shadow-garden/covers/evil.svg',{method:'POST',headers,body:'<svg/>'})});assert.equal(response.status,400);
+});
+test('replacement cannot assign another book identity to an already mapped EPUB',async(t)=>{
+  const env=fixture(),headers=await adminHeaders(env),objects=mockStorage(t,env);
+  t.after(()=>env.DB.sqlite.close());
+  const keys=['shadow-garden/books/identity-a.epub','shadow-garden/books/identity-b.epub'];
+  for(const key of keys)objects.set(key,epubFixture());
+  const post=p=>endpoint(catalog)(context(env,'/admin-api/catalog','POST',p,headers));
+  const a=await (await post({series:'Identity A',title:'A',number:1,epubKey:keys[0]})).json();
+  const b=await (await post({series:'Identity B',title:'B',number:1,epubKey:keys[1]})).json();
+  const before=await loadState(env);
+  const response=await post({series:'Identity A',targetSeriesId:a.seriesId,title:'Replacement',number:1,epubKey:keys[1],duplicatePolicy:'replace',replaceTargetFile:a.bookId});
+  assert.equal(response.status,409);
+  const after=await loadState(env);assert.equal(after.revision,before.revision);
+  assert.equal(after.document.books[a.bookId],keys[0]);assert.equal(after.document.books[b.bookId],keys[1]);
+});
+test('series and volume trash restores reject identities already active in another series',async(t)=>{
+  for(const action of ['delete-series','delete-volume']){
+    const env=fixture(),headers=await adminHeaders(env),objects=mockStorage(t,env);
+    t.after(()=>env.DB.sqlite.close());
+    const key=`shadow-garden/books/${action}.epub`;objects.set(key,epubFixture());
+    const post=(handler,path,p)=>endpoint(handler)(context(env,path,'POST',p,headers));
+    const original=await (await post(catalog,'/admin-api/catalog',{series:'Original',title:'Volume',number:1,epubKey:key})).json();
+    assert.equal((await post(library,'/admin-api/library',{action,id:original.seriesId,volumeIndex:0})).status,200);
+    const moved=await post(catalog,'/admin-api/catalog',{series:'Another Series',title:'Volume',number:1,epubKey:key});
+    assert.equal(moved.status,200);assert.equal((await moved.json()).bookId,original.bookId);
+    const before=await loadState(env),trashId=before.document.trash[0].id;
+    const response=await post(maintenance,'/admin-api/maintenance',{action:'restore-trash',id:trashId});
+    assert.equal(response.status,409,action);
+    const after=await loadState(env);assert.equal(after.revision,before.revision);assert.equal(after.document.trash.length,1);
+    assert.equal(after.document.main.flatMap(s=>s.volumes).filter(v=>v.bookId===original.bookId).length,1);
+  }
 });
 test('backup deletion affects only selected snapshot; status and object checks retain contract',async(t)=>{
   const env=fixture(),headers=await adminHeaders(env);mockStorage(t,env);

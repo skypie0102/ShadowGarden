@@ -14,17 +14,17 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 25/25 passed locally and in GitHub Actions run 36123630092; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 27/27 pass locally; the preceding 25 also passed GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
-| Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-23 |
-| Real-browser visual checks | Successful-page screenshots are now retained for review; visual sign-off remains pending |
-| Browser/Pages integration suite | 10/10 passed on desktop/mobile Chromium in GitHub Actions run 36123630092 at commit 929c5d5 |
-| Full local preview | Wrangler dev failed on `uv_interface_addresses`; direct Miniflare probes did not initialize and were stopped |
+| Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
+| Real-browser workflow checks | 10/10 pass in GitHub Actions: desktop Chromium and mobile Chromium |
+| Manual visual review and actual-book rendering | Successful-page captures retained for review; visual sign-off and original EPUB rendering remain unverified |
+| Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
-| Remote Git commit/push | Published to skypie0102/ShadowGarden main; browser-readiness fix 929c5d5 verified remotely with a passing CI run |
+| Remote Git commit/push | Reconstruction and browser fixes published to skypie0102/ShadowGarden main; remote Git trees checked against local source |
 
 ## Defects found and fixed during reconstruction
 
@@ -55,6 +55,13 @@ production equivalence or complete private-data recovery**.
    before the acknowledgement click. The gate now captures the destination
    before initialization and permits only same-origin paths. The browser case
    explicitly waits for catalog initialization before acknowledging.
+10. EPUB mapping collision: replacing one volume with an object mapped to another
+    identity could make valid reader tickets unusable. Catalog writes now reject
+    that alias with 409 without changing metadata or snapshots.
+11. Trash identity collision: restoring a trashed series or volume could introduce
+    a book ID already active under a different series. Restores now check both
+    libraries and reject conflicting identities without consuming the trash item.
+    Both collision regressions failed before the guards and pass afterwards.
 
 ## Important remaining limits
 
@@ -129,3 +136,6 @@ acknowledgement, recovered series, missing-book reader and Keeper series editor
 on both screen sizes. These are render evidence, not pixel-baseline assertions.
 Fonts and other third-party requests remain excluded by the isolated harness;
 live-provider and original-EPUB checks remain separate.
+
+Two subsequent collision regression tests bring the current local suite to 27.
+The CI workflow runs both suites on every push.
