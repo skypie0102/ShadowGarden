@@ -40,7 +40,7 @@ for(const entry of provenance.files){
   const sha=createHash('sha256').update(await readFile(entry.path)).digest('hex');
   if(sha!==entry.sha256)modified.push(entry.path);
 }
-const deliberate=new Set(['public/assets/js/admin/core.js','public/assets/js/admin/trash-workflow.js']);
+const deliberate=new Set(['public/assets/js/admin/core.js','public/assets/js/admin/trash-workflow.js','public/assets/js/admin/library-workflow.js']);
 for(const path of modified)if(!deliberate.has(path))errors.push(`Undocumented change to recovered file ${path}`);
 const manifest=await readFile('recovery-info/FUNCTION_ROUTES.md','utf8');
 const routes=[...manifest.matchAll(/`(functions\/[^`:]+\.js)(?::[^`]*)?`/g)].map(m=>m[1]);

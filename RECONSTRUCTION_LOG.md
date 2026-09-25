@@ -118,3 +118,26 @@ perform real-browser and provider integration checks before switching traffic.
   original object mappings, production credentials, browser/live-service QA and
   the unsupported recovery/purge semantics remain outstanding. No production
   Cloudflare deployment or original storage was modified.
+
+## 2026-09-25 — continuation: editor concurrency and runtime verification
+
+- Reconfirmed the published `skypie0102/ShadowGarden` main checkpoint `61b4a35`.
+- Recovered evidence is unchanged: 148 public files, one series, five book IDs,
+  ten covers, and the route transcription. No new private media/source was found.
+- Found and fixed a reconstruction defect: background admin reads could advance
+  the revision used by an older open editor. Forms now retain their displayed
+  revision, and explicit caller preconditions are no longer overwritten.
+- Added three client-to-backend regression cases. All 25 local tests, the asset
+  audit, static build, and Pages Functions compilation pass. The newly edited
+  library workflow is documented: 145 of 148 recovered files remain identical.
+- Added pinned Playwright 1.63.0 and ten desktop/mobile browser cases against
+  real HTTPS Pages Functions and a disposable local D1 database. No application
+  API response is mocked; signed fixture sessions isolate live Turnstile from
+  this test scope. Production credentials/resources are never loaded.
+- GitHub Actions now installs Chromium, executes these cases, and retains reports.
+  Browser test execution is pending at this commit. Local interface enumeration
+  still fails with `uv_interface_addresses`, so the CI runner will resolve that
+  environment-specific gap.
+- Still missing: original EPUBs/object mappings, credentials, original backend
+  sources/history, live provider verification, and undocumented purge/recovery
+  semantics. The harness does not invent any of these components.

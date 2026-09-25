@@ -110,6 +110,9 @@
     #coverKeys=new Map();
     #bookKeys=new Map();
     #revision=null;
+    #editor=null;
+
+    beginEdit(id,revision){this.#editor={id,revision}}
 
     token(){return $("#adminToken")?.value.trim()||""}
     isAuthorized(){return this.#authorized}
@@ -165,11 +168,15 @@
       const method=String(options.method||"GET").toUpperCase();
       if(String(path).startsWith("/admin-api/")){if(!internal.allowLocked&&!this.#authorized)throw new Error("Garden Keeper is locked.");if(!this.token())throw new Error("Admin token is required.")}
       const headers=new Headers(options.headers||{});if(String(path).startsWith("/admin-api/"))headers.set("authorization",`Bearer ${this.token()}`);
-      if(method==="POST"&&this.#revision!==null&&/^\/admin-api\/(catalog|library|maintenance|translations|series-banner)$/.test(path))headers.set("if-match",String(this.#revision));
-      let body=options.body;
+      let body=options.body,payload=null;
       if(typeof body==="string"&&String(headers.get("content-type")||"").includes("application/json")){
-        try{body=JSON.stringify(this.transformPayload(path,method,JSON.parse(body)))}catch{}
+        try{payload=this.transformPayload(path,method,JSON.parse(body));body=JSON.stringify(payload)}catch{}
       }
+      // An open form keeps the revision of the data it displays. Background reads
+      // (including banner/history refreshes) must not authorize a stale edit.
+      const editor=method==="POST"&&/^\/admin-api\/(library|translations|series-banner)$/.test(path)&&payload?.id===this.#editor?.id?this.#editor:null;
+      const revision=editor?editor.revision:this.#revision;
+      if(method==="POST"&&Number.isInteger(revision)&&!headers.has("if-match")&&/^\/admin-api\/(catalog|library|maintenance|translations|series-banner)$/.test(path))headers.set("if-match",String(revision));
       const controller=options.signal?null:new AbortController(),timeoutMs=this.timeoutFor(path,method),timer=controller?setTimeout(()=>controller.abort(),timeoutMs):0;
       try{
         const response=await fetch(path,{...options,method,headers,body,credentials:"same-origin",cache:"no-store",signal:options.signal||controller?.signal});
@@ -178,7 +185,13 @@
           if(response.status===401||response.status===403)events.dispatchEvent(new CustomEvent("session:rejected",{detail:{path,status:response.status}}));
           throw new Error(data.detail||data.error||`Request failed (${response.status})`);
         }
-        if(Number.isInteger(data.revision))this.#revision=data.revision;
+        if(Number.isInteger(data.revision)){
+          this.#revision=this.#revision===null?data.revision:Math.max(this.#revision,data.revision);
+          if(editor&&this.#editor===editor&&headers.get("if-match")===String(editor.revision)){
+            if(state.management?.revision===editor.revision)state.management.revision=data.revision;
+            editor.revision=data.revision;
+          }
+        }
         return data;
       }catch(error){
         if(error?.name==="AbortError")throw new Error(path.startsWith("/admin-api/upload")?`Upload timed out after ${Math.round(timeoutMs/1000)} seconds. Check the connection and try again.`:`Garden Keeper request timed out after ${Math.round(timeoutMs/1000)} seconds.`);

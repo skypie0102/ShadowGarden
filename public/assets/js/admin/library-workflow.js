@@ -30,7 +30,7 @@
     const seriesAudioUrl=series=>series?.audioAlignedUrl||arr(series?.volumes).find(volume=>volume.audioAlignedUrl)?.audioAlignedUrl||"";
 
     function updateManagement(data){
-      state.management={main:arr(data?.main),adult:arr(data?.adult),counts:data?.counts||{}};
+      state.management={main:arr(data?.main),adult:arr(data?.adult),counts:data?.counts||{},revision:data?.revision};
       if($("#manageSeriesCount"))$("#manageSeriesCount").textContent=state.management.main.length+state.management.adult.length;
       if($("#manageVolumeCount"))$("#manageVolumeCount").textContent=managementSeries().reduce((count,item)=>count+arr(item.series.volumes).length,0);
       if($("#manageAdultCount"))$("#manageAdultCount").textContent=state.management.adult.length;
@@ -88,7 +88,7 @@
     }
 
     async function openSeriesEditor(id){
-      const item=findManagedSeries(id);if(!item)return;state.activeSeriesId=id;const {series,scope}=item;
+      const item=findManagedSeries(id);if(!item)return;state.activeSeriesId=id;client.beginEdit(id,state.management.revision);const {series,scope}=item;
       $("#seriesEditorHeading").textContent=series.title||"Edit series";$("#manageTitle").value=series.title||"";$("#manageAuthor").value=series.author||"";$("#manageYear").value=series.year||"";$("#manageStatus").value=normalizeSeriesStatus(series.status);$("#manageGenres").value=arr(series.genres).join(", ");$("#manageTags").value=arr(series.tags).join(", ");$("#manageDescription").value=series.description||"";$("#manageAudioAlignedUrl").value=seriesAudioUrl(series);$("#manageAdult").checked=scope==="adult";
       const cover=series.cover||arr(series.volumes).find(volume=>volume.cover)?.cover||"";$("#managerCover").classList.toggle("hidden",!cover);$("#managerCoverFallback").classList.toggle("hidden",Boolean(cover));if(cover)$("#managerCover").src=cover;
       renderManagedVolumes(series);if(!dialog.open)dialog.showModal();bannerSeriesId=id;void loadBannerChoices(id);

@@ -7,7 +7,7 @@ supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 146 remain byte-identical; two admin
+148 deployed files were recovered. Of those, 145 remain byte-identical; three admin
 scripts have documented compatibility/safety changes. The archive contains one
 cataloged series, five opaque book IDs and ten cover images. **The five EPUBs,
 private object mappings, production credentials and original server code were
@@ -43,6 +43,21 @@ npm audit
 runs the SQLite-backed contract/security tests; builds `dist/`; and compiles
 the Pages Functions with Wrangler. It does not access production services.
 
+For desktop and mobile Chromium checks against real local Pages/D1:
+
+```sh
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+The browser harness creates and removes a disposable project/database beneath
+`.wrangler/`, with public fixture credentials. It never uses `.dev.vars`, the
+developer database, or remote resources. It checks public navigation, the adult
+gate, missing-book errors, admin edits/conflicts, and trash restoration. Admin
+tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
+separate integration checks. GitHub Actions runs both test suites and retains
+the browser report for seven days.
+
 ## Layout
 
 | Path | Purpose |
@@ -53,7 +68,7 @@ the Pages Functions with Wrangler. It does not access production services.
 | `migrations/` | New D1 schema, explicitly not the original database schema |
 | `recovery-info/` | Recovery reports, hashes and idempotent public catalog seed |
 | `scripts/` | Build, audit and private mapping migration generator |
-| `tests/` | Isolated tests with real SQLite and mocked provider APIs |
+| `tests/` | SQLite/client contract tests and isolated Pages/D1 browser checks |
 | `docs/` | API contracts, deployment setup and audit results |
 
 ## Backend behavior

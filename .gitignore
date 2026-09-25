@@ -8,6 +8,7 @@ dist/
 wrangler.production.jsonc
 private/
 test-results/
+playwright-report/
 *.log
 *.epub
 *.zip

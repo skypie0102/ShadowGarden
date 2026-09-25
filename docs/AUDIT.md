@@ -1,4 +1,4 @@
-# Reconstruction audit — 2026-09-23
+# Reconstruction audit — updated 2026-09-25
 
 ## Scope and outcome
 
@@ -9,18 +9,19 @@ production equivalence or complete private-data recovery**.
 | Check | Result |
 | --- | --- |
 | Archive integrity/provenance | SHA-256 recorded for both source archives and all 148 recovered public files |
-| Retained public files | 148/148 present; 146/148 byte-identical; 2 intentional admin script edits |
+| Retained public files | 148/148 present; 145/148 byte-identical; 3 intentional admin script edits |
 | Syntax, JSON, literal static dependencies | Passed; 207 checked literal references resolve |
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend tests | 22/22 pass locally and on GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 25/25 pass locally; original 22 also passed GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-23 |
 | Real-browser visual checks | Unverified: Chromium absent; its download returned invalid/truncated data |
+| Browser/Pages integration suite | Ten desktop/mobile cases added; CI execution pending at this commit |
 | Full local preview | Wrangler dev failed on `uv_interface_addresses`; direct Miniflare probes did not initialize and were stopped |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
 | Remote Git commit/push | Published to skypie0102/ShadowGarden main at 20dd2ec; remote tree exactly matches the verified local source |
@@ -44,6 +45,11 @@ production equivalence or complete private-data recovery**.
 7. Public/protected storage boundary: private EPUB requests cannot reach the
    static fallback; public catalogs strip private paths and upload bookkeeping.
    Tested, including invalid tickets, raw paths and retired book identities.
+8. Stale editor revision: a background banner/history/status read previously
+   advanced the shared client revision, letting old forms submit with a newer
+   precondition. Editor requests now retain the revision of the displayed data;
+   successful edits advance that form's revision. Caller-supplied `If-Match`
+   headers are preserved. Three client-to-backend regression tests pass.
 
 ## Important remaining limits
 
@@ -68,7 +74,11 @@ production equivalence or complete private-data recovery**.
 ## Intentional edits to recovered files
 
 `public/assets/js/admin/core.js`: record catalog revisions, send `If-Match`, map
-EPUB uploads to fresh object keys and rewrite the catalog upload payload.
+EPUB uploads to fresh object keys and rewrite the catalog upload payload. Open
+editors retain their own revision across background reads.
+
+`public/assets/js/admin/library-workflow.js`: retain the loaded library revision
+and bind it to the series editor when opening a form.
 
 `public/assets/js/admin/trash-workflow.js`: disable permanent purge controls and
 explain its unavailability.
@@ -89,3 +99,14 @@ Git tree `4e5be36752df1177242f40a374eb7fa0c7295737` matched the local
 publication tree exactly. All 197 project files, including ten binary images,
 were verified through Git hashes. The following documentation commit records
 this outcome without changing application behavior.
+
+## Browser verification scope added 2026-09-25
+
+The pinned Playwright suite executes five workflows on desktop Chromium and
+mobile Chromium. Its server harness copies the reconstructed app into a temporary
+directory, initializes a separate local D1 database, and starts real HTTPS Pages
+Functions with fixture credentials. Application API responses are not mocked.
+Third-party browser requests are excluded. Authentication uses a normally signed,
+D1-backed fixture session; this does not verify live Turnstile. The suite checks
+the missing-book error rather than claiming actual EPUB reading was restored.
+CI execution and results must be recorded before treating this gap as closed.
