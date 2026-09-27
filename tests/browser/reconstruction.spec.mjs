@@ -10,10 +10,11 @@ function cookie(name,kind,claims={}) {
 const auth={authorization:`Bearer ${adminToken}`};
 const post=(request,path,data,revision)=>request.post(path,{headers:{...auth,'if-match':String(revision)},data});
 
-async function capture(page,name) {
+async function capture(page,name,{fullPage=true}={}) {
   // Keep successful render evidence as well as failure screenshots. Reviewers
   // can inspect the real recovered layouts even when local Chromium is absent.
-  await test.info().attach(name,{body:await page.screenshot({fullPage:true,animations:'disabled'}),contentType:'image/png'});
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await test.info().attach(name,{body:await page.screenshot({fullPage,animations:'disabled'}),contentType:'image/png'});
 }
 
 test.beforeEach(async({page})=>{
@@ -66,7 +67,7 @@ test('adult acknowledgement returns to the recovered series with five readable l
   // Catalog initialization rewrites the filter URL. Return navigation must still
   // work when acknowledgement happens afterwards, including on mobile.
   await expect(page.locator('#headerVolumes')).toHaveText('5');
-  await capture(page,'adult-acknowledgement');
+  await capture(page,'adult-acknowledgement',{fullPage:false});
   await page.locator('#adultEnter').click();
   await expect(page.locator('#seriesRoot .volume-card')).toHaveCount(5);
   const links=page.locator('.volume-card a.read[data-volume-action="open"]');
@@ -85,6 +86,11 @@ test('the reader reports missing recovered mappings without serving private byte
   const response=await ticket;
   expect(response.status()).toBe(503);expect((await response.json()).code).toBe('book_mapping_missing');
   await expect(page.locator('#readerLoading')).toContainText('Shadow Garden could not authorize this EPUB.');
+  // Reproduce background preparation arriving after the terminal error. Its
+  // progress messages must not replace the recovery advice or restore loading.
+  await page.evaluate(()=>window.__sgVisualPageCache.prepare('/media/shadow-garden/books/missing-visual-fixture.epub'));
+  await expect(page.locator('.reader-failure p')).toHaveText('The protected book link could not be prepared. Try again; if the problem continues, return to the series and reopen the volume.');
+  await expect(page.locator('#bookTitle')).toHaveText('Unable to open volume');
   await capture(page,'missing-book-reader');
   expect((await context.request.get('/media/shadow-garden/books/missing.epub')).status()).toBe(404);
 });
@@ -94,7 +100,7 @@ test('the real admin form rejects stale edits after background reads and saves a
   await page.locator('[data-manager-open]').click();
   await expect(page.locator('#manageBanner')).toBeEnabled();
   await expect(page.locator('#seriesSaveState')).toHaveText('No changes');
-  await capture(page,'keeper-series-editor');
+  await capture(page,'keeper-series-editor',{fullPage:false});
   const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
   const original=initial.adult[0].title;
   const changed=await post(context.request,'/admin-api/library',{action:'update-series',id:seriesId,title:'External fixture edit'},initial.revision);

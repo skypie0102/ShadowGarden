@@ -209,3 +209,33 @@ perform real-browser and provider integration checks before switching traffic.
   changes remain inferred replacements, not newly recovered original source.
 - Integrated remote checkpoint `3ebea88` before publication, retaining its
   successful-page screenshot captures and audit documentation.
+
+### Screenshot review found a terminal reader-state defect
+
+- Published the render-evidence update as `3ebea88`. Run `36152151140` passed
+  all 25 backend/client tests and all ten browser cases, with zero failures,
+  retries, flaky cases or skips. Its artifact contains ten screen captures.
+- Downloaded artifact `10871678757` and verified its SHA-256 against GitHub's
+  digest before inspecting all ten captures. The public library, series cards,
+  acknowledgement and Keeper editor render at both tested sizes.
+- Reader captures exposed a real defect in the recovered client: asynchronous
+  visual preparation overwrote terminal error advice with loading text, while
+  the header continued to say the book was opening. Restricted progress writes
+  to the original startup paragraph and changed the opening header placeholder
+  on failure. Added a browser regression that triggers late preparation after
+  authorization failure and checks the complete advice and terminal header.
+- Screenshots now start from the top of the page; modal captures use the viewport
+  to avoid misleading full-page artifacts from fixed overlays. No application
+  layout or acknowledgement behavior was changed for these capture adjustments.
+- There are now six documented recovered-script edits and 142/148 byte-identical
+  files. The reader fix and refreshed screenshots await the next CI run.
+- Integrated the independently published identity guards at `35b323f` before
+  publishing this reader fix, retaining both regressions and all audit entries.
+
+## 2026-09-27 — reader verification resumed
+
+- Reconfirmed remote main at `35b323f`; its complete CI run `36152617517` passed.
+  The local reader fix was preserved at `20c4e23`, already based on those guards,
+  and the combined local backend/client suite had passed all 27 tests.
+- Resuming publication and browser verification of that exact reader fix. No
+  original private resources have become available since the previous checkpoint.

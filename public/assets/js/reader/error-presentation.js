@@ -46,6 +46,8 @@ export function showReaderFailure({container,error,phase="open",returnHref="/",r
   const returnLink=document.createElement("a");returnLink.className="reader-failure-action reader-failure-return";returnLink.href=String(returnHref||"/");returnLink.textContent=String(returnLabel||"Return to library");
   actions.append(retryButton,returnLink);panel.append(title,detail,actions);
   container.replaceChildren(mark,panel);container.classList.remove("hidden");container.setAttribute("role","alert");container.setAttribute("aria-live","assertive");
+  const bookTitle=document.getElementById("bookTitle");
+  if(/^Opening (?:the volume|EPUB)/i.test(bookTitle?.textContent||""))bookTitle.textContent="Unable to open volume";
   requestAnimationFrame(()=>retryButton.focus?.({preventScroll:true}));
   return{...copy,retryButton,returnLink};
 }

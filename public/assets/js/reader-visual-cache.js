@@ -93,7 +93,9 @@
 
   function setLoadingMessage(message){
     const apply=()=>{
-      const text=document.querySelector("#readerLoading p");
+      // Only the startup paragraph belongs to this progress writer. A terminal
+      // failure has its own nested advice paragraph that must remain intact.
+      const text=document.querySelector("#readerLoading > p");
       if(text&&!document.querySelector("#readerLoading")?.classList.contains("hidden"))text.textContent=message;
     };
     if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",apply,{once:true});else apply();

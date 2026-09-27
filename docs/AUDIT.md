@@ -9,7 +9,7 @@ production equivalence or complete private-data recovery**.
 | Check | Result |
 | --- | --- |
 | Archive integrity/provenance | SHA-256 recorded for both source archives and all 148 recovered public files |
-| Retained public files | 148/148 present; 144/148 byte-identical; 4 intentional browser script edits |
+| Retained public files | 148/148 present; 142/148 byte-identical; 6 intentional browser script edits |
 | Syntax, JSON, literal static dependencies | Passed; 207 checked literal references resolve |
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
@@ -21,7 +21,8 @@ production equivalence or complete private-data recovery**.
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
 | Real-browser workflow checks | 10/10 pass in GitHub Actions: desktop Chromium and mobile Chromium |
-| Manual visual review and actual-book rendering | Successful-page captures retained for review; visual sign-off and original EPUB rendering remain unverified |
+| Manual visual review | Ten desktop/mobile captures reviewed from run 36152151140; reader error-state defect found and fixed; follow-up verification pending |
+| Original EPUB rendering | Unverified; original books and mappings remain missing |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
 | Remote Git commit/push | Reconstruction and browser fixes published to skypie0102/ShadowGarden main; remote Git trees checked against local source |
@@ -62,6 +63,11 @@ production equivalence or complete private-data recovery**.
     a book ID already active under a different series. Restores now check both
     libraries and reject conflicting identities without consuming the trash item.
     Both collision regressions failed before the guards and pass afterwards.
+12. Terminal reader error overwritten by loading updates: visual review found
+    that background preparation replaced the failure advice with a progress
+    message and left the header claiming the volume was opening. Progress now
+    updates only the startup paragraph; terminal failures replace placeholder
+    header text. The browser case exercises a late preparation after failure.
 
 ## Important remaining limits
 
@@ -97,6 +103,12 @@ filter URL rewrites and reject external return destinations.
 
 `public/assets/js/admin/trash-workflow.js`: disable permanent purge controls and
 explain its unavailability.
+
+`public/assets/js/reader-visual-cache.js`: limit loading messages to the startup
+paragraph, leaving nested terminal-error advice untouched.
+
+`public/assets/js/reader/error-presentation.js`: replace the opening placeholder
+in the header with a terminal failure label; preserve real book titles.
 
 `recovery-info/_recovery-log.tsv` was normalized to deployment URL/path fields;
 the original workstation directory strings were removed from the committed log.
