@@ -1,4 +1,4 @@
-# Reconstruction audit — updated 2026-09-25
+# Reconstruction audit — updated 2026-09-27
 
 ## Scope and outcome
 
@@ -14,14 +14,14 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 27/27 pass locally; the preceding 25 also passed GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 27/27 passed locally and in GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
-| Real-browser workflow checks | 10/10 pass in GitHub Actions: desktop Chromium and mobile Chromium |
-| Manual visual review | Ten desktop/mobile captures reviewed from run 36152151140; reader error-state defect found and fixed; follow-up verification pending |
+| Real-browser workflow checks | 10/10 passed in run 36316245127 at a0b4632, including the terminal-reader-error regression; zero failed, flaky or skipped cases |
+| Manual visual review | Ten desktop/mobile fixture captures reviewed; reader error-state correction confirmed; scope below |
 | Original EPUB rendering | Unverified; original books and mappings remain missing |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
@@ -149,5 +149,36 @@ on both screen sizes. These are render evidence, not pixel-baseline assertions.
 Fonts and other third-party requests remain excluded by the isolated harness;
 live-provider and original-EPUB checks remain separate.
 
-Two subsequent collision regression tests bring the current local suite to 27.
-The CI workflow runs both suites on every push.
+Two subsequent collision regression tests bring the suite to 27. Runs
+`36152617517`, `36316012764` and `36316245127` passed the full backend/client
+suite and all ten browser cases. The CI workflow runs both suites on every push.
+
+## Visual review completed 2026-09-27
+
+Reviewed the ten captures in [run 36316245127](https://github.com/skypie0102/ShadowGarden/actions/runs/36316245127),
+commit `a0b46328e8ad5580bd0d336738d6e810ec8a0281`. The source tree
+`6e41d375e06e82b84bc6cceb1118676a82ca4ce0` exactly matched the local tree.
+Desktop uses a 1280×720 CSS-pixel viewport; mobile uses Playwright's Pixel 7
+profile at 412×839 CSS pixels and device scale 2.625. Six captures were
+byte-identical to the already-reviewed reader-fix run; four were inspected anew.
+
+| Screen | Desktop and mobile findings |
+| --- | --- |
+| Empty main library | Navigation, filters, counts and empty-state copy render as recovered |
+| Adult acknowledgement | Notice and both navigation choices fit the viewport; the blank transition capture is resolved |
+| Recovered series | Banner, metadata, five cover cards and primary read links render; mobile uses two card columns |
+| Missing-book reader | Terminal header, full recovery advice and retry/return controls remain visible after late preparation |
+| Keeper series editor | Inputs and footer actions fit the dialog; clean-state disabled save is expected and the workflow verifies later saves |
+
+The screenshot harness waits for cross-document transitions and finite
+animations, then captures the rendered page. It does not change application
+motion behavior. Modal evidence uses viewport captures; library/series evidence
+uses full-page captures. These checks found no additional blocking layout issue
+in the reviewed states. They do not establish fidelity to an unrecovered
+original screenshot baseline or validate every reader/admin screen.
+
+Artifact `10931210518` (`browser-report`) was downloaded and its SHA-256
+`d86611b5a6f8880d60497a8bf8601f473a2951bc1efbbdf96a82d361c595b484`
+verified before review. GitHub reports expiry on 2026-10-04; later CI runs
+regenerate the same evidence types. Original EPUB rendering, production fonts,
+live Turnstile and real B2/D1 integration remain outside this fixture review.

@@ -86,10 +86,11 @@ replacement, backup and restore against non-production B2/D1 resources; verify
 all five original EPUBs in the reader after restoring their mappings. Exercise
 desktop and mobile layouts with the real books in a browser. GitHub CI now passes
 ten desktop/mobile Chromium workflow cases against real local HTTPS Pages/D1.
-Those cases use fixture sessions and test the missing-book error; manual visual
-review, live Turnstile/B2, and original-book rendering remain separate checks.
-CI reports retain successful-page screenshots on both screen sizes; third-party
-fonts are excluded by the fixture harness.
+Those cases use fixture sessions and test the missing-book error. Ten captures
+from run `36316245127` were visually reviewed on both screen sizes, including
+the corrected terminal reader error state; see [the audit](AUDIT.md). Live
+Turnstile/B2, production fonts and original-book rendering remain separate
+checks. CI retains successful-page screenshots for seven days.
 
 Retain the old Cloudflare deployment and B2 objects while validating the new
 project. The current D1 catalog is authoritative for this reconstruction; other

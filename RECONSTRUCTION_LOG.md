@@ -249,3 +249,36 @@ perform real-browser and provider integration checks before switching traffic.
   although the workflow passed. Capture readiness now awaits the actual
   cross-document transition and finite animations before saving screenshots.
   This changes the harness only; application motion behavior is preserved.
+
+### Final browser and visual verification
+
+- Published capture synchronization as `a0b4632`; run `36316245127` passed the
+  complete checks, including all 27 backend/client tests and ten browser cases.
+  The browser report records zero failures, flaky cases or skips. The remote
+  source tree `6e41d375e06e82b84bc6cceb1118676a82ca4ce0` matched locally.
+- Verified artifact `10931210518` against GitHub's SHA-256 digest
+  `d86611b5a6f8880d60497a8bf8601f473a2951bc1efbbdf96a82d361c595b484`.
+  Reviewed all ten screen states: six images matched the preceding reviewed
+  run byte-for-byte; four were inspected anew. The desktop acknowledgement
+  capture now shows the page correctly, and both reader captures retain the
+  repaired error header and advice. No further blocking layout issue was found
+  within the five-screen desktop/mobile scope.
+- Updated the audit, deployment guide and recovery matrix to record this result
+  and separate completed fixture review from original-book/live-provider checks.
+  The two original recovery archives remain the evidence source; no private
+  EPUBs, original server source or new production credentials were recovered.
+
+## Current resume point — 2026-09-27
+
+The archive-based source reconstruction and this browser/visual audit checkpoint
+are published on `skypie0102/ShadowGarden` main. The reader correction is
+`6680298`; the verified capture harness is `a0b4632`. All 148 recovered files
+remain present, 142 byte-identical, with six documented browser-script edits.
+All 15 observed route paths are implemented, with the two unavailable operations
+explicitly returning 501.
+
+Further production recovery requires the five original EPUBs and evidence-backed
+private object mappings, actual Cloudflare/B2 bindings and credentials, and live
+Turnstile/provider checks. Original backend algorithms, history, security policy,
+purge/recovery semantics and historical private data remain unrecovered. Keep
+the original deployment/storage intact while those resources are restored.
