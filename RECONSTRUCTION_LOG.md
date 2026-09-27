@@ -300,12 +300,21 @@ perform real-browser and provider integration checks before switching traffic.
   backend source, EPUBs, private mappings or production bindings were recovered.
   These changes improve the inferred replacement; permanent purge and the
   undocumented recovery POST remain explicitly unavailable.
+- Published the implementation as `d2e943c`; the remote Git tree exactly matched
+  the local tested tree. Run `36353495881` passed all 34 backend/client tests and
+  twelve of fourteen browser cases, including damaged-snapshot management at
+  both sizes. The live-recovery cases stopped before fault injection because the
+  test helper expected one SQLite file; Wrangler also creates `metadata.sqlite`.
+  The helper now inspects candidates read-only and selects the unique database
+  containing the disposable session. Application behavior is unchanged by this
+  harness correction; the two live-recovery cases still await verification.
 
 ## Current resume point — 2026-09-28
 
 The archive-based source reconstruction and this browser/visual audit checkpoint
-are published on `skypie0102/ShadowGarden` main at `d6ef996`. The recovery
-integrity work described above is ready for publication and CI verification.
+are published on `skypie0102/ShadowGarden` main at `d2e943c`. The recovery
+integrity implementation has passed local checks and twelve browser cases;
+the fixture lookup correction and remaining verification are in progress.
 All 148 recovered files remain present, 140 byte-identical, with eight documented
 browser-script edits.
 All 15 observed route paths are implemented, with the two unavailable operations
