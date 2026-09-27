@@ -13,6 +13,7 @@
     function render(data){
       trash=arr(data?.trash);if($("#trashCount"))$("#trashCount").textContent=String(trash.length);if($("#maintenanceTrashCount"))$("#maintenanceTrashCount").textContent=String(trash.length);
       const purgeAll=$("#purgeAllTrash");if(purgeAll){purgeAll.disabled=true;purgeAll.textContent="Permanent purge unavailable during recovery";purgeAll.title="Original retention rules have not been recovered. Restore remains available."}
+      if(data?.catalog?.readable===false){if($("#trashCount"))$("#trashCount").textContent="—";if($("#maintenanceTrashCount"))$("#maintenanceTrashCount").textContent="—";list.innerHTML='<div class="maintenance-empty maintenance-bad">Trash cannot be read until a valid catalog snapshot is restored.</div>';return}
       if(!trash.length){list.innerHTML='<div class="maintenance-empty maintenance-good">Trash is empty.</div>';return}
       list.innerHTML=trash.map(item=>{
         const isRestoring=restoring.has(item.id),isPurging=purging.has(item.id),busy=purgeAllRunning||isRestoring||isPurging;

@@ -84,13 +84,23 @@ Run `npm run check` and `npm run test:browser`; test an actual Turnstile unlock 
 check unauthenticated admin and raw EPUB URLs are denied; test one upload,
 replacement, backup and restore against non-production B2/D1 resources; verify
 all five original EPUBs in the reader after restoring their mappings. Exercise
-desktop and mobile layouts with the real books in a browser. GitHub CI now passes
-ten desktop/mobile Chromium workflow cases against real local HTTPS Pages/D1.
-Those cases use fixture sessions and test the missing-book error. Ten captures
+desktop and mobile layouts with the real books in a browser. GitHub CI has passed
+ten desktop/mobile Chromium cases against real local HTTPS Pages/D1. The expanded
+fourteen-case suite adds damaged snapshot management and live-catalog recovery;
+its new cases await CI verification. Fault injection touches only the harness's
+disposable database. Those cases use fixture sessions and test the missing-book
+error, not original EPUB content. Ten captures
 from run `36316245127` were visually reviewed on both screen sizes, including
 the corrected terminal reader error state; see [the audit](AUDIT.md). Live
 Turnstile/B2, production fonts and original-book rendering remain separate
 checks. CI retains successful-page screenshots for seven days.
+
+Keeper's Catalog History remains available when a live catalog is structurally
+damaged. A valid snapshot can be restored with a revision guard; the current
+record is retained byte-for-byte in a safety snapshot. Damaged snapshots are
+marked and cannot be restored, but may be explicitly deleted. Snapshot restore
+changes metadata only. Run recovery readiness to check media for both active
+entries and Trash, including recovered covers served by static hosting.
 
 Retain the old Cloudflare deployment and B2 objects while validating the new
 project. The current D1 catalog is authoritative for this reconstruction; other

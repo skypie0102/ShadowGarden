@@ -1,8 +1,9 @@
 import {bodyJson, boundedBytes, fail, json, method, required, safeUrl, text} from './http.js';
 import {database, digest, now, requireAdmin} from './security.js';
-import {adminLibrary, counts, loadState, saveState, snapshots} from './state.js';
+import {adminLibrary, counts, inspectSnapshot, loadState, loadStateRecord, readableState, saveState, snapshots} from './state.js';
+import {inspectCatalog} from './catalog-document.js';
 import {activeBooks, bookIdForKey} from './books.js';
-import {getObject, objectKey, storageConfigured, uploadObject} from './storage.js';
+import {getObject, getStaticCover, objectKey, storageConfigured, uploadObject} from './storage.js';
 import {validateEpub} from './epub.js';
 import {CANONICAL_GENRES, normalizeSeriesTaxonomy, taxonomyDiff} from '../public/assets/js/domain/catalog-taxonomy.js';
 import {normalizeTranslations, normalizeTranslationStatus} from '../public/assets/js/domain/translations.js';
@@ -151,9 +152,9 @@ export async function translationUpdate(context) {
   return json(adminLibrary(await saveState(context.env,row,doc,'translations')));
 }
 
-export function health(doc) {
+export function health(doc,{includeTrash=false}={}) {
   const objectKeys=new Set(),issues=[],optimizationCandidates=[];let missingCovers=0,missingThumbs=0,missingBookMappings=0;
-  for (const scope of ['main','adult']) for (const s of doc[scope]) {
+  for (const scope of ['main','adult']) for (const s of [...doc[scope],...(includeTrash?doc.trash.filter(t=>t.scope===scope).map(t=>t.type==='series'?t.series:{...t.series,volumes:[t.volume]}):[])]) {
     const check=(v,volumeIndex)=>{
       for (const field of ['cover','coverThumb']) if (v[field]?.startsWith('/media/')) objectKeys.add(v[field].slice(7));
       if (!v.cover) missingCovers++;
@@ -171,37 +172,53 @@ export function health(doc) {
     metrics:{referencedObjects:objectKeys.size,missingCovers,missingThumbs,missingBookMappings,legacyIdentity:0,trashItems:doc.trash.length},issues,objectKeys:[...objectKeys],optimizationCandidates};
 }
 async function maintenanceData(env,row) {
-  const saved=await snapshots(env),doc=row.document,preview=allSeries(doc).map(s=>({...taxonomyDiff(s),title:s.title,beforeGenres:s.genres||[],beforeTags:s.tags||[]})).filter(x=>x.changed);
-  return {ok:true,revision:row.revision,health:health(doc),trash:doc.trash.map(({series,volume,...entry})=>entry),
-    backups:saved.map(s=>({id:s.id,reason:s.reason,createdAt:s.created_at,counts:counts(JSON.parse(s.document))})),
-    taxonomy:{totalSeries:allSeries(doc).length,affectedSeries:preview.length,canonicalGenreCount:CANONICAL_GENRES.length,preview:preview.slice(0,100)}};
+  const saved=await snapshots(env),{document:doc,error}=inspectCatalog(row.serialized),backups=[];
+  for (const entry of saved) {
+    const result=await inspectSnapshot(entry);
+    backups.push({id:entry.id,reason:entry.reason,createdAt:entry.created_at,counts:result.error?null:counts(result.document),restorable:!result.error,
+      integrity:{status:result.error?'damaged':'valid',detail:result.error||'Catalog snapshot validated. Check recovery readiness for media availability.'}});
+  }
+  const preview=doc?allSeries(doc).map(s=>({...taxonomyDiff(s),title:s.title,beforeGenres:s.genres||[],beforeTags:s.tags||[]})).filter(x=>x.changed):[];
+  const report=doc?health(doc):{status:'attention',counts:{series:'—',volumes:'—'},metrics:{referencedObjects:'—',missingCovers:'—',missingThumbs:'—',legacyIdentity:'—',trashItems:'—'},
+    issues:[{severity:'error',code:'catalog-damaged',title:'Live catalog is unreadable',detail:'Restore a valid snapshot from Catalog History. The current catalog will be preserved in a safety backup.'}],objectKeys:[],optimizationCandidates:[]};
+  return {ok:true,revision:row.revision,catalog:{readable:!error,detail:error},health:report,trash:doc?doc.trash.map(({series,volume,...entry})=>entry):[],backups,
+    taxonomy:{readable:!error,totalSeries:doc?allSeries(doc).length:null,affectedSeries:preview.length,canonicalGenreCount:CANONICAL_GENRES.length,preview:preview.slice(0,100)}};
 }
-export async function checkObjects(env,keys) {
-  const missing=[];for (const key of keys) if (!await getObject(env,objectKey(key),{head:true})) missing.push({key});
+export async function checkObjects(env,keys,{includeAssets=false,origin}={}) {
+  const missing=[];
+  for (const key of keys) {
+    objectKey(key);
+    const found=(includeAssets && await getStaticCover(env,key,{head:true,origin})) || await getObject(env,key,{head:true});
+    if (!found) missing.push({key});
+    else {await found.body?.cancel();if (!found.ok) fail(502,'storage_error','Media presence could not be verified.');}
+  }
   return {checked:keys.length,missing};
 }
 async function backupRow(env,id) {
   const row=await database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots WHERE id = ?').bind(text(id,100)).first();
   if (!row) fail(404,'backup_not_found','Backup not found.');
-  if (await digest(row.document)!==row.sha256) fail(409,'backup_damaged','Backup checksum verification failed.');
   return row;
 }
 export async function maintenance(context) {
   method(context.request,['GET','POST']);await requireAdmin(context);
-  let row=await writable(context);
+  let row=await loadStateRecord(context.env,{writable:true});checkRevision(context,row);
   if (context.request.method==='GET') return json(await maintenanceData(context.env,row));
-  const p=await bodyJson(context.request),doc=structuredClone(row.document);let extra={};
+  const p=await bodyJson(context.request);let extra={};
+  if (p.action==='restore-backup') {
+    const saved=await backupRow(context.env,p.id),result=await inspectSnapshot(saved);
+    if (result.error) fail(409,'backup_damaged','This snapshot failed validation and cannot be restored.');
+    row=await saveState(context.env,row,result.document,'before-restore-backup');
+    return json(await maintenanceData(context.env,row));
+  }
   if (p.action==='check-objects') {
     if (!Array.isArray(p.keys)||p.keys.length>25) fail(400,'invalid_keys','Check at most 25 media keys at a time.');
     return json({ok:true,...await checkObjects(context.env,p.keys)});
   }
   if (p.action==='purge-trash') fail(501,'purge_not_reconstructed','Permanent B2 deletion is unavailable until the original retention and recovery rules are recovered. Trash can still be restored.');
+  row=readableState(row);const doc=structuredClone(row.document);
   if (p.action==='create-backup') {
     const db=database(context.env),document=JSON.stringify(doc),id=crypto.randomUUID();
     await db.prepare('INSERT INTO snapshots(id,reason,created_at,document,sha256) VALUES(?,?,?,?,?)').bind(id,text(p.reason)||'manual-backup',new Date().toISOString(),document,await digest(document)).run();
-  } else if (p.action==='restore-backup') {
-    const saved=await backupRow(context.env,p.id);
-    row=await saveState(context.env,row,JSON.parse(saved.document),'before-restore-backup');
   } else if (p.action==='restore-trash') {
     const item=doc.trash.find(t=>t.id===p.id);if (!item) fail(404,'trash_not_found','Trash item not found.');
     const active=activeBooks(doc),restoring=item.type==='series'?item.series.volumes:[item.volume];
@@ -235,27 +252,29 @@ export async function maintenance(context) {
 export async function backup(context) {
   method(context.request,['POST']);await requireAdmin(context);const p=await bodyJson(context.request);
   if (p.action!=='delete') fail(400,'unknown_action','Use maintenance to create or restore a snapshot.');
-  await backupRow(context.env,p.id);await database(context.env).prepare('DELETE FROM snapshots WHERE id = ?').bind(p.id).run();
+  const selected=await backupRow(context.env,p.id);await database(context.env).prepare('DELETE FROM snapshots WHERE id = ?').bind(selected.id).run();
   return json({ok:true});
 }
 export async function readiness(context) {
   method(context.request,['GET']);await requireAdmin(context);
-  const row=await loadState(context.env,{writable:true}),saved=await snapshots(context.env);
-  let verified=0,damaged=0,uncertain=0,stale=0,anchor=null;
+  const row=await loadStateRecord(context.env,{writable:true}),live=inspectCatalog(row.serialized),saved=await snapshots(context.env);
+  let verified=0,damaged=0,uncertain=0,stale=0,inspected=0,anchor=null;
   // Inspect at most 3 complete snapshots and 75 media keys per request.
   for (const snapshot of saved.slice(0,3)) {
-    if (await digest(snapshot.document)!==snapshot.sha256) {damaged++;continue;}
-    verified++;const report=health(JSON.parse(snapshot.document));
+    inspected++;const result=await inspectSnapshot(snapshot);
+    if (result.error) {damaged++;continue;}
+    verified++;const report=health(result.document,{includeTrash:true});
     if (report.metrics.missingBookMappings) {stale++;continue;}
-    if (!storageConfigured(context.env)||report.objectKeys.length>25) {uncertain++;continue;}
-    try {const result=await checkObjects(context.env,report.objectKeys);if (!result.missing.length) {anchor={id:snapshot.id,reason:snapshot.reason,verified:true,objectCount:result.checked};break;}stale++;}
+    if (report.objectKeys.length>25) {uncertain++;continue;}
+    try {const result=await checkObjects(context.env,report.objectKeys,{includeAssets:true,origin:new URL(context.request.url).origin});if (!result.missing.length) {anchor={id:snapshot.id,reason:snapshot.reason,verified:true,objectCount:result.checked};break;}stale++;}
     catch {uncertain++;}
   }
-  uncertain+=Math.max(0,saved.length-3);
+  uncertain+=saved.length-inspected;
   return json({ok:true,summary:{total:saved.length,verified,damaged},
-    live:{entries:['main','adult'].map(scope=>({scope,readable:true,detail:`${row.document[scope].length} series; ${row.source}`}))},
-    readiness:{status:anchor?'ready':'not-ready',anchor,staleSnapshots:stale,uncertainSnapshots:uncertain,
-      detail:anchor?'A checksummed snapshot with all referenced media was verified.':'No object-complete recovery snapshot was proven. Missing mappings or media must be restored separately.'}});
+    live:{entries:['main','adult'].map(scope=>({scope,readable:!live.error,detail:live.error||`${live.document[scope].length} series; ${row.source}`}))},
+    readiness:{status:live.error?'recovery-required':anchor?'ready':'not-ready',anchor,staleSnapshots:stale,uncertainSnapshots:uncertain,
+      detail:live.error?(anchor?'The live catalog is damaged. A verified recovery snapshot is available in Catalog History.':'The live catalog is damaged and no object-complete recovery snapshot was proven. Inspect Catalog History and restore missing media separately.'):
+        anchor?'A validated snapshot with all active and trashed media was verified.':'No object-complete recovery snapshot was proven. Missing mappings or media must be restored separately.'}});
 }
 export async function recovery(context) {
   method(context.request,['GET','POST']);
@@ -265,8 +284,8 @@ export async function recovery(context) {
 }
 export async function statusEndpoint(context) {
   method(context.request,['POST']);await requireAdmin(context);
-  const row=await loadState(context.env,{writable:true});
-  return json({ok:true,authorized:true,storageConfigured:storageConfigured(context.env),revision:row.revision,reconstructed:true});
+  const row=await loadStateRecord(context.env,{writable:true});
+  return json({ok:true,authorized:true,storageConfigured:storageConfigured(context.env),catalogReadable:!inspectCatalog(row.serialized).error,revision:row.revision,reconstructed:true});
 }
 export async function abuse(context) {
   method(context.request,['GET','POST']);await requireAdmin(context);const db=database(context.env);

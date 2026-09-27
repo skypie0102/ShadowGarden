@@ -12,8 +12,9 @@
 | Private book-to-object map | Missing | Private catalog export or B2 inventory matched to known IDs |
 | Production secrets/bindings | Missing | Configure through the owner's Cloudflare/B2 accounts |
 | Original backups/trash | Missing | Export from original storage before changing retention |
+| Replacement snapshot integrity and damaged-catalog recovery | Implemented; 7 new regression cases pass locally | Expanded desktop/mobile recovery verification pending CI |
 | Original security telemetry/policy | Missing | Original code/configuration; basic replacement is documented |
-| Browser/Pages/D1 workflow verification | Verified in CI (10 cases) | Live provider tests and actual EPUB rendering still require original private resources |
+| Browser/Pages/D1 workflow verification | Ten cases verified in CI; fourteen-case expansion pending | Live provider tests and actual EPUB rendering still require original private resources |
 | Recovered-screen visual review | Reviewed (10 fixture captures) | Run 36316245127; real books and production fonts remain outside this scope |
 | Original-book reader verification | Outstanding | Restore the five EPUBs and mappings, then check reading and navigation with live services |
 | Permanent B2 purge | Unavailable | Verify object reachability and original retention semantics first |

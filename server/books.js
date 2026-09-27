@@ -1,8 +1,9 @@
 import {bodyJson, fail, json, method, sameOrigin} from './http.js';
 import {b64, challenge, cookie, cookies, HUMAN_COOKIE, now, rateLimit, signed, verified} from './security.js';
 import {loadState, publicCatalog} from './state.js';
-import {getObject, mimeFor, objectKey} from './storage.js';
-export const BOOK_ID=/^bk_[A-Za-z0-9_-]{22}$/;
+import {getObject, getStaticCover, mimeFor, objectKey} from './storage.js';
+import {BOOK_ID} from './catalog-document.js';
+export {BOOK_ID};
 export async function bookIdForKey(key) {
   objectKey(key,'book');
   const bytes=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(`shadow-garden-book-id-v1\n/media/${key}`)));
@@ -52,9 +53,8 @@ export async function media(context) {
     if (!claims || claims.bookId!==id || claims.key!==key) fail(403,'book_ticket_required','A valid book ticket is required.');
   } else {
     // Only an exact recovered/static image is eligible for the asset fallback.
-    const fallback=await env.ASSETS.fetch(new Request(new URL(`/media/${key}`,url.origin),{method:request.method}));
-    if (fallback.ok && /^image\/(webp|png|jpeg|gif)/i.test(fallback.headers.get('content-type') || '')) return fallback;
-    await fallback.body?.cancel();
+    const fallback=await getStaticCover(env,key,{head:request.method==='HEAD',origin:url.origin});
+    if (fallback) return fallback;
   }
   const range=request.headers.get('range') || '';
   if (range && !/^bytes=(?:\d+-\d*|-\d+)$/.test(range)) fail(416,'invalid_range','Only a single byte range is supported.');

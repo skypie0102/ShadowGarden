@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {createHmac} from 'node:crypto';
 import {baseURL,adminToken,sessionSecret,sessionId,bookId,seriesId} from './fixture.mjs';
+import {fixtureDatabase} from './database.mjs';
 
 function cookie(name,kind,claims={}) {
   const data=Buffer.from(JSON.stringify({...claims,kind,exp:Math.floor(Date.now()/1000)+3600})).toString('base64url');
@@ -152,4 +153,59 @@ test('trash restore preserves the five-volume catalog in real D1 and permanent p
   expect((await post(context.request,'/admin-api/maintenance',{action:'purge-trash',ids:[]},current.revision)).status()).toBe(501);
   await page.evaluate(()=>window.ShadowGardenKeeper.workflows.get('library').instance.refresh());
   await expect(page.locator('#manageVolumeCount')).toHaveText('5');
+});
+
+test('Catalog History marks damaged snapshots and permits deleting only the selected backup',async({page,context})=>{
+  await openKeeper(page,context);
+  await page.locator('#openMaintenance').click();
+  const id=`damaged-${test.info().project.name}`;
+  const restore=page.locator(`[data-restore-backup="${id}"]`),remove=page.locator(`[data-delete-backup="${id}"]`);
+  await expect(restore).toBeDisabled();await expect(restore).toHaveText('Cannot restore');
+  await expect(restore.locator('xpath=../..')).toContainText('Damaged snapshot');
+  await expect(remove).toBeEnabled();await remove.scrollIntoViewIfNeeded();
+  await capture(page,'keeper-damaged-snapshot',{fullPage:false});
+  const before=await (await context.request.get('/admin-api/library',{headers:auth})).json();
+  page.once('dialog',dialog=>dialog.accept());
+  const deleted=page.waitForResponse(response=>response.url().endsWith('/admin-api/backup'));
+  await remove.click();expect((await deleted).status()).toBe(200);
+  await expect(restore).toHaveCount(0);
+  expect(await (await context.request.get('/admin-api/library',{headers:auth})).json()).toEqual(before);
+});
+
+test('Keeper restores a damaged live catalog through Catalog History in the real Pages runtime',async({page,context})=>{
+  await openKeeper(page,context);
+  const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
+  const reason=`recovery-ui-${test.info().project.name}`;
+  const created=await post(context.request,'/admin-api/maintenance',{action:'create-backup',reason},initial.revision);
+  expect(created.status()).toBe(200);
+  const id=(await created.json()).backups.find(entry=>entry.reason===reason).id;
+  const database=await fixtureDatabase(),before=database.prepare('SELECT * FROM library_state WHERE id = 1').get();
+  try {
+    database.prepare("UPDATE library_state SET document = '{}', revision = revision+1 WHERE id = 1").run();
+    await page.locator('#openMaintenance').click();
+    await expect(page.locator('#gardenHealthIssues')).toContainText('Live catalog is unreadable');
+    await expect(page.locator('#maintenanceVolumes')).toHaveText('—');
+    await expect(page.locator('#createCatalogBackup')).toBeDisabled();
+    await expect(page.locator('#deepHealthCheck')).toBeDisabled();
+    await expect(page.locator('#taxonomyMaintenanceState')).toHaveText('UNAVAILABLE');
+    await expect(page.locator('#coverMaintenanceState')).toHaveText('UNAVAILABLE');
+    await expect(page.locator('#trashList')).toContainText('Trash cannot be read');
+    await page.locator('#checkRecoveryReadiness').click();
+    await expect(page.locator('#recoveryReadinessState')).toHaveText('RECOVER NOW');
+    await page.locator('#gardenHealthCard').scrollIntoViewIfNeeded();
+    await capture(page,'keeper-catalog-recovery',{fullPage:false});
+    const restore=page.locator(`[data-restore-backup="${id}"]`);await expect(restore).toBeEnabled();
+    page.once('dialog',dialog=>dialog.accept());
+    const restored=page.waitForResponse(response=>response.url().endsWith('/admin-api/maintenance')&&response.request().method()==='POST');
+    await restore.click();expect((await restored).status()).toBe(200);
+    await expect(page.locator('#maintenanceVolumes')).toHaveText('5');
+    await expect(page.locator('#createCatalogBackup')).toBeEnabled();
+    await expect(page.locator('#trashList')).toContainText('Trash is empty');
+    expect((await (await context.request.get('/admin-api/library',{headers:auth})).json()).adult).toEqual(initial.adult);
+    const safety=database.prepare("SELECT document FROM snapshots WHERE reason = 'before-restore-backup' ORDER BY created_at DESC LIMIT 1").get();expect(safety.document).toBe('{}');
+  } finally {
+    // A failed assertion must not leave the shared fixture broken for later cases.
+    if(database.prepare('SELECT document FROM library_state WHERE id = 1').get().document==='{}')database.prepare('UPDATE library_state SET document = ?, revision = revision+1 WHERE id = 1').run(before.document);
+    database.close();
+  }
 });

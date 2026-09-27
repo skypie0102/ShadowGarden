@@ -7,7 +7,7 @@ supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 142 remain byte-identical; six browser
+148 deployed files were recovered. Of those, 140 remain byte-identical; eight browser
 scripts have documented compatibility/safety changes. The archive contains one
 cataloged series, five opaque book IDs and ten cover images. **The five EPUBs,
 private object mappings, production credentials and original server code were
@@ -53,11 +53,13 @@ npm run test:browser
 The browser harness creates and removes a disposable project/database beneath
 `.wrangler/`, with public fixture credentials. It never uses `.dev.vars`, the
 developer database, or remote resources. It checks public navigation, the adult
-gate, missing-book errors, admin edits/conflicts, and trash restoration. Admin
+gate, missing-book errors, admin edits/conflicts, trash restoration, damaged
+snapshots and recovery of a damaged live catalog. Fault injection is restricted
+to that disposable fixture database; the application has no test bypass. Admin
 tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
 separate integration checks. GitHub Actions runs both test suites and retains
 the browser report for seven days. Reports also include successful-page captures
-of the public screens and Keeper editor for desktop/mobile visual review.
+of the public screens, Keeper editor and recovery states for desktop/mobile review.
 
 ## Layout
 
@@ -84,7 +86,10 @@ Keeper requests require a bearer token and a revocable, signed session created
 after server-side Turnstile validation. Readers receive a 12-hour human session
 and 15-minute, object-specific book tickets. Private objects never fall back to
 public static hosting. Catalog writes use revision checks and create checksummed
-snapshots. Book replacements use fresh object keys and retain old bytes.
+snapshots. Snapshots must pass checksum and structural validation before restore.
+Keeper history stays accessible when the live catalog is damaged; restoring a
+valid snapshot preserves the damaged record in an exact safety copy. Book
+replacements use fresh object keys and retain old bytes.
 
 Catalog editing, translations, banners, upload, backups, restore, taxonomy,
 cover optimization, object checks and basic cooldown telemetry are reconstructed.

@@ -1,4 +1,4 @@
-# Reconstruction audit — updated 2026-09-27
+# Reconstruction audit — updated 2026-09-28
 
 ## Scope and outcome
 
@@ -9,18 +9,18 @@ production equivalence or complete private-data recovery**.
 | Check | Result |
 | --- | --- |
 | Archive integrity/provenance | SHA-256 recorded for both source archives and all 148 recovered public files |
-| Retained public files | 148/148 present; 142/148 byte-identical; 6 intentional browser script edits |
+| Retained public files | 148/148 present; 140/148 byte-identical; 8 intentional browser script edits |
 | Syntax, JSON, literal static dependencies | Passed; 207 checked literal references resolve |
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 27/27 passed locally and in GitHub Actions; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 34/34 passed locally; CI verification of the recovery additions pending; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
-| Real-browser workflow checks | 10/10 passed in run 36316245127 at a0b4632, including the terminal-reader-error regression; zero failed, flaky or skipped cases |
+| Real-browser workflow checks | Previous ten cases passed in run 36316245127; expanded fourteen-case recovery suite awaiting CI |
 | Manual visual review | Ten desktop/mobile fixture captures reviewed; reader error-state correction confirmed; scope below |
 | Original EPUB rendering | Unverified; original books and mappings remain missing |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
@@ -68,6 +68,23 @@ production equivalence or complete private-data recovery**.
     message and left the header claiming the volume was opening. Progress now
     updates only the startup paragraph; terminal failures replace placeholder
     header text. The browser case exercises a late preparation after failure.
+13. Structurally damaged snapshots: a matching checksum previously allowed
+    invalid catalog shapes to be stored before the restore response crashed.
+    Snapshots now pass structure/identity validation before restore. Damaged
+    records are marked in history, cannot be restored, and can be explicitly
+    deleted without affecting other data. New regression cases failed before
+    the correction and pass afterwards.
+14. Recovery blocked by damaged live data: maintenance previously assumed the
+    live document could be parsed and traversed. It now keeps authenticated
+    history and revision-guarded restore usable, while ordinary reads/writes
+    fail explicitly. Unknown counts and disabled operations are shown in Keeper;
+    restore preserves the exact damaged serialization in a safety snapshot.
+15. False or incomplete readiness: trash-only books were omitted; static
+    recovered covers were treated as absent unless also in B2; uninspected
+    candidates after an early match were undercounted. Readiness now checks
+    active and trash references, accepts only image asset responses for covers,
+    requires B2 for EPUBs, and reports every uninspected candidate as uncertain.
+    A damaged live record always reports recovery required.
 
 ## Important remaining limits
 
@@ -102,7 +119,14 @@ and bind it to the series editor when opening a form.
 filter URL rewrites and reject external return destinations.
 
 `public/assets/js/admin/trash-workflow.js`: disable permanent purge controls and
-explain its unavailability.
+explain its unavailability; show unreadable trash without claiming it is empty.
+
+`public/assets/js/admin/history-workflow.js`: show damaged snapshot status,
+disable invalid restores and backup creation from unreadable live data, and
+refresh maintenance state after a successful snapshot restore.
+
+`public/assets/js/admin/maintenance-workflow.js`: show unavailable taxonomy and
+cover checks when live data is unreadable; preserve access to Catalog History.
 
 `public/assets/js/reader-visual-cache.js`: limit loading messages to the startup
 paragraph, leaving nested terminal-error advice untouched.

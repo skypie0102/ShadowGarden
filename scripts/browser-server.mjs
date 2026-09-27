@@ -4,7 +4,8 @@ import {cp,mkdir,mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
-import {adminToken,sessionSecret,sessionId} from '../tests/browser/fixture.mjs';
+import {createHash} from 'node:crypto';
+import {adminToken,sessionSecret,sessionId,fixtureStateFile} from '../tests/browser/fixture.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 await mkdir(resolve(root,'.wrangler'),{recursive:true});
@@ -37,10 +38,15 @@ try {
   }));
   const migration=await readFile(resolve(root,'migrations/0001_reconstructed.sql'),'utf8');
   const seed=await readFile(resolve(root,'recovery-info/seed.sql'),'utf8');
-  await writeFile(resolve(project,'fixture.sql'),`${migration}\n${seed}\nINSERT INTO admin_sessions(id,expires_at) VALUES('${sessionId}',${Math.floor(Date.now()/1000)+3600});\n`);
+  const damaged=['desktop-chromium','mobile-chromium'].map(name=>`INSERT INTO snapshots(id,reason,created_at,document,sha256) VALUES('damaged-${name}','Damaged test snapshot','2026-09-27T00:00:00.000Z','{}','${createHash('sha256').update('{}').digest('hex')}');`).join('\n');
+  await writeFile(resolve(project,'fixture.sql'),`${migration}\n${seed}\n${damaged}\nINSERT INTO admin_sessions(id,expires_at) VALUES('${sessionId}',${Math.floor(Date.now()/1000)+3600});\n`);
   const persist=resolve(project,'state');
   await run(['d1','execute','DB','--local','--file','fixture.sql','--persist-to',persist]);
+  // Test-only fault injection locates this exact disposable database. The app
+  // has no HTTP endpoint or configuration switch that bypasses validation.
+  await writeFile(fixtureStateFile,JSON.stringify({project}));
   await run(['pages','dev','dist','--ip','127.0.0.1','--port','4173','--local-protocol','https','--persist-to',persist]);
 } finally {
+  await rm(fixtureStateFile,{force:true});
   await rm(project,{recursive:true,force:true});
 }

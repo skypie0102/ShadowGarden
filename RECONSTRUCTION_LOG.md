@@ -268,12 +268,46 @@ perform real-browser and provider integration checks before switching traffic.
   The two original recovery archives remain the evidence source; no private
   EPUBs, original server source or new production credentials were recovered.
 
-## Current resume point — 2026-09-27
+## 2026-09-28 — snapshot integrity and usable recovery
+
+- Reproduced malformed-snapshot failures in the replacement backend: maintenance
+  could crash while listing one, and a checksummed but invalid document could
+  be written to the live catalog before the restore response failed.
+- Added shared validation for the reconstructed catalog shape, unique active
+  identities, private media coordinates and embedded trash records. Missing
+  original private mappings are still allowed as metadata; no keys were invented.
+  Invalid snapshots are listed as damaged and rejected before restore, while
+  explicit deletion can remove the selected damaged snapshot.
+- Kept authenticated history, readiness and the existing snapshot restore action
+  available when live data is unreadable. Ordinary catalog access fails with a
+  clear error. A valid restore retains revision protection and atomically saves
+  the exact damaged record in a safety snapshot. Keeper shows unknown counts and
+  unavailable checks instead of reporting an empty or healthy catalog.
+- Reproduced false readiness for snapshots containing missing trash-only books.
+  Readiness now includes recoverable Trash, validates structure and checksums,
+  accepts exact static image assets for recovered covers, and requires B2 for
+  EPUBs. It counts all uninspected snapshots as uncertain, including after an
+  early match. Damaged live data reports recovery required even with an anchor.
+- All seven new regression cases failed against the previous implementation.
+  The corrected backend/client suite passes 34 tests, and the asset audit,
+  static build and Functions compilation pass locally. The fourteen-case
+  desktop/mobile suite now exercises damaged snapshot deletion and restores a
+  deliberately damaged catalog in its isolated D1 fixture. CI verification and
+  review of the new recovery captures are pending publication.
+- Preserved all 148 recovered files; 140 remain byte-identical. History and
+  maintenance add two documented script changes; the existing trash adaptation
+  now distinguishes unreadable metadata from an empty Trash. No new original
+  backend source, EPUBs, private mappings or production bindings were recovered.
+  These changes improve the inferred replacement; permanent purge and the
+  undocumented recovery POST remain explicitly unavailable.
+
+## Current resume point — 2026-09-28
 
 The archive-based source reconstruction and this browser/visual audit checkpoint
-are published on `skypie0102/ShadowGarden` main. The reader correction is
-`6680298`; the verified capture harness is `a0b4632`. All 148 recovered files
-remain present, 142 byte-identical, with six documented browser-script edits.
+are published on `skypie0102/ShadowGarden` main at `d6ef996`. The recovery
+integrity work described above is ready for publication and CI verification.
+All 148 recovered files remain present, 140 byte-identical, with eight documented
+browser-script edits.
 All 15 observed route paths are implemented, with the two unavailable operations
 explicitly returning 501.
 

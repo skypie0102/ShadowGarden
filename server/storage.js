@@ -12,6 +12,14 @@ export function objectKey(value, kind = '') {
 }
 export const mimeFor = key => key.endsWith('.epub') ? 'application/epub+zip' : /\.webp$/i.test(key) ? 'image/webp' : /\.png$/i.test(key) ? 'image/png' : /\.gif$/i.test(key) ? 'image/gif' : 'image/jpeg';
 export function storageConfigured(env) { return ['B2_APPLICATION_KEY_ID','B2_APPLICATION_KEY','B2_BUCKET_ID','B2_BUCKET_NAME'].every(k=>Boolean(env[k])); }
+export async function getStaticCover(env,key,{head=false,origin}={}) {
+  if (!key.startsWith('shadow-garden/covers/') || !env.ASSETS) return null;
+  objectKey(key,'cover');
+  const response=await env.ASSETS.fetch(new Request(new URL(`/media/${key}`,origin),{method:head?'HEAD':'GET'}));
+  if (response.ok && /^image\/(?:webp|png|jpeg|gif)(?:;|$)/i.test(response.headers.get('content-type') || '')) return response;
+  await response.body?.cancel();
+  return null;
+}
 function providerUrl(value) {
   let url; try { url = new URL(value); } catch { fail(502,'storage_error','Storage returned an invalid endpoint.'); }
   if (url.protocol !== 'https:' || !url.hostname.endsWith('.backblazeb2.com') || url.username || url.password || url.port) fail(502,'storage_error','Storage returned an invalid endpoint.');

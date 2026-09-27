@@ -1,24 +1,34 @@
 import recovered from './recovered-state.js';
 import {database, digest} from './security.js';
 import {fail} from './http.js';
+import {catalogError, inspectCatalog} from './catalog-document.js';
 
 export function counts(doc) {
   return {mainSeries:doc.main.length,adultSeries:doc.adult.length,series:doc.main.length+doc.adult.length,
     volumes:[...doc.main,...doc.adult].reduce((sum,s)=>sum+s.volumes.length,0)};
 }
-export async function loadState(env, {writable = false} = {}) {
+export async function loadStateRecord(env, {writable = false} = {}) {
   if (!env.DB) {
     if (writable) database(env);
-    return {revision:-1,document:structuredClone(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
+    return {revision:-1,serialized:JSON.stringify(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
   }
   const row=await env.DB.prepare('SELECT revision,document,updated_at FROM library_state WHERE id = 1').first();
   if (!row) {
     if (writable) fail(503,'database_not_seeded','Apply the reconstruction migration and explicit catalog seed first.');
-    return {revision:-1,document:structuredClone(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
+    return {revision:-1,serialized:JSON.stringify(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
   }
-  return {...row,serialized:row.document,document:JSON.parse(row.document),source:'reconstructed-d1'};
+  return {revision:row.revision,serialized:row.document,updated_at:row.updated_at,source:'reconstructed-d1'};
+}
+export function readableState(row) {
+  const result=inspectCatalog(row.serialized);
+  if (result.error) fail(503,'catalog_damaged','The stored catalog is damaged. Open Keeper maintenance to restore a valid snapshot.');
+  return {...row,document:result.document};
+}
+export async function loadState(env,options) {
+  return readableState(await loadStateRecord(env,options));
 }
 export async function saveState(env,previous,document,reason) {
+  if (catalogError(document)) fail(409,'catalog_invalid','Catalog data failed structural validation; nothing was saved.');
   const db=database(env),id=crypto.randomUUID(),date=new Date().toISOString();
   const old=previous.serialized || JSON.stringify(previous.document),next=JSON.stringify(document);
   if (new TextEncoder().encode(next).length > 1500000) fail(413,'catalog_too_large','Catalog exceeds the reconstructed storage limit.');
@@ -32,6 +42,10 @@ export async function saveState(env,previous,document,reason) {
 export async function snapshots(env) {
   const result=await database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots ORDER BY created_at DESC LIMIT 200').all();
   return result.results || [];
+}
+export async function inspectSnapshot(row) {
+  if (await digest(row.document)!==row.sha256) return {document:null,error:'Snapshot checksum verification failed.'};
+  return inspectCatalog(row.document);
 }
 export function adminLibrary(row) {
   const doc=structuredClone(row.document);

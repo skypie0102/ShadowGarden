@@ -5,3 +5,4 @@ export const sessionSecret='browser-fixture-session-secret-not-for-deployment';
 export const sessionId='browser-fixture-session';
 export const bookId='bk_A2yCOKedG1g4xXTJJhbEzA';
 export const seriesId='adult-adolescent-adam';
+export const fixtureStateFile=new URL('../../.wrangler/browser-fixture.json',import.meta.url);

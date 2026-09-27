@@ -27,7 +27,7 @@
       if(!list)return;if(!items.length){list.innerHTML='<div class="maintenance-empty maintenance-good">No long maintenance work is pending.</div>';return}
       list.innerHTML=items.map(item=>{const status=item.status==="running"?"RUNNING":item.status==="queued"?"QUEUED":item.status==="done"?"DONE":"FAILED",kind=item.status==="failed"?"error":item.status==="done"?"ready":"",remove=item.status==="queued"?`<button type="button" class="admin-secondary compact-button" data-remove-maintenance-operation="${safe(item.id)}">Remove</button>`:"";return `<div class="maintenance-item maintenance-operation-item" data-operation-status="${safe(item.status)}"><div class="maintenance-item-copy"><strong>${safe(item.label)}</strong><span>${safe(item.detail||(item.status==="queued"?"Waiting for the current maintenance operation.":"Ready."))}</span></div><div class="maintenance-item-actions"><span class="state-pill ${kind}">${status}</span>${remove}</div></div>`}).join("");
     }
-    function renderDeepCheckControl(){const button=$("#deepHealthCheck"),state=operationState("deep");if(!button)return;button.disabled=Boolean(state)||!snapshot;button.textContent=state==="running"?"Checking B2…":state==="queued"?"Deep B2 check queued":"Deep B2 check"}
+    function renderDeepCheckControl(){const button=$("#deepHealthCheck"),state=operationState("deep");if(!button)return;button.disabled=Boolean(state)||!snapshot||snapshot.catalog?.readable===false;button.textContent=state==="running"?"Checking B2…":state==="queued"?"Deep B2 check queued":"Deep B2 check"}
     function renderOperationControls(){renderDeepCheckControl();if(snapshot){renderTaxonomy(snapshot);renderCovers(snapshot)}}
     function updateOperationDetail(kind,detail){if(activeOperation?.kind!==kind)return;activeOperation.detail=String(detail||"");renderOperationQueue()}
     function enqueueOperation(kind,label,run){
@@ -56,6 +56,7 @@
     }
     function renderTaxonomy(data){
       const audit=data?.taxonomy||{},stateEl=$("#taxonomyMaintenanceState"),detail=$("#taxonomyMaintenanceDetail"),preview=$("#taxonomyMaintenancePreview"),button=$("#normalizeCatalogTaxonomy"),count=Number(audit.affectedSeries)||0,queued=operationState("taxonomy");
+      if(data?.catalog?.readable===false){setPill(stateEl,"UNAVAILABLE","error");if(detail)detail.textContent="Restore a valid catalog snapshot to inspect taxonomy.";if(preview)preview.innerHTML="";if(button){button.disabled=true;button.textContent="Catalog recovery required"}return}
       setPill(stateEl,count?`${count} REVIEW`:"CURRENT",count?"":"ready");
       if(detail)detail.textContent=count?`${count} of ${audit.totalSeries||0} series will be normalized into ${audit.canonicalGenreCount||35} canonical genres plus descriptive tags. A backup is created before changes are written.`:`All ${audit.totalSeries||0} series already follow the canonical genre/tag taxonomy.`;
       if(preview)preview.innerHTML=arr(audit.preview).map(item=>`<div class="maintenance-item"><div class="maintenance-item-copy"><strong>${safe(item.title)}</strong><span>${safe([...arr(item.beforeGenres),...arr(item.beforeTags)].join(" · ")||"No taxonomy")} → ${safe([...arr(item.genres),...arr(item.tags)].join(" · ")||"No taxonomy")}</span></div></div>`).join("")||(count?'<div class="maintenance-empty">No preview rows available.</div>':'<div class="maintenance-empty maintenance-good">No taxonomy changes are pending.</div>');
@@ -63,6 +64,7 @@
     }
     function renderCovers(data){
       const candidates=arr(data?.health?.optimizationCandidates),stateEl=$("#coverMaintenanceState"),detail=$("#coverMaintenanceDetail"),button=$("#optimizeLegacyCovers"),queued=operationState("covers");
+      if(data?.catalog?.readable===false){setPill(stateEl,"UNAVAILABLE","error");if(detail)detail.textContent="Restore a valid catalog snapshot to inspect covers.";if(button){button.disabled=true;button.textContent="Catalog recovery required"}return}
       if(!candidates.length){setPill(stateEl,"CURRENT","ready");if(detail)detail.innerHTML='<span class="maintenance-good">All cataloged covers already have lightweight thumbnails.</span>';if(button){button.disabled=true;button.textContent="Covers are current"}return}
       setPill(stateEl,`${candidates.length} FOUND`);if(detail)detail.textContent=`${candidates.length} legacy cover${candidates.length===1?"":"s"} can be upgraded to a ~1000px WebP detail image plus a 480px WebP thumbnail.`;if(button){button.disabled=Boolean(queued);button.textContent=queued==="running"?"Optimizing…":queued==="queued"?"Cover optimization queued":`Optimize ${candidates.length} legacy cover${candidates.length===1?"":"s"}`}
     }
@@ -114,7 +116,7 @@
 
     view.addEventListener("click",event=>{const button=event.target.closest("[data-remove-maintenance-operation]");if(!button)return;const index=operationQueue.findIndex(item=>item.id===button.dataset.removeMaintenanceOperation);if(index<0)return;operationQueue.splice(index,1);renderOperationQueue();renderOperationControls()});
     $("#refreshMaintenance")?.addEventListener("click",()=>{invalidate();void load(true)});$("#deepHealthCheck")?.addEventListener("click",deepCheck);$("#normalizeCatalogTaxonomy")?.addEventListener("click",normalizeTaxonomy);$("#optimizeLegacyCovers")?.addEventListener("click",optimizeCovers);
-    keeper.events.addEventListener("maintenance:opened",()=>void load(true));keeper.events.addEventListener("trash:changed",invalidate);keeper.events.addEventListener("history:changed",invalidate);keeper.events.addEventListener("session:locked",()=>{invalidate();clearQueuedOperations()});
+    keeper.events.addEventListener("maintenance:opened",()=>void load(true));keeper.events.addEventListener("trash:changed",invalidate);keeper.events.addEventListener("history:changed",event=>{if(event.detail?.data)render(event.detail.data);else invalidate()});keeper.events.addEventListener("session:locked",()=>{invalidate();clearQueuedOperations()});
     renderOperationQueue();
     return{load,refresh:()=>load(true),invalidate,get snapshot(){return snapshot}};
   });
