@@ -318,13 +318,28 @@ perform real-browser and provider integration checks before switching traffic.
   limit and reproduced another undercount. Readiness now obtains the full count
   and only its newest three candidate documents in one SQLite query, preserving
   a consistent count while avoiding loading all retained snapshot payloads.
+- Published the completed recovery checkpoint as `887deb9`. Run `36353932405`
+  passed all 34 backend/client tests and all fourteen browser cases in 37.7
+  seconds, with no failures, flaky cases or skips. The remote tree
+  `211b20e3731ed5d326e79533f937f9894ae657ec` matched the local tested tree.
+  Both desktop/mobile recovery cases verified the five-volume catalog and the
+  exact damaged safety snapshot after restoration.
+- Downloaded artifact `10943312219` and verified its SHA-256
+  `afc51dc37f3f09d988f4c6d7e882051f2ba08b43064a61cd7b6ece8baea043fe`.
+  Reviewed the four new recovery viewport captures: damaged snapshot status,
+  disabled restore controls, unknown counts and recovery advice remain legible
+  at both sizes. The report also contains the ten established public/editor
+  captures. Updated the audit, API contracts, deployment guide and recovery
+  matrix with the verified outcome and unchanged original-resource gaps.
 
 ## Current resume point — 2026-09-28
 
 The archive-based source reconstruction and this browser/visual audit checkpoint
-are published on `skypie0102/ShadowGarden` main at `d2e943c`. The recovery
-integrity implementation has passed local checks and twelve browser cases;
-the fixture lookup correction and remaining verification are in progress.
+are published on `skypie0102/ShadowGarden` main. The verified recovery checkpoint
+is `887deb9`, with 34 backend/client tests and fourteen browser cases passing in
+run `36353932405`. Snapshot validation, damaged-live-catalog restoration and
+bounded recovery reporting are implemented and verified; the new recovery
+screens have been visually reviewed.
 All 148 recovered files remain present, 140 byte-identical, with eight documented
 browser-script edits.
 All 15 observed route paths are implemented, with the two unavailable operations

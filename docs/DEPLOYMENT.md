@@ -84,14 +84,14 @@ Run `npm run check` and `npm run test:browser`; test an actual Turnstile unlock 
 check unauthenticated admin and raw EPUB URLs are denied; test one upload,
 replacement, backup and restore against non-production B2/D1 resources; verify
 all five original EPUBs in the reader after restoring their mappings. Exercise
-desktop and mobile layouts with the real books in a browser. GitHub CI has passed
-ten desktop/mobile Chromium cases against real local HTTPS Pages/D1. The expanded
-fourteen-case suite adds damaged snapshot management and live-catalog recovery;
-its new cases await CI verification. Fault injection touches only the harness's
-disposable database. Those cases use fixture sessions and test the missing-book
-error, not original EPUB content. Ten captures
-from run `36316245127` were visually reviewed on both screen sizes, including
-the corrected terminal reader error state; see [the audit](AUDIT.md). Live
+desktop and mobile layouts with the real books in a browser. GitHub CI passed
+all fourteen desktop/mobile Chromium cases against real local HTTPS Pages/D1
+in run `36353932405`. The suite includes damaged snapshot management and
+live-catalog recovery. Fault injection touches only the harness's disposable
+database. Cases use fixture sessions and test the missing-book error, not
+original EPUB content. Ten captures from run `36316245127` and four new recovery
+captures from `36353932405` were visually reviewed on both screen sizes;
+see [the audit](AUDIT.md). Live
 Turnstile/B2, production fonts and original-book rendering remain separate
 checks. CI retains successful-page screenshots for seven days.
 

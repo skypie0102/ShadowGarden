@@ -12,15 +12,15 @@
 | Private book-to-object map | Missing | Private catalog export or B2 inventory matched to known IDs |
 | Production secrets/bindings | Missing | Configure through the owner's Cloudflare/B2 accounts |
 | Original backups/trash | Missing | Export from original storage before changing retention |
-| Replacement snapshot integrity and damaged-catalog recovery | Implemented; 7 new regression cases pass locally | Expanded desktop/mobile recovery verification pending CI |
+| Replacement snapshot integrity and damaged-catalog recovery | Verified; 7 new backend regressions and 4 desktop/mobile cases pass | New reconstruction behavior; original storage schema/history still missing |
 | Original security telemetry/policy | Missing | Original code/configuration; basic replacement is documented |
-| Browser/Pages/D1 workflow verification | Ten cases verified in CI; fourteen-case expansion pending | Live provider tests and actual EPUB rendering still require original private resources |
-| Recovered-screen visual review | Reviewed (10 fixture captures) | Run 36316245127; real books and production fonts remain outside this scope |
+| Browser/Pages/D1 workflow verification | Verified in CI (14 cases), run 36353932405 | Live provider tests and actual EPUB rendering still require original private resources |
+| Recovered-screen visual review | Reviewed (10 earlier captures plus 4 recovery captures) | Runs 36316245127 and 36353932405; real books and production fonts remain outside this scope |
 | Original-book reader verification | Outstanding | Restore the five EPUBs and mappings, then check reading and navigation with live services |
 | Permanent B2 purge | Unavailable | Verify object reachability and original retention semantics first |
 | Undocumented recovery POST | Unavailable | Recover its request/response contract and mutation semantics |
 | Git history before recovery | Missing | An original Git clone/bundle or accessible GitHub repository |
-| Target repository | Published and verified | skypie0102/ShadowGarden main; browser/visual checkpoint a0b4632, CI passed |
+| Target repository | Published and verified | skypie0102/ShadowGarden main; recovery checkpoint 887deb9, CI passed |
 
 No credential values, private object paths, file contents or historical commits
 were invented. Original public IDs and metadata were preserved.

@@ -14,14 +14,14 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 34/34 passed locally; CI verification of the recovery additions pending; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 34/34 passed locally and in run 36353932405; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
-| Real-browser workflow checks | Previous ten cases passed in run 36316245127; expanded fourteen-case recovery suite awaiting CI |
-| Manual visual review | Ten desktop/mobile fixture captures reviewed; reader error-state correction confirmed; scope below |
+| Real-browser workflow checks | 14/14 passed in run 36353932405 at 887deb9; zero failed, flaky or skipped cases |
+| Manual visual review | Previous ten fixture captures reviewed; four new desktop/mobile recovery captures reviewed in run 36353932405; scope below |
 | Original EPUB rendering | Unverified; original books and mappings remain missing |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
@@ -84,7 +84,9 @@ production equivalence or complete private-data recovery**.
     candidates after an early match were undercounted. Readiness now checks
     active and trash references, accepts only image asset responses for covers,
     requires B2 for EPUBs, and reports every uninspected candidate as uncertain.
-    A damaged live record always reports recovery required.
+    Retained totals include history beyond the panel's 200-item display limit;
+    only the newest three candidate payloads are loaded for readiness. A damaged
+    live record always reports recovery required.
 
 ## Important remaining limits
 
@@ -206,3 +208,31 @@ Artifact `10931210518` (`browser-report`) was downloaded and its SHA-256
 verified before review. GitHub reports expiry on 2026-10-04; later CI runs
 regenerate the same evidence types. Original EPUB rendering, production fonts,
 live Turnstile and real B2/D1 integration remain outside this fixture review.
+
+## Recovery verification completed 2026-09-28
+
+[Run 36353932405](https://github.com/skypie0102/ShadowGarden/actions/runs/36353932405)
+at [887deb9](https://github.com/skypie0102/ShadowGarden/commit/887deb930e81a3bfab4699714d08876663dd80ec)
+passed all 34 backend/client tests and fourteen browser cases in 37.7 seconds.
+The report records fourteen expected results, no unexpected failures, flaky
+cases or skips. The remote source tree `211b20e3731ed5d326e79533f937f9894ae657ec`
+matched the local tree exactly.
+
+The two added workflows run at both screen sizes. They verify that damaged
+snapshots remain visible, cannot be restored, and can be individually deleted;
+then deliberately damage the isolated fixture's live catalog and restore a
+valid snapshot through the real Keeper interface. The tests verify unknown
+counts, unavailable checks, recovery-required status, successful restore,
+re-enabled controls, all five recovered volumes and an exact damaged safety copy.
+Fault injection selects only the harness-created database containing its fixture
+session; no app endpoint bypasses catalog validation.
+
+Reviewed the four new viewport captures. Damaged snapshot labels, disabled
+restore controls, available delete controls, unknown counts and catalog-recovery
+advice are legible on desktop and mobile. This extends the previous five-screen
+review; it does not establish an original screenshot baseline or verify every
+maintenance state. Provider requests remain fixtures, and real EPUBs are absent.
+
+Artifact `10943312219` contains fourteen successful-page captures. Its downloaded
+SHA-256 is `afc51dc37f3f09d988f4c6d7e882051f2ba08b43064a61cd7b6ece8baea043fe`,
+matching GitHub's digest. GitHub reports expiry on 2026-10-04 UTC.
