@@ -13,11 +13,24 @@ const post=(request,path,data,revision)=>request.post(path,{headers:{...auth,'if
 async function capture(page,name,{fullPage=true}={}) {
   // Keep successful render evidence as well as failure screenshots. Reviewers
   // can inspect the real recovered layouts even when local Chromium is absent.
-  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.evaluate(async()=>{
+    await window.__sgPageReveal;
+    window.scrollTo(0,0);
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    await Promise.allSettled(document.getAnimations().filter(animation=>Number.isFinite(animation.effect?.getComputedTiming().endTime)).map(animation=>animation.finished));
+  });
   await test.info().attach(name,{body:await page.screenshot({fullPage,animations:'disabled'}),contentType:'image/png'});
 }
 
 test.beforeEach(async({page})=>{
+  await page.addInitScript(()=>{
+    // Cross-document view transitions can expose a blank compositor frame even
+    // after DOM visibility checks pass. Await their actual completion in captures.
+    window.__sgPageReveal=Promise.resolve();
+    window.addEventListener('pagereveal',event=>{
+      window.__sgPageReveal=event.viewTransition?.finished.catch(()=>{})||Promise.resolve();
+    });
+  });
   const errors=[];
   page.on('pageerror',error=>errors.push(error.message));
   page.__runtimeErrors=errors;

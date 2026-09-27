@@ -239,3 +239,13 @@ perform real-browser and provider integration checks before switching traffic.
   and the combined local backend/client suite had passed all 27 tests.
 - Resuming publication and browser verification of that exact reader fix. No
   original private resources have become available since the previous checkpoint.
+
+- Published the reader fix as `6680298`; run `36316012764` passed all 27
+  backend/client tests and all ten browser cases (25.3 seconds, no retries).
+  The source tree `6ca19a3b6a9c69e9ee235b0a6040ccf9ca9d9cb9` exactly matched
+  the local tested tree. Refreshed reader captures confirm that late preparation
+  leaves the terminal header and complete recovery advice intact at both sizes.
+- One desktop acknowledgement screenshot captured a blank transition frame,
+  although the workflow passed. Capture readiness now awaits the actual
+  cross-document transition and finite animations before saving screenshots.
+  This changes the harness only; application motion behavior is preserved.
