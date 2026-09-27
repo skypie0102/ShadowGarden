@@ -308,6 +308,16 @@ perform real-browser and provider integration checks before switching traffic.
   The helper now inspects candidates read-only and selects the unique database
   containing the disposable session. Application behavior is unchanged by this
   harness correction; the two live-recovery cases still await verification.
+- Run `36353672642` at `9222d74` reached live-catalog recovery successfully on
+  both screen sizes: the restore returned 200, volume count returned to five and
+  backup creation was re-enabled. Both cases then failed on an overly specific
+  empty-Trash caption assertion: the recovered flavor script rewrites that text.
+  The test now checks the empty count and healthy empty-state element, leaving
+  the recovered presentation unchanged.
+- Extended the retained-count regression past the history panel's 200-entry
+  limit and reproduced another undercount. Readiness now obtains the full count
+  and only its newest three candidate documents in one SQLite query, preserving
+  a consistent count while avoiding loading all retained snapshot payloads.
 
 ## Current resume point — 2026-09-28
 

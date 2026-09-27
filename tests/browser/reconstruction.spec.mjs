@@ -200,7 +200,8 @@ test('Keeper restores a damaged live catalog through Catalog History in the real
     await restore.click();expect((await restored).status()).toBe(200);
     await expect(page.locator('#maintenanceVolumes')).toHaveText('5');
     await expect(page.locator('#createCatalogBackup')).toBeEnabled();
-    await expect(page.locator('#trashList')).toContainText('Trash is empty');
+    await expect(page.locator('#trashCount')).toHaveText('0');
+    await expect(page.locator('#trashList .maintenance-good')).toBeVisible();
     expect((await (await context.request.get('/admin-api/library',{headers:auth})).json()).adult).toEqual(initial.adult);
     const safety=database.prepare("SELECT document FROM snapshots WHERE reason = 'before-restore-backup' ORDER BY created_at DESC LIMIT 1").get();expect(safety.document).toBe('{}');
   } finally {

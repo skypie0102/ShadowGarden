@@ -104,9 +104,9 @@ test('readiness verifies recovered static covers and checks protected EPUBs only
 
 test('readiness counts every uninspected snapshot and accepts an empty snapshot without storage',async()=>{
   const env=fixture(),headers=await adminHeaders(env);
-  for(let i=0;i<4;i++)await snapshot(env,empty(),{date:`2026-09-27T00:00:0${i}.000Z`});
+  for(let i=0;i<201;i++)await snapshot(env,empty(),{date:new Date(Date.UTC(2026,8,27,0,0,i)).toISOString()});
   const report=await readReport(env,headers);assert.equal(report.readiness.status,'ready');assert.equal(report.readiness.anchor.objectCount,0);
-  assert.equal(report.summary.total,4);assert.equal(report.summary.verified,1);assert.equal(report.readiness.uncertainSnapshots,3);
+  assert.equal(report.summary.total,201);assert.equal(report.summary.verified,1);assert.equal(report.readiness.uncertainSnapshots,200);
   env.DB.sqlite.prepare("UPDATE library_state SET document = '{}' WHERE id = 1").run();
   const damaged=await readReport(env,headers);assert.equal(damaged.readiness.status,'recovery-required');assert.ok(damaged.readiness.anchor);
 });

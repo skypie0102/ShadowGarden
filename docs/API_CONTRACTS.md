@@ -61,6 +61,9 @@ present. Recovered static images count only when the asset response is an image;
 EPUBs never use the static fallback. The separate Deep B2 check remains B2-only.
 An empty snapshot needs no provider access. Uninspected snapshots, provider
 failures and over-limit candidates remain uncertain.
+The history panel displays the newest 200 entries. Readiness counts the entire
+retained history in the same query that loads its newest three candidates; its
+totals do not inherit the panel's display limit or load older document payloads.
 
 ## Reconstructed security policy
 

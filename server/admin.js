@@ -1,6 +1,6 @@
 import {bodyJson, boundedBytes, fail, json, method, required, safeUrl, text} from './http.js';
 import {database, digest, now, requireAdmin} from './security.js';
-import {adminLibrary, counts, inspectSnapshot, loadState, loadStateRecord, readableState, saveState, snapshots} from './state.js';
+import {adminLibrary, counts, inspectSnapshot, loadState, loadStateRecord, readableState, recoverySnapshots, saveState, snapshots} from './state.js';
 import {inspectCatalog} from './catalog-document.js';
 import {activeBooks, bookIdForKey} from './books.js';
 import {getObject, getStaticCover, objectKey, storageConfigured, uploadObject} from './storage.js';
@@ -257,7 +257,7 @@ export async function backup(context) {
 }
 export async function readiness(context) {
   method(context.request,['GET']);await requireAdmin(context);
-  const row=await loadStateRecord(context.env,{writable:true}),live=inspectCatalog(row.serialized),saved=await snapshots(context.env);
+  const row=await loadStateRecord(context.env,{writable:true}),live=inspectCatalog(row.serialized),{entries:saved,total}=await recoverySnapshots(context.env);
   let verified=0,damaged=0,uncertain=0,stale=0,inspected=0,anchor=null;
   // Inspect at most 3 complete snapshots and 75 media keys per request.
   for (const snapshot of saved.slice(0,3)) {
@@ -269,8 +269,8 @@ export async function readiness(context) {
     try {const result=await checkObjects(context.env,report.objectKeys,{includeAssets:true,origin:new URL(context.request.url).origin});if (!result.missing.length) {anchor={id:snapshot.id,reason:snapshot.reason,verified:true,objectCount:result.checked};break;}stale++;}
     catch {uncertain++;}
   }
-  uncertain+=saved.length-inspected;
-  return json({ok:true,summary:{total:saved.length,verified,damaged},
+  uncertain+=total-inspected;
+  return json({ok:true,summary:{total,verified,damaged},
     live:{entries:['main','adult'].map(scope=>({scope,readable:!live.error,detail:live.error||`${live.document[scope].length} series; ${row.source}`}))},
     readiness:{status:live.error?'recovery-required':anchor?'ready':'not-ready',anchor,staleSnapshots:stale,uncertainSnapshots:uncertain,
       detail:live.error?(anchor?'The live catalog is damaged. A verified recovery snapshot is available in Catalog History.':'The live catalog is damaged and no object-complete recovery snapshot was proven. Inspect Catalog History and restore missing media separately.'):

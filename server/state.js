@@ -43,6 +43,13 @@ export async function snapshots(env) {
   const result=await database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots ORDER BY created_at DESC LIMIT 200').all();
   return result.results || [];
 }
+export async function recoverySnapshots(env) {
+  // Count the full history while loading only the bounded candidates. Both
+  // values come from one statement, including during concurrent history edits.
+  const result=await database(env).prepare('SELECT id,reason,created_at,document,sha256,COUNT(*) OVER () AS retained_count FROM snapshots ORDER BY created_at DESC LIMIT 3').all();
+  const entries=result.results || [];
+  return {entries,total:entries[0]?.retained_count || 0};
+}
 export async function inspectSnapshot(row) {
   if (await digest(row.document)!==row.sha256) return {document:null,error:'Snapshot checksum verification failed.'};
   return inspectCatalog(row.document);
