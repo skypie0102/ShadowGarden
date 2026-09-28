@@ -14,14 +14,14 @@ production equivalence or complete private-data recovery**.
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 47/47 passed locally; new purge/recovery CI pending; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 47/47 passed locally and in run 36375221866; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
 | Local D1 migration and seed | Passed under Wrangler; no remote database touched |
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
-| Real-browser workflow checks | 14/14 passed in run 36353932405 at 887deb9; zero failed, flaky or skipped cases |
-| Manual visual review | Previous ten fixture captures reviewed; four new desktop/mobile recovery captures reviewed in run 36353932405; scope below |
+| Real-browser workflow checks | 14/14 passed in run 36375221866 at be25028; zero failed, flaky or skipped cases |
+| Manual visual review | Established public/recovery views plus four new purge/recovery-control captures reviewed; latest run 36375221866; scope below |
 | Original EPUB rendering | Out of scope: owner confirmed disposable test data; original files are not a recovery gate |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
@@ -244,3 +244,35 @@ maintenance state. Provider requests remain fixtures, and real EPUBs are absent.
 Artifact `10943312219` contains fourteen successful-page captures. Its downloaded
 SHA-256 is `afc51dc37f3f09d988f4c6d7e882051f2ba08b43064a61cd7b6ece8baea043fe`,
 matching GitHub's digest. GitHub reports expiry on 2026-10-04 UTC.
+
+
+## Purge and recovery completion verified 2026-09-28
+
+[Run 36375221866](https://github.com/skypie0102/ShadowGarden/actions/runs/36375221866)
+at [be25028](https://github.com/skypie0102/ShadowGarden/commit/be25028ca67f39db45f4dfa97a45901b3f9bf9de)
+passed all 47 backend/client tests, the audit, static build, Functions compilation
+and all fourteen desktop/mobile cases in 33.8 seconds. Browser results have no
+unexpected failures, flaky cases or skips. Remote source tree
+`b6b7473c97c36fa493fe8d6c5c239961342e4a74` matched the tested local tree.
+
+The purge workflow removed a real fixture Trash entry, resumed bounded cleanup
+through Keeper, retained all ten bundled covers, and restored the five-volume
+fixture from a retained snapshot. The recovery workflow restored a damaged live
+catalog through the new recovery POST and verified its exact safety copy. Both
+migrations ran in real local D1 under Pages in CI. Mock-provider regressions
+cover older B2 versions, neighbouring keys, partial failure, Object Lock, stale
+requests, references in old/damaged snapshots, in-flight uploads, concurrent
+adoption, request budgets and abandoned job leases. No live B2 deletion occurred.
+
+Reviewed four new desktop/mobile viewport captures of completed cleanup and the
+recovery action. Counts and explanatory text remain readable; controls fit both
+viewports, with mobile actions stacked. Report artifact `10950078953` contains
+18 successful-page captures. Its downloaded SHA-256
+`4aeee997db1a8ddc4e5f1335c482a190ab1bab363e14194ffb7f5099fc416d5d`
+matched GitHub's digest; expiry is 2026-10-05 UTC.
+
+The five original EPUBs are disposable test data per the owner and are no longer
+a completion gate. Reconstruction code is complete under the documented
+replacement contracts. Production deployment requires migration 0002, configured
+secrets/bindings and a B2 key with the required capabilities. Live provider
+integration remains a deployment check, not a claim made by fixture tests.

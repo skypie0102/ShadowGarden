@@ -354,16 +354,27 @@ contracts instead of waiting for unrecovered original retention policies.
   compilation. All 148 recovered files remain present, 139 byte-identical with
   nine documented browser-script edits. Browser CI and new visual review follow.
 
-## Current resume point — 2026-09-28
+## Completion checkpoint — 2026-09-28
 
-Purge and recovery implementations are complete locally with 47 passing tests.
-The desktop/mobile suite now exercises real purge/continuation controls and the
-recovery POST in its disposable Pages/D1 fixture. Publish the current changes to
-`skypie0102/ShadowGarden` main, verify CI, review the new captures and record the
-outcome. Earlier checkpoint 887deb9 passed 34 backend/client and fourteen browser
-cases in run 36353932405. Original test EPUBs are explicitly out of scope.
+Published implementation `be25028` to `skypie0102/ShadowGarden` main. The remote
+source tree `b6b7473c97c36fa493fe8d6c5c239961342e4a74` matches the tested local tree.
+Run `36375221866` passed all 47 backend/client tests, the asset audit, build,
+Functions compilation and all fourteen desktop/mobile browser cases in 33.8
+seconds. No failed, flaky or skipped browser cases remain. The real Pages/D1
+fixture verifies purge, continuation, retained covers and snapshot recovery.
+
+Downloaded report artifact `10950078953`; verified SHA-256
+`4aeee997db1a8ddc4e5f1335c482a190ab1bab363e14194ffb7f5099fc416d5d`.
+Reviewed the four new purge/recovery-action captures at both viewport sizes.
+The report contains 18 successful-page captures and expires 2026-10-05 UTC.
+
+The requested reconstruction and remaining code fixes are complete under the
+documented replacement contracts. Both previous 501 operations now work. The
+five original test EPUBs are explicitly out of scope. All 148 recovered files
+remain, 139 byte-identical, with nine documented browser-script adaptations.
 
 Production setup still needs owner-provided Cloudflare/B2/Turnstile resources.
 Apply all migrations, including 0002, before deployment; supply scoped B2
-list/delete capabilities for explicit cleanup. No production deployment or
-remote database mutation has been performed by this reconstruction.
+list/delete capabilities for explicit cleanup. No production deployment,
+remote database mutation or live B2 deletion was performed. The documentation
+commit following be25028 records this verified outcome without changing code.

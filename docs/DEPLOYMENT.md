@@ -52,6 +52,7 @@ Set non-secret environment values `TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAME`
 (optional exact override), `B2_BUCKET_ID`, and `B2_BUCKET_NAME`. The widget must
 permit the actual hostname. Use bucket/prefix-scoped B2 keys with read/write
 capabilities, plus `listFiles` and `deleteFiles` for explicit media cleanup.
+Use a single-bucket application key compatible with B2 v2 authorization.
 Do not grant governance-bypass permission for cleanup. No account key, bucket identifier, widget key or original binding
 name was recovered from the public archive.
 

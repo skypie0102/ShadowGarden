@@ -166,6 +166,7 @@ larger candidates remain uncertain, not falsely verified.
 - [B2 account authorization](https://www.backblaze.com/apidocs/b2-authorize-account)
 - [B2 upload URL](https://www.backblaze.com/apidocs/b2-get-upload-url)
 - [B2 file upload](https://www.backblaze.com/apidocs/b2-upload-file)
+- [B2 API version compatibility](https://www.backblaze.com/docs/cloud-storage-native-api-versions)
 - [B2 file versions](https://www.backblaze.com/apidocs/b2-list-file-versions)
 - [B2 version deletion](https://www.backblaze.com/apidocs/b2-delete-file-version)
 
