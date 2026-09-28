@@ -121,6 +121,7 @@
 
     timeoutFor(path,method){
       if(String(path).startsWith("/admin-api/upload"))return 180000;
+      if(path==="/admin-api/maintenance"&&method==="POST")return 180000;
       if(path==="/admin-api/catalog"&&method==="POST")return 60000;
       if(path==="/admin-api/library"&&method==="GET")return 8000;
       return 30000;
@@ -176,7 +177,7 @@
       // (including banner/history refreshes) must not authorize a stale edit.
       const editor=method==="POST"&&/^\/admin-api\/(library|translations|series-banner)$/.test(path)&&payload?.id===this.#editor?.id?this.#editor:null;
       const revision=editor?editor.revision:this.#revision;
-      if(method==="POST"&&Number.isInteger(revision)&&!headers.has("if-match")&&/^\/admin-api\/(catalog|library|maintenance|translations|series-banner)$/.test(path))headers.set("if-match",String(revision));
+      if(method==="POST"&&Number.isInteger(revision)&&!headers.has("if-match")&&/^\/admin-api\/(catalog|library|maintenance|recovery|translations|series-banner)$/.test(path))headers.set("if-match",String(revision));
       const controller=options.signal?null:new AbortController(),timeoutMs=this.timeoutFor(path,method),timer=controller?setTimeout(()=>controller.abort(),timeoutMs):0;
       try{
         const response=await fetch(path,{...options,method,headers,body,credentials:"same-origin",cache:"no-store",signal:options.signal||controller?.signal});

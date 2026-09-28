@@ -40,7 +40,7 @@ for(const entry of provenance.files){
   const sha=createHash('sha256').update(await readFile(entry.path)).digest('hex');
   if(sha!==entry.sha256)modified.push(entry.path);
 }
-const deliberate=new Set(['public/assets/js/admin/core.js','public/assets/js/admin/trash-workflow.js','public/assets/js/admin/library-workflow.js','public/assets/js/admin/history-workflow.js','public/assets/js/admin/maintenance-workflow.js','public/assets/js/library.js','public/assets/js/reader-visual-cache.js','public/assets/js/reader/error-presentation.js']);
+const deliberate=new Set(['public/assets/js/admin/core.js','public/assets/js/admin/trash-workflow.js','public/assets/js/admin/recovery-readiness-workflow.js','public/assets/js/admin/library-workflow.js','public/assets/js/admin/history-workflow.js','public/assets/js/admin/maintenance-workflow.js','public/assets/js/library.js','public/assets/js/reader-visual-cache.js','public/assets/js/reader/error-presentation.js']);
 for(const path of modified)if(!deliberate.has(path))errors.push(`Undocumented change to recovered file ${path}`);
 const manifest=await readFile('recovery-info/FUNCTION_ROUTES.md','utf8');
 const routes=[...manifest.matchAll(/`(functions\/[^`:]+\.js)(?::[^`]*)?`/g)].map(m=>m[1]);
@@ -59,6 +59,6 @@ for(const name of ['catalog','adult-catalog']){
 }
 for(const path of await walk('functions'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 for(const path of await walk('server'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
-warnings.push(`${volumes} recovered EPUB identities have no recovered binaries or private mappings.`);
+// The owner confirmed these five books are disposable test fixtures, not a recovery gate.
 console.log(JSON.stringify({recoveredFiles:provenance.files.length,byteIdentical:provenance.files.length-modified.length,documentedModifications:modified,routes:routes.length,literalReferences:references.length,series,volumes,warnings,errors},null,2));
 if(errors.length)process.exitCode=1;

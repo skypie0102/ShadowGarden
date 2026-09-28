@@ -28,10 +28,15 @@ Do not apply this new schema to an unidentified original database.
 ## Database and secrets
 
 Create a new D1 database, bind it as `DB`, apply `migrations/`, and explicitly seed
-`recovery-info/seed.sql`. Seeding uses `INSERT OR IGNORE` and never overwrites an
+`recovery-info/empty-seed.sql` for a new library. Use `recovery-info/seed.sql`
+only when the recovered five-volume demo catalog is wanted. Seeding uses `INSERT OR IGNORE` and never overwrites an
 existing library. Local equivalents are in the README. For a configured remote
 target, use Wrangler D1 migration/execute commands with `--remote` and your
 production config after verifying the database name.
+
+Upgrades must apply `0002_media_purge.sql` before deploying the new Functions.
+It adds durable cleanup jobs, upload activity leases and retirement guards.
+The test harness applies both migrations to its disposable database.
 
 Set secrets through Cloudflare's secret controls, never Git:
 
@@ -46,10 +51,16 @@ Set secrets through Cloudflare's secret controls, never Git:
 Set non-secret environment values `TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAME`
 (optional exact override), `B2_BUCKET_ID`, and `B2_BUCKET_NAME`. The widget must
 permit the actual hostname. Use bucket/prefix-scoped B2 keys with read/write
-capabilities. No account key, bucket identifier, widget key or original binding
+capabilities, plus `listFiles` and `deleteFiles` for explicit media cleanup.
+Do not grant governance-bypass permission for cleanup. No account key, bucket identifier, widget key or original binding
 name was recovered from the public archive.
 
-## Restore private books
+## Optional legacy mapping import
+
+The owner confirmed that the five recovered book records were test data. Their
+EPUBs and mappings are not required to complete this reconstruction. New books
+can be uploaded normally, or a new library can start from the empty seed. The
+following procedure is optional if preserving a known legacy identity is useful.
 
 Obtain an authorized B2 object inventory or original private catalog/export.
 Match the five public book IDs to their real private EPUB objects. Do not invent
@@ -80,23 +91,18 @@ the referenced EPUB objects actually exist and are accessible using B2 first.
 
 ## Verification before production traffic
 
-Run `npm run check` and `npm run test:browser`; test an actual Turnstile unlock on the intended hostname;
-check unauthenticated admin and raw EPUB URLs are denied; test one upload,
-replacement, backup and restore against non-production B2/D1 resources; verify
-all five original EPUBs in the reader after restoring their mappings. Exercise
-desktop and mobile layouts with the real books in a browser. GitHub CI passed
-all fourteen desktop/mobile Chromium cases against real local HTTPS Pages/D1
-in run `36353932405`. The suite includes damaged snapshot management and
-live-catalog recovery. Fault injection touches only the harness's disposable
-database. Cases use fixture sessions and test the missing-book error, not
-original EPUB content. Ten captures from run `36316245127` and four new recovery
-captures from `36353932405` were visually reviewed on both screen sizes;
-see [the audit](AUDIT.md). Live
-Turnstile/B2, production fonts and original-book rendering remain separate
-checks. CI retains successful-page screenshots for seven days.
+Run `npm run check` and `npm run test:browser`; test an actual Turnstile unlock on
+the intended hostname and one authorized test EPUB upload/read/replace against
+non-production resources. Check unauthenticated admin and raw EPUB URLs are
+denied. Test backup, recovery and explicit purge with disposable media, including
+a B2 key lacking delete permission so retry reporting is verified. Original test
+EPUBs are not needed. The automated suite uses isolated sessions and B2 fixtures;
+real provider configuration remains a deployment check. See [the audit](AUDIT.md)
+for the latest verified CI and browser evidence.
 
 Keeper's Catalog History remains available when a live catalog is structurally
-damaged. A valid snapshot can be restored with a revision guard; the current
+damaged. A valid snapshot can be restored from Catalog History or Recovery Readiness;
+the recovery endpoint requires the displayed revision and snapshot checksum; the current
 record is retained byte-for-byte in a safety snapshot. Damaged snapshots are
 marked and cannot be restored, but may be explicitly deleted. Snapshot restore
 changes metadata only. Run recovery readiness to check media for both active
@@ -106,4 +112,6 @@ Retain the old Cloudflare deployment and B2 objects while validating the new
 project. The current D1 catalog is authoritative for this reconstruction; other
 consumers that directly read the original B2 catalog JSON will not see edits.
 Export D1 regularly alongside B2 inventory for an off-service backup. There is
-no reconstructed automatic remote backup job or media purge policy.
+no automatic remote backup job. Trash cleanup runs only on an explicit purge or
+continuation request; snapshots and referenced media remain protected. Failed
+cleanup is visible in Keeper and can resume after configuration is corrected.

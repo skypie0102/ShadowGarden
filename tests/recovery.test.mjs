@@ -122,3 +122,25 @@ test('snapshots cannot be object-complete while recoverable trash lacks mappings
   env.ASSETS.fetch=async()=>new Response(null,{headers:{'content-type':'image/webp'}});
   report=await readReport(env,headers);assert.equal(report.readiness.anchor,null);assert.equal(report.readiness.staleSnapshots,1);assert.deepEqual(seen,[key]);
 });
+
+test('recovery POST restores the chosen checksummed snapshot with an exact safety backup',async()=>{
+  const {recovery}=await import('../server/admin.js');
+  const env=fixture(),headers=await adminHeaders(env),original=await loadState(env);
+  await snapshot(env,original.document);env.DB.sqlite.prepare("UPDATE library_state SET document='{}'").run();
+  const report=await readReport(env,headers),candidate=report.readiness.candidate;
+  assert.equal(candidate.mediaStatus,'incomplete');assert.equal(report.revision,0);assert.equal(report.readiness.anchor,null);
+  const response=await call(recovery,context(env,'/admin-api/recovery','POST',{action:'restore-snapshot',id:candidate.id,sha256:candidate.sha256},{...headers,'if-match':String(report.revision)}));
+  assert.equal(response.status,200);assert.equal((await response.json()).recovery.restored,true);
+  assert.deepEqual((await loadState(env)).document,original.document);
+  const safety=env.DB.sqlite.prepare("SELECT document,sha256 FROM snapshots WHERE reason='before-recovery'").get();assert.equal(safety.document,'{}');assert.equal(safety.sha256,await digest('{}'));
+});
+
+test('recovery rejects stale revisions, changed checksums, damaged snapshots and unauthorized requests',async()=>{
+  const {recovery}=await import('../server/admin.js');
+  const env=fixture(),headers=await adminHeaders(env),before=await loadState(env),id=await snapshot(env,before.document);
+  const sha256=await digest(JSON.stringify(before.document)),payload={action:'restore-snapshot',id,sha256};
+  const post=(data=payload,extra={})=>call(recovery,context(env,'/admin-api/recovery','POST',data,{...headers,'if-match':'0',...extra}));
+  for(const [data,extra,status] of [[payload,{'if-match':''},428],[payload,{'if-match':'9'},409],[{...payload,sha256:'0'.repeat(64)},{},409],[{...payload,sha256:'invalid'},{},400],[payload,{authorization:''},401],[payload,{origin:'https://other.test'},403]])assert.equal((await post(data,extra)).status,status);
+  const damaged=await snapshot(env,{});assert.equal((await post({...payload,id:damaged,sha256:await digest('{}')})).status,409);
+  assert.deepEqual(await loadState(env),before);assert.equal(env.DB.sqlite.prepare('SELECT count(*) n FROM snapshots').get().n,2);
+});

@@ -141,7 +141,7 @@ test('the real admin form rejects stale edits after background reads and saves a
   expect((await (await context.request.get('/admin-api/library',{headers:auth})).json()).adult[0].title).toBe(original);
 });
 
-test('trash restore preserves the five-volume catalog in real D1 and permanent purge stays unavailable',async({page,context})=>{
+test('trash restore and permanent purge preserve retained media in real D1',async({page,context})=>{
   await openKeeper(page,context);
   const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
   const removed=await post(context.request,'/admin-api/library',{action:'delete-volume',id:seriesId,volumeIndex:0},initial.revision);
@@ -150,7 +150,23 @@ test('trash restore preserves the five-volume catalog in real D1 and permanent p
   const maintenance=await (await context.request.get('/admin-api/maintenance',{headers:auth})).json();
   const restored=await post(context.request,'/admin-api/maintenance',{action:'restore-trash',id:maintenance.trash[0].id},maintenance.revision);
   expect(restored.status()).toBe(200);const current=await restored.json();expect(current.health.counts.volumes).toBe(5);
-  expect((await post(context.request,'/admin-api/maintenance',{action:'purge-trash',ids:[]},current.revision)).status()).toBe(501);
+  const deleted=await post(context.request,'/admin-api/library',{action:'delete-volume',id:seriesId,volumeIndex:0},current.revision);expect(deleted.status()).toBe(200);
+  await page.locator('#openMaintenance').click();
+  const purge=page.locator('[data-purge-trash]').first();await expect(purge).toBeEnabled();
+  page.once('dialog',dialog=>dialog.accept());
+  const purged=page.waitForResponse(response=>response.url().endsWith('/admin-api/maintenance')&&response.request().method()==='POST');
+  await purge.click();const response=await purged;expect([200,202]).toContain(response.status());
+  let data=await response.json();expect(data.trash).toHaveLength(0);expect(data.purge.failed).toBe(0);
+  // Cover references embedded in old Trash metadata can span several bounded batches.
+  while(data.purge.pending){
+    const continued=page.waitForResponse(response=>response.url().endsWith('/admin-api/maintenance')&&response.request().method()==='POST');
+    await page.locator(`[data-continue-purge="${data.purge.id}"]`).click();data=await (await continued).json();
+  }
+  expect(data.purge.complete).toBe(true);expect(data.purge.staticAssets).toBeGreaterThan(0);
+  await expect(page.locator('#trashCleanupJobs')).toContainText('Cleanup complete');
+  await page.locator('#trashCleanupJobs').scrollIntoViewIfNeeded();await capture(page,'keeper-trash-cleanup',{fullPage:false});
+  const saved=data.backups.find(entry=>entry.reason==='delete-volume'&&entry.counts?.volumes===5);
+  expect((await post(context.request,'/admin-api/maintenance',{action:'restore-backup',id:saved.id},data.revision)).status()).toBe(200);
   await page.evaluate(()=>window.ShadowGardenKeeper.workflows.get('library').instance.refresh());
   await expect(page.locator('#manageVolumeCount')).toHaveText('5');
 });
@@ -172,7 +188,7 @@ test('Catalog History marks damaged snapshots and permits deleting only the sele
   expect(await (await context.request.get('/admin-api/library',{headers:auth})).json()).toEqual(before);
 });
 
-test('Keeper restores a damaged live catalog through Catalog History in the real Pages runtime',async({page,context})=>{
+test('Keeper restores a damaged live catalog through snapshot recovery in the real Pages runtime',async({page,context})=>{
   await openKeeper(page,context);
   const initial=await (await context.request.get('/admin-api/library',{headers:auth})).json();
   const reason=`recovery-ui-${test.info().project.name}`;
@@ -194,16 +210,17 @@ test('Keeper restores a damaged live catalog through Catalog History in the real
     await expect(page.locator('#recoveryReadinessState')).toHaveText('RECOVER NOW');
     await page.locator('#gardenHealthCard').scrollIntoViewIfNeeded();
     await capture(page,'keeper-catalog-recovery',{fullPage:false});
-    const restore=page.locator(`[data-restore-backup="${id}"]`);await expect(restore).toBeEnabled();
+    const restore=page.locator("#restoreRecoverySnapshot");await expect(restore).toBeEnabled();
+    await restore.scrollIntoViewIfNeeded();await capture(page,"keeper-recovery-snapshot",{fullPage:false});
     page.once('dialog',dialog=>dialog.accept());
-    const restored=page.waitForResponse(response=>response.url().endsWith('/admin-api/maintenance')&&response.request().method()==='POST');
+    const restored=page.waitForResponse(response=>response.url().endsWith('/admin-api/recovery')&&response.request().method()==='POST');
     await restore.click();expect((await restored).status()).toBe(200);
     await expect(page.locator('#maintenanceVolumes')).toHaveText('5');
     await expect(page.locator('#createCatalogBackup')).toBeEnabled();
     await expect(page.locator('#trashCount')).toHaveText('0');
     await expect(page.locator('#trashList .maintenance-good')).toBeVisible();
     expect((await (await context.request.get('/admin-api/library',{headers:auth})).json()).adult).toEqual(initial.adult);
-    const safety=database.prepare("SELECT document FROM snapshots WHERE reason = 'before-restore-backup' ORDER BY created_at DESC LIMIT 1").get();expect(safety.document).toBe('{}');
+    const safety=database.prepare("SELECT document FROM snapshots WHERE reason = 'before-recovery' ORDER BY created_at DESC LIMIT 1").get();expect(safety.document).toBe('{}');
   } finally {
     // A failed assertion must not leave the shared fixture broken for later cases.
     if(database.prepare('SELECT document FROM library_state WHERE id = 1').get().document==='{}')database.prepare('UPDATE library_state SET document = ?, revision = revision+1 WHERE id = 1').run(before.document);

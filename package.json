@@ -15,7 +15,8 @@
     "check": "npm run audit && npm test && npm run build && npm run check:functions",
     "check:functions": "wrangler pages functions build functions --outdir .wrangler/compiled",
     "db:local": "wrangler d1 migrations apply DB --local",
-    "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql"
+    "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql",
+    "seed:empty": "wrangler d1 execute DB --local --file recovery-info/empty-seed.sql"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

@@ -332,21 +332,38 @@ perform real-browser and provider integration checks before switching traffic.
   captures. Updated the audit, API contracts, deployment guide and recovery
   matrix with the verified outcome and unchanged original-resource gaps.
 
+## Remaining operations completed — 2026-09-28
+
+The owner clarified that the five EPUBs were disposable tests and requested that
+remaining code issues be resolved. Implemented replacement purge and recovery
+contracts instead of waiting for unrecovered original retention policies.
+
+- Added migration 0002 with durable cleanup jobs, atomic reference checks and
+  permanent media retirements. Live catalog, all retained snapshots (including
+  damaged/old ones), active uploads and bundled assets protect referenced bytes.
+- Purge removes selected Trash under an explicit revision guard. B2 cleanup
+  processes exact-name versions in bounded, resumable batches, respects provider
+  retention and never claims failed deletions succeeded. Keeper exposes progress,
+  failure detail and retry controls. No production objects were deleted.
+- Recovery POST validates the selected snapshot ID/checksum and live revision,
+  then atomically restores metadata with an exact safety copy. Keeper offers the
+  validated candidate even when its media is incomplete. Both old 501 stubs are gone.
+- Added optional empty initialization without overwriting existing data. The
+  recovered demo seed remains available and is used by the isolated browser suite.
+- Local checks pass 47 backend/client regressions, asset audit, build and Functions
+  compilation. All 148 recovered files remain present, 139 byte-identical with
+  nine documented browser-script edits. Browser CI and new visual review follow.
+
 ## Current resume point — 2026-09-28
 
-The archive-based source reconstruction and this browser/visual audit checkpoint
-are published on `skypie0102/ShadowGarden` main. The verified recovery checkpoint
-is `887deb9`, with 34 backend/client tests and fourteen browser cases passing in
-run `36353932405`. Snapshot validation, damaged-live-catalog restoration and
-bounded recovery reporting are implemented and verified; the new recovery
-screens have been visually reviewed.
-All 148 recovered files remain present, 140 byte-identical, with eight documented
-browser-script edits.
-All 15 observed route paths are implemented, with the two unavailable operations
-explicitly returning 501.
+Purge and recovery implementations are complete locally with 47 passing tests.
+The desktop/mobile suite now exercises real purge/continuation controls and the
+recovery POST in its disposable Pages/D1 fixture. Publish the current changes to
+`skypie0102/ShadowGarden` main, verify CI, review the new captures and record the
+outcome. Earlier checkpoint 887deb9 passed 34 backend/client and fourteen browser
+cases in run 36353932405. Original test EPUBs are explicitly out of scope.
 
-Further production recovery requires the five original EPUBs and evidence-backed
-private object mappings, actual Cloudflare/B2 bindings and credentials, and live
-Turnstile/provider checks. Original backend algorithms, history, security policy,
-purge/recovery semantics and historical private data remain unrecovered. Keep
-the original deployment/storage intact while those resources are restored.
+Production setup still needs owner-provided Cloudflare/B2/Turnstile resources.
+Apply all migrations, including 0002, before deployment; supply scoped B2
+list/delete capabilities for explicit cleanup. No production deployment or
+remote database mutation has been performed by this reconstruction.

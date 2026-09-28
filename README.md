@@ -7,12 +7,11 @@ supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 140 remain byte-identical; eight browser
+148 deployed files were recovered. Of those, 139 remain byte-identical; nine browser
 scripts have documented compatibility/safety changes. The archive contains one
-cataloged series, five opaque book IDs and ten cover images. **The five EPUBs,
-private object mappings, production credentials and original server code were
-not in the archive.** Reading those books cannot work until the private assets
-and mappings are restored.
+cataloged series, five opaque book IDs and ten cover images. The owner confirmed that the five EPUBs were disposable test data; their absence
+is not a reconstruction blocker. Original server source and production credentials
+were not in the archive. The backend is a documented replacement.
 
 ## Local development
 
@@ -21,11 +20,12 @@ Use Node.js 24 (minimum 22.16).
 ```sh
 npm ci
 npm run db:local
-npm run seed:local
+npm run seed:empty
 npm run dev
 ```
 
-Open the URL printed by Wrangler. The recovered public catalog and covers work
+Use `npm run seed:local` instead to initialize the recovered demo catalog. Both
+seeds preserve any existing library. Open the URL printed by Wrangler. The recovered public catalog and covers work
 without B2 credentials. Keeper unlock and protected book access intentionally
 return configuration errors until configured; there is no development bypass.
 Copy `.env.example` to `.dev.vars` and fill it with your own credentials when
@@ -53,7 +53,7 @@ npm run test:browser
 The browser harness creates and removes a disposable project/database beneath
 `.wrangler/`, with public fixture credentials. It never uses `.dev.vars`, the
 developer database, or remote resources. It checks public navigation, the adult
-gate, missing-book errors, admin edits/conflicts, trash restoration, damaged
+gate, missing-book errors, admin edits/conflicts, trash restore/purge, cleanup continuation, damaged
 snapshots and recovery of a damaged live catalog. Fault injection is restricted
 to that disposable fixture database; the application has no test bypass. Admin
 tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
@@ -86,16 +86,23 @@ Keeper requests require a bearer token and a revocable, signed session created
 after server-side Turnstile validation. Readers receive a 12-hour human session
 and 15-minute, object-specific book tickets. Private objects never fall back to
 public static hosting. Catalog writes use revision checks and create checksummed
-snapshots. Snapshots must pass checksum and structural validation before restore.
+snapshots, except explicit permanent Trash purge. Snapshots must pass checksum and structural validation before restore.
 Keeper history stays accessible when the live catalog is damaged; restoring a
 valid snapshot preserves the damaged record in an exact safety copy. Book
 replacements use fresh object keys and retain old bytes.
 
 Catalog editing, translations, banners, upload, backups, restore, taxonomy,
 cover optimization, object checks and basic cooldown telemetry are reconstructed.
-Permanent B2 purge and the undocumented `POST /admin-api/recovery` operation
-return explicit 501 errors. The purge controls are disabled. Original tripwire
-scoring and recovery policies have not been recovered.
+Trash purge now removes selected metadata and queues bounded, retryable B2
+cleanup. Live references, all retained snapshots, active uploads and bundled
+covers are protected. Recovery restores a selected validated snapshot with a
+revision/checksum guard and an exact safety backup. These are explicit replacement
+contracts; original tripwire scoring and retention policies remain unknown.
+
+Apply **all D1 migrations, including `0002_media_purge.sql`, before upgrading**.
+Media cleanup requires B2 `listFiles` and `deleteFiles` capabilities in addition
+to the existing read/write access. Keeper shows failed or protected cleanup jobs
+without claiming their files were deleted.
 
 See [RECONSTRUCTION_LOG.md](RECONSTRUCTION_LOG.md),
 [the API contracts](docs/API_CONTRACTS.md), [deployment steps](docs/DEPLOYMENT.md),

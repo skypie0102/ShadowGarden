@@ -98,10 +98,10 @@ test('catalog checksum corruption prevents restore and missing media prevents RE
   const report=await (await call(readiness,context(env,'/admin-api/recovery-readiness','GET',undefined,headers))).json();
   assert.equal(report.readiness.status,'not-ready');assert.equal(report.summary.damaged,1);
 });
-test('unknown recovery mutation and irreversible purge report unavailable',async()=>{
+test('purge requires a revision and recovery rejects unknown actions',async()=>{
   const env=fixture(),headers=await adminHeaders(env);
-  assert.equal((await call(maintenance,context(env,'/admin-api/maintenance','POST',{action:'purge-trash',ids:[]},headers))).status,501);
-  assert.equal((await call(recovery,context(env,'/admin-api/recovery','POST',{},headers))).status,501);
+  assert.equal((await call(maintenance,context(env,'/admin-api/maintenance','POST',{action:'purge-trash',ids:[]},headers))).status,428);
+  assert.equal((await call(recovery,context(env,'/admin-api/recovery','POST',{},headers))).status,400);
   assert.equal((await loadState(env)).revision,0);
 });
 test('book IDs match the recovered client derivation and reject traversal',async()=>{

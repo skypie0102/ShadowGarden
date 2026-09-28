@@ -1,10 +1,11 @@
 import {DatabaseSync} from 'node:sqlite';
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 import {ADMIN_COOKIE,cookie,now,signed} from '../server/security.js';
 
 export function dbFixture() {
   const sqlite=new DatabaseSync(':memory:');
-  sqlite.exec(readFileSync(new URL('../migrations/0001_reconstructed.sql',import.meta.url),'utf8'));
+  const migrations=new URL('../migrations/',import.meta.url);
+  for(const file of readdirSync(migrations).filter(name=>name.endsWith('.sql')).sort())sqlite.exec(readFileSync(new URL(file,migrations),'utf8'));
   sqlite.exec(readFileSync(new URL('../recovery-info/seed.sql',import.meta.url),'utf8'));
   const prepare=(sql,args=[])=>({
     bind:(...bound)=>prepare(sql,bound),

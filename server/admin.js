@@ -5,6 +5,7 @@ import {inspectCatalog} from './catalog-document.js';
 import {activeBooks, bookIdForKey} from './books.js';
 import {getObject, getStaticCover, objectKey, storageConfigured, uploadObject} from './storage.js';
 import {validateEpub} from './epub.js';
+import {createPurge,continuePurge,purgeJobs} from './purge.js';
 import {CANONICAL_GENRES, normalizeSeriesTaxonomy, taxonomyDiff} from '../public/assets/js/domain/catalog-taxonomy.js';
 import {normalizeTranslations, normalizeTranslationStatus} from '../public/assets/js/domain/translations.js';
 
@@ -49,6 +50,10 @@ function checkRevision(context,row) {
   const expected=context.request.headers.get('if-match');
   if (expected && expected!==`"${row.revision}"` && expected!==String(row.revision)) fail(409,'catalog_conflict','The catalog changed. Reload before saving.');
 }
+function requireRevision(context,row) {
+  if (!context.request.headers.get('if-match')) fail(428,'revision_required','Refresh the catalog and send its revision in If-Match.');
+  checkRevision(context,row);
+}
 async function writable(context) { const row=await loadState(context.env,{writable:true});checkRevision(context,row);return row; }
 
 export async function library(context) {
@@ -87,9 +92,14 @@ export async function upload(context) {
   // No object overwrite: old snapshots must continue to refer to their original bytes.
   const existing=await getObject(context.env,key,{head:true});
   if (existing) fail(409,'object_exists','This object key already exists. Upload using a new key.');
-  const reserved=await database(context.env).prepare('INSERT OR IGNORE INTO media_uploads(object_key,created_at) VALUES(?,?)').bind(key,new Date().toISOString()).run();
-  if(reserved.meta.changes!==1)fail(409,'object_reserved','This upload key has already been used. Retry with a new key.');
-  return json({ok:true,...await uploadObject(context.env,key,bytes)});
+  const db=database(context.env),token=crypto.randomUUID();
+  const reserved=await db.batch([
+    db.prepare('INSERT OR IGNORE INTO media_uploads(object_key,created_at,reservation_id) VALUES(?,?,?)').bind(key,new Date().toISOString(),token),
+    db.prepare('INSERT INTO media_upload_activity(object_key,token,expires_at) SELECT object_key,?,? FROM media_uploads WHERE object_key=? AND reservation_id=?').bind(token,now()+90,key,token)
+  ]);
+  if(reserved[0].meta.changes!==1)fail(409,'object_reserved','This upload key has already been used. Retry with a new key.');
+  try {return json({ok:true,...await uploadObject(context.env,key,bytes)});}
+  finally {await db.prepare('DELETE FROM media_upload_activity WHERE object_key=? AND token=?').bind(key,token).run();}
 }
 async function requireObject(env,key,kind) {
   objectKey(key,kind);const found=await getObject(env,key,{head:true});
@@ -181,7 +191,7 @@ async function maintenanceData(env,row) {
   const preview=doc?allSeries(doc).map(s=>({...taxonomyDiff(s),title:s.title,beforeGenres:s.genres||[],beforeTags:s.tags||[]})).filter(x=>x.changed):[];
   const report=doc?health(doc):{status:'attention',counts:{series:'—',volumes:'—'},metrics:{referencedObjects:'—',missingCovers:'—',missingThumbs:'—',legacyIdentity:'—',trashItems:'—'},
     issues:[{severity:'error',code:'catalog-damaged',title:'Live catalog is unreadable',detail:'Restore a valid snapshot from Catalog History. The current catalog will be preserved in a safety backup.'}],objectKeys:[],optimizationCandidates:[]};
-  return {ok:true,revision:row.revision,catalog:{readable:!error,detail:error},health:report,trash:doc?doc.trash.map(({series,volume,...entry})=>entry):[],backups,
+  return {ok:true,revision:row.revision,catalog:{readable:!error,detail:error},health:report,trash:doc?doc.trash.map(({series,volume,...entry})=>entry):[],backups,purgeJobs:await purgeJobs(env),
     taxonomy:{readable:!error,totalSeries:doc?allSeries(doc).length:null,affectedSeries:preview.length,canonicalGenreCount:CANONICAL_GENRES.length,preview:preview.slice(0,100)}};
 }
 export async function checkObjects(env,keys,{includeAssets=false,origin}={}) {
@@ -199,22 +209,33 @@ async function backupRow(env,id) {
   if (!row) fail(404,'backup_not_found','Backup not found.');
   return row;
 }
+async function restoreSnapshot(env,row,id,{sha256,reason='before-restore-backup'}={}) {
+  const saved=await backupRow(env,id);
+  if (sha256!==undefined && saved.sha256!==sha256) fail(409,'backup_changed','The selected snapshot changed. Check recovery readiness again.');
+  const result=await inspectSnapshot(saved);
+  if (result.error) fail(409,'backup_damaged','This snapshot failed validation and cannot be restored.');
+  return saveState(env,row,result.document,reason);
+}
 export async function maintenance(context) {
   method(context.request,['GET','POST']);await requireAdmin(context);
   let row=await loadStateRecord(context.env,{writable:true});checkRevision(context,row);
   if (context.request.method==='GET') return json(await maintenanceData(context.env,row));
   const p=await bodyJson(context.request);let extra={};
   if (p.action==='restore-backup') {
-    const saved=await backupRow(context.env,p.id),result=await inspectSnapshot(saved);
-    if (result.error) fail(409,'backup_damaged','This snapshot failed validation and cannot be restored.');
-    row=await saveState(context.env,row,result.document,'before-restore-backup');
+    row=await restoreSnapshot(context.env,row,p.id);
     return json(await maintenanceData(context.env,row));
   }
   if (p.action==='check-objects') {
     if (!Array.isArray(p.keys)||p.keys.length>25) fail(400,'invalid_keys','Check at most 25 media keys at a time.');
     return json({ok:true,...await checkObjects(context.env,p.keys)});
   }
-  if (p.action==='purge-trash') fail(501,'purge_not_reconstructed','Permanent B2 deletion is unavailable until the original retention and recovery rules are recovered. Trash can still be restored.');
+  if (p.action==='purge-trash' || p.action==='continue-purge') {
+    row=readableState(row);
+    if (p.action==='purge-trash') requireRevision(context,row);
+    const id=p.action==='purge-trash'?await createPurge(context.env,row,p.ids):required(p.jobId,'Cleanup job');
+    const purge=await continuePurge(context.env,id,new URL(context.request.url).origin);
+    return json({...await maintenanceData(context.env,await loadStateRecord(context.env,{writable:true})),purge},purge.complete?200:202);
+  }
   row=readableState(row);const doc=structuredClone(row.document);
   if (p.action==='create-backup') {
     const db=database(context.env),document=JSON.stringify(doc),id=crypto.randomUUID();
@@ -258,21 +279,23 @@ export async function backup(context) {
 export async function readiness(context) {
   method(context.request,['GET']);await requireAdmin(context);
   const row=await loadStateRecord(context.env,{writable:true}),live=inspectCatalog(row.serialized),{entries:saved,total}=await recoverySnapshots(context.env);
-  let verified=0,damaged=0,uncertain=0,stale=0,inspected=0,anchor=null;
+  let verified=0,damaged=0,uncertain=0,stale=0,inspected=0,anchor=null,candidate=null;
   // Inspect at most 3 complete snapshots and 75 media keys per request.
   for (const snapshot of saved.slice(0,3)) {
     inspected++;const result=await inspectSnapshot(snapshot);
     if (result.error) {damaged++;continue;}
     verified++;const report=health(result.document,{includeTrash:true});
-    if (report.metrics.missingBookMappings) {stale++;continue;}
+    const choice={id:snapshot.id,sha256:snapshot.sha256,reason:snapshot.reason,createdAt:snapshot.created_at,counts:counts(result.document),mediaStatus:'unverified'};
+    candidate ||= choice;
+    if (report.metrics.missingBookMappings) {choice.mediaStatus='incomplete';stale++;continue;}
     if (report.objectKeys.length>25) {uncertain++;continue;}
-    try {const result=await checkObjects(context.env,report.objectKeys,{includeAssets:true,origin:new URL(context.request.url).origin});if (!result.missing.length) {anchor={id:snapshot.id,reason:snapshot.reason,verified:true,objectCount:result.checked};break;}stale++;}
+    try {const result=await checkObjects(context.env,report.objectKeys,{includeAssets:true,origin:new URL(context.request.url).origin});if (!result.missing.length) {choice.mediaStatus='complete';candidate=choice;anchor={...choice,verified:true,objectCount:result.checked};break;}choice.mediaStatus='incomplete';stale++;}
     catch {uncertain++;}
   }
   uncertain+=total-inspected;
-  return json({ok:true,summary:{total,verified,damaged},
+  return json({ok:true,revision:row.revision,summary:{total,verified,damaged},
     live:{entries:['main','adult'].map(scope=>({scope,readable:!live.error,detail:live.error||`${live.document[scope].length} series; ${row.source}`}))},
-    readiness:{status:live.error?'recovery-required':anchor?'ready':'not-ready',anchor,staleSnapshots:stale,uncertainSnapshots:uncertain,
+    readiness:{status:live.error?'recovery-required':anchor?'ready':'not-ready',anchor,candidate,staleSnapshots:stale,uncertainSnapshots:uncertain,
       detail:live.error?(anchor?'The live catalog is damaged. A verified recovery snapshot is available in Catalog History.':'The live catalog is damaged and no object-complete recovery snapshot was proven. Inspect Catalog History and restore missing media separately.'):
         anchor?'A validated snapshot with all active and trashed media was verified.':'No object-complete recovery snapshot was proven. Missing mappings or media must be restored separately.'}});
 }
@@ -280,7 +303,12 @@ export async function recovery(context) {
   method(context.request,['GET','POST']);
   if (context.request.method==='GET') return readiness(context);
   await requireAdmin(context);
-  fail(501,'recovery_contract_missing','The archive does not contain this recovery mutation contract. Use tested Catalog History restore or explicit private mapping import.');
+  const p=await bodyJson(context.request);
+  if (p.action!=='restore-snapshot') fail(400,'unknown_action','Choose a snapshot to restore.');
+  const row=await loadStateRecord(context.env,{writable:true});requireRevision(context,row);
+  if (!/^[a-f0-9]{64}$/.test(p.sha256||'')) fail(400,'invalid_checksum','Send the checksum from the selected recovery snapshot.');
+  const restored=await restoreSnapshot(context.env,row,required(p.id,'Snapshot'),{sha256:p.sha256,reason:'before-recovery'});
+  return json({...await maintenanceData(context.env,restored),recovery:{snapshotId:p.id,restored:true}});
 }
 export async function statusEndpoint(context) {
   method(context.request,['POST']);await requireAdmin(context);

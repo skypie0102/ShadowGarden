@@ -17,6 +17,7 @@ export function endpoint(handler) {
     try { return await handler(context); }
     catch (error) {
       if (error instanceof HttpError) return json({ok:false, code:error.code, error:error.message, ...error.extra}, error.status, error.headers);
+      if (error?.message?.includes('media_retired')) return json({ok:false,code:'media_retired',error:'This media object is scheduled for deletion or has been deleted. Upload it under a new key.'},409);
       // Do not include stack traces, provider responses, private keys or SQL in public errors.
       console.error('ShadowGarden request failed', error?.name || 'Error');
       return json({ok:false, code:'internal_error', error:'The server could not complete this request.'}, 500);

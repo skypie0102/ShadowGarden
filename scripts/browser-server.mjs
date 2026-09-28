@@ -1,6 +1,6 @@
 // Start an isolated Pages app with its own disposable D1 database. No remote CLI
 // commands, real credentials, developer state or production configuration used.
-import {cp,mkdir,mkdtemp,readFile,writeFile,rm} from 'node:fs/promises';
+import {cp,mkdir,mkdtemp,readFile,readdir,writeFile,rm} from 'node:fs/promises';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
@@ -36,7 +36,7 @@ try {
     vars:{ADMIN_TOKEN:adminToken,SESSION_SECRET:sessionSecret,BOOK_SIGNING_SECRET:'browser-fixture-book-secret-not-for-deployment',
       TURNSTILE_SITE_KEY:'browser-fixture-site-key',TURNSTILE_SECRET_KEY:'browser-fixture-secret-key'}
   }));
-  const migration=await readFile(resolve(root,'migrations/0001_reconstructed.sql'),'utf8');
+  const migration=(await Promise.all((await readdir(resolve(root,'migrations'))).filter(name=>name.endsWith('.sql')).sort().map(name=>readFile(resolve(root,'migrations',name),'utf8')))).join('\n');
   const seed=await readFile(resolve(root,'recovery-info/seed.sql'),'utf8');
   const damaged=['desktop-chromium','mobile-chromium'].map(name=>`INSERT INTO snapshots(id,reason,created_at,document,sha256) VALUES('damaged-${name}','Damaged test snapshot','2026-09-27T00:00:00.000Z','{}','${createHash('sha256').update('{}').digest('hex')}');`).join('\n');
   await writeFile(resolve(project,'fixture.sql'),`${migration}\n${seed}\n${damaged}\nINSERT INTO admin_sessions(id,expires_at) VALUES('${sessionId}',${Math.floor(Date.now()/1000)+3600});\n`);

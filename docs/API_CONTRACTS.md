@@ -1,6 +1,7 @@
 # API reconstruction contracts
 
-Every implementation here is inferred. The only server evidence in the archive
+Implementations are inferred from the recovered client or explicitly designed as
+replacement contracts. Purge and recovery mutations use the replacement policies below. The only server evidence in the archive
 is `recovery-info/FUNCTION_ROUTES.md`, a transcription of the deployment routing
 manifest. Actual worker code and the raw manifest were not supplied.
 
@@ -25,12 +26,12 @@ returned in error payloads. Success payloads include `revision` when applicable.
 | `/admin-api/backup` | POST | `admin/history-workflow.js`: `{action:"delete",id}` removes selected snapshot only |
 | `/admin-api/recovery-readiness` | GET | `admin/recovery-readiness-workflow.js`: catalog structure, snapshot checksums and active/trash media presence; static recovered covers or B2, protected EPUBs only B2 |
 | `/admin-api/abuse` | GET, POST | `admin/abuse-workflow.js`: pseudonymous cooldown events; `{action:"release",clientId}` releases public limits only |
-| `/admin-api/recovery` | GET, POST | Route exists in inventory but no client call was recovered. GET exposes readiness; POST returns 501 for unknown mutation contract |
+| `/admin-api/recovery` | GET, POST | Route exists in inventory but no client call was recovered. GET exposes readiness; POST `{action:"restore-snapshot",id,sha256}` restores validated metadata with required `If-Match` and a safety backup |
 
 Maintenance actions: `create-backup`, `restore-backup`, `restore-trash`,
 `normalize-taxonomy`, `check-objects` (up to 25 keys),
-`apply-cover-optimizations` (up to 100 updates). `purge-trash` is explicitly 501:
-original object retention, snapshot reachability and B2 deletion rules are absent.
+`apply-cover-optimizations` (up to 100 updates), `purge-trash` and `continue-purge`.
+The last two use the explicit replacement retention policy below.
 
 ## Snapshot validation and damaged-catalog recovery
 
@@ -52,7 +53,17 @@ return 503 `catalog_damaged`. Authenticated status, maintenance/history, readine
 and the existing `restore-backup` action remain available. Restore still observes
 the revision guard and atomically preserves the exact damaged record in a safety
 snapshot. That safety copy remains visible as damaged; it is not blindly restorable.
-This does not add semantics to the undocumented recovery POST.
+`POST /admin-api/recovery` accepts only `{action:"restore-snapshot",id,sha256}`.
+`If-Match` must equal the displayed catalog revision (428 when absent, 409 when
+stale). The checksum must equal the selected snapshot's stored SHA-256; a changed
+snapshot returns 409 `backup_changed`. Checksum/structure validation still runs.
+The transaction creates `before-recovery` with the exact current serialization,
+then advances the catalog revision. The response includes maintenance data and
+`recovery: {snapshotId,restored:true}`. No media is uploaded, recreated or deleted.
+Keeper readiness exposes `revision` and a validated `readiness.candidate` with
+`id,sha256,reason,createdAt,counts,mediaStatus`. It prefers an object-complete
+anchor; otherwise metadata restoration remains available with explicit incomplete
+or unverified media status. Unknown actions return 400, not an implicit restore.
 
 Readiness reports `recovery-required` when the live record cannot be read, even
 if a usable anchor exists. `ready` requires readable live data plus a checksummed,
@@ -89,14 +100,55 @@ totals do not inherit the panel's display limit or load older document payloads.
 - Catalog writes reject EPUB keys already mapped to another book identity (409
   `object_already_mapped`). Trash restores reject any book identity already active
   in either library (409 `restore_conflict`), leaving the trash item recoverable.
-- No automatic expiry or deletion of media objects or snapshots. Failed uploads
-  can leave unused objects/reservations; cleanup requires a verified retention policy.
+- No automatic expiry of media objects or snapshots. Only explicitly requested
+  Trash cleanup deletes media. Uncataloged orphan uploads are not swept.
+
+## Permanent Trash purge and cleanup
+
+`POST /admin-api/maintenance` with `{action:"purge-trash",ids:[...]}` requires
+`If-Match` of the displayed live revision. An empty array means all displayed
+Trash; duplicate or invalid IDs return 400, a changed selection returns 409.
+Unreadable live catalogs cannot purge. D1 atomically removes the selected Trash,
+prunes private book mappings no longer referenced by remaining catalog/Trash
+metadata, advances the revision, and records a durable cleanup job. Purge does
+not create another snapshot of the removed entries. Existing snapshots remain.
+
+Every literal media reference in the live document and **all** retained snapshots
+protects its key, including old maps, damaged snapshots and history beyond the
+200-row display limit. SQL triggers atomically check references before reserving
+a key for deletion. A permanent retirement record then prevents catalog writes,
+restores, snapshot imports and uploads from reusing it while deletion is in
+progress or afterwards. An active upload lease also defers deletion. Bundled
+public cover assets are retained and never deleted through B2.
+
+Cleanup lists versions for the exact object name and deletes up to five per key,
+including older versions and hide markers, without following prefix neighbours
+or bypassing Object Lock/legal holds. It verifies absence after deletion. Each
+request handles at most three keys within a 20-second work budget; provider
+requests use bounded timeouts. A job lease prevents routine duplicate workers;
+immutable version IDs and persistent retirements make retries safe. The app must
+be the only writer of these keys; external writers must also honor retired keys.
+
+Responses include `purge` with job ID, counts (`deleted,staticAssets,retained,
+failed,pending`), `running`, `complete`, and limited issue details. HTTP 200 means
+cleanup is complete; 202 means metadata was removed but cleanup remains pending,
+protected or failed. Storage errors never undo the metadata transaction or imply
+successful file deletion. `{action:"continue-purge",jobId}` retries unfinished
+work. Keeper shows errors and a continuation control, including after reload.
+Maintenance lists up to 20 jobs, unfinished first and least recently attempted
+first, so retrying rotates older work into view. Jobs do not run on a scheduler.
+
+Retained snapshots are never deleted by cleanup. Owners may explicitly delete a
+snapshot in Catalog History and then continue its cleanup job. Files stay while
+any other reference exists. A protected job can therefore remain pending for as
+long as recovery history is retained. Missing B2 configuration, missing delete
+permissions and provider retention locks remain visible, retryable failures.
 
 ## Fidelity limits
 
 The native B2 v2 API is used for authorization/download/upload; original provider
-API choice is unknown. The B2 application key needs only read/write access within
-the relevant bucket/prefix; no delete capability is required. Admin uploads check
+API choice is unknown. The B2 key needs bucket/prefix-scoped read/write access;
+Trash cleanup additionally needs `listFiles` and `deleteFiles`. Admin uploads check
 ZIP structure and expansion bounds but do not replace a full EPUBCheck audit.
 
 D1 holds private mappings and catalog revisions. The seed contains no invented
@@ -114,6 +166,8 @@ larger candidates remain uncertain, not falsely verified.
 - [B2 account authorization](https://www.backblaze.com/apidocs/b2-authorize-account)
 - [B2 upload URL](https://www.backblaze.com/apidocs/b2-get-upload-url)
 - [B2 file upload](https://www.backblaze.com/apidocs/b2-upload-file)
+- [B2 file versions](https://www.backblaze.com/apidocs/b2-list-file-versions)
+- [B2 version deletion](https://www.backblaze.com/apidocs/b2-delete-file-version)
 
 These sources guided compatible replacements; they do not establish what the
 lost ShadowGarden Functions originally implemented.

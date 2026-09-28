@@ -9,12 +9,12 @@ production equivalence or complete private-data recovery**.
 | Check | Result |
 | --- | --- |
 | Archive integrity/provenance | SHA-256 recorded for both source archives and all 148 recovered public files |
-| Retained public files | 148/148 present; 140/148 byte-identical; 8 intentional browser script edits |
+| Retained public files | 148/148 present; 139/148 byte-identical; 9 intentional browser script edits |
 | Syntax, JSON, literal static dependencies | Passed; 207 checked literal references resolve |
 | Route coverage | 15/15 recorded function paths exist; client endpoint literals covered |
 | Catalog evidence | Main empty; one adult series, five unique book IDs, ten cover files |
 | HTML structural inspection | Six documents parsed; no duplicate IDs |
-| Automated backend/client tests | 34/34 passed locally and in run 36353932405; real SQLite, isolated sessions, mocked B2/Turnstile |
+| Automated backend/client tests | 47/47 passed locally; new purge/recovery CI pending; real SQLite, isolated sessions, mocked B2/Turnstile |
 | Private mapping migration generator | Successful restore and stale rerun verified against SQLite |
 | Static build | Passed; `dist/` contains public assets, no server/private files |
 | Pages Functions compilation | Passed with pinned Wrangler 4.136.3 |
@@ -22,7 +22,7 @@ production equivalence or complete private-data recovery**.
 | Dependency audit | `npm audit`: zero reported vulnerabilities on 2026-09-25, including the new Playwright dependency graph |
 | Real-browser workflow checks | 14/14 passed in run 36353932405 at 887deb9; zero failed, flaky or skipped cases |
 | Manual visual review | Previous ten fixture captures reviewed; four new desktop/mobile recovery captures reviewed in run 36353932405; scope below |
-| Original EPUB rendering | Unverified; original books and mappings remain missing |
+| Original EPUB rendering | Out of scope: owner confirmed disposable test data; original files are not a recovery gate |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
 | Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
 | Remote Git commit/push | Reconstruction and browser fixes published to skypie0102/ShadowGarden main; remote Git trees checked against local source |
@@ -41,8 +41,9 @@ production equivalence or complete private-data recovery**.
    old state and updates the new state; losing writers receive HTTP 409. Tested.
 5. Concurrent object uploads: D1 reserves object keys before upload; a reused key
    is rejected. Existing B2 objects are not deliberately overwritten.
-6. Unsupported purge UI: controls are explicitly disabled and the endpoint
-   returns 501. The reconstructed app never reports an unperformed deletion.
+6. Permanent purge now uses a documented replacement contract: selected Trash
+   removal, durable cleanup, reference protection, exact B2 version deletion and
+   visible continuation/errors. No deletion is reported complete without verification.
 7. Public/protected storage boundary: private EPUB requests cannot reach the
    static fallback; public catalogs strip private paths and upload bookkeeping.
    Tested, including invalid tickets, raw paths and retired book identities.
@@ -92,11 +93,13 @@ production equivalence or complete private-data recovery**.
 
 - All backend source is new. Original algorithms, bindings, retention rules,
   protection policies and runtime behavior have not been reproduced exactly.
-- Five original books still lack both binaries and private B2 mappings.
+- Five original books are disposable test data, confirmed by the owner; they
+  are outside the reconstruction completion criteria.
 - D1 is a new authoritative metadata store; it does not update legacy B2 catalog
   JSON. A deployment must explicitly initialize and bind a new database.
-- Permanent purge and the undocumented recovery mutation remain unavailable.
-  No cleanup runs silently, and upload reservations/orphan objects may accumulate.
+- Purge and recovery use new documented semantics. Only explicit Trash jobs
+  delete media; orphan uploads are not automatically swept. Retained snapshots
+  intentionally keep referenced media until explicitly removed.
 - Abuse Watch implements basic persistent rate limits, not the original scoring
   and tripwire system. Operational event retention and limits are new policy.
 - Readiness checks are bounded and can report uncertain for large libraries.
@@ -120,15 +123,20 @@ and bind it to the series editor when opening a form.
 `public/assets/js/library.js`: preserve the adult-gate return destination across
 filter URL rewrites and reject external return destinations.
 
-`public/assets/js/admin/trash-workflow.js`: disable permanent purge controls and
-explain its unavailability; show unreadable trash without claiming it is empty.
+`public/assets/js/admin/trash-workflow.js`: enable guarded purge, display durable
+cleanup progress/errors and retry controls; show unreadable Trash honestly.
+
+`public/assets/js/admin/recovery-readiness-workflow.js`: select a validated recovery
+candidate, preserve its displayed revision/checksum and restore with explicit
+metadata-only scope and a safety backup.
 
 `public/assets/js/admin/history-workflow.js`: show damaged snapshot status,
 disable invalid restores and backup creation from unreadable live data, and
 refresh maintenance state after a successful snapshot restore.
 
 `public/assets/js/admin/maintenance-workflow.js`: show unavailable taxonomy and
-cover checks when live data is unreadable; preserve access to Catalog History.
+cover checks when live data is unreadable; preserve access to Catalog History
+and refresh health after Trash changes.
 
 `public/assets/js/reader-visual-cache.js`: limit loading messages to the startup
 paragraph, leaving nested terminal-error advice untouched.

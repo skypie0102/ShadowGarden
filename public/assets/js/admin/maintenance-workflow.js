@@ -116,7 +116,7 @@
 
     view.addEventListener("click",event=>{const button=event.target.closest("[data-remove-maintenance-operation]");if(!button)return;const index=operationQueue.findIndex(item=>item.id===button.dataset.removeMaintenanceOperation);if(index<0)return;operationQueue.splice(index,1);renderOperationQueue();renderOperationControls()});
     $("#refreshMaintenance")?.addEventListener("click",()=>{invalidate();void load(true)});$("#deepHealthCheck")?.addEventListener("click",deepCheck);$("#normalizeCatalogTaxonomy")?.addEventListener("click",normalizeTaxonomy);$("#optimizeLegacyCovers")?.addEventListener("click",optimizeCovers);
-    keeper.events.addEventListener("maintenance:opened",()=>void load(true));keeper.events.addEventListener("trash:changed",invalidate);keeper.events.addEventListener("history:changed",event=>{if(event.detail?.data)render(event.detail.data);else invalidate()});keeper.events.addEventListener("session:locked",()=>{invalidate();clearQueuedOperations()});
+    keeper.events.addEventListener("maintenance:opened",()=>void load(true));keeper.events.addEventListener("trash:changed",event=>{if(event.detail?.data)render(event.detail.data);else invalidate()});keeper.events.addEventListener("history:changed",event=>{if(event.detail?.data)render(event.detail.data);else invalidate()});keeper.events.addEventListener("session:locked",()=>{invalidate();clearQueuedOperations()});
     renderOperationQueue();
     return{load,refresh:()=>load(true),invalidate,get snapshot(){return snapshot}};
   });

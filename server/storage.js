@@ -26,7 +26,8 @@ function providerUrl(value) {
   return url;
 }
 async function request(url, options = {}) {
-  try { return await fetch(url, {...options, redirect:'error', signal:AbortSignal.timeout(30000)}); }
+  const {timeoutMs=30000,...init}=options;
+  try { return await fetch(url, {...init, redirect:'error', signal:AbortSignal.timeout(timeoutMs)}); }
   catch { fail(502,'storage_unavailable','Private media storage is temporarily unavailable.'); }
 }
 const authorizationCache = new Map();
@@ -68,4 +69,39 @@ export async function uploadObject(env,key,bytes) {
   if (!result.ok) fail(502,'upload_failed','Private media upload failed.');
   const metadata=await result.json();
   return {key,size:bytes.byteLength,fileId:metadata.fileId};
+}
+
+async function versionRequest(env,auth,operation,payload,deadline) {
+  const remaining=deadline-Date.now();
+  if(remaining<=0)fail(409,'cleanup_budget','Cleanup paused at its request time limit. Continue this job.');
+  const response=await request(new URL(`/b2api/v2/${operation}`,providerUrl(auth.apiUrl)),{
+    timeoutMs:Math.min(10000,remaining),method:'POST',headers:{authorization:auth.authorizationToken,'content-type':'application/json'},body:JSON.stringify(payload)
+  });
+  let data;try {data=await response.json();} catch {fail(502,'storage_error','Storage returned an unreadable response.');}
+  if (!response.ok) {
+    if (operation==='b2_delete_file_version' && response.status===400 && data.code==='file_not_present') return {};
+    if (data.code==='access_denied') fail(409,'storage_object_locked','Storage retention or a legal hold prevents deletion.');
+    if ([401,403].includes(response.status)) fail(503,'storage_delete_denied','The B2 key needs listFiles and deleteFiles permissions for media cleanup.');
+    fail(502,'storage_unavailable','Media cleanup could not reach storage. Retry the cleanup job.');
+  }
+  return data;
+}
+export async function deleteObjectVersions(env,key,{deadline=Date.now()+20000}={}) {
+  objectKey(key);const auth=await authorize(env);
+  const list=async limit=>{
+    const data=await versionRequest(env,auth,'b2_list_file_versions',{bucketId:env.B2_BUCKET_ID,prefix:key,startFileName:key,maxFileCount:limit},deadline);
+    if (!Array.isArray(data.files) || data.files.length>limit) fail(502,'storage_error','Storage returned an invalid version list.');
+    // A prefix may include neighbouring names; never delete those entries.
+    const exact=data.files.filter(file=>file.fileName===key);
+    if (exact.some(file=>typeof file.fileId!=='string'||!file.fileId||!['upload','hide','start'].includes(file.action)||file.bucketId!==env.B2_BUCKET_ID)) fail(502,'storage_error','Storage returned invalid file coordinates.');
+    if (!exact.length && data.nextFileName===key) fail(502,'storage_error','Storage returned an incomplete version list.');
+    return exact;
+  };
+  const versions=await list(5);
+  for (const file of versions) {
+    // Never bypass B2 Object Lock, governance retention or legal holds.
+    const deleted=await versionRequest(env,auth,'b2_delete_file_version',{fileName:key,fileId:file.fileId},deadline);
+    if ((deleted.fileName && deleted.fileName!==key) || (deleted.fileId && deleted.fileId!==file.fileId)) fail(502,'storage_error','Storage returned an unexpected deletion result.');
+  }
+  return {complete:(await list(1)).length===0,versionsDeleted:versions.length};
 }
