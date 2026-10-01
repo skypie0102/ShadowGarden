@@ -14,8 +14,11 @@ No production deployment or remote database changes were made during reconstruct
 - Do not upload only `dist/` through the dashboard: the Pages Functions must be
   compiled/deployed via Git integration or Wrangler Pages deployment.
 
-The committed Wrangler file is for local reconstruction. Its all-zero D1 ID is
-an intentional placeholder, not a usable remote database. Make a private copy
+On the reconstruction and compatibility branches, the committed Wrangler file
+uses an all-zero D1 ID as a local placeholder, not a usable remote database.
+On `deploy/shadowgarden-test`, it instead targets the owner's new test database;
+follow [the test setup](TEST_DEPLOYMENT.md) for its initialization and resource
+boundaries. For a different deployment target, make a private copy
 as `wrangler.production.jsonc`, replace the Pages project name and database
 identifiers with the actual target values. D1 commands support `--config` for
 this private file. Pages dev/deploy do **not** support a custom config path in

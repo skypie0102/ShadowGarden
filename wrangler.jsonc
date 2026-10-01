@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "shadowgarden-reconstructed",
+  "name": "shadowgarden-test",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-09-23",
   "d1_databases": [{
     "binding": "DB",
-    "database_name": "shadowgarden-reconstruction-local",
-    "database_id": "00000000-0000-0000-0000-000000000000",
+    "database_name": "shadowgarden-test",
+    "database_id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86",
     "migrations_dir": "migrations"
   }]
 }

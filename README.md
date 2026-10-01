@@ -2,6 +2,10 @@
 
 Repository: https://github.com/skypie0102/ShadowGarden
 
+This `deploy/shadowgarden-test` branch targets the owner's separate test D1
+database. Follow [the test setup](docs/TEST_DEPLOYMENT.md) before connecting a
+new test Pages project. Its resource configuration is not for the live project.
+
 This repository reconstructs the 2.11.0 Cloudflare Pages deployment from the
 supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original

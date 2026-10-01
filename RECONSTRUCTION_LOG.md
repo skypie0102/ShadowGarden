@@ -403,3 +403,21 @@ bucket name/ID or D1 `DB` binding. Secret lengths and provider permissions are
 unverified. Next obtain the non-secret binding inventory and configure an
 isolated test deployment before considering a production switch. No account
 secrets, remote database state or live storage objects were modified.
+
+## Isolated test database supplied — 2026-10-01
+
+The owner showed the live Production bindings list as empty, then created D1
+`shadowgarden-test` with ID `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86`. Its overview
+showed zero tables and zero queries. Prepared `deploy/shadowgarden-test` from
+compatibility commit `368b6e1` with that database bound as `DB`. This branch has
+test-only resource configuration; main and compatibility PR #1 remain separate.
+
+Added Windows initialization steps using tracked Wrangler migrations and the
+empty seed, plus the later separate Pages/B2/Turnstile setup. No remote database
+operation, Cloudflare deployment, secret change or B2 operation was performed.
+The supplied D1 ID is a resource identifier, not a credential. Actual migration
+execution and provider integration remain unverified until the owner runs setup.
+
+Validated the exact resource fields, both migrations and the empty-library
+verification query in isolated SQLite. The pinned Wrangler Pages Functions
+compiler passes with this configuration. No application code changed.
