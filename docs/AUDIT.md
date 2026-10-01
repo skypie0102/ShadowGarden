@@ -1,4 +1,27 @@
-# Reconstruction audit — updated 2026-09-28
+# Reconstruction audit — updated 2026-10-01
+
+## Existing deployment configuration compatibility — 2026-10-01
+
+The owner supplied the eight encrypted variable names already configured in
+Cloudflare. Added aliases for the four `SG_*` security settings and separate B2
+read/write credential selection. Reads never retry with write credentials,
+partial role pairs fail closed, canonical overrides remain explicit, and cached
+B2 authorization rechecks bucket restrictions and credential rotation.
+
+Local `npm run check` passes all 53 backend/client tests, the recovered-asset
+audit, static build and Pages Functions compilation. Six new regression tests
+cover actual login/book-access handlers, precedence/strength checks, split B2
+operations, partial pairs, rotation/bucket changes and denied read authorization.
+No browser assets or schema changed. The previous verified fourteen browser
+cases are recorded below; the compatibility branch's Actions run checks them
+again before adoption.
+
+This change is prepared on `fix/existing-cloudflare-secrets`, separately from
+main and the live deployment. No Cloudflare settings, secret values, remote
+database records or B2 objects were changed. The screenshot does not establish
+the presence of `SESSION_SECRET`, bucket identifiers or `DB`, nor the secret
+lengths, B2 permissions or live provider compatibility. Follow the deployment
+guide with separate test resources before switching production traffic.
 
 ## Scope and outcome
 

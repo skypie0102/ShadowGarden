@@ -104,6 +104,11 @@ Media cleanup requires B2 `listFiles` and `deleteFiles` capabilities in addition
 to the existing read/write access. Keeper shows failed or protected cleanup jobs
 without claiming their files were deleted.
 
+The owner's existing `SG_*` security names and separate `B2_READ_*` / `B2_WRITE_*`
+credential pairs are supported. Keep those names; the replacement also needs an
+independent `SESSION_SECRET`, explicit B2 bucket identifiers and the new `DB`
+binding. The deployment guide explains precedence, permissions and test setup.
+
 See [RECONSTRUCTION_LOG.md](RECONSTRUCTION_LOG.md),
 [the API contracts](docs/API_CONTRACTS.md), [deployment steps](docs/DEPLOYMENT.md),
 and [the audit](docs/AUDIT.md) before reconnecting a production Pages project.
