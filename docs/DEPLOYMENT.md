@@ -38,23 +38,56 @@ Upgrades must apply `0002_media_purge.sql` before deploying the new Functions.
 It adds durable cleanup jobs, upload activity leases and retirement guards.
 The test harness applies both migrations to its disposable database.
 
+The owner supplied eight encrypted variable names on 2026-10-01. The backend
+now accepts those exact names; no rename or disclosure of their values is needed.
+This establishes name compatibility, not proof of valid credentials, permissions
+or original session compatibility. Keep the live project while testing a separate
+Pages project with its own D1 database and disposable B2 bucket/keys. Configure the
+test project's secrets separately; do not assume it inherits the live project's
+settings or that production and preview environments have identical settings.
+
 Set secrets through Cloudflare's secret controls, never Git:
 
 | Name | Required for |
 | --- | --- |
-| `ADMIN_TOKEN` | Keeper bearer/login token, at least 32 random characters |
+| `SG_ADMIN_TOKEN` | Existing Keeper bearer/login token, at least 32 characters |
 | `SESSION_SECRET` | Independent HMAC secret, at least 32 random characters |
-| `BOOK_SIGNING_SECRET` | Independent ticket secret, at least 32 random characters |
-| `TURNSTILE_SECRET_KEY` | Server-side Siteverify |
-| `B2_APPLICATION_KEY_ID`, `B2_APPLICATION_KEY` | B2 authorization |
+| `SG_MEDIA_SIGNING_SECRET` | Existing media ticket secret, at least 32 characters |
+| `SG_TURNSTILE_SECRET_KEY` | Server-side Siteverify |
+| `B2_READ_KEY_ID`, `B2_READ_APPLICATION_KEY` | B2 downloads and existence checks; `readFiles` |
+| `B2_WRITE_KEY_ID`, `B2_WRITE_APPLICATION_KEY` | B2 uploads; `writeFiles`; cleanup additionally needs `listFiles` and `deleteFiles` |
 
-Set non-secret environment values `TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAME`
+Set non-secret environment values `SG_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAME`
 (optional exact override), `B2_BUCKET_ID`, and `B2_BUCKET_NAME`. The widget must
-permit the actual hostname. Use bucket/prefix-scoped B2 keys with read/write
-capabilities, plus `listFiles` and `deleteFiles` for explicit media cleanup.
-Use a single-bucket application key compatible with B2 v2 authorization.
-Do not grant governance-bypass permission for cleanup. No account key, bucket identifier, widget key or original binding
-name was recovered from the public archive.
+permit the actual hostname. An existing encrypted `SG_TURNSTILE_SITE_KEY` works;
+it does not need to be recreated as plaintext. The site key is intentionally
+returned to the browser for the widget; the Turnstile secret is never returned.
+Use bucket/prefix-scoped B2 keys for the same bucket, compatible with B2 v2
+authorization. Do not grant governance-bypass permission for cleanup.
+
+The screenshot did not show `SESSION_SECRET`, `B2_BUCKET_ID`, `B2_BUCKET_NAME`
+or resource bindings. Verify those settings before deploying. This replacement
+requires a D1 binding named `DB`; it does not imply the original app used D1.
+The admin/media secret length and B2 capabilities cannot be verified from an
+encrypted-name inventory. `SESSION_SECRET` must be independently generated;
+there is no fallback to the media or admin secret. New sessions must be issued
+by this backend, even if an existing bearer token is retained.
+
+The earlier reconstruction names remain supported: `ADMIN_TOKEN` overrides
+`SG_ADMIN_TOKEN`, `BOOK_SIGNING_SECRET` overrides `SG_MEDIA_SIGNING_SECRET`,
+and `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` override their `SG_` versions.
+An explicitly configured canonical value wins even when empty or invalid, so
+avoid stale duplicate settings. For B2, each complete role-specific pair takes
+precedence. Only when neither member of that role's pair is present does it use
+the shared `B2_APPLICATION_KEY_ID` / `B2_APPLICATION_KEY` pair. Partial pairs
+fail configuration checks; failed reads never retry with write credentials.
+
+Before switching traffic, review the standard `wrangler.jsonc` against the target
+project's settings. Pages treats that file as the configuration source of truth
+when deploying with it; the committed local database placeholder must be replaced
+with the intended test or production database. See Cloudflare's
+[Pages configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
+and [secrets and bindings](https://developers.cloudflare.com/pages/functions/bindings/).
 
 ## Optional legacy mapping import
 

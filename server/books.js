@@ -3,6 +3,7 @@ import {b64, challenge, cookie, cookies, HUMAN_COOKIE, now, rateLimit, signed, v
 import {loadState, publicCatalog} from './state.js';
 import {getObject, getStaticCover, mimeFor, objectKey} from './storage.js';
 import {BOOK_ID} from './catalog-document.js';
+import {setting} from './config.js';
 export {BOOK_ID};
 export async function bookIdForKey(key) {
   objectKey(key,'book');
@@ -13,7 +14,8 @@ export function activeBooks(doc) { return new Set([...doc.main,...doc.adult].fla
 export async function bookAccess(context) {
   method(context.request,['POST']); sameOrigin(context.request);
   const body=await bodyJson(context.request,8192);
-  if (!context.env.BOOK_SIGNING_SECRET || context.env.BOOK_SIGNING_SECRET.length<32) fail(503,'ticketing_not_configured','Signed EPUB access is not configured.');
+  const signingSecret=setting(context.env,'BOOK_SIGNING_SECRET');
+  if (typeof signingSecret!=='string' || signingSecret.length<32) fail(503,'ticketing_not_configured','Signed EPUB access is not configured.');
   const info=challenge(context,'book_access');
   if (!await verified(context.env,cookies(context.request)[HUMAN_COOKIE],'human')) fail(428,'human_verification_required','Confirm you are human to open a protected book.',info);
   await rateLimit(context,'book',120,600);

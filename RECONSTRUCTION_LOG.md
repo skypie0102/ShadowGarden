@@ -378,3 +378,28 @@ Apply all migrations, including 0002, before deployment; supply scoped B2
 list/delete capabilities for explicit cleanup. No production deployment,
 remote database mutation or live B2 deletion was performed. The documentation
 commit following be25028 records this verified outcome without changing code.
+
+## Existing Cloudflare secret names — 2026-10-01
+
+The owner supplied a Variables and Secrets screenshot containing four `SG_*`
+security names and separate B2 read/write key pairs. Values remain encrypted.
+Prepared `fix/existing-cloudflare-secrets` from `f8cc6c6` to accept those names
+without changing the live deployment or main. Canonical reconstruction names
+remain supported with explicit precedence. B2 downloads use the read pair;
+uploads and cleanup use the write pair. Partial pairs fail closed; authorization
+failures never fall back to the opposite role. Cache tests cover rotation and
+changed bucket restrictions.
+
+Local `npm run check` passes all 53 backend/client cases, recovered-asset audit,
+static build and Functions compilation. Six new regression tests use isolated
+SQLite and mocked providers. No browser assets, routes or migrations changed;
+148 recovered files remain, 139 byte-identical with nine documented adaptations.
+The compatibility branch's GitHub Actions run supplies the follow-up browser
+check; the previous production-reconstruction checkpoint remains recorded above.
+
+Updated the example configuration, deployment guide and API contracts. The
+screenshot does not show the replacement's independent `SESSION_SECRET`, B2
+bucket name/ID or D1 `DB` binding. Secret lengths and provider permissions are
+unverified. Next obtain the non-secret binding inventory and configure an
+isolated test deployment before considering a production switch. No account
+secrets, remote database state or live storage objects were modified.
