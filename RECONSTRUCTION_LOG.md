@@ -462,3 +462,24 @@ fixtures. Asset audit, static build and Pages Functions compilation pass.
 Updated deployment/API/audit documentation and the completed test setup status.
 No browser assets, schema, test resource identifiers or production configuration
 changed. This fix is prepared on the isolated `deploy/shadowgarden-test` branch.
+
+## Existing production takeover prepared — 2026-10-02
+
+The owner explicitly authorized replacing `shadowgarden-bon.pages.dev` and
+reusing the existing private B2 bucket, instead of creating another bucket.
+Cloudflare access confirmed that the Pages project name is `shadowgarden`, all
+eight original encrypted variables remain configured, and its original Git
+repository is `shdwmnrchbks/ShadowGarden`. Cloudflare ignored a source-repository
+change through the API; automatic production/preview builds from that old
+repository are now paused. The previous production deployment is recorded in
+`docs/PRODUCTION_TAKEOVER.md` for rollback.
+
+Read-only D1 queries independently confirmed both migrations and the empty
+revision-0 library. Prepared `deploy/shadowgarden-bon` with the real project
+name, existing bucket name/ID and initialized D1 binding. This reuses the same
+database as the test Pages project, so test writes must now be treated as live
+data changes. No B2 files are deleted by this configuration change.
+
+Static build and Pages Functions compilation pass with the production config;
+the backend remains the version already covered by 57 backend/client tests and
+14 browser tests. Production deployment and live checks follow this preparation.

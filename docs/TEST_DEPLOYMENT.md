@@ -176,3 +176,9 @@ outside this isolated test configuration.
 - [B2 authorization and key compatibility](https://www.backblaze.com/apidocs/b2-authorize-account)
 - [B2 bucket setup](https://www.backblaze.com/docs/cloud-storage-create-and-manage-buckets)
 - [B2 application key setup](https://www.backblaze.com/docs/cloud-storage-create-and-manage-app-keys)
+# Production takeover supersedes separate storage setup
+
+On 2026-10-02 the owner chose to reuse the existing production site and B2
+bucket. Follow [PRODUCTION_TAKEOVER.md](PRODUCTION_TAKEOVER.md) for the current
+deployment. The D1 database below is now assigned to production; avoid test
+writes against it.
