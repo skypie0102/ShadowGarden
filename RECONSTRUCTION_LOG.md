@@ -421,3 +421,20 @@ execution and provider integration remain unverified until the owner runs setup.
 Validated the exact resource fields, both migrations and the empty-library
 verification query in isolated SQLite. The pinned Wrangler Pages Functions
 compiler passes with this configuration. No application code changed.
+
+## Test database initialized by owner — 2026-10-02
+
+The owner supplied Wrangler 4.136.3 output identifying the intended D1 UUID and
+showing successful remote application of `0001_reconstructed.sql` and
+`0002_media_purge.sql`. The subsequent empty seed processed one query and wrote
+one row. This confirms test database initialization from owner-provided output;
+no independent remote SELECT was performed here.
+
+PowerShell had blocked `npm.ps1` despite Administrator mode. Switching the guide
+to `npm.cmd` and `npx.cmd` allowed setup without changing the execution policy.
+Updated the test guide with the completed initialization, exact new Pages build
+settings, and expected initial credential-configuration state. Test commit
+`1811668` already passed all 53 backend/client and 14 browser checks in Actions
+run `36844551820`. This follow-up changes documentation only. The new test Pages
+project and real B2/Turnstile checks remain next; main and the live project are
+unchanged by this work.

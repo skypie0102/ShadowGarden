@@ -12,7 +12,10 @@ The original B2 bucket is private. Existing secret names are documented in
 [DEPLOYMENT.md](DEPLOYMENT.md); their encrypted values and permissions are
 unverified. This test setup uses separate resources.
 
-The new D1 database was shown with zero tables and zero queries:
+The new D1 database was initially shown with zero tables and zero queries on
+2026-10-01. On 2026-10-02, the owner's terminal output confirmed both migrations
+and the empty-library seed succeeded against the exact database below. Database
+initialization is complete; creating the separate test Pages project is next.
 
 | Setting | Value |
 | --- | --- |
@@ -35,22 +38,26 @@ Use PowerShell on a PC with Git and Node.js 24 (minimum 22.16). Run each command
 separately and stop if one fails. Clone into a new directory; do not replace an
 existing checkout. `wrangler login` opens Cloudflare authorization in the browser;
 choose the account containing this new database. Authentication stays on the PC.
+The Windows examples use `npm.cmd` and `npx.cmd`: PowerShell can block the `.ps1`
+wrappers even in an Administrator window. The `.cmd` wrappers work without
+changing the execution policy. These initialization steps are already completed
+for the database above and are retained for reference.
 
 ```powershell
 git clone --branch deploy/shadowgarden-test --single-branch https://github.com/skypie0102/ShadowGarden.git ShadowGarden-test
 cd ShadowGarden-test
-npm ci
-npx wrangler login
-npx wrangler d1 info shadowgarden-test
+npm.cmd ci
+npx.cmd wrangler login
+npx.cmd wrangler d1 info shadowgarden-test
 ```
 
 Confirm the displayed database ID is `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86`.
 Then apply the two tracked migrations and initialize an empty library:
 
 ```powershell
-npx wrangler d1 migrations apply shadowgarden-test --remote
-npx wrangler d1 execute shadowgarden-test --remote --file recovery-info/empty-seed.sql
-npx wrangler d1 execute shadowgarden-test --remote --command "SELECT revision, json_array_length(document, '$.main') AS main_series, json_array_length(document, '$.adult') AS adult_series FROM library_state WHERE id=1;"
+npx.cmd wrangler d1 migrations apply shadowgarden-test --remote
+npx.cmd wrangler d1 execute shadowgarden-test --remote --file recovery-info/empty-seed.sql
+npx.cmd wrangler d1 execute shadowgarden-test --remote --command "SELECT revision, json_array_length(document, '$.main') AS main_series, json_array_length(document, '$.adult') AS adult_series FROM library_state WHERE id=1;"
 ```
 
 Accept Wrangler's migration confirmation for this test database. Both
@@ -62,13 +69,32 @@ No Pages deployment or B2 operation is included in these commands.
 
 ## Connect a separate test Pages project after initialization
 
-Create a new Pages project for `skypie0102/ShadowGarden` with the test branch as
-its production branch. This means production for the separate test project; the
-existing live Pages project continues using its own configuration. Use framework
-preset None, repository root, `npm run build`, output `dist`, and Node.js 24.
+Open Cloudflare's Workers & Pages page, then Create application > Pages > Connect
+to Git. Connect the `skypie0102` GitHub account and choose `ShadowGarden`.
+Create a new project using these settings:
+
+| Build setting | Value |
+| --- | --- |
+| Project name | `shadowgarden-test` |
+| Production branch | `deploy/shadowgarden-test` |
+| Framework preset | None |
+| Root directory | Leave blank (repository root) |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Build environment variable | `NODE_VERSION` = `24` |
+
+The build command uses `npm`, without the Windows `.cmd` extension, because
+Cloudflare builds run on Linux. The production-branch field refers to this new
+test project's deployments; the existing live project retains its own settings.
 The branch's standard Wrangler configuration supplies the `DB` binding. If the
 proposed Pages project name is unavailable, agree a replacement and update the
 branch's `name` before deployment. Do not attach the live custom domain yet.
+
+Select Save and Deploy for the new test project. The initial deployment can check
+hosting and the empty D1 catalog before secrets are configured. Keeper login,
+Turnstile unlock and B2 uploads require the credentials below and will report
+configuration errors until those are set. Supply the resulting `pages.dev` URL
+or the build error before configuring and validating those provider flows.
 
 Configure the test project's credentials independently: the supported `SG_*`
 names, an independent random `SESSION_SECRET` (at least 32 characters), and B2
@@ -85,12 +111,21 @@ deployment direction.
 
 ## Status and references
 
-Prepared from the owner's screenshots; this preparation did not execute remote
-migrations, initialize the database, create a Pages project, change Cloudflare
-settings, or call B2. Database initialization is the next owner-side action.
-The new config is checked with the pinned Wrangler compiler; the branch's Actions
-workflow runs the established backend/client and isolated browser tests.
+The owner initialized the test D1 database on 2026-10-02 using Wrangler 4.136.3.
+The supplied output marks `0001_reconstructed.sql` and `0002_media_purge.sql`
+successful; the empty seed processed one query and wrote one row. The preceding
+database info identified the intended UUID and APAC region. The final SELECT
+query above has not been independently run against the remote database.
+
+Test configuration commit `1811668` passed Actions run `36844551820`: 53
+backend/client tests, build/Functions compilation and all 14 browser cases. The
+current documentation update records initialization and fixes the PowerShell wrapper
+commands; it changes no runtime code or resources. No test Pages deployment or
+live-provider integration has been confirmed, and no live project setting or
+secret was changed by this preparation.
 
 - [Cloudflare D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 - [Wrangler D1 commands](https://developers.cloudflare.com/d1/wrangler-commands/)
 - [Pages Wrangler configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
+- [Pages Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)
+- [Pages build image and NODE_VERSION](https://developers.cloudflare.com/pages/configuration/build-image/)
