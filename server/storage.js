@@ -41,17 +41,21 @@ async function authorize(env,access) {
   if (!storageConfigured(env,access)) fail(503,'storage_not_configured',`Backblaze B2 ${access} access is not configured.`);
   const {id,key}=storageCredentials(env,access),cacheKey=`${access}:${id}`;
   const checkBucket=data=>{
-    if (!data.authorizationToken || (data.allowed?.bucketId && data.allowed.bucketId!==env.B2_BUCKET_ID) || (data.allowed?.bucketName && data.allowed.bucketName!==env.B2_BUCKET_NAME)) fail(502,'storage_auth_failed','Storage authorization does not match the configured bucket.');
+    const buckets=data.allowed?.buckets;
+    if (typeof data.authorizationToken!=='string' || !data.authorizationToken || (buckets!==null && !Array.isArray(buckets))) fail(502,'storage_auth_failed','Storage returned invalid authorization information.');
+    if (buckets!==null && !buckets.some(bucket=>bucket?.id===env.B2_BUCKET_ID && (bucket.name===null || bucket.name===env.B2_BUCKET_NAME))) fail(502,'storage_auth_failed','Storage authorization does not match the configured bucket.');
     return data;
   };
   const cached = authorizationCache.get(cacheKey);
   if (cached && cached.key === key && cached.until > Date.now()) return checkBucket(cached.data);
-  const response = await request('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
+  const response = await request('https://api.backblazeb2.com/b2api/v4/b2_authorize_account', {
     headers:{authorization:`Basic ${btoa(`${id}:${key}`)}`}
   });
   if (!response.ok) fail(502,'storage_auth_failed','Private media storage authorization failed.');
-  const data = await response.json(); providerUrl(data.apiUrl); providerUrl(data.downloadUrl);
-  checkBucket(data);
+  let result;try {result=await response.json();} catch {fail(502,'storage_auth_failed','Storage returned unreadable authorization information.');}
+  const storage=result?.apiInfo?.storageApi;
+  const data=checkBucket({authorizationToken:result?.authorizationToken,apiUrl:storage?.apiUrl,downloadUrl:storage?.downloadUrl,allowed:storage?.allowed});
+  providerUrl(data.apiUrl); providerUrl(data.downloadUrl);
   if (authorizationCache.size > 8) authorizationCache.clear();
   authorizationCache.set(cacheKey,{key,until:Date.now()+15*60000,data});
   return data;

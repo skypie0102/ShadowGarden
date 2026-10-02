@@ -65,8 +65,10 @@ Set non-secret environment values `SG_TURNSTILE_SITE_KEY`, `TURNSTILE_HOSTNAME`
 permit the actual hostname. An existing encrypted `SG_TURNSTILE_SITE_KEY` works;
 it does not need to be recreated as plaintext. The site key is intentionally
 returned to the browser for the widget; the Turnstile secret is never returned.
-Use bucket/prefix-scoped B2 keys for the same bucket, compatible with B2 v2
-authorization. Do not grant governance-bypass permission for cleanup.
+Use bucket/prefix-scoped B2 keys for the same bucket. Authorization uses B2 v4,
+which supports both legacy keys and current bucket-group keys. The configured
+bucket must be present in the returned restrictions; known bucket names must
+also match. Do not grant governance-bypass permission for cleanup.
 
 The screenshot did not show `SESSION_SECRET`, `B2_BUCKET_ID`, `B2_BUCKET_NAME`
 or resource bindings. Verify those settings before deploying. This replacement

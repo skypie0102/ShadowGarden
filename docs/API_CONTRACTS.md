@@ -164,8 +164,12 @@ permissions and provider retention locks remain visible, retryable failures.
 
 ## Fidelity limits
 
-The native B2 v2 API is used for authorization/download/upload; original provider
-API choice is unknown. B2 keys need bucket/prefix-scoped access: `readFiles` for
+The native B2 v4 API is used for authorization, including the nested
+`apiInfo.storageApi` endpoints and `allowed.buckets` restrictions. It supports
+legacy keys and current bucket-group keys; cached authorization rechecks the
+configured bucket ID and any known name. Upload preparation, version listing and
+deletion retain their v2 operations; downloads use the authorized download URL.
+The original provider API choice is unknown. B2 keys need bucket/prefix-scoped access: `readFiles` for
 the read pair and `writeFiles` for the write pair. Trash cleanup additionally
 needs `listFiles` and `deleteFiles` on the write pair. Admin uploads check
 ZIP structure and expansion bounds but do not replace a full EPUBCheck audit.

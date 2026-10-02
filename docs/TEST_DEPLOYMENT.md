@@ -15,19 +15,21 @@ unverified. This test setup uses separate resources.
 The new D1 database was initially shown with zero tables and zero queries on
 2026-10-01. On 2026-10-02, the owner's terminal output confirmed both migrations
 and the empty-library seed succeeded against the exact database below. Database
-initialization is complete; creating the separate test Pages project is next.
+initialization is complete. The owner subsequently deployed the separate Pages
+project, configured security and confirmed Keeper login. B2 setup is next.
 
 | Setting | Value |
 | --- | --- |
 | GitHub repository | `skypie0102/ShadowGarden` |
 | Test branch | `deploy/shadowgarden-test` |
-| Proposed test Pages project | `shadowgarden-test` |
+| Test Pages project | `shadowgarden-test` |
+| Test URL | `https://shadowgarden-test.pages.dev/` |
 | D1 binding | `DB` |
 | D1 database name | `shadowgarden-test` |
 | D1 database ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 
-The database name and ID come from the owner's D1 overview screenshot. The Pages
-project name is proposed; that project has not been created or deployed here.
+The database name and ID come from the owner's D1 overview screenshot. The owner
+created and deployed the Pages project above on 2026-10-02.
 The committed `wrangler.jsonc` on this branch targets this database. It contains
 no credentials or live B2 configuration. Local Wrangler commands remain local
 unless a remote operation is explicitly requested.
@@ -119,13 +121,58 @@ query above has not been independently run against the remote database.
 
 Test configuration commit `1811668` passed Actions run `36844551820`: 53
 backend/client tests, build/Functions compilation and all 14 browser cases. The
-current documentation update records initialization and fixes the PowerShell wrapper
-commands; it changes no runtime code or resources. No test Pages deployment or
-live-provider integration has been confirmed, and no live project setting or
-secret was changed by this preparation.
+following documentation update recorded initialization and fixed the PowerShell
+wrapper commands without changing runtime code or resources.
+
+The owner has now deployed `https://shadowgarden-test.pages.dev/`. Independent
+HTTP checks confirmed the homepage and both catalog routes, with empty series
+and the initialized D1 timestamp `2026-10-02T01:08:53.645Z`. After the owner added
+security secrets and redeployed, `/admin-access` and `/human-access` returned
+200 with the expected actions and a public site key. The owner then confirmed
+Keeper opened normally. This validates test login from the owner's report;
+media signing, B2 upload/read and cleanup still need actual storage tests.
+
+Provider documentation revealed that current bucket-group keys require B2 v4
+authorization. Updated the backend and provider fixtures to that response
+format. All 57 local backend/client tests, asset audit, build and Functions
+compilation pass. No secret values were collected or B2 objects changed.
+
+## Connect isolated test storage
+
+1. In Backblaze B2, open Buckets > Create a Bucket. Choose an available test
+   name such as `shadowgarden-test-books`, select Private and leave Object Lock
+   disabled so disposable cleanup tests can run. Record its exact name and ID.
+2. In Application Keys > Add a New Application Key, create two keys. Restrict
+   each to this test bucket and the file prefix `shadow-garden/`. Leave Allow
+   List All Bucket Names unchecked. Use Read Only for `shadowgarden-test-read`
+   and Read and Write for `shadowgarden-test-write`; the latter needs file
+   listing/deletion as well as uploads. Save each keyID and applicationKey
+   privately when shown. These are application keys scoped to one test bucket.
+3. In the `shadowgarden-test` Pages project's Production Variables and Secrets,
+   add the six entries below. All six may be stored as Secrets, including the
+   bucket name/ID. Keep their values out of Git and chat.
+
+| Cloudflare name | Backblaze value |
+| --- | --- |
+| `B2_BUCKET_NAME` | New test bucket's exact name |
+| `B2_BUCKET_ID` | New test bucket's ID |
+| `B2_READ_KEY_ID` | Read key's keyID |
+| `B2_READ_APPLICATION_KEY` | Read key's applicationKey |
+| `B2_WRITE_KEY_ID` | Write key's keyID |
+| `B2_WRITE_APPLICATION_KEY` | Write key's applicationKey |
+
+Save and redeploy the latest `deploy/shadowgarden-test` commit after entering
+these values. Upload one small disposable EPUB in Keeper, then open it from
+the public test library to exercise both write/read keys and signed media.
+The actual upload/reader result remains pending. Backup/restore and explicit
+cleanup follow once a real test upload succeeds. Original live storage is
+outside this isolated test configuration.
 
 - [Cloudflare D1 migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 - [Wrangler D1 commands](https://developers.cloudflare.com/d1/wrangler-commands/)
 - [Pages Wrangler configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
 - [Pages Git integration](https://developers.cloudflare.com/pages/get-started/git-integration/)
 - [Pages build image and NODE_VERSION](https://developers.cloudflare.com/pages/configuration/build-image/)
+- [B2 authorization and key compatibility](https://www.backblaze.com/apidocs/b2-authorize-account)
+- [B2 bucket setup](https://www.backblaze.com/docs/cloud-storage-create-and-manage-buckets)
+- [B2 application key setup](https://www.backblaze.com/docs/cloud-storage-create-and-manage-app-keys)

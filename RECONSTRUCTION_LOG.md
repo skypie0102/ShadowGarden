@@ -438,3 +438,27 @@ settings, and expected initial credential-configuration state. Test commit
 run `36844551820`. This follow-up changes documentation only. The new test Pages
 project and real B2/Turnstile checks remain next; main and the live project are
 unchanged by this work.
+
+## Test Pages and Keeper confirmed; B2 authorization updated — 2026-10-02
+
+The owner deployed `shadowgarden-test.pages.dev`, entered the security secrets,
+and successfully retried deployment. Independent HTTP checks confirmed the
+empty D1 catalogs, then 200 responses from both challenge endpoints with their
+expected actions. The owner reported that Keeper opened normally. Secret values
+were never collected. Test B2 upload/read, media signing, backup/restore and
+cleanup remain pending separate disposable storage.
+
+While preparing B2 setup, current provider documentation confirmed that
+bucket-group application keys require v4 authorization and fail against v2.
+Updated the backend to v4, reading endpoints/restrictions from
+`apiInfo.storageApi` and verifying the configured bucket against `allowed.buckets`.
+Legacy keys are supported by the provider's v4 endpoint. Invalid/missing
+authorization data, mismatched buckets and untrusted endpoints fail before
+storage operations; existing role separation and cache rotation checks remain.
+
+All 57 local backend/client tests pass, including four new compatibility/error
+cases. Existing upload, reader, recovery and purge tests now use v4 provider
+fixtures. Asset audit, static build and Pages Functions compilation pass.
+Updated deployment/API/audit documentation and the completed test setup status.
+No browser assets, schema, test resource identifiers or production configuration
+changed. This fix is prepared on the isolated `deploy/shadowgarden-test` branch.

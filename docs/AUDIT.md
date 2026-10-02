@@ -1,4 +1,22 @@
-# Reconstruction audit — updated 2026-10-01
+# Reconstruction audit — updated 2026-10-02
+
+## Test deployment and B2 authorization compatibility — 2026-10-02
+
+The isolated Pages project now serves the initialized empty D1 catalogs.
+After the owner configured security and redeployed, independent HTTP checks
+confirmed both challenge endpoints return 200. The owner confirmed Keeper
+login opens normally. Actual B2 upload/read, media signing and cleanup remain
+pending the separate test bucket and credentials.
+
+Changed B2 authorization from v2 to v4 so current bucket-group keys work along
+with legacy keys. Nested provider endpoints and returned bucket restrictions
+are validated before storage operations. Malformed authorization fails closed;
+the split credentials, rotation checks and exact-version cleanup remain intact.
+All 57 local backend/client tests, asset audit, build and Functions compilation
+pass. Four additional cases cover bucket groups/unrestricted responses,
+bucket mismatches, malformed responses and untrusted nested endpoints. Existing
+upload, reader, recovery and cleanup fixtures now use the documented v4 shape.
+No browser assets, database schema, live project settings or B2 objects changed.
 
 ## Existing deployment configuration compatibility — 2026-10-01
 
@@ -47,7 +65,7 @@ production equivalence or complete private-data recovery**.
 | Manual visual review | Established public/recovery views plus four new purge/recovery-control captures reviewed; latest run 36375221866; scope below |
 | Original EPUB rendering | Out of scope: owner confirmed disposable test data; original files are not a recovery gate |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
-| Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
+| Live provider integration | Isolated Pages/D1 and owner-reported Keeper login confirmed; B2/media flows pending |
 | Remote Git commit/push | Reconstruction and browser fixes published to skypie0102/ShadowGarden main; remote Git trees checked against local source |
 
 ## Defects found and fixed during reconstruction

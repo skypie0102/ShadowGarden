@@ -17,7 +17,7 @@ function legacy(t) {
 function splitStorage() {
   return {B2_READ_KEY_ID:crypto.randomUUID(),B2_READ_APPLICATION_KEY:'fixture-read-key',B2_WRITE_KEY_ID:crypto.randomUUID(),B2_WRITE_APPLICATION_KEY:'fixture-write-key',B2_BUCKET_ID:'fixture-bucket',B2_BUCKET_NAME:'fixture-garden'};
 }
-const authData=(token='token')=>({apiUrl:'https://api.fixture.backblazeb2.com',downloadUrl:'https://download.fixture.backblazeb2.com',authorizationToken:token,allowed:{bucketId:'fixture-bucket',bucketName:'fixture-garden'}});
+const authData=(token='token',buckets=[{id:'fixture-bucket',name:'fixture-garden'}])=>({authorizationToken:token,apiInfo:{storageApi:{apiUrl:'https://api.fixture.backblazeb2.com',downloadUrl:'https://download.fixture.backblazeb2.com',allowed:{buckets}}}});
 const key='shadow-garden/books/config-fixture.epub';
 
 test('existing SG names support Turnstile login, admin authorization and signed book access',async t=>{
@@ -57,6 +57,7 @@ test('B2 reads use the read pair and uploads plus exact-version deletion use the
   t.mock.method(globalThis,'fetch',async(input,options={})=>{
     const url=new URL(input);
     if(url.pathname.endsWith('b2_authorize_account')){
+      assert.equal(url.pathname,'/b2api/v4/b2_authorize_account');
       const credentials=atob(options.headers.authorization.slice(6));auths.push(credentials);
       const token=credentials===`${env.B2_READ_KEY_ID}:${env.B2_READ_APPLICATION_KEY}`?'read-token':'write-token';return Response.json(authData(token));
     }
@@ -106,4 +107,48 @@ test('rejected B2 read authorization never retries with the write key',async t=>
   t.mock.method(globalThis,'fetch',async(input,options)=>{auths.push(atob(options.headers.authorization.slice(6)));return Response.json({code:'unauthorized'},{status:401});});
   await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');
   assert.deepEqual(auths,[`${env.B2_READ_KEY_ID}:${env.B2_READ_APPLICATION_KEY}`]);
+});
+
+test('B2 v4 accepts the configured bucket within a group and unrestricted legacy keys',async t=>{
+  for(const buckets of [[{id:'other-bucket',name:'other'},{id:'fixture-bucket',name:'fixture-garden'}],[{id:'fixture-bucket',name:null}],null]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      requests.push(String(input));
+      if(String(input).endsWith('b2_authorize_account'))return Response.json(authData('v4-token',buckets));
+      assert.equal(options.headers.authorization,'v4-token');return new Response('epub-bytes');
+    });
+    assert.equal(await (await getObject(env,key)).text(),'epub-bytes');
+    assert.deepEqual(requests,['https://api.backblazeb2.com/b2api/v4/b2_authorize_account',`https://download.fixture.backblazeb2.com/file/fixture-garden/${key}`]);
+  }
+});
+
+test('B2 v4 rejects absent or mismatched buckets before downloads, uploads or cleanup',async t=>{
+  for(const buckets of [[],[{id:'other-bucket',name:'fixture-garden'}],[{id:'fixture-bucket',name:'other-garden'}]]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async input=>{requests.push(String(input));return Response.json(authData('v4-token',buckets));});
+    for(const operation of [()=>getObject(env,key),()=>uploadObject(env,key,new Uint8Array([1])),()=>deleteObjectVersions(env,key)]){
+      await assert.rejects(operation,e=>e.code==='storage_auth_failed');
+    }
+    assert.equal(requests.length,3);assert.ok(requests.every(url=>url.endsWith('/v4/b2_authorize_account')));
+  }
+});
+
+test('B2 v4 rejects malformed authorization instead of treating missing restrictions as unrestricted',async t=>{
+  const responses=[{},null,{authorizationToken:'token'},authData('',null),authData('token',{}),authData()];
+  delete responses.at(-1).apiInfo.storageApi.allowed.buckets;
+  for(const body of responses){
+    const env=splitStorage();let requests=0;
+    t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(body);});
+    await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');assert.equal(requests,1);
+  }
+  const env=splitStorage();t.mock.method(globalThis,'fetch',async()=>new Response('invalid-json'));
+  await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');
+});
+
+test('B2 v4 validates nested provider URLs before passing authorization to another host',async t=>{
+  for(const field of ['apiUrl','downloadUrl']){
+    const env=splitStorage(),data=authData();data.apiInfo.storageApi[field]='https://storage.invalid.example/';let requests=0;
+    t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(data);});
+    await assert.rejects(getObject(env,key),e=>e.code==='storage_error');assert.equal(requests,1);
+  }
 });

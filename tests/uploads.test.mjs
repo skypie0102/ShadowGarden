@@ -20,7 +20,7 @@ function mockStorage(t,env){
   const objects=new Map();
   t.mock.method(globalThis,'fetch',async(input,options={})=>{
     const url=new URL(input);
-    if(url.pathname.endsWith('b2_authorize_account'))return Response.json({apiUrl:'https://api.unit.backblazeb2.com',downloadUrl:'https://download.unit.backblazeb2.com',authorizationToken:'test-auth',allowed:{bucketId:'test-bucket'}});
+    if(url.pathname.endsWith('b2_authorize_account'))return Response.json({authorizationToken:'test-auth',apiInfo:{storageApi:{apiUrl:'https://api.unit.backblazeb2.com',downloadUrl:'https://download.unit.backblazeb2.com',allowed:{buckets:[{id:'test-bucket',name:'test-bucket'}]}}}});
     if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://upload.unit.backblazeb2.com/upload',authorizationToken:'test-upload-auth'});
     if(url.pathname==='/upload'){const key=decodeURIComponent(options.headers['x-bz-file-name']);objects.set(key,new Uint8Array(options.body));return Response.json({fileId:'test-file-id'});}
     const key=decodeURIComponent(url.pathname.replace('/file/test-bucket/','')),bytes=objects.get(key);
