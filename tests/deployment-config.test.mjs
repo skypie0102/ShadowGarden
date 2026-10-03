@@ -152,3 +152,39 @@ test('B2 v4 validates nested provider URLs before passing authorization to anoth
     await assert.rejects(getObject(env,key),e=>e.code==='storage_error');assert.equal(requests,1);
   }
 });
+
+test('B2 authorization refuses redirects without sending credentials to their destination',async t=>{
+  for(const status of [301,302,303,307,308]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      requests.push(String(input));assert.equal(options.redirect,'manual');
+      return new Response(null,{status,headers:{location:'https://untrusted.example/collect'}});
+    });
+    await assert.rejects(getObject(env,key),e=>e.code==='storage_redirect_refused'&&e.status===502);
+    assert.deepEqual(requests,['https://api.backblazeb2.com/b2api/v4/b2_authorize_account']);
+  }
+});
+
+test('B2 downloads, uploads and version cleanup refuse provider redirects',async t=>{
+  const cases=[
+    ['/file/',env=>getObject(env,key)],
+    ['b2_get_upload_url',env=>uploadObject(env,key,new Uint8Array([1]))],
+    ['/upload',env=>uploadObject(env,key,new Uint8Array([1]))],
+    ['b2_list_file_versions',env=>deleteObjectVersions(env,key)],
+    ['b2_delete_file_version',env=>deleteObjectVersions(env,key)]
+  ];
+  for(const [target,operation] of cases){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      const url=new URL(input);requests.push(url);assert.equal(options.redirect,'manual');
+      assert.ok(url.hostname.endsWith('.backblazeb2.com'));
+      if(url.pathname.endsWith('b2_authorize_account'))return Response.json(authData());
+      if(url.pathname===target||url.pathname.endsWith(target)||url.pathname.startsWith(target))return new Response(null,{status:307,headers:{location:'https://untrusted.example/collect'}});
+      if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://upload.fixture.backblazeb2.com/upload',authorizationToken:'upload-token'});
+      if(url.pathname.endsWith('b2_list_file_versions'))return Response.json({files:[{fileName:key,fileId:'version',action:'upload',bucketId:env.B2_BUCKET_ID}],nextFileName:null});
+      throw new Error('Unexpected request');
+    });
+    await assert.rejects(operation(env),e=>e.code==='storage_redirect_refused'&&e.status===502);
+    assert.ok(requests.at(-1).pathname.includes(target));
+  }
+});

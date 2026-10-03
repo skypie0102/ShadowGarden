@@ -483,3 +483,40 @@ data changes. No B2 files are deleted by this configuration change.
 Static build and Pages Functions compilation pass with the production config;
 the backend remains the version already covered by 57 backend/client tests and
 14 browser tests. Production deployment and live checks follow this preparation.
+
+## Production deployed; B2 runtime failure corrected — 2026-10-02
+
+Deployed commit `26bacb7` into the existing Pages project `shadowgarden` as
+production deployment `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`. It serves the original
+`shadowgarden-bon.pages.dev` URL. All original secrets were preserved and the
+missing independent session secret was generated securely in Cloudflare. Live
+checks confirmed the new version, homepage, both challenge endpoints and empty
+D1 catalogs. The existing Turnstile widget already allows the original hostname.
+
+Paused the orphaned Workers build configuration after confirming the account has
+no Worker scripts. This fixes future unrelated failed build notices while Pages
+continues serving normally.
+
+A public, read-only missing-cover probe returned `storage_unavailable`. The
+cause was `redirect: 'error'`, rejected by workerd before network access. Replaced
+it with manual redirects and explicit rejection of all 3xx responses. A local
+Cloudflare runtime reproduced the old 502 with zero provider requests, then
+served fixture bytes and rejected a redirect with the fix. All 59 backend/client
+tests pass, including two added regression cases covering provider redirects.
+No real B2 file was created or deleted during this diagnosis. Corrected
+production deployment and live storage verification follow this commit.
+
+## Storage correction deployed after connector interruption — 2026-10-03
+
+The GitHub write never completed. Its eventual error reported that the tool
+catalog changed after the call was prepared, despite owner approval. The remote
+branch and production site were independently rechecked and still used `26bacb7`.
+
+Deployed the already-tested Functions bundle directly to the existing Pages
+project as `f8844be0-ae68-4e72-969d-c0812f03109d`, with `commit_dirty: true` and a
+message recording the pending GitHub sync. Cloudflare confirmed production
+success at 00:39 UTC. The homepage, both challenge endpoints and D1 catalog pass.
+The live B2 missing-cover probe now returns the expected `media_not_found` 404,
+confirming provider authorization and read lookup work with the original keys.
+No B2 objects were created or deleted. Real Keeper upload, protected reader and
+write/delete permissions remain to be verified with the owner's login.

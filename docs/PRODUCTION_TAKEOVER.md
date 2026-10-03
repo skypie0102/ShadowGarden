@@ -23,6 +23,31 @@ Cloudflare retained its original Git source when an API update was attempted,
 so automatic production and preview builds from that old repository are paused.
 Use Pages direct deployments to retain the existing hostname and secrets.
 
+The first takeover deployment succeeded at 2026-10-02 08:31 UTC with commit
+`26bacb7` and deployment ID `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`. The homepage,
+version, login challenge endpoints and both empty catalogs passed live checks.
+All eight original secrets remain encrypted; `SESSION_SECRET` was added securely.
+The original Turnstile widget already permits the production hostname.
+
+The initial B2 probe exposed an unsupported `redirect: 'error'` fetch option in
+workerd. This branch corrects it to manual redirects with explicit refusal of
+every 3xx response. The failure and fix were reproduced in the Cloudflare local
+runtime, independently of the Node mocks. The correction first went live in
+deployment `f8844be0-ae68-4e72-969d-c0812f03109d` on 2026-10-03 at 00:39 UTC.
+It was deployed from the tested working tree while the GitHub connector was
+stalled, with `commit_dirty: true` recorded in Cloudflare.
+
+The live missing-cover probe now completes B2 authorization and the download
+lookup, returning the expected `media_not_found` 404 instead of a storage 502.
+This verifies the read connection without creating or deleting a real object.
+The homepage, both challenge endpoints and D1 catalog also pass. An authenticated
+Keeper upload and actual EPUB reader check remain pending owner verification;
+write/delete capabilities have not yet been tested against the real bucket.
+
+The old `Workers Builds: shadowgarden-test` integration had no Worker remaining
+in the account. Its preview builds and production path triggers are now paused,
+preventing further irrelevant failed builds. Historical failed checks remain.
+
 ## Configuration
 
 `wrangler.jsonc` on this branch is production configuration. It binds the already

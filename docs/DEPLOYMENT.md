@@ -1,6 +1,10 @@
 # Configure a recovered Pages deployment
 
-No production deployment or remote database changes were made during reconstruction.
+The owner authorized production takeover on 2026-10-02. The original site is now
+running the reconstruction with its existing B2 bucket and encrypted secrets.
+Follow [PRODUCTION_TAKEOVER.md](PRODUCTION_TAKEOVER.md) for the current project,
+database, deployment command and verification status. The general setup guidance
+below also documents the earlier isolated-test plan.
 
 ## Build configuration
 

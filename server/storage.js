@@ -33,8 +33,15 @@ function providerUrl(value) {
 }
 async function request(url, options = {}) {
   const {timeoutMs=30000,...init}=options;
-  try { return await fetch(url, {...init, redirect:'error', signal:AbortSignal.timeout(timeoutMs)}); }
+  let response;
+  // workerd accepts manual/follow; reject redirects ourselves without forwarding credentials.
+  try { response = await fetch(url, {...init, redirect:'manual', signal:AbortSignal.timeout(timeoutMs)}); }
   catch { fail(502,'storage_unavailable','Private media storage is temporarily unavailable.'); }
+  if (response.status>=300 && response.status<400) {
+    await response.body?.cancel();
+    fail(502,'storage_redirect_refused','Private media storage returned an unexpected redirect.');
+  }
+  return response;
 }
 const authorizationCache = new Map();
 async function authorize(env,access) {

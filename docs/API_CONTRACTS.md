@@ -121,6 +121,10 @@ are cached separately by role/key ID, invalidated on key rotation, and checked
 against the configured bucket restriction on both fresh and cached responses.
 `B2_BUCKET_ID` and `B2_BUCKET_NAME` remain explicit requirements.
 
+Storage requests use `redirect: 'manual'`, supported by Cloudflare's workerd
+runtime. Every 3xx response fails with `storage_redirect_refused` (HTTP 502);
+credentials and uploaded bytes are never forwarded to a redirect destination.
+
 ## Permanent Trash purge and cleanup
 
 `POST /admin-api/maintenance` with `{action:"purge-trash",ids:[...]}` requires

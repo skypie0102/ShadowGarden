@@ -1,5 +1,29 @@
 # Reconstruction audit — updated 2026-10-02
 
+## Production takeover and storage runtime correction — 2026-10-02
+
+The owner authorized taking over `shadowgarden-bon.pages.dev` using its existing
+secrets and B2 bucket. Production deployment `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`
+served commit `26bacb7`. Live HTTP checks verified the homepage, version, both
+Turnstile challenge endpoints and empty D1 catalogs. All eight original secrets
+were retained; an independent `SESSION_SECRET`, D1 binding and bucket variables
+were added. See `PRODUCTION_TAKEOVER.md` for the exact resources and rollback.
+
+A real storage probe exposed a runtime compatibility bug: workerd rejects
+`redirect: 'error'` before contacting B2. Node fetch mocks had not exposed this.
+The pinned Cloudflare runtime reproduced the old 502 with zero provider calls.
+The fix uses `manual` and explicitly rejects every 3xx response without following
+the destination. The same runtime then served fixture media and refused a 307.
+All 59 backend/client tests pass, including authorization and file-operation
+redirect guards. On 2026-10-03, corrected production deployment
+`f8844be0-ae68-4e72-969d-c0812f03109d` passed the live read-only B2 probe: provider
+authorization and a missing-object lookup now return the expected 404. Actual
+EPUB upload/read and real write/delete permissions still require Keeper checks.
+
+The orphaned Workers build configuration was confirmed to reference a deleted
+Worker. Its previews are disabled and production builds exclude all paths;
+Pages deployment configuration is independent of this cleanup.
+
 ## Test deployment and B2 authorization compatibility — 2026-10-02
 
 The isolated Pages project now serves the initialized empty D1 catalogs.
