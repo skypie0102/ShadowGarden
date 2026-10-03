@@ -40,9 +40,21 @@ stalled, with `commit_dirty: true` recorded in Cloudflare.
 The live missing-cover probe now completes B2 authorization and the download
 lookup, returning the expected `media_not_found` 404 instead of a storage 502.
 This verifies the read connection without creating or deleting a real object.
-The homepage, both challenge endpoints and D1 catalog also pass. An authenticated
-Keeper upload and actual EPUB reader check remain pending owner verification;
-write/delete capabilities have not yet been tested against the real bucket.
+The homepage, both challenge endpoints and D1 catalog also pass. The owner
+confirmed Keeper login works after deployment
+`12b99509-604b-4566-a0eb-330864686b27` (source `ab26a01`).
+
+The first authenticated upload on 2026-10-03 passed EPUB validation and the B2
+read/existence check, reserving a new object key in D1, but failed before catalog
+creation. A separate upload validation bug rejected B2's documented
+`pod-*.backblaze.com` upload URLs. The validator now accepts those HTTPS pods
+only for the URL returned by `b2_get_upload_url`; API/download hosts remain
+restricted to `*.backblazeb2.com`, and redirects are still refused.
+The pinned Cloudflare runtime reproduced the old 502 and the corrected upload
+using fake credentials and provider responses. All 63 backend/client tests pass.
+Retrying an authenticated live upload and opening its EPUB remain necessary to
+verify the real write credentials and reader together. No B2 objects were
+created or deleted by the diagnostic work.
 
 The old `Workers Builds: shadowgarden-test` integration had no Worker remaining
 in the account. Its preview builds and production path triggers are now paused,

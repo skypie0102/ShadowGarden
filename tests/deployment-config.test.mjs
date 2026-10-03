@@ -20,6 +20,58 @@ function splitStorage() {
 const authData=(token='token',buckets=[{id:'fixture-bucket',name:'fixture-garden'}])=>({authorizationToken:token,apiInfo:{storageApi:{apiUrl:'https://api.fixture.backblazeb2.com',downloadUrl:'https://download.fixture.backblazeb2.com',allowed:{buckets}}}});
 const key='shadow-garden/books/config-fixture.epub';
 
+test('B2 uploads accept documented Backblaze pod URLs and preserve the upload request',async t=>{
+  for(const uploadUrl of [
+    'https://pod-000-1005-03.backblaze.com/b2api/v2/b2_upload_file?cvt=fixture&bucket=fixture-bucket',
+    'https://pod-000-1143-18.backblaze.com/b2api/v4/b2_upload_file/fixture-bucket/fixture',
+    'https://upload.fixture.backblazeb2.com/upload'
+  ]){
+    const env=splitStorage(),requests=[],bytes=new Uint8Array([80,75,3,4]);
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      const url=String(input);requests.push(url);assert.equal(options.redirect,'manual');
+      if(url.endsWith('b2_authorize_account'))return Response.json(authData('account-token'));
+      if(url.endsWith('b2_get_upload_url')){
+        assert.equal(options.headers.authorization,'account-token');
+        assert.equal(JSON.parse(options.body).bucketId,env.B2_BUCKET_ID);
+        return Response.json({uploadUrl,authorizationToken:'upload-token'});
+      }
+      assert.equal(url,uploadUrl);assert.equal(options.method,'POST');
+      assert.equal(options.headers.authorization,'upload-token');
+      assert.equal(options.headers['content-type'],'application/epub+zip');
+      assert.equal(options.headers['content-length'],'4');
+      assert.equal(options.headers['x-bz-file-name'],key);
+      assert.match(options.headers['x-bz-content-sha1'],/^[a-f0-9]{40}$/);
+      assert.deepEqual(options.body,bytes);
+      return Response.json({fileId:'fixture-upload'});
+    });
+    assert.deepEqual(await uploadObject(env,key,bytes),{key,size:4,fileId:'fixture-upload'});
+    assert.equal(requests.length,3);
+  }
+});
+
+test('B2 uploads reject untrusted or insecure endpoints before sending bytes or credentials',async t=>{
+  for(const uploadUrl of [
+    'https://pod-000-1005-03.backblaze.com.evil.example/upload',
+    'https://pod-000-1005-03.evilbackblaze.com/upload',
+    'https://www.backblaze.com/upload',
+    'https://pod-.backblaze.com/upload',
+    'https://pod-000-1005-03.backblaze.com:8443/upload',
+    'http://pod-000-1005-03.backblaze.com/upload',
+    'https://user:password@pod-000-1005-03.backblaze.com/upload',
+    'https://upload.backblazeb2.com.evil.example/upload'
+  ]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async input=>{
+      const url=String(input);requests.push(url);
+      if(url.endsWith('b2_authorize_account'))return Response.json(authData());
+      assert.ok(url.endsWith('b2_get_upload_url'));
+      return Response.json({uploadUrl,authorizationToken:'upload-token'});
+    });
+    await assert.rejects(uploadObject(env,key,new Uint8Array([1])),e=>e.code==='storage_error');
+    assert.equal(requests.length,2);
+  }
+});
+
 test('existing SG names support Turnstile login, admin authorization and signed book access',async t=>{
   const env=legacy(t),requests=[];
   t.mock.method(globalThis,'fetch',async(url,options)=>{
@@ -173,9 +225,11 @@ test('B2 v4 rejects malformed authorization instead of treating missing restrict
 
 test('B2 v4 validates nested provider URLs before passing authorization to another host',async t=>{
   for(const field of ['apiUrl','downloadUrl']){
-    const env=splitStorage(),data=authData();data.apiInfo.storageApi[field]='https://storage.invalid.example/';let requests=0;
-    t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(data);});
-    await assert.rejects(getObject(env,key),e=>e.code==='storage_error');assert.equal(requests,1);
+    for(const url of ['https://storage.invalid.example/','https://pod-000-1005-03.backblaze.com/']){
+      const env=splitStorage(),data=authData();data.apiInfo.storageApi[field]=url;let requests=0;
+      t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(data);});
+      await assert.rejects(getObject(env,key),e=>e.code==='storage_error');assert.equal(requests,1);
+    }
   }
 });
 
@@ -203,10 +257,10 @@ test('B2 downloads, uploads and version cleanup refuse provider redirects',async
     const env=splitStorage(),requests=[];
     t.mock.method(globalThis,'fetch',async(input,options)=>{
       const url=new URL(input);requests.push(url);assert.equal(options.redirect,'manual');
-      assert.ok(url.hostname.endsWith('.backblazeb2.com'));
+      assert.ok(url.hostname.endsWith('.backblazeb2.com')||url.hostname==='pod-000-1005-03.backblaze.com');
       if(url.pathname.endsWith('b2_authorize_account'))return Response.json(authData());
       if(url.pathname===target||url.pathname.endsWith(target)||url.pathname.startsWith(target))return new Response(null,{status:307,headers:{location:'https://untrusted.example/collect'}});
-      if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://upload.fixture.backblazeb2.com/upload',authorizationToken:'upload-token'});
+      if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://pod-000-1005-03.backblaze.com/upload',authorizationToken:'upload-token'});
       if(url.pathname.endsWith('b2_list_file_versions'))return Response.json({files:[{fileName:key,fileId:'version',action:'upload',bucketId:env.B2_BUCKET_ID}],nextFileName:null});
       throw new Error('Unexpected request');
     });

@@ -74,6 +74,13 @@ which supports both legacy keys and current bucket-group keys. The configured
 bucket must be present in the returned restrictions; known bucket names must
 also match. Do not grant governance-bypass permission for cleanup.
 
+B2 API/download endpoints use `*.backblazeb2.com`, while the upload URL returned
+by `b2_get_upload_url` can use `pod-*.backblaze.com`. The upload-only validator
+accepts these documented pods and preserves the returned URL, path and query.
+HTTPS, credential-free URLs, standard ports and redirect refusal remain required;
+API/download requests do not inherit the upload-host exception. See Backblaze's
+[native upload guide](https://www.backblaze.com/docs/cloud-storage-upload-files-with-the-native-api).
+
 The screenshot did not show `SESSION_SECRET`, `B2_BUCKET_ID`, `B2_BUCKET_NAME`
 or resource bindings. Verify those settings before deploying. This replacement
 requires a D1 binding named `DB`; it does not imply the original app used D1.

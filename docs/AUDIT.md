@@ -1,5 +1,28 @@
 # Reconstruction audit — updated 2026-10-03
 
+## B2 upload pod compatibility — 2026-10-03
+
+The owner confirmed production Keeper login and then reported an upload failure.
+A read-only D1 check showed one upload reservation at 11:30 UTC, an empty catalog,
+and no active upload lease. The request had passed EPUB validation and the B2
+read/existence check, narrowing the failure to the write step.
+
+The provider URL validator allowed only `*.backblazeb2.com`, but Backblaze's
+[upload URL API](https://www.backblaze.com/apidocs/b2-get-upload-url) returns
+`pod-*.backblaze.com`. Both a regression test and the pinned Cloudflare runtime
+reproduced `storage_error` before the upload POST. The corrected validator
+permits HTTPS pod hosts only for upload URLs; account/download credentials
+remain restricted to their existing hosts. Lookalike domains, unrelated
+Backblaze hosts, URL credentials, nonstandard ports, HTTP and redirects are
+still rejected before upload credentials or bytes can reach them.
+
+All 63 backend/client tests pass, including documented upload URL formats,
+unsafe endpoint rejection, upload-pod redirects and complete upload/catalog
+fixtures using a realistic pod hostname. The Cloudflare runtime completed the
+mocked upload with the expected bytes, content length and upload-specific token.
+No real B2 object was created or deleted, and no secrets or bucket settings were
+changed. A live authenticated retry remains the final provider integration check.
+
 ## Existing Keeper credential compatibility — 2026-10-03
 
 The owner reported `security_not_configured` when logging into production.

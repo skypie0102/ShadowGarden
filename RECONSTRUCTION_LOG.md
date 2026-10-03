@@ -536,3 +536,20 @@ login credentials fail during the initial admin challenge and before counting
 a login attempt. All 61 backend/client tests pass, including added complete
 legacy-token login/session and fail-closed configuration cases. Secret values
 were neither inspected nor changed. Production redeployment follows this fix.
+
+## B2 upload endpoint compatibility — 2026-10-03
+
+The owner confirmed login after deployment `12b99509-604b-4566-a0eb-330864686b27`
+and reported that uploads still failed. Read-only production checks confirmed
+the intended bucket and secret names, an upload reservation after EPUB validation
+and the B2 read check, and no catalog insertion.
+
+The storage URL validator incorrectly rejected Backblaze's documented
+`pod-*.backblaze.com` upload servers. Reproduced the 502 with fake credentials
+in both a regression test and the pinned Cloudflare runtime. Allowed those HTTPS
+pods only for provider-issued upload URLs, retaining separate API/download host
+checks, exact returned paths/queries, and refusal of redirects and unsafe URLs.
+The same runtime then completed the fixture upload. All 63 backend/client tests
+pass; upload/catalog fixtures now use realistic pod hosts. Existing B2 secrets,
+bucket settings and objects were unchanged. Production deployment and the
+owner's authenticated upload retry follow this correction.

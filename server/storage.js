@@ -26,9 +26,12 @@ export async function getStaticCover(env,key,{head=false,origin}={}) {
   await response.body?.cancel();
   return null;
 }
-function providerUrl(value) {
+function providerUrl(value, {upload=false} = {}) {
   let url; try { url = new URL(value); } catch { fail(502,'storage_error','Storage returned an invalid endpoint.'); }
-  if (url.protocol !== 'https:' || !url.hostname.endsWith('.backblazeb2.com') || url.username || url.password || url.port) fail(502,'storage_error','Storage returned an invalid endpoint.');
+  // B2 returns pod-*.backblaze.com for uploads, distinct from API/download hosts.
+  // Permit those pods only for the upload URL returned by b2_get_upload_url.
+  const trustedHost=url.hostname.endsWith('.backblazeb2.com') || (upload && /^pod-[a-z0-9]+(?:-[a-z0-9]+)*\.backblaze\.com$/.test(url.hostname));
+  if (url.protocol !== 'https:' || !trustedHost || url.username || url.password || url.port) fail(502,'storage_error','Storage returned an invalid endpoint.');
   return url;
 }
 async function request(url, options = {}) {
@@ -82,7 +85,7 @@ export async function uploadObject(env,key,bytes) {
     method:'POST',headers:{authorization:auth.authorizationToken,'content-type':'application/json'},body:JSON.stringify({bucketId:env.B2_BUCKET_ID})
   });
   if (!response.ok) fail(502,'upload_unavailable','Storage could not prepare the upload.');
-  const target=await response.json(), url=providerUrl(target.uploadUrl);
+  const target=await response.json(), url=providerUrl(target.uploadUrl,{upload:true});
   const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-1',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   const result=await request(url,{method:'POST',headers:{authorization:target.authorizationToken,
     'content-type':mimeFor(key),'x-bz-file-name':key.split('/').map(encodeURIComponent).join('/'),
