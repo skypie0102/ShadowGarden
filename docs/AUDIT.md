@@ -1,4 +1,24 @@
-# Reconstruction audit — updated 2026-10-02
+# Reconstruction audit — updated 2026-10-03
+
+## Existing Keeper credential compatibility — 2026-10-03
+
+The owner reported `security_not_configured` when logging into production.
+Read-only checks showed a working session/Turnstile challenge and configured
+`SG_ADMIN_TOKEN`, while the protected library endpoint failed the admin-token
+configuration gate. The reconstruction had applied its 32-character HMAC key
+minimum to the existing login credential even though an independent session
+key signs the comparison.
+
+Separated credential validation from signing-key validation. Keeper preserves
+the exact nonempty stored token, including existing shorter credentials. Empty,
+whitespace-only and non-string values still fail closed; canonical overrides
+remain explicit. Session/media signing keys retain their length checks. The
+admin challenge now validates credential presence, and configuration errors
+are rejected before counting failed login attempts.
+
+All 61 backend/client tests pass. Added full login/session checks for an existing
+shorter token, wrong-token and failed-Turnstile rejection, and invalid-credential
+configuration checks. No stored secret was read, changed or rotated.
 
 ## Production takeover and storage runtime correction — 2026-10-02
 

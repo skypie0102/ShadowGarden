@@ -37,8 +37,15 @@ export function cookie(name, value, ttl, path = '/') {
   return `${name}=${value}; Path=${path}; Max-Age=${ttl}; HttpOnly; Secure; SameSite=Strict`;
 }
 export function database(env) { if (!env.DB) fail(503,'database_not_configured','The reconstructed database binding is not configured.'); return env.DB; }
+function adminCredential(env) {
+  // Keeper's existing token is a login credential, not an HMAC signing key.
+  // Preserve its exact value; the independent SESSION_SECRET signs comparisons.
+  const expected = setting(env, 'ADMIN_TOKEN');
+  if (typeof expected !== 'string' || !expected.trim()) fail(503,'security_not_configured','The Keeper admin token is not configured.');
+  return expected;
+}
 export async function checkAdminToken(env, token) {
-  const expected = secret(env, 'ADMIN_TOKEN');
+  const expected = adminCredential(env);
   const key = await hmacKey(secret(env,'SESSION_SECRET'));
   const expectedMac = await crypto.subtle.sign('HMAC',key,encoder.encode(expected));
   return crypto.subtle.verify('HMAC',key,expectedMac,encoder.encode(String(token || '')));
@@ -99,12 +106,17 @@ export async function rateLimit(context, scope, max = 10, windowSeconds = 600) {
 export async function adminAccess(context) {
   const {request,env} = context;
   method(request,['GET','POST','DELETE']); sameOrigin(request);
-  if (request.method === 'GET') return json(challenge(context,'admin_access'));
+  if (request.method === 'GET') {
+    adminCredential(env);
+    return json(challenge(context,'admin_access'));
+  }
   if (request.method === 'DELETE') {
     const session = await verified(env,cookies(request)[ADMIN_COOKIE],'admin');
     if (session) await database(env).prepare('DELETE FROM admin_sessions WHERE id = ?').bind(session.sid).run();
     return json({ok:true},200,{'set-cookie':cookie(ADMIN_COOKIE,'',0)});
   }
+  // Configuration errors are not failed login attempts.
+  adminCredential(env);
   const body = await bodyJson(request,8192);
   await rateLimit(context,'admin',5,600);
   await turnstile(context,body.turnstileToken,'admin_access');

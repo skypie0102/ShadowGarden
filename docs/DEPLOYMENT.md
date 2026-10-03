@@ -57,7 +57,7 @@ Set secrets through Cloudflare's secret controls, never Git:
 
 | Name | Required for |
 | --- | --- |
-| `SG_ADMIN_TOKEN` | Existing Keeper bearer/login token, at least 32 characters |
+| `SG_ADMIN_TOKEN` | Existing nonempty Keeper bearer/login token; preserved and matched exactly |
 | `SESSION_SECRET` | Independent HMAC secret, at least 32 random characters |
 | `SG_MEDIA_SIGNING_SECRET` | Existing media ticket secret, at least 32 characters |
 | `SG_TURNSTILE_SECRET_KEY` | Server-side Siteverify |
@@ -77,7 +77,7 @@ also match. Do not grant governance-bypass permission for cleanup.
 The screenshot did not show `SESSION_SECRET`, `B2_BUCKET_ID`, `B2_BUCKET_NAME`
 or resource bindings. Verify those settings before deploying. This replacement
 requires a D1 binding named `DB`; it does not imply the original app used D1.
-The admin/media secret length and B2 capabilities cannot be verified from an
+The media signing secret length and B2 capabilities cannot be verified from an
 encrypted-name inventory. `SESSION_SECRET` must be independently generated;
 there is no fallback to the media or admin secret. New sessions must be issued
 by this backend, even if an existing bearer token is retained.

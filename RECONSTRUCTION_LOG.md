@@ -520,3 +520,19 @@ The live B2 missing-cover probe now returns the expected `media_not_found` 404,
 confirming provider authorization and read lookup work with the original keys.
 No B2 objects were created or deleted. Real Keeper upload, protected reader and
 write/delete permissions remain to be verified with the owner's login.
+
+## Keeper login credential compatibility — 2026-10-03
+
+The owner reported that Keeper login failed with "Server security is not
+configured." Production had all required secret names and the session/Turnstile
+challenge worked; the protected library endpoint failed the administrator-token
+configuration gate. This gate reused the signing-key helper and rejected an
+existing login token shorter than 32 characters.
+
+The login credential is now checked for nonempty text and still compared exactly
+using the independent session HMAC key. Signing-key length requirements,
+Turnstile, rate limits, and session validation remain enforced. Missing or blank
+login credentials fail during the initial admin challenge and before counting
+a login attempt. All 61 backend/client tests pass, including added complete
+legacy-token login/session and fail-closed configuration cases. Secret values
+were neither inspected nor changed. Production redeployment follows this fix.

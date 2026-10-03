@@ -109,8 +109,12 @@ totals do not inherit the panel's display limit or load older document payloads.
 `TURNSTILE_SECRET_KEY` accept the owner's corresponding aliases
 `SG_ADMIN_TOKEN`, `SG_MEDIA_SIGNING_SECRET`, `SG_TURNSTILE_SITE_KEY` and
 `SG_TURNSTILE_SECRET_KEY`. An explicitly defined canonical setting takes
-precedence, including an empty or invalid value. Existing strength requirements
-still apply. `SESSION_SECRET` is independent and has no alias or fallback.
+precedence, including an empty or invalid value. Keeper's login token must be a
+nonempty string and is compared exactly; it is not used as a signing key.
+`SESSION_SECRET` and `BOOK_SIGNING_SECRET` still require at least 32 characters.
+`SESSION_SECRET` is independent and has no alias or fallback. The admin challenge
+checks that a login credential is configured, and a missing credential fails
+before consuming a login attempt.
 
 B2 GET/HEAD requests use `B2_READ_KEY_ID` / `B2_READ_APPLICATION_KEY`; uploads
 and cleanup list/delete requests use `B2_WRITE_KEY_ID` / `B2_WRITE_APPLICATION_KEY`.

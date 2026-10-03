@@ -67,6 +67,13 @@ The reconstructed backend also needs an independent encrypted `SESSION_SECRET`
 with at least 32 characters. Add it once; retain it on subsequent deployments.
 The existing SG aliases are supported. Secret values do not belong in Git.
 
+Keeper accepts the original nonempty `SG_ADMIN_TOKEN` exactly as configured,
+including an existing token shorter than 32 characters. It is a login credential,
+not a signing key. The independent session and media signing secrets retain
+their 32-character minimum; Turnstile, rate limits and revocable sessions remain
+required. A missing or blank Keeper token still fails closed with a specific
+configuration error and does not consume a login attempt.
+
 The database still has its original `shadowgarden-test` name. The test Pages
 project also references it, so treat writes from either site as production
 writes after the takeover. Future destructive testing requires an isolated

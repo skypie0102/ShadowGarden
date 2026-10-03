@@ -39,17 +39,43 @@ test('existing SG names support Turnstile login, admin authorization and signed 
   assert.ok(requests.every(r=>r.secret===env.SG_TURNSTILE_SECRET_KEY));
 });
 
-test('explicit canonical values win over aliases and aliases retain secret strength checks',async t=>{
+test('explicit canonical values win over aliases and signing secrets retain strength checks',async t=>{
   const env=legacy(t),oldToken=env.SG_ADMIN_TOKEN;env.ADMIN_TOKEN='new-admin-token-'.repeat(3);
   assert.equal(await checkAdminToken(env,env.ADMIN_TOKEN),true);assert.equal(await checkAdminToken(env,oldToken),false);
   env.ADMIN_TOKEN='';await assert.rejects(checkAdminToken(env,oldToken),e=>e.code==='security_not_configured');
-  delete env.ADMIN_TOKEN;env.SG_ADMIN_TOKEN='short';await assert.rejects(checkAdminToken(env,'short'),e=>e.code==='security_not_configured');
+  delete env.ADMIN_TOKEN;env.SG_ADMIN_TOKEN='';await assert.rejects(checkAdminToken(env,''),e=>e.code==='security_not_configured');
   const bookTicket=await signed(env,'book',{},60,'BOOK_SIGNING_SECRET');env.BOOK_SIGNING_SECRET='canonical-book-secret-'.repeat(3);
   assert.equal(await verified(env,bookTicket,'book','BOOK_SIGNING_SECRET'),null);
   env.BOOK_SIGNING_SECRET='';await assert.rejects(verified(env,bookTicket,'book','BOOK_SIGNING_SECRET'),e=>e.code==='ticketing_not_configured');
   delete env.BOOK_SIGNING_SECRET;env.SG_MEDIA_SIGNING_SECRET='short';assert.equal((await call(bookAccess,context(env,'/book-access','POST',{}))).status,503);
   env.TURNSTILE_SECRET_KEY='';assert.throws(()=>challenge(context(env,'/admin-access'),'admin_access'),e=>e.code==='human_verification_unavailable');
   delete env.TURNSTILE_SECRET_KEY;delete env.SESSION_SECRET;assert.throws(()=>challenge(context(env,'/admin-access'),'admin_access'),e=>e.code==='security_not_configured');
+});
+
+test('existing shorter Keeper credentials unlock only with the exact token and a verified session',async t=>{
+  const env=legacy(t);env.SG_ADMIN_TOKEN='legacy-keeper-token';
+  t.mock.method(globalThis,'fetch',async()=>Response.json({success:true,hostname:'garden.test',action:'admin_access'}));
+  const login=await call(adminAccess,context(env,'/admin-access','POST',{adminToken:env.SG_ADMIN_TOKEN,turnstileToken:'fixture'}));
+  assert.equal(login.status,200);
+  const headers={authorization:`Bearer ${env.SG_ADMIN_TOKEN}`,cookie:login.headers.get('set-cookie').split(';')[0]};
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,headers))).status,200);
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,{authorization:headers.authorization}))).status,401);
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,{...headers,authorization:'Bearer wrong-token'}))).status,401);
+  for(const wrong of ['',env.SG_ADMIN_TOKEN+'x',' '+env.SG_ADMIN_TOKEN])assert.equal(await checkAdminToken(env,wrong),false);
+  t.mock.method(globalThis,'fetch',async()=>Response.json({success:false}));
+  assert.equal((await call(adminAccess,context(env,'/admin-access','POST',{adminToken:env.SG_ADMIN_TOKEN,turnstileToken:'invalid'}))).status,403);
+  env.SESSION_SECRET='short';await assert.rejects(checkAdminToken(env,env.SG_ADMIN_TOKEN),e=>e.code==='security_not_configured');
+});
+
+test('missing, blank and non-string Keeper credentials still fail closed',async t=>{
+  const env=legacy(t);
+  for(const invalid of [undefined,null,'','   ',123]){
+    env.SG_ADMIN_TOKEN=invalid;
+    await assert.rejects(checkAdminToken(env,String(invalid)),e=>e.code==='security_not_configured');
+    assert.equal((await call(adminAccess,context(env,'/admin-access'))).status,503);
+    assert.equal((await call(adminAccess,context(env,'/admin-access','POST',{adminToken:'fixture',turnstileToken:'fixture'}))).status,503);
+  }
+  assert.equal(env.DB.sqlite.prepare('SELECT COUNT(*) AS count FROM rate_limits').get().count,0);
 });
 
 test('B2 reads use the read pair and uploads plus exact-version deletion use the write pair',async t=>{
