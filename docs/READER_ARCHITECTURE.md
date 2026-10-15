@@ -68,6 +68,11 @@ to the planned cache lifecycle/performance work.
 
 ## Verification boundaries
 
+- The first milestone passes all 79 Node tests, 30 desktop/mobile Chromium
+  browser cases, recovered-asset audit, static build and Functions compilation
+  in clean [CI run 38743863205](https://github.com/skypie0102/ShadowGarden/actions/runs/38743863205).
+  The tested source is `5d3856ecf7000fa47714a5e38df0445d2e8f74e9` on draft
+  [PR #2](https://github.com/skypie0102/ShadowGarden/pull/2); production is unchanged.
 - Engine tests check initialization, repeat initialization, the original vendor
   factory, extension installation and unsupported-runtime failure.
 - Navigation tests check delegation and ownership cleanup. Continuous target

@@ -596,3 +596,33 @@ The same runtime then completed the fixture upload. All 63 backend/client tests
 pass; upload/catalog fixtures now use realistic pod hosts. Existing B2 secrets,
 bucket settings and objects were unchanged. Production deployment and the
 owner's authenticated upload retry follow this correction.
+
+## Reader refactor — first milestone verified — 2026-10-15
+
+Created `refactor/reader-foundation` from the deployed reader source and recorded
+the phased plan, invariants, ownership map and issue register in
+`docs/READER_REFACTOR_ROADMAP.md`. The first milestone replaces six global
+`window.ePub` wrappers with explicit ordered extensions and one application
+engine API. Initialization is idempotent and rejects unsupported runtime shapes
+before installing integration behavior. The recovered vendor bundles are
+unchanged; manager compatibility remains inside the integration boundary.
+
+Ten new browser cases exercise the production reader HTML, authorization client,
+bootstrap, full extension stack and UI with generated original EPUBs and isolated
+network fixtures. These exposed and verified fixes for skipped external SVG
+artwork, iframe hash scrolling that undid internal-link navigation, and fragment
+CFIs with element/text offset mismatches. Removed duplicate legacy TOC capture
+and routed internal links through the app's active navigation owner. Seek,
+relayout, resume and lifecycle consolidation remain later milestones.
+
+Source `5d3856ecf7000fa47714a5e38df0445d2e8f74e9` passes all 79 Node tests and
+30 desktop/mobile Chromium browser cases in clean GitHub Actions run
+`38743863205`, plus the recovered-asset audit, static build and Pages Functions
+compilation. Broader browser engines, mid-passage reflow and lifecycle cases are
+explicitly tracked rather than claimed as covered. The temporary CI runtime
+export used to debug the restricted local environment has been removed.
+
+The milestone is in draft PR #2, targeting `deploy/shadowgarden-bon`. It is not
+merged or deployed. No production storage, database, secrets or Cloudflare
+settings changed during this refactor. `docs/READER_ARCHITECTURE.md` describes
+the current engine boundary and remaining compatibility bridges.
