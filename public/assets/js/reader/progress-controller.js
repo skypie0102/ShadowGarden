@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Reader-facing progress adapter over the canonical R2 service. */
 import { beginRenditionNavigation,holdRenditionNavigation,navigateRendition } from "./navigation-state.js";
 
@@ -18,11 +19,12 @@ export function formatReaderProgress({percentage=0,position=null,chapter=""}={})
 }
 
 export function createProgressController({storage,elements,getBook,getRendition,getPageMap,getFlow,getChapter,toast,onPositionChange}={}){
+  const scope=createReaderScope();
   const state={currentCfi:"",currentPosition:null,locationsReady:false,locationsFailed:false,pendingSeek:null,seekTimer:0,refinementTimer:0,seekBarrier:null};
 
   function supersedeSeek(){
-    clearTimeout(state.seekTimer);state.seekTimer=0;
-    clearTimeout(state.refinementTimer);state.refinementTimer=0;
+    scope.clearTimeout(state.seekTimer);state.seekTimer=0;
+    scope.clearTimeout(state.refinementTimer);state.refinementTimer=0;
     state.pendingSeek?.finishInitial?.();state.pendingSeek=null;
     const previous=state.seekBarrier;state.seekBarrier=null;
     if(previous){previous.operation.signal.removeEventListener("abort",previous.onAbort);previous.finishInitial?.();previous.resolve();previous.operation.cancel()}
@@ -42,7 +44,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
   function finishSeekBarrier(operation){
     const barrier=state.seekBarrier;
     if(!barrier||barrier.operation!==operation)return;
-    clearTimeout(state.refinementTimer);state.refinementTimer=0;
+    scope.clearTimeout(state.refinementTimer);state.refinementTimer=0;
     operation.signal.removeEventListener("abort",barrier.onAbort);
     state.seekBarrier=null;barrier.resolve();
   }
@@ -56,6 +58,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     try{document.dispatchEvent(new CustomEvent("sg:reader-progress",{detail:presentation}))}catch{}
   }
   function setProgressUI(percentage,position=state.currentPosition){
+    if(scope.disposed)return;
     const range=elements.progressRange,text=elements.progressText;
     const chapter=String(position?.chapter||(position?.cfi?getChapter?.():"")||"").trim();
     const presentation=formatReaderProgress({percentage,position,chapter});
@@ -93,6 +96,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     try{return pageMap.positionForLocation(location,{rendition,flow:getFlow?.()})}catch{return null}
   }
   function save(location){
+    if(scope.disposed)return state.currentPosition;
     const reportedCfi=location?.start?.cfi;if(!reportedCfi)return state.currentPosition;
     const pageMap=getPageMap?.(),position=currentPageMapPosition(location)||{cfi:reportedCfi},cfi=position.cfi||reportedCfi;
     const chapter=getChapter?.()||"";
@@ -111,7 +115,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     if(!items.length)return"";const value=clamp01(percentage),index=value>=1?items.length-1:Math.min(items.length-1,Math.floor(value*items.length));return items[index]?.href||"";
   }
   async function performSeek(percentage,{rendition,book,pageMap,flow,operation}){
-    const current=()=>operation.isCurrent()&&rendition===getRendition?.()&&book===getBook?.();
+    const current=()=>!scope.disposed&&operation.isCurrent()&&rendition===getRendition?.()&&book===getBook?.();
     if(!current())return false;
     const value=clamp01(percentage);
     if(pageMap?.hasCompleteMap?.()){
@@ -132,6 +136,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     catch(error){if(current()){console.error("Progress seek failed",error);toast?.("Could not seek to that location")}return false}
   }
   function seekTo(percentage,immediate=false){
+    if(scope.disposed)return Promise.resolve(false);
     const value=clamp01(percentage);setProgressUI(value,pageMapPositionFromPercentage(value));
     const rendition=getRendition?.();if(!rendition)return Promise.resolve();
     const barrier=beginSeekBarrier(rendition);
@@ -142,7 +147,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     if(needsRefinement){
       const pending={percentage:value,requestedAt:Date.now(),barrier,initialDone,finishInitial};
       state.pendingSeek=pending;
-      state.refinementTimer=setTimeout(()=>{
+      state.refinementTimer=scope.timeout(()=>{
         if(state.pendingSeek!==pending)return;
         state.pendingSeek=null;state.refinementTimer=0;
         void initialDone.then(()=>finishSeekBarrier(barrier.operation));
@@ -157,13 +162,13 @@ export function createProgressController({storage,elements,getBook,getRendition,
         if(!needsRefinement)finishSeekBarrier(barrier.operation);
       }
     };
-    if(immediate)void run();else state.seekTimer=setTimeout(()=>{state.seekTimer=0;void run()},120);
+    if(immediate)void run();else state.seekTimer=scope.timeout(()=>{state.seekTimer=0;void run()},120);
     return barrier.promise;
   }
   function startLocationGeneration(){
-    const book=getBook?.();if(!book)return;
-    book.ready.then(()=>book.locations.generate(1200)).then(async()=>{
-      if(book!==getBook?.())return;
+    const book=getBook?.();if(!book||scope.disposed)return;
+    book.ready.then(()=>scope.disposed?null:book.locations.generate(1200)).then(async()=>{
+      if(scope.disposed||book!==getBook?.())return;
       state.locationsReady=true;state.locationsFailed=false;
       const pending=state.pendingSeek;state.pendingSeek=null;
       if(pending&&Date.now()-pending.requestedAt<refinementWindow){
@@ -177,7 +182,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
       const location=getRendition?.()?.location;if(location?.start){save(location);return}
       if(state.currentCfi){try{const exact=book.locations.percentageFromCfi(state.currentCfi);if(Number.isFinite(exact))setProgressUI(exact,state.currentPosition)}catch{}}
     }).catch(error=>{
-      if(book!==getBook?.())return;
+      if(scope.disposed||book!==getBook?.())return;
       state.locationsFailed=true;
       const pending=state.pendingSeek;state.pendingSeek=null;
       if(pending){pending.finishInitial?.();finishSeekBarrier(pending.barrier.operation)}
@@ -192,13 +197,14 @@ export function createProgressController({storage,elements,getBook,getRendition,
     return saved;
   }
   function setPosition(position){
-    if(!position)return;state.currentPosition={...position};if(position.cfi)state.currentCfi=position.cfi;
+    if(scope.disposed||!position)return;state.currentPosition={...position};if(position.cfi)state.currentCfi=position.cfi;
   }
   function pageMapReady(){
     const location=getRendition?.()?.location;if(location?.start)save(location);
   }
 
   return{
+    dispose(){scope.dispose();supersedeSeek();state.currentCfi="";state.currentPosition=null},
     save,seekTo,navigateToPercentage:percentage=>seekTo(percentage,true),startLocationGeneration,restoreSaved,setProgressUI,pageMapReady,setPosition,
     currentCfi:()=>state.currentCfi,currentPosition:()=>state.currentPosition,locationsReady:()=>state.locationsReady
   };

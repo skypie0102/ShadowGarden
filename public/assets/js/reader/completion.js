@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — one Reader completion owner for Page and Continuous end pages. */
 import { catalog as catalogDomain, readingState, urls } from "../domain/index.js";
 import { confirmReadAgain, resetFinishedVolume } from "../public/volume-actions.js";
@@ -21,14 +22,17 @@ function entryTitle(entry){
   return String(entry?.volume?.title||(number!==""?`Volume ${number}`:"this volume")).trim()||"this volume";
 }
 
-export async function createCompletionController({session,elements,toast}={}){
+export async function createCompletionController({session,elements,toast,signal}={}){
+  const scope=createReaderScope();
+  if(signal?.aborted)scope.dispose();else scope.listen(signal,"abort",()=>scope.dispose(),{once:true});
+  const dispose=()=>scope.dispose();
   const masterActions=elements.volumeEndPage?.querySelector(".volume-complete-actions")||document.querySelector("#volumeEndPage .volume-complete-actions");
-  if(!masterActions)return{sync(){},destroy(){}};
+  if(!masterActions)return{sync(){},dispose,destroy:dispose};
 
   let series=null,volume=null,volumeIndex=-1,currentEntry=null,nextEntry=null,firstEntry=null;
   try{
     if(session?.seriesId&&window.ShadowGardenData?.loadCatalog){
-      const shelf=await window.ShadowGardenData.loadCatalog(session.adult);
+      const shelf=await scope.wait(window.ShadowGardenData.loadCatalog(session.adult));
       const found=catalogDomain.findVolumeEntry(shelf,session.seriesId,session.publicBookId||session.requested,[session.sourcePath,session.ticket?.identity,session.ticket?.requestedIdentity]);
       if(found){
         series=found.series;volume=found.volume;volumeIndex=found.index;
@@ -38,8 +42,9 @@ export async function createCompletionController({session,elements,toast}={}){
         nextEntry=current>=0?ordered[current+1]||null:null;
       }
     }
-  }catch(error){console.warn("Reader completion context unavailable",error)}
+  }catch(error){if(!scope.disposed)console.warn("Reader completion context unavailable",error)}
 
+  if(scope.disposed)return{sync(){},dispose,destroy:dispose};
   const aliases=readingState.volumeAliases?.(session?.seriesId,volume,volumeIndex,[volume?.file,volume?.bookId,session?.publicBookId,session?.requested,session?.sourcePath,session?.ticket?.identity])
     ||[volume?.file,volume?.bookId,session?.publicBookId,session?.requested,session?.sourcePath].filter(Boolean);
   const primary=String(volume?.file||session?.publicBookId||session?.requested||aliases[0]||"").trim();
@@ -101,6 +106,7 @@ export async function createCompletionController({session,elements,toast}={}){
     return[...document.querySelectorAll('.volume-end-page .volume-complete-actions')].map((actions,index)=>installControl(actions,{master:actions===masterActions||index===0})).filter(Boolean);
   }
   function sync(){
+    if(scope.disposed)return;
     configureAllPages();
     const finished=finishedNow();
     for(const toggle of allControls()){
@@ -110,6 +116,7 @@ export async function createCompletionController({session,elements,toast}={}){
     }
   }
   function persist(wanted,{quiet=false}={}){
+    if(scope.disposed)return false;
     const ok=aliases.length?(readingState.setAliasesFinished?.(aliases,wanted)??readingState.setFinished(primary,wanted)):false;
     if(!ok||finishedNow()!==wanted){sync();toast?.("Could not save reading status");return false}
     sync();if(!quiet)toast?.(wanted?"Marked as finished":"Marked as unfinished");return true;
@@ -117,8 +124,9 @@ export async function createCompletionController({session,elements,toast}={}){
 
   async function restartDestination(target,bookId){
     if(!seriesId||!target||!bookId)return;
-    if(!(await confirmReadAgain(entryTitle(target))))return;
-    const reset=await resetFinishedVolume(seriesId,bookId);
+    if(!(await confirmReadAgain(entryTitle(target),{signal:scope.signal}))||scope.disposed)return;
+    const reset=await resetFinishedVolume(seriesId,bookId,{signal:scope.signal});
+    if(scope.disposed)return;
     if(!reset){toast?.("Could not restart this volume");return}
     location.assign(urls.readerUrl(bookId,seriesId,{restart:true}));
   }
@@ -144,9 +152,9 @@ export async function createCompletionController({session,elements,toast}={}){
     if(changed.some(id=>aliases.includes(String(id||""))))sync();
   }
 
-  document.addEventListener("change",onChange,true);
-  document.addEventListener("click",onClick,true);
-  window.addEventListener(readingState.EVENT,onState);
+  scope.listen(document,"change",onChange,true);
+  scope.listen(document,"click",onClick,true);
+  scope.listen(window,readingState.EVENT,onState);
 
   /* Continuous mode clones the master end page inside EPUB.js's manager. The clone is a
      third-party lifecycle boundary, so this observer initializes both its copy/navigation
@@ -155,11 +163,11 @@ export async function createCompletionController({session,elements,toast}={}){
   const observer=new MutationObserver(mutations=>{
     if(mutations.some(mutation=>[...mutation.addedNodes].some(node=>node?.nodeType===1&&(node.matches?.(".volume-end-page-continuous")||node.querySelector?.(".volume-end-page-continuous")))))sync();
   });
-  observer.observe(host,{childList:true,subtree:true});
+  scope.observe(observer,host,{childList:true,subtree:true});
   sync();
 
   return{
-    sync,persist,finished:finishedNow,
-    destroy(){observer.disconnect();document.removeEventListener("change",onChange,true);document.removeEventListener("click",onClick,true);window.removeEventListener(readingState.EVENT,onState)}
+    sync,persist,finished:finishedNow,dispose,
+    destroy:dispose
   };
 }

@@ -1,3 +1,4 @@
+import {readerInstanceScope} from "./reader/lifecycle.js";
 /* Shadow Garden v1.4.3 — paginated standalone visual-page frame.
  *
  * Standalone visual pages are synthetic one-page documents from the Visual Page Cache.
@@ -236,7 +237,7 @@ export function createPaginatedVisualFitExtension(){
       manager.display=(section,target)=>{
         const visual=isVisualSection(section);
         return Promise.resolve(rawDisplay(section,visual?undefined:target)).then(result=>{
-          if(visual){
+          if(visual&&!readerInstanceScope(rendition).disposed){
             const view=manager.views?.find?.(section)||manager.views?.first?.();
             if(view)fitVisualView(view,rendition);
             try{manager.scrollTo?.(0,0,true)}catch{}
@@ -252,17 +253,18 @@ export function createPaginatedVisualFitExtension(){
   function patchRendition(rendition,options={}){
     if(!rendition||rendition.__sgPaginatedVisualFramePatched||!isPaginated(options,rendition))return rendition;
     rendition.__sgPaginatedVisualFramePatched=true;
+    const scope=readerInstanceScope(rendition);
 
-    const install=()=>patchManager(rendition);
+    const install=scope.guard(()=>patchManager(rendition));
     install();
     try{Promise.resolve(rendition.started).then(install).catch(()=>{})}catch{}
-    try{rendition.on?.("started",install)}catch{}
+    try{scope.on(rendition,"started",install)}catch{}
     try{
-      rendition.on?.("rendered",(section,view)=>{
+      scope.on(rendition,"rendered",(section,view)=>{
         patchView(view,rendition);
         if(isVisualSection(section)){
           fitVisualView(view,rendition);
-          requestAnimationFrame(()=>fitVisualView(view,rendition));
+          scope.frame(()=>fitVisualView(view,rendition));
         }
       });
     }catch{}

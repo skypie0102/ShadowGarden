@@ -1,7 +1,7 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Paginated-mode navigation adapter. */
 import { beginRenditionNavigation,holdRenditionNavigation,runRenditionMove } from "./navigation-state.js";
 
-const paint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 
 function cleanHref(value){
   let href=String(value||"").split("#")[0].split("?")[0];
@@ -65,15 +65,16 @@ function locationKey(rendition){
 }
 
 function endPageVisible(){return document.getElementById("volumeEndPage")?.classList.contains("active")===true}
-function showEndPage(){
+function showEndPage(scope){
   const page=document.getElementById("volumeEndPage");
   if(!page||!document.body.classList.contains("reader-flow-paginated"))return false;
   page.classList.remove("hidden");page.classList.add("active");
-  requestAnimationFrame(()=>page.querySelector("a:not(.hidden)")?.focus?.({preventScroll:true}));
+  scope.frame(()=>page.querySelector("a:not(.hidden)")?.focus?.({preventScroll:true}));
   return true;
 }
 
 export function createPaginatedController({getRendition,beforeTurn}={}){
+  const scope=createReaderScope();
   let queue=Promise.resolve(true),pendingTurns=0,turnOperation=null;
 
   async function performTurn(direction,rendition,operation){
@@ -90,23 +91,24 @@ export function createPaginatedController({getRendition,beforeTurn}={}){
          to the Reader completion page immediately. Keep the no-op comparison below as a fallback
          for EPUBs that do not expose displayed page metadata. */
       const wasFinalSpine=onFinalSpineItem(rendition);
-      if(wasFinalSpine&&onFinalDisplayedPage(rendition)){showEndPage();return true}
+      if(wasFinalSpine&&onFinalDisplayedPage(rendition)){showEndPage(scope);return true}
       const before=locationKey(rendition);
       await rendition.next?.();
-      await paint();
-      if(current()&&wasFinalSpine&&before&&locationKey(rendition)===before)showEndPage();
+      await scope.paint();
+      if(current()&&wasFinalSpine&&before&&locationKey(rendition)===before)showEndPage(scope);
       return true;
     });
   }
 
   function turn(direction){
+    if(scope.disposed)return Promise.resolve(false);
     const rendition=getRendition?.();if(!rendition)return Promise.resolve(false);
     // Keep intentional repeated page turns in order. A different navigation
     // cancels the batch, and a new batch invalidates older lifecycle snapshots.
     if(!pendingTurns||!turnOperation?.isCurrent()||turnOperation.rendition!==rendition)turnOperation=beginRenditionNavigation(rendition,{kind:"turn"});
     const operation=turnOperation;pendingTurns++;beforeTurn?.();
     const task=queue.then(()=>performTurn(direction,rendition,operation)).catch(error=>{
-      console.warn("Paginated Reader turn skipped",error);
+      if(!scope.disposed)console.warn("Paginated Reader turn skipped",error);
       return false;
     }).finally(()=>{
       pendingTurns--;if(!pendingTurns)turnOperation=null;
@@ -115,5 +117,5 @@ export function createPaginatedController({getRendition,beforeTurn}={}){
     queue=task;
     return task;
   }
-  return{turn};
+  return{dispose(){scope.dispose();turnOperation?.cancel()},turn};
 }

@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden v2.6 — Reader interaction and perceived-loading controller. */
 
 const EXTERNAL_RE=/^(?:https?:)?\/\//i;
@@ -30,6 +31,7 @@ function eventPoint(event,changed=false){
 }
 
 export function installReaderInteractionController(){
+  const scope=createReaderScope(),frames=new Map(),scrollers=new Map();
   const loading=document.getElementById("readerLoading");
   const loadingText=loading?.querySelector("p");
   const bookTitle=document.getElementById("bookTitle");
@@ -40,6 +42,7 @@ export function installReaderInteractionController(){
   let lastStage="";
 
   function stage(message,key=message){
+    if(scope.disposed)return;
     if(!loadingText||loading?.classList.contains("hidden")||lastStage===key)return;
     lastStage=key;
     loading.dataset.stage=key;
@@ -55,9 +58,9 @@ export function installReaderInteractionController(){
   }
 
   function scheduleChromeHide(){
-    clearTimeout(chromeTimer);
+    scope.clearTimeout(chromeTimer);
     if(!mobile?.matches||chromeBlocked()||!loading?.classList.contains("hidden")){setChromeHidden(false);return}
-    chromeTimer=setTimeout(()=>{if(!chromeBlocked())setChromeHidden(true)},3200);
+    chromeTimer=scope.timeout(()=>{if(!chromeBlocked())setChromeHidden(true)},3200);
   }
 
   function revealChrome(){
@@ -65,8 +68,10 @@ export function installReaderInteractionController(){
     scheduleChromeHide();
   }
 
-  function attachContentDocument(doc){
+  function attachContentDocument(doc,owner){
     if(!doc?.documentElement||doc.documentElement.dataset.sgInteractionReady==="1")return;
+    const lifetime=owner.child();
+    lifetime.add(()=>delete doc.documentElement.dataset.sgInteractionReady);
     doc.documentElement.dataset.sgInteractionReady="1";
     decorateExternalLinks(doc);
     let gesture=null;
@@ -85,31 +90,37 @@ export function installReaderInteractionController(){
     const cancel=()=>{gesture=null};
     const win=doc.defaultView;
     if(typeof win?.PointerEvent==="function"){
-      doc.addEventListener("pointerdown",begin,{capture:true,passive:true});
-      doc.addEventListener("pointerup",finish,{capture:true,passive:true});
-      doc.addEventListener("pointercancel",cancel,{capture:true,passive:true});
+      lifetime.listen(doc,"pointerdown",begin,{capture:true,passive:true});
+      lifetime.listen(doc,"pointerup",finish,{capture:true,passive:true});
+      lifetime.listen(doc,"pointercancel",cancel,{capture:true,passive:true});
     }else{
-      doc.addEventListener("touchstart",begin,{capture:true,passive:true});
-      doc.addEventListener("touchend",finish,{capture:true,passive:true});
-      doc.addEventListener("touchcancel",cancel,{capture:true,passive:true});
+      lifetime.listen(doc,"touchstart",begin,{capture:true,passive:true});
+      lifetime.listen(doc,"touchend",finish,{capture:true,passive:true});
+      lifetime.listen(doc,"touchcancel",cancel,{capture:true,passive:true});
     }
-    win?.addEventListener?.("wheel",event=>{if((Number(event.deltaY)||0)<0)revealChrome()},{passive:true});
+    lifetime.listen(win,"wheel",event=>{if((Number(event.deltaY)||0)<0)revealChrome()},{passive:true});
+    return lifetime;
   }
 
   function attachIframe(frame){
     if(!frame||frame.dataset.sgInteractionFrame==="1")return;
+    const lifetime=scope.child();frames.set(frame,lifetime);
+    lifetime.add(()=>{frames.delete(frame);delete frame.dataset.sgInteractionFrame});
     frame.dataset.sgInteractionFrame="1";
-    const attach=()=>{try{attachContentDocument(frame.contentDocument)}catch{}};
-    frame.addEventListener("load",attach);
+    let content=null;
+    const attach=()=>{content?.dispose();try{content=attachContentDocument(frame.contentDocument,lifetime)}catch{}};
+    lifetime.listen(frame,"load",attach);
     attach();
   }
 
   function attachContinuousScroller(){
     const scroller=viewer?.querySelector?.(".epub-container");
     if(!scroller||scroller.dataset.sgInteractionScroll==="1")return;
+    const lifetime=scope.child();scrollers.set(scroller,lifetime);
+    lifetime.add(()=>{scrollers.delete(scroller);delete scroller.dataset.sgInteractionScroll});
     scroller.dataset.sgInteractionScroll="1";
     let lastTop=Number(scroller.scrollTop)||0;
-    scroller.addEventListener("scroll",()=>{
+    lifetime.listen(scroller,"scroll",()=>{
       const top=Number(scroller.scrollTop)||0;
       if(document.body.classList.contains("reader-flow-scrolled")&&top<lastTop-6)revealChrome();
       lastTop=top;
@@ -117,31 +128,33 @@ export function installReaderInteractionController(){
   }
 
   function inspectViewer(){
+    for(const [node,owner] of [...frames,...scrollers])if(!viewer?.contains(node))owner.dispose();
     viewer?.querySelectorAll?.("iframe").forEach(attachIframe);
     attachContinuousScroller();
     if(viewer?.querySelector?.("iframe"))stage("Laying out the page…","layout");
   }
 
-  document.addEventListener("click",revealChrome,{passive:true});
-  document.addEventListener("focusin",event=>{if(event.target?.closest?.(".reader-topbar,.reader-bottombar,.reader-drawer,.continuous-seek"))revealChrome()});
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden)revealChrome()});
-  mobile?.addEventListener?.("change",revealChrome);
+  scope.listen(document,"click",revealChrome,{passive:true});
+  scope.listen(document,"focusin",event=>{if(event.target?.closest?.(".reader-topbar,.reader-bottombar,.reader-drawer,.continuous-seek"))revealChrome()});
+  scope.listen(document,"visibilitychange",()=>{if(!document.hidden)revealChrome()});
+  scope.listen(mobile,"change",revealChrome);
 
   if(bookTitle){
     const syncTitle=()=>{const value=String(bookTitle.textContent||"").trim();if(value&&!/^Opening EPUB/i.test(value))stage("Preparing chapters…","metadata")};
-    new MutationObserver(syncTitle).observe(bookTitle,{childList:true,characterData:true,subtree:true});
+    scope.observe(new MutationObserver(scope.guard(syncTitle)),bookTitle,{childList:true,characterData:true,subtree:true});
     syncTitle();
   }
 
   if(progressText){
     const syncMap=()=>{if(/Preparing device page map/i.test(progressText.title||""))stage("Mapping pages for this device…","page-map")};
-    new MutationObserver(syncMap).observe(progressText,{attributes:true,attributeFilter:["title"]});
+    scope.observe(new MutationObserver(scope.guard(syncMap)),progressText,{attributes:true,attributeFilter:["title"]});
     syncMap();
   }
 
-  if(viewer){new MutationObserver(inspectViewer).observe(viewer,{childList:true,subtree:true});inspectViewer()}
-  if(loading)new MutationObserver(()=>{if(loading.classList.contains("hidden"))scheduleChromeHide();else setChromeHidden(false)}).observe(loading,{attributes:true,attributeFilter:["class"]});
+  if(viewer){scope.observe(new MutationObserver(scope.guard(inspectViewer)),viewer,{childList:true,subtree:true});inspectViewer()}
+  if(loading)scope.observe(new MutationObserver(scope.guard(()=>{if(loading.classList.contains("hidden"))scheduleChromeHide();else setChromeHidden(false)})),loading,{attributes:true,attributeFilter:["class"]});
 
   stage("Authorizing the book…","authorize");
-  return {stage,revealChrome,decorateExternalLinks};
+  scope.add(()=>setChromeHidden(false));
+  return {dispose:()=>scope.dispose(),stage,revealChrome,decorateExternalLinks};
 }

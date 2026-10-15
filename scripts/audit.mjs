@@ -48,6 +48,7 @@ const deliberate=new Set([
   'public/assets/js/admin/history-workflow.js',
   'public/assets/js/admin/maintenance-workflow.js',
   'public/assets/js/library.js',
+  'public/assets/js/public/volume-actions.js',
   'public/reader.html',
   'public/assets/js/reader-bootstrap.js',
   'public/assets/js/reader-epub-adapter.js',
@@ -65,6 +66,16 @@ const deliberate=new Set([
   'public/assets/js/reader/rendition.js',
   'public/assets/js/reader/page-map.js',
   'public/assets/js/reader/paginated.js',
+  'public/assets/js/reader/book-session.js',
+  'public/assets/js/reader/book-search.js',
+  'public/assets/js/reader/image-focus-touch-compat.js',
+  'public/assets/js/reader/page-navigation-input.js',
+  'public/assets/js/reader/bookmarks-controller.js',
+  'public/assets/js/reader/theme.js',
+  'public/assets/js/reader/settings.js',
+  'public/assets/js/reader/toc.js',
+  'public/assets/js/reader/completion.js',
+  'public/assets/js/reader/interaction-controller.js',
   'public/assets/js/reader/app.js'
 ]);
 for(const path of modified)if(!deliberate.has(path))errors.push(`Undocumented change to recovered file ${path}`);

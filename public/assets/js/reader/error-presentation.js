@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden v2.8 — Reader startup failure presentation. */
 
 const damagedPattern=/zip|central directory|container\.xml|package document|\bopf\b|archive|corrupt|unexpected end|end of data|invalid[^\n]*epub|unsupported[^\n]*epub/i;
@@ -35,6 +36,7 @@ export function readerFailureCopy(error,{phase="open"}={}){
 
 export function showReaderFailure({container,error,phase="open",returnHref="/",returnLabel="Return to library",retry}={}){
   if(!container)return null;
+  const scope=createReaderScope();
   const copy=readerFailureCopy(error,{phase});
   const retryAction=typeof retry==="function"?retry:()=>location.reload();
   const mark=document.createElement("span");mark.setAttribute("aria-hidden","true");mark.textContent="✦";
@@ -42,12 +44,12 @@ export function showReaderFailure({container,error,phase="open",returnHref="/",r
   const title=document.createElement("h2");title.textContent=copy.title;
   const detail=document.createElement("p");detail.textContent=copy.detail;
   const actions=document.createElement("div");actions.className="reader-failure-actions";
-  const retryButton=document.createElement("button");retryButton.type="button";retryButton.className="reader-failure-action";retryButton.textContent="Try again";retryButton.addEventListener("click",retryAction);
+  const retryButton=document.createElement("button");retryButton.type="button";retryButton.className="reader-failure-action";retryButton.textContent="Try again";scope.listen(retryButton,"click",retryAction);
   const returnLink=document.createElement("a");returnLink.className="reader-failure-action reader-failure-return";returnLink.href=String(returnHref||"/");returnLink.textContent=String(returnLabel||"Return to library");
   actions.append(retryButton,returnLink);panel.append(title,detail,actions);
   container.replaceChildren(mark,panel);container.classList.remove("hidden");container.setAttribute("role","alert");container.setAttribute("aria-live","assertive");
   const bookTitle=document.getElementById("bookTitle");
   if(/^Opening (?:the volume|EPUB)/i.test(bookTitle?.textContent||""))bookTitle.textContent="Unable to open volume";
-  requestAnimationFrame(()=>retryButton.focus?.({preventScroll:true}));
-  return{...copy,retryButton,returnLink};
+  scope.frame(()=>retryButton.focus?.({preventScroll:true}));
+  return{dispose:()=>scope.dispose(),...copy,retryButton,returnLink};
 }

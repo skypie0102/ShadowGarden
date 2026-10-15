@@ -1,3 +1,4 @@
+import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifecycle.js";
 /* Shadow Garden R4.1 — isolated focused-image viewing, pinch zoom and pan. */
 import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
 import {hasPendingRenditionNavigation,renditionNavigationRevision} from "./navigation-state.js";
@@ -45,6 +46,7 @@ export function createImageFocusController({
   getRendition,
   getFlow
 }={}){
+  const scope=createReaderScope(),documents=new WeakMap();
   const state={active:false,scale:1,x:0,y:0,maxScale:4,gesture:null,suppressCloseClickUntil:0,returnFocus:null};
   let returnPosition=null,focusCycle=0;
   const parentHits=new Map();
@@ -67,15 +69,15 @@ export function createImageFocusController({
   function showHint(){
     if(!hint)return;
     applyHintCopy();
-    clearTimeout(hintFadeTimer);hint.classList.remove("reader-image-focus-hint-faded");
-    hintFadeTimer=setTimeout(()=>{if(state.active)hint.classList.add("reader-image-focus-hint-faded")},3000);
+    scope.clearTimeout(hintFadeTimer);hint.classList.remove("reader-image-focus-hint-faded");
+    hintFadeTimer=scope.timeout(()=>{if(state.active)hint.classList.add("reader-image-focus-hint-faded")},3000);
   }
-  function hideHintInstant(){clearTimeout(hintFadeTimer);hint?.classList.add("reader-image-focus-hint-faded")}
+  function hideHintInstant(){scope.clearTimeout(hintFadeTimer);hint?.classList.add("reader-image-focus-hint-faded")}
   if(hint&&fineQuery?.addEventListener){
     try{
       const updatePointerMode=()=>{const was=finePointer;finePointer=isFinePointer();applyHintCopy();void was;hideHintInstant()};
-      fineQuery.addEventListener("change",updatePointerMode);
-      coarseQuery?.addEventListener("change",updatePointerMode);
+      scope.listen(fineQuery,"change",updatePointerMode);
+      scope.listen(coarseQuery,"change",updatePointerMode);
     }catch{}
   }
 
@@ -129,6 +131,7 @@ export function createImageFocusController({
     scheduleParentHitRefresh();
   }
   function openImageFocus(sourceImage,doc){
+    if(scope.disposed)return false;
     const src=imageSource(sourceImage,doc);if(!src||!overlay||!image)return false;
     const cycle=++focusCycle;
     state.returnFocus=document.activeElement;
@@ -139,7 +142,7 @@ export function createImageFocusController({
     state.suppressCloseClickUntil=Date.now()+400;
     image.src=src;image.alt=String(sourceImage?.alt||"Book image");
     overlay.classList.remove("hidden","reader-image-focus-zoomed");overlay.setAttribute("aria-hidden","false");
-    render();showHint();requestAnimationFrame(()=>{
+    render();showHint();scope.frame(()=>{
       if(cycle!==focusCycle||!state.active)return;
       closeButton?.focus?.({preventScroll:true});
       restoreReadingPosition(returnPosition);
@@ -158,21 +161,22 @@ export function createImageFocusController({
     document.body.classList.remove("reader-image-focused");
     if(restoreFocus){
       restoreReadingPosition(saved);
-      requestAnimationFrame(()=>{
+      scope.frame(()=>{
         if(cycle!==focusCycle||state.active)return;
         if(saved&&saved.revision!==renditionNavigationRevision(saved.rendition))return;
         if(target&&document.contains(target))target.focus?.({preventScroll:true});
         restoreReadingPosition(saved);
-        requestAnimationFrame(()=>{if(cycle===focusCycle&&!state.active)restoreReadingPosition(saved)});
+        scope.frame(()=>{if(cycle===focusCycle&&!state.active)restoreReadingPosition(saved)});
       });
     }
     return true;
   }
 
   function createParentHit(sourceImage,doc){
+    const lifetime=documents.get(doc)||scope;
     const hit=document.createElement("span");
     hit.className="reader-image-focus-hit";hit.setAttribute("aria-hidden","true");hit.dataset.sgReaderImageHit="1";hit.hidden=true;
-    hit.addEventListener("click",event=>{
+    lifetime.listen(hit,"click",event=>{
       event.preventDefault();event.stopPropagation();
       if(state.active||shouldSuppressOpen?.())return;
       openImageFocus(sourceImage,doc);
@@ -210,23 +214,28 @@ export function createImageFocusController({
       });
     });
   }
-  function scheduleParentHitRefresh(){if(parentHitFrame)return;parentHitFrame=requestAnimationFrame(refreshParentHits)}
+  function scheduleParentHitRefresh(){if(parentHitFrame)return;parentHitFrame=scope.frame(refreshParentHits)}
   function installParentHits(doc){
     if(!needsParentHitTargets(doc)||parentHits.has(doc))return;
+    const lifetime=documents.get(doc)||scope;
     const hits=new Map();parentHits.set(doc,{hits});
+    lifetime.add(()=>removeParentHits(doc));
     // WebKit parent-owned hit targets use fixed parent coordinates. Any scroll
     // inside the EPUB iframe invalidates those coordinates until they are remapped.
-    doc.addEventListener?.("scroll",scheduleParentHitRefresh,true);
-    doc.defaultView?.addEventListener?.("scroll",scheduleParentHitRefresh,{passive:true});
+    lifetime.listen(doc,"scroll",scheduleParentHitRefresh,true);
+    lifetime.listen(doc.defaultView,"scroll",scheduleParentHitRefresh,{passive:true});
     doc.querySelectorAll?.("img").forEach(sourceImage=>{
       hits.set(sourceImage,[createParentHit(sourceImage,doc)]);
-      sourceImage.addEventListener?.("load",scheduleParentHitRefresh,{once:false});
+      lifetime.listen(sourceImage,"load",scheduleParentHitRefresh,{once:false});
     });
     scheduleParentHitRefresh();
   }
 
-  function installDocument(doc){
-    if(!doc?.documentElement||doc.documentElement.dataset.sgReaderImageFocus==="1")return;
+  function installDocument(doc,owner=scope){
+    if(scope.disposed||owner.disposed||!doc?.documentElement||documents.has(doc))return;
+    const lifetime=owner.child(),release=scope.add(()=>lifetime.dispose());
+    lifetime.add(release.forget);documents.set(doc,lifetime);
+    lifetime.add(()=>{documents.delete(doc);delete doc.documentElement.dataset.sgReaderImageFocus;});
     doc.documentElement.dataset.sgReaderImageFocus="1";
     try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{cursor:zoom-in}";doc.head?.appendChild(style)}catch{}
     installParentHits(doc);
@@ -236,31 +245,33 @@ export function createImageFocusController({
       if(shouldSuppressOpen?.()){event?.preventDefault?.();event?.stopImmediatePropagation?.();return false}
       event?.preventDefault?.();event?.stopImmediatePropagation?.();return openImageFocus(sourceImage,doc);
     };
-    doc.addEventListener("pointerdown",event=>{
+    lifetime.listen(doc,"pointerdown",event=>{
       const sourceImage=imageTarget(event.target);
       if(!sourceImage||Number(event.button)>0){pointerStart=null;return}
       pointerStart={id:event.pointerId,image:sourceImage,x:Number(event.clientX)||0,y:Number(event.clientY)||0};
     },true);
-    doc.addEventListener("pointerup",event=>{
+    lifetime.listen(doc,"pointerup",event=>{
       const start=pointerStart;pointerStart=null;
       const sourceImage=imageTarget(event.target);
       if(!start||start.id!==event.pointerId||!sourceImage||sourceImage!==start.image)return;
       if(Math.hypot((Number(event.clientX)||0)-start.x,(Number(event.clientY)||0)-start.y)>12)return;
-      setTimeout(()=>{if(!state.active&&!shouldSuppressOpen?.())openImageFocus(sourceImage,doc)},0);
+      lifetime.timeout(()=>{if(!state.active&&!shouldSuppressOpen?.())openImageFocus(sourceImage,doc)},0);
     },true);
-    doc.addEventListener("pointercancel",()=>{pointerStart=null},true);
-    doc.addEventListener("click",event=>{
+    lifetime.listen(doc,"pointercancel",()=>{pointerStart=null},true);
+    lifetime.listen(doc,"click",event=>{
       const sourceImage=imageTarget(event.target);if(!sourceImage)return;
       activate(sourceImage,event);
     },true);
   }
   function attachRendition(rendition){
-    if(!rendition||rendition.__sgR41ImageFocus)return;
+    if(scope.disposed||!rendition||rendition.__sgR41ImageFocus)return;
     rendition.__sgR41ImageFocus=true;
-    try{rendition.hooks?.content?.register?.(contents=>installDocument(contents?.document||contents?.contentDocument))}catch(error){console.warn("Reader image focus hook unavailable",error)}
-    try{rendition.on?.("rendered",(_section,view)=>{installDocument(view?.contents?.document||view?.contents?.contentDocument);scheduleParentHitRefresh()})}catch{}
-    try{rendition.on?.("relocated",scheduleParentHitRefresh);rendition.on?.("resized",scheduleParentHitRefresh);rendition.on?.("removed",(_section,view)=>removeParentHits(view?.contents?.document||view?.contents?.contentDocument))}catch{}
-    try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument))}catch{}
+    const lifetime=scope.child().link(readerInstanceScope(rendition));
+    lifetime.add(()=>{delete rendition.__sgR41ImageFocus});
+    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){console.warn("Reader image focus hook unavailable",error)}
+    try{lifetime.on(rendition,"rendered",(_section,view)=>{installDocument(view?.contents?.document||view?.contents?.contentDocument,view?.contents?readerContentsScope(rendition,view.contents):lifetime);scheduleParentHitRefresh()})}catch{}
+    try{lifetime.on(rendition,"relocated",scheduleParentHitRefresh);lifetime.on(rendition,"resized",scheduleParentHitRefresh);lifetime.on(rendition,"removed",(_section,view)=>removeParentHits(view?.contents?.document||view?.contents?.contentDocument))}catch{}
+    try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch{}
   }
 
   function beginTouch(event){
@@ -341,31 +352,31 @@ export function createImageFocusController({
     pointerDrag=null;
   }
 
-  viewport?.addEventListener("touchstart",beginTouch,{passive:false});
-  viewport?.addEventListener("touchmove",moveTouch,{passive:false});
-  viewport?.addEventListener("touchend",endTouch,{passive:false});
-  viewport?.addEventListener("touchcancel",()=>{state.gesture=null},{passive:true});
-  viewport?.addEventListener("wheel",handleWheel,{passive:false});
-  viewport?.addEventListener("pointerdown",handlePointerDown);
-  viewport?.addEventListener("pointermove",handlePointerMove);
-  viewport?.addEventListener("pointerup",handlePointerUp,{passive:true});
-  viewport?.addEventListener("pointercancel",()=>{pointerDrag=null},{passive:true});
-  viewport?.addEventListener("dblclick",event=>{
+  scope.listen(viewport,"touchstart",beginTouch,{passive:false});
+  scope.listen(viewport,"touchmove",moveTouch,{passive:false});
+  scope.listen(viewport,"touchend",endTouch,{passive:false});
+  scope.listen(viewport,"touchcancel",()=>{state.gesture=null},{passive:true});
+  scope.listen(viewport,"wheel",handleWheel,{passive:false});
+  scope.listen(viewport,"pointerdown",handlePointerDown);
+  scope.listen(viewport,"pointermove",handlePointerMove);
+  scope.listen(viewport,"pointerup",handlePointerUp,{passive:true});
+  scope.listen(viewport,"pointercancel",()=>{pointerDrag=null},{passive:true});
+  scope.listen(viewport,"dblclick",event=>{
     if(!finePointer||!state.active)return;
     event.preventDefault();closeImageFocus();
   });
-  viewport?.addEventListener("click",event=>{
+  scope.listen(viewport,"click",event=>{
     if(Date.now()<state.suppressCloseClickUntil)return;
     /* fine-pointer devices return via double-click or the close button; accidental
        single clicks must not dismiss the focused image */
     if(finePointer)return;
     event.preventDefault();closeImageFocus();
   });
-  closeButton?.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();closeImageFocus()});
-  image?.addEventListener("load",()=>{if(state.active)setTransform(state.scale,state.x,state.y)});
-  window.addEventListener("resize",()=>{if(state.active)setTransform(state.scale,state.x,state.y);scheduleParentHitRefresh()});
-  document.addEventListener("scroll",scheduleParentHitRefresh,true);
+  scope.listen(closeButton,"click",event=>{event.preventDefault();event.stopPropagation();closeImageFocus()});
+  scope.listen(image,"load",()=>{if(state.active)setTransform(state.scale,state.x,state.y)});
+  scope.listen(window,"resize",()=>{if(state.active)setTransform(state.scale,state.x,state.y);scheduleParentHitRefresh()});
+  scope.listen(document,"scroll",scheduleParentHitRefresh,true);
   render();
 
-  return{attachRendition,installDocument,openImageFocus,closeImageFocus,isFocused:()=>state.active,isZoomed:()=>state.scale>1.001,scale:()=>state.scale};
+  return{dispose(){closeImageFocus({restoreFocus:false});scope.dispose();parentHits.forEach((_entry,doc)=>removeParentHits(doc));parentHitFrame=0},attachRendition,installDocument,openImageFocus,closeImageFocus,isFocused:()=>state.active,isZoomed:()=>state.scale>1.001,scale:()=>state.scale};
 }

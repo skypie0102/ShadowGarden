@@ -8,9 +8,10 @@ const tick=()=>new Promise(resolve=>setImmediate(resolve));
 
 function fixture(t,options={}){
   const calls=[],position={cfi:'epubcfi(old)'},rendition={display:target=>calls.push(target)};
-  const previous=globalThis.requestAnimationFrame;
+  const previous=globalThis.requestAnimationFrame,previousCancel=globalThis.cancelAnimationFrame;
+  globalThis.cancelAnimationFrame=()=>{};
   globalThis.requestAnimationFrame=callback=>{queueMicrotask(()=>callback(0));return 1};
-  t.after(()=>previous?globalThis.requestAnimationFrame=previous:delete globalThis.requestAnimationFrame);
+  t.after(()=>{if(previous)globalThis.requestAnimationFrame=previous;else delete globalThis.requestAnimationFrame;if(previousCancel)globalThis.cancelAnimationFrame=previousCancel;else delete globalThis.cancelAnimationFrame});
   const controller=createReaderResumeController({getRendition:()=>rendition,getFlow:()=> 'paginated',getPosition:()=>position,capturePosition:()=>({...position}),resizeRendition:()=>calls.push('resize'),...options});
   return{controller,rendition,calls,position};
 }
@@ -79,4 +80,17 @@ test('resume geometry waits for an already-running vendor display instead of res
   displaying.resolve();await moving;await capture;
   assert.equal(await f.controller.restore(),true);
   assert.deepEqual(f.calls,['resize','epubcfi(old)']);
+});
+
+test('disposing resume recovery settles its access wait without moving the closed rendition',async t=>{
+  const renewal=deferred(),f=fixture(t,{renewAccess:()=>renewal.promise});
+  await f.controller.capture();const restoring=f.controller.restore();await tick();
+  f.controller.dispose();assert.equal(await restoring,false);assert.equal(f.controller.isRestoring(),false);
+  renewal.resolve();await tick();assert.deepEqual(f.calls,[]);
+});
+
+test('disposing a pending semantic capture prevents it from remembering a closed book',async t=>{
+  const captured=deferred(),f=fixture(t,{capturePosition:()=>captured.promise});
+  const capturing=f.controller.capture();await tick();f.controller.dispose();captured.resolve({cfi:'epubcfi(stale)'});
+  assert.equal(await capturing,null);assert.equal(await f.controller.restore(),false);assert.deepEqual(f.calls,[]);
 });

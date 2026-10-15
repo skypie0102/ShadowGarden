@@ -1,5 +1,8 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Reader-facing bookmark controller over canonical storage. */
 export function createBookmarksController({storage,elements,getPosition,getCfi,getChapter,getPageMap,navigate,closeDrawers,toast}={}){
+  const scope=createReaderScope();
+  let rows=scope.child();
   const list=()=>storage.loadBookmarks();
 
   function samePosition(bookmark,position=getPosition?.()){
@@ -20,6 +23,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
   }
 
   function syncButton(){
+    if(scope.disposed)return;
     const button=elements.bookmarkButton;if(!button)return;
     const saved=currentIndex()>=0;
     button.textContent=saved?"◆":"◇";
@@ -30,7 +34,9 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
   }
 
   function render(){
+    if(scope.disposed)return;
     const panel=elements.bookmarksPanel;if(!panel)return;
+    rows.dispose();rows=scope.child();
     const bookmarks=list();panel.replaceChildren();
     if(!bookmarks.length){
       const empty=document.createElement("p");empty.className="bookmark-empty";empty.textContent="No bookmarks yet.";panel.appendChild(empty);return;
@@ -46,16 +52,17 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
       if(bookmark.at)parts.push(new Date(bookmark.at).toLocaleString());
       meta.textContent=parts.join(" · ")||"Saved bookmark";copy.append(label,meta);
       const open=document.createElement("button");open.type="button";open.textContent="↗";open.setAttribute("aria-label",`Open bookmark ${index+1}`);
-      open.addEventListener("click",async()=>{
+      rows.listen(open,"click",async()=>{
         try{
           const pageMap=getPageMap?.(),fingerprint=pageMap?.fingerprint?.();
           const canonical=fingerprint&&bookmark.pageMapFingerprint===fingerprint;
           const target=canonical?await pageMap.targetForPosition(bookmark,{includeFraction:true}):bookmark.cfi;
-          await navigate?.(target||bookmark.cfi);closeDrawers?.();
+          if(scope.disposed)return;
+          await navigate?.(target||bookmark.cfi);if(!scope.disposed)closeDrawers?.();
         }catch(error){console.error("Bookmark navigation failed",error);toast?.("Could not open bookmark")}
       });
       const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.setAttribute("aria-label",`Delete bookmark ${index+1}`);
-      remove.addEventListener("click",()=>{
+      rows.listen(remove,"click",()=>{
         const next=list();next.splice(index,1);storage.saveBookmarks(next);render();syncButton();toast?.("Bookmark removed");
       });
       row.append(copy,open,remove);panel.appendChild(row);
@@ -63,6 +70,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
   }
 
   function toggle(){
+    if(scope.disposed)return;
     if(!getCfi?.()&&!getPosition?.())return;
     const bookmarks=list(),index=bookmarks.findIndex(item=>samePosition(item));
     if(index>=0){bookmarks.splice(index,1);storage.saveBookmarks(bookmarks);render();syncButton();toast?.("Bookmark removed");return}
@@ -77,7 +85,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
     storage.saveBookmarks(bookmarks);render();syncButton();toast?.("Bookmark saved");
   }
 
-  elements.bookmarkButton?.addEventListener("click",toggle);
+  scope.listen(elements.bookmarkButton,"click",toggle);
   render();syncButton();
-  return{render,syncButton,toggle,samePosition};
+  return{dispose(){scope.dispose();elements.bookmarksPanel?.replaceChildren()},render,syncButton,toggle,samePosition};
 }

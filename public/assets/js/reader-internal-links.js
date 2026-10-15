@@ -1,3 +1,4 @@
+import {readerInstanceScope} from "./reader/lifecycle.js";
 /* Shadow Garden v2.8 — sandbox-safe internal EPUB link bridge.
  * Keeps EPUB.js as the navigation owner while avoiding native iframe navigation
  * in script-disabled WebKit srcdoc frames.
@@ -8,7 +9,7 @@ export function createInternalLinksExtension(){
   const EPUB_NS="http://www.idpf.org/2007/ops";
   const MARKER_PREFIX="sg-nav-";
   const NOTE_REF_CLASSES=new Set(["noteref","note-ref","footnote-ref","endnote-ref"]);
-  let activeBook=null,activeRendition=null,markerSerial=0,markerTimer=0;
+  let activeBook=null,activeRendition=null,markerSerial=0;
 
   const cleanText=value=>String(value||"").replace(/\s+/g," ").trim();
   const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
@@ -156,30 +157,32 @@ export function createInternalLinksExtension(){
   }
 
   function ensureMarkerObserver(){
-    if(markerTimer)return;
-    markerTimer=window.setInterval(scanNavigationMarkers,50);
+    readerInstanceScope(activeRendition).interval(scanNavigationMarkers,50);
   }
 
   function patchRendition(rendition){
     if(!rendition||rendition.__sgInternalLinksPatched)return rendition;
+    const scope=readerInstanceScope(rendition);
+    scope.add(()=>{if(activeRendition===rendition)activeRendition=null});
     activeRendition=rendition;
     rendition.__sgInternalLinksPatched=true;
     ensureMarkerObserver();
-    try{rendition.hooks?.content?.register?.((contents,view)=>installInternalLinkGuard(contents,view?.section))}
+    try{scope.hook(rendition.hooks?.content,(contents,view)=>installInternalLinkGuard(contents,view?.section))}
     catch(error){console.warn("EPUB internal-link hook unavailable",error)}
-    try{rendition.on?.("rendered",(section,view)=>{
+    try{scope.on(rendition,"rendered",(section,view)=>{
       if(rendition!==activeRendition)return;
       const contents=view?.contents;
       if(contents){
         installInternalLinkGuard(contents,section);
-        setTimeout(()=>installInternalLinkGuard(contents,section),0);
-      }else setTimeout(()=>{try{rendition.getContents?.().forEach(item=>installInternalLinkGuard(item))}catch{}},0);
+        scope.timeout(()=>installInternalLinkGuard(contents,section),0);
+      }else scope.timeout(()=>{try{rendition.getContents?.().forEach(item=>installInternalLinkGuard(item))}catch{}},0);
     })}catch{}
     return rendition;
   }
 
   function patchBook(book){
     if(!book)return book;
+    readerInstanceScope(book).add(()=>{if(activeBook===book)activeBook=null});
     activeBook=book;
     if(book.__sgInternalLinksPatched)return book;
     book.__sgInternalLinksPatched=true;
