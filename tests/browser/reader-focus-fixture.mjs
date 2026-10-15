@@ -7,8 +7,8 @@ export async function fixtureHTML(){
   const html=(await readFile(new URL('../../public/reader.html',import.meta.url),'utf8')).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
   return html.replace('</body>',`<script src="/assets/vendor/jszip.min.js"></script>
 <script src="/assets/vendor/epub.min.js"></script>
-<script src="/assets/js/reader-continuous-core.js"></script>
 <script type="module">
+import {createContinuousCoreExtension} from '/assets/js/reader-continuous-core.js';
 import {installEpubLifecyclePatch} from '/assets/js/reader/epub-lifecycle.js';
 import {createRendition} from '/assets/js/reader/rendition.js';
 import {createImageFocusController} from '/assets/js/reader/image-focus.js';
@@ -29,7 +29,7 @@ try{
   let rendition;
   const flow=()=>document.body.classList.contains('reader-flow-scrolled')?'scrolled-doc':'paginated';
   const focus=createImageFocusController({overlay:document.querySelector('#imageFocus'),viewport:document.querySelector('#imageFocusViewport'),image:document.querySelector('#imageFocusImage'),closeButton:document.querySelector('#imageFocusClose'),getRendition:()=>rendition,getFlow:flow});
-  const book=ePub(await zip.generateAsync({type:'arraybuffer'}));await book.ready;
+  const book=createContinuousCoreExtension().attachBook(ePub(await zip.generateAsync({type:'arraybuffer'})));await book.ready;
   await createRendition({book,flow:'scrolled-doc',target:'chapter7.xhtml',onCreate:value=>{rendition=value},wire:value=>focus.attachRendition(value)});
   window.focusFixture={rendition,focus};
   document.querySelector('#readerLoading').classList.add('hidden');

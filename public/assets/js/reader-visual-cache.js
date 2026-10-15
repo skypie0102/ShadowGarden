@@ -4,13 +4,11 @@
  * stores a normalized local image asset in IndexedDB, then replaces those XHTML/SVG bodies
  * with a deterministic synthetic image page before EPUB.js measures either reading flow.
  */
-(()=>{
-  const baseEpub=window.ePub;
-  if(typeof baseEpub!=="function")return;
+export function createVisualPageCacheExtension(){
 
   const CACHE_DB="shadow-garden-visual-pages";
   const CACHE_STORE="books";
-  const CACHE_VERSION=1;
+  const CACHE_VERSION=2;
   const DB_VERSION=1;
   const MAX_WEBP_EDGE=2600;
   const TEXT_LIMIT=4;
@@ -277,6 +275,14 @@
     return{blob,width:dimensions.width||0,height:dimensions.height||0,converted:false};
   }
 
+  async function publicationImageAsset(zip,path,mime=mimeFromPath(path)){
+    if(mime!=="image/svg+xml")return rasterAsset(zip,path,mime);
+    const entry=zip.file(path);if(!entry)return null;
+    const doc=parseXml(await entry.async("string"));
+    if(broken(doc)||doc.documentElement?.localName!=="svg")return null;
+    return svgAsset(zip,doc.documentElement,path);
+  }
+
   async function classifySpineDocument({zip,item,coverPath}){
     const entry=zip.file(item.path);if(!entry)return null;
     const source=await entry.async("string");
@@ -302,7 +308,7 @@
       if(src&&!/^(?:data:|blob:|https?:|\/\/)/i.test(src)){
         sourcePath=resolvePath(dirName(item.path),src);
         cover=hrefMatches(sourcePath,coverPath);
-        asset=await rasterAsset(zip,sourcePath,mimeFromPath(sourcePath));
+        asset=await publicationImageAsset(zip,sourcePath);
         alt=image.getAttribute("alt")||"";
       }
     }
@@ -315,7 +321,7 @@
         if(href&&!/^(?:data:|blob:|https?:|\/\/)/i.test(href)){
           sourcePath=resolvePath(dirName(item.path),href);
           cover=hrefMatches(sourcePath,coverPath);
-          asset=await rasterAsset(zip,sourcePath,mimeFromPath(sourcePath));
+          asset=await publicationImageAsset(zip,sourcePath);
         }
       }
       if(!asset){asset=await svgAsset(zip,svg,item.path);sourcePath=item.path;kind="svg"}
@@ -541,8 +547,5 @@
   const initialBook=new URLSearchParams(location.search).get("book");
   if(initialBook)void prepare(initialBook);
 
-  function wrappedEpub(...args){return patchBook(baseEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,baseEpub)}catch{}
-  try{wrappedEpub.prototype=baseEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-})();
+  return {name:"visual-cache",attachBook:patchBook,visualPages:api};
+}

@@ -40,7 +40,28 @@ for(const entry of provenance.files){
   const sha=createHash('sha256').update(await readFile(entry.path)).digest('hex');
   if(sha!==entry.sha256)modified.push(entry.path);
 }
-const deliberate=new Set(['public/assets/js/admin/core.js','public/assets/js/admin/trash-workflow.js','public/assets/js/admin/recovery-readiness-workflow.js','public/assets/js/admin/library-workflow.js','public/assets/js/admin/history-workflow.js','public/assets/js/admin/maintenance-workflow.js','public/assets/js/library.js','public/assets/js/reader-visual-cache.js','public/assets/js/reader/error-presentation.js','public/assets/js/reader/image-focus.js','public/assets/js/reader/app.js']);
+const deliberate=new Set([
+  'public/assets/js/admin/core.js',
+  'public/assets/js/admin/trash-workflow.js',
+  'public/assets/js/admin/recovery-readiness-workflow.js',
+  'public/assets/js/admin/library-workflow.js',
+  'public/assets/js/admin/history-workflow.js',
+  'public/assets/js/admin/maintenance-workflow.js',
+  'public/assets/js/library.js',
+  'public/reader.html',
+  'public/assets/js/reader-bootstrap.js',
+  'public/assets/js/reader-epub-adapter.js',
+  'public/assets/js/reader-footnotes.js',
+  'public/assets/js/reader-internal-links.js',
+  'public/assets/js/reader-visual-cache.js',
+  'public/assets/js/reader-paginated-visual-fit.js',
+  'public/assets/js/reader-continuous-core.js',
+  'public/assets/js/reader/error-presentation.js',
+  'public/assets/js/reader/image-focus.js',
+  'public/assets/js/reader/continuous.js',
+  'public/assets/js/reader/navigation-state.js',
+  'public/assets/js/reader/app.js'
+]);
 for(const path of modified)if(!deliberate.has(path))errors.push(`Undocumented change to recovered file ${path}`);
 const manifest=await readFile('recovery-info/FUNCTION_ROUTES.md','utf8');
 const routes=[...manifest.matchAll(/`(functions\/[^`:]+\.js)(?::[^`]*)?`/g)].map(m=>m[1]);

@@ -15,6 +15,8 @@ import { createContinuousController } from "./continuous.js";
 import { createReaderResumeController } from "./resume-controller.js";
 import { createRendition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics } from "./rendition.js";
 import { preferences, urls } from "../domain/index.js";
+import { getReaderEngine } from "./engine.js";
+import { registerRenditionNavigator } from "./navigation-state.js";
 
 const $=selector=>document.querySelector(selector);
 const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -166,6 +168,7 @@ export async function startReader(session){
     progressController.save(location);resumeController?.remember();tocController.setActiveForLocation(location);bookmarksController.syncButton();themeController.refresh(rendition);
   }
   function wireRendition(rendition){
+    registerRenditionNavigator(rendition,target=>rendition===state.rendition?navigate(target):Promise.resolve(false));
     rendition.hooks.content.register(contents=>themeController.prepare(contents));
     pageInputController.attachRendition(rendition);
     imageFocusController.attachRendition(rendition);
@@ -245,7 +248,7 @@ export async function startReader(session){
   const returnHref=session.seriesId?urls.seriesUrl(session.seriesId):urls.libraryUrl(session.adult);if(elements.backLink)elements.backLink.href=returnHref;if(elements.returnButton)elements.returnButton.href=returnHref;
 
   try{
-    state.book=window.ePub(session.sourcePath);
+    state.book=getReaderEngine().createBook(session.sourcePath);
     const metadataPromise=state.book.loaded.metadata,navigationPromise=state.book.loaded.navigation.catch(error=>{console.warn("EPUB navigation unavailable",error);return{toc:[]}});
     const[metadata,navigation]=await Promise.all([metadataPromise,navigationPromise]);state.navigation=navigation;
     const title=metadata?.title||"Untitled EPUB";if(elements.bookTitle)elements.bookTitle.textContent=title;document.title=`${title} — Shadow Garden`;tocController.render(navigation?.toc||[]);

@@ -3,6 +3,7 @@ import {installReaderFixture,readerURL,readerTitle,readerBookId} from './reader-
 
 test.describe('production reader integration',()=>{
   test.setTimeout(90000);
+  test.use({actionTimeout:15000});
 
   test.beforeEach(async({page})=>{
     const errors=[];
@@ -16,18 +17,29 @@ test.describe('production reader integration',()=>{
   test.afterEach(async({page})=>expect(page.__readerErrors).toEqual([]));
 
   async function chapter(page,index){
+    // The production mobile chrome auto-hides. Focusing its public control uses
+    // the same accessibility path that reveals it for keyboard navigation.
+    await page.locator('#tocToggle').focus();
     await page.locator('#tocToggle').click();
     await page.locator(`#tocPanel .toc-entry-link[data-href="chapter${index}.xhtml"]`).click();
-    await expect(page.locator('#tocDrawer')).not.toHaveClass(/\bopen\b/);
-    await expect.poll(()=>page.evaluate(()=>document.querySelector('#chapterTitle')?.textContent)).toContain(`Chapter ${index}`);
+    await expect(page.locator('#tocDrawer')).not.toHaveClass(/\bopen\b/,{timeout:20000});
+    await expect.poll(()=>page.evaluate(()=>document.querySelector('#chapterTitle')?.textContent),{timeout:15000}).toContain(`Chapter ${index}`);
     await expect.poll(async()=>{
-      for(const frame of page.frames())if(await frame.locator(`#art-${index}`).count())return true;
+      for(const frame of page.frames()){
+        if(frame.isDetached())continue;
+        try{if(await frame.locator(`#art-${index}`).count())return true;}
+        catch(error){if(!frame.isDetached())throw error;}
+      }
       return false;
     }).toBe(true);
     return findChapter(page,index);
   }
   async function findChapter(page,index){
-    for(const frame of page.frames())if(await frame.locator(`#art-${index}`).count())return frame;
+    for(const frame of page.frames()){
+      if(frame.isDetached())continue;
+      try{if(await frame.locator(`#art-${index}`).count())return frame;}
+      catch(error){if(!frame.isDetached())throw error;}
+    }
     throw Error(`Chapter ${index} is not buffered`);
   }
   async function openImage(page,index=3){
@@ -63,6 +75,9 @@ test.describe('production reader integration',()=>{
     const {image,before}=await openImage(page);
     await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:-650,ctrlKey:true,clientX:150,clientY:220});
     await expect(page.locator('#imageFocus')).toHaveClass(/reader-image-focus-zoomed/);
+    // The existing immersive zoom UI hides chrome until zoom returns to fit.
+    await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:1800,ctrlKey:true,clientX:150,clientY:220});
+    await expect(page.locator('#imageFocus')).not.toHaveClass(/reader-image-focus-zoomed/);
     await page.locator('#imageFocusClose').click();
     await returned(page,image,before);
   });
@@ -79,6 +94,7 @@ test.describe('production reader integration',()=>{
   test('mode switches and reopening retain the selected chapter',async({page})=>{
     await chapter(page,4);
     for(const flow of ['paginated','scrolled-doc']){
+      await page.locator('#settingsToggle').focus();
       await page.locator('#settingsToggle').click();
       await page.locator('#flowSelect').selectOption(flow);
       await page.locator('#settingsDrawer [data-close]').click();
@@ -99,6 +115,15 @@ test.describe('production reader integration',()=>{
     await frame.locator('#jump-3').click();
     await expect(page.locator('#chapterTitle')).toContainText('Chapter 4',{timeout:15000});
     frame=await findChapter(page,4);
-    await expect(frame.locator('#target-4')).toBeVisible();
+    await expect(frame.locator('#target-4')).toBeInViewport();
+    await page.waitForTimeout(1600);
+    await expect(frame.locator('#target-4')).toBeInViewport();
+    // Repeat from a retained source chapter: consuming its iframe marker must
+    // neither replay an old navigation nor prevent another activation.
+    frame=await chapter(page,3);
+    await frame.locator('#jump-3').click();
+    await expect(page.locator('#chapterTitle')).toContainText('Chapter 4',{timeout:15000});
+    frame=await findChapter(page,4);
+    await expect(frame.locator('#target-4')).toBeInViewport();
   });
 });

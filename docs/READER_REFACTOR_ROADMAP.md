@@ -31,8 +31,8 @@ behavior just because it looks unusual.
 | Phase | Work | Completion gate | Status |
 | --- | --- | --- | --- |
 | 0 — Production baseline | Exercise the unmodified reader page, startup, authorization client and complete adapter stack with original generated EPUBs. Add image, TOC, mode-change and reopen scenarios. | Desktop/mobile browser runs exercise the production entry point, report page errors, and preserve existing tests. Document the remaining coverage gaps. | In progress |
-| 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Pending |
-| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Pending |
+| 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Implemented; validation in progress |
+| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Started: TOC/internal links use the app owner; seek/relayout/resume consolidation remains |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Pending |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
@@ -78,14 +78,28 @@ project and no production credentials or catalog writes.
 
 | ID | Finding | Treatment / status |
 | --- | --- | --- |
-| RDR-001 | Six scripts independently overwrite `window.ePub`; behavior is load-order dependent. | Phase 1: explicit ordered engine installers. |
-| RDR-002 | Legacy adapter captures Continuous TOC clicks before the app handler; it also owns a separate Continuous seek path. | Phase 2: reproduce ownership conflicts and migrate both paths to the navigation coordinator. Do not remove behavior without replacement tests. |
+| RDR-001 | Six scripts independently overwrite `window.ePub`; behavior is load-order dependent. | Implemented explicit ordered engine extensions; full-suite verification pending. |
+| RDR-002 | Legacy adapter captures Continuous TOC clicks before the app handler; it also owns a separate Continuous seek path. | Removed duplicate TOC interception and routed internal links through the app owner. Separate seek migration remains in Phase 2. |
 | RDR-003 | Several controllers install listeners/observers without a common disposal API; resume cleanup is returned but not owned by app teardown. | Phase 3: lifecycle tests and disposal scope. This is a structural concern, not a measured memory-leak claim. |
 | RDR-004 | Image regression fixture omits the production adapter chain and startup. | Phase 0: add production-entry tests while retaining the targeted fixture. |
-| RDR-005 | README still describes the test deployment branch and obsolete recovered-file totals. | Correct the current branch/deployment guidance and point to the audit for current counts. |
+| RDR-005 | README still describes the test deployment branch and obsolete recovered-file totals. | Corrected deployment guidance and pointed to the audit for current counts. |
+| RDR-006 | Standalone `<img src="...svg">` artwork is skipped while inline/object SVG is supported. | Fixed shared SVG normalization; advanced the cache payload version to invalidate previously skipped results. Production-entry regression covers the case. |
+| RDR-007 | Clearing a consumed srcdoc link marker via `location.hash` can scroll the source iframe back into view and undo explicit navigation. | Replaced native hash navigation with history replacement and marker rotation; repeated-link regression verifies the visible target. |
+| RDR-008 | Vendor fragment handling can apply a text character offset to an element child list. | Resolve fragment text to a collapsed text-node CFI; retain element CFIs for non-text anchors. Added focused tests. |
 
 ## Progress log
 
 - 2026-10-15: Inspected current production source and recorded the baseline,
   invariants, ownership map, phase gates and known coverage limits. Created the
   isolated refactor branch. Production remains at the verified image-focus fix.
+- The first full-stack baseline (CI run `38738863755`) passed 24/30 cases and
+  exposed the SVG and internal-link issues above. Corrected test assumptions
+  about immersive zoom chrome and transient iframe removal as well.
+- Implemented the explicit engine boundary and the first navigation ownership
+  changes. All 79 local Node tests, the recovered-asset audit, static build and
+  Functions compilation pass. Desktop full-stack image return, mode/reopen and
+  corrected internal navigation have passed. The complete desktop/mobile matrix
+  and clean CI validation are required before the milestone is marked complete.
+- Architecture and current limits are documented in
+  [READER_ARCHITECTURE.md](READER_ARCHITECTURE.md). The one-time CI browser-runtime
+  export used for restricted-environment debugging was removed from the workflow.

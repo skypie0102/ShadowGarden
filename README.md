@@ -63,8 +63,10 @@ developer database, or remote resources. It checks public navigation, the adult
 gate, missing-book errors, admin edits/conflicts, trash restore/purge, cleanup continuation, damaged
 snapshots and recovery of a damaged live catalog. Fault injection is restricted
 to that disposable fixture database; the application has no test bypass. Admin
-tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
-separate integration checks. GitHub Actions runs both test suites and retains
+tests seed a signed test session. Production-entry reader tests run the actual
+startup and complete integration stack with original generated EPUBs and mocked
+ticket/media network responses. Live Turnstile and B2 remain separate integration
+checks. GitHub Actions runs both test suites and retains
 the browser report for seven days. Reports also include successful-page captures
 of the public screens, Keeper editor and recovery states for desktop/mobile review.
 

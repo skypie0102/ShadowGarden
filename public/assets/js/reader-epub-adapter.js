@@ -1,9 +1,7 @@
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
-(()=>{
-  const originalEpub=window.ePub;
-  if(typeof originalEpub!=="function")return;
+export function createEpubCompatibilityExtension(){
 
   let currentBook=null,currentRendition=null,currentTarget=null,viewportTimer=0,seekTimer=0,seekSerial=0,pendingExternalHref="";
   const progressByCfi=new Map();
@@ -328,70 +326,11 @@
     return book;
   }
 
-  function wrappedEpub(...args){return patchBook(originalEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,originalEpub)}catch{}
-  try{wrappedEpub.prototype=originalEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-
-  function decodeFragment(value){try{return decodeURIComponent(value)}catch{return value}}
-
-  async function cfiFromTocHref(book,href){
-    const text=String(href||"");
-    if(!text)return"";
-    let section=null;
-    try{section=book?.spine?.get?.(text)}catch{}
-    if(!section){
-      const path=text.split("#")[0];
-      try{section=book?.spine?.get?.(path)}catch{}
-    }
-    if(!section)return text;
-
-    if(!section.document)await section.load(book.load.bind(book));
-    const hash=text.indexOf("#"),fragment=hash>=0?decodeFragment(text.slice(hash+1)):"";
-    let element=null;
-    if(fragment){
-      element=section.document?.getElementById?.(fragment)||null;
-      if(!element){
-        try{element=section.document?.querySelector?.(`[name="${CSS.escape(fragment)}"]`)||null}catch{}
-      }
-    }
-    element=element||section.document?.body||section.document?.documentElement;
-    if(!element||typeof section.cfiFromElement!=="function")return text;
-    try{return section.cfiFromElement(element)||text}catch{return text}
-  }
-
-  function closeTocDrawer(){
-    document.querySelectorAll(".reader-drawer").forEach(drawer=>drawer.classList.remove("open"));
-    document.getElementById("drawerBackdrop")?.classList.add("hidden");
-  }
-
   async function displaySettled(rendition,target){
     await rendition.display(target);
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     if(rendition===currentRendition&&document.body?.classList.contains("reader-flow-scrolled"))await rendition.display(target);
   }
-
-  /* In the continuous manager, display(href) can reuse a retained section offset.
-     Resolve the TOC href to a concrete CFI so chapter/anchor navigation is exact. */
-  document.addEventListener("click",event=>{
-    const button=event.target?.closest?.("#tocPanel .toc-entry-link[data-href]");
-    if(!button||!document.body?.classList.contains("reader-flow-scrolled"))return;
-    const book=currentBook,rendition=currentRendition;
-    if(!book||!rendition)return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const href=button.dataset.href||"";
-    (async()=>{
-      try{
-        const target=await cfiFromTocHref(book,href);
-        await displaySettled(rendition,target);
-        closeTocDrawer();
-      }catch(error){
-        console.error("Continuous TOC navigation failed",error);
-        try{await rendition.display(href);closeTocDrawer()}catch(fallbackError){console.error("TOC fallback navigation failed",fallbackError)}
-      }
-    })();
-  },true);
 
   function locationCount(book){
     try{
@@ -463,4 +402,5 @@
     clearTimeout(viewportTimer);
     viewportTimer=setTimeout(()=>window.dispatchEvent(new Event("resize")),80);
   });
-})();
+  return {name:"compatibility",attachBook:patchBook};
+}

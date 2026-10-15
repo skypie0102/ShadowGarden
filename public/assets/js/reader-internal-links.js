@@ -2,9 +2,8 @@
  * Keeps EPUB.js as the navigation owner while avoiding native iframe navigation
  * in script-disabled WebKit srcdoc frames.
  */
-(()=>{
-  const previousEpub=window.ePub;
-  if(typeof previousEpub!=="function")return;
+import {navigateRendition} from './reader/navigation-state.js';
+export function createInternalLinksExtension(){
 
   const EPUB_NS="http://www.idpf.org/2007/ops";
   const MARKER_PREFIX="sg-nav-";
@@ -116,21 +115,25 @@
     try{return decode(String(win?.location?.hash||"").replace(/^#/,""))}catch{return""}
   }
 
-  function resetMarker(contents,marker){
+  function resetMarker(contents,marker,anchor){
     const doc=contents?.document||contents?.contentDocument||contents;
     const win=doc?.defaultView;
-    try{if(win?.location?.hash)win.location.hash=""}catch{}
-    setTimeout(()=>{
-      if(contents.__sgConsumedNavMarker!==marker)return;
-      if(markerNameFrom(contents)!==marker)contents.__sgConsumedNavMarker="";
-    },180);
+    // Assigning location.hash scrolls the source iframe back into view and can
+    // undo the parent reader's explicit chapter navigation. Rewrite history
+    // without navigation, and rotate the link marker so repeat taps also work
+    // when a browser refuses history changes inside its sandboxed srcdoc.
+    try{if(win?.location?.hash)win.history.replaceState(win.history.state,"",win.location.href.split("#")[0])}catch{}
+    if(anchor?.dataset?.sgNavMarker===marker){
+      delete anchor.dataset.sgNavMarker;
+      markInternalReference(anchor);
+    }
   }
 
   async function activateInternalReference(contents,anchor,renderedSection){
     const href=internalHrefValue(anchor?.dataset?.sgNavHref||"");
     const current=currentSectionFor(contents,renderedSection),target=resolveInternalTarget(current,href);
     if(!activeRendition||!target?.displayHref)return;
-    try{await activeRendition.display(target.displayHref)}
+    try{await navigateRendition(activeRendition,target.displayHref)}
     catch(error){console.warn("Internal EPUB navigation failed",error)}
   }
 
@@ -147,7 +150,7 @@
       try{anchor=doc?.querySelector?.(`[data-sg-nav-marker="${marker}"]`)||null}catch{}
       if(!anchor)continue;
       contents.__sgConsumedNavMarker=marker;
-      resetMarker(contents,marker);
+      resetMarker(contents,marker,anchor);
       activateInternalReference(contents,anchor,contents.__sgNavSection);
     }
   }
@@ -185,8 +188,5 @@
     return book;
   }
 
-  function wrappedEpub(...args){return patchBook(previousEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,previousEpub)}catch{}
-  try{wrappedEpub.prototype=previousEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-})();
+  return {name:"internal-links",attachBook:patchBook};
+}

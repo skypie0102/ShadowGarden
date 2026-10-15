@@ -18,6 +18,16 @@ async function resolveHrefTarget(book,target){
       if(!element){try{element=section.document?.querySelector?.(`[name="${CSS.escape(fragment)}"]`)||null}catch{}}
     }
     element=element||section.document?.body||section.document?.documentElement;
+    // EPUB.js locationOf() assumes collapsed text CFIs have text-node offsets.
+    // A fragment heading's element CFI can make it apply a character offset to
+    // an element's child list. Preserve the precise text point when available.
+    if(fragment&&element&&typeof section.cfiFromRange==="function"){
+      const node=section.document.createTreeWalker(element,4).nextNode();
+      if(node){
+        const range=section.document.createRange();range.setStart(node,0);range.collapse(true);
+        const cfi=section.cfiFromRange(range);if(cfi)return cfi;
+      }
+    }
     return element&&typeof section.cfiFromElement==="function"?(section.cfiFromElement(element)||text):text;
   }catch{return text}
 }

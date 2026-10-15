@@ -1,9 +1,7 @@
 /* Shadow Garden v2.8 — EPUB footnote/endnote compatibility layer.
  * Explicit noterefs open in Reader chrome instead of moving the live rendition.
  */
-(()=>{
-  const previousEpub=window.ePub;
-  if(typeof previousEpub!=="function")return;
+export function createFootnotesExtension(){
 
   const EPUB_NS="http://www.idpf.org/2007/ops";
   const NOTE_REF_CLASSES=new Set(["noteref","note-ref","footnote-ref","endnote-ref"]);
@@ -304,11 +302,7 @@
     return book;
   }
 
-  function wrappedEpub(...args){return patchBook(previousEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,previousEpub)}catch{}
-  try{wrappedEpub.prototype=previousEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setupNoteDialog,{once:true});
   else setupNoteDialog();
-})();
+  return {name:"footnotes",attachBook:patchBook};
+}
