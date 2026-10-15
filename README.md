@@ -2,17 +2,20 @@
 
 Repository: https://github.com/skypie0102/ShadowGarden
 
-This `deploy/shadowgarden-test` branch targets the owner's separate test D1
-database. Follow [the test setup](docs/TEST_DEPLOYMENT.md) before connecting a
-new test Pages project. Its resource configuration is not for the live project.
+Reader work follows the [phased refactor roadmap](docs/READER_REFACTOR_ROADMAP.md).
+The `refactor/reader-foundation` branch is based on `deploy/shadowgarden-bon`;
+its Wrangler configuration references existing production resources. Automated
+browser tests create an isolated local project/database. Use the
+[production guide](docs/PRODUCTION_TAKEOVER.md) for the existing site and the
+[test guide](docs/TEST_DEPLOYMENT.md) for a separately configured test project.
 
 This repository reconstructs the 2.11.0 Cloudflare Pages deployment from the
 supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 139 remain byte-identical; nine browser
-scripts have documented compatibility/safety changes. The archive contains one
+148 deployed files were recovered. `npm run audit` reports the current
+byte-identical files and documented changes. The archive contains one
 cataloged series, five opaque book IDs and ten cover images. The owner confirmed that the five EPUBs were disposable test data; their absence
 is not a reconstruction blocker. Original server source and production credentials
 were not in the archive. The backend is a documented replacement.

@@ -16,6 +16,16 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npx playwright install --with-deps chromium
+      - name: Package browser runtime for the initial refactor verification
+        if: github.ref == 'refs/heads/refactor/reader-foundation' && contains(github.event.head_commit.message, 'bootstrap-browser')
+        run: tar -C "$HOME/.cache/ms-playwright" -czf "$RUNNER_TEMP/reader-browser-runtime.tar.gz" .
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/refactor/reader-foundation' && contains(github.event.head_commit.message, 'bootstrap-browser')
+        with:
+          name: reader-browser-runtime
+          path: ${{ runner.temp }}/reader-browser-runtime.tar.gz
+          retention-days: 1
+          compression-level: 0
       - run: npm run test:browser
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
