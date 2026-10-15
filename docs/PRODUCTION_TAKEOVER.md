@@ -62,6 +62,19 @@ preventing further irrelevant failed builds. Historical failed checks remain.
 
 ## Configuration
 
+The Continuous reader image-focus fix was deployed on 2026-10-15 at 12:31 UTC
+from source `9daea7f481ae1f19cc3d0640b83b20d424eab794`, deployment
+`dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33`. Closing the image restores the live
+reading position without navigating to saved progress; stale callbacks are
+cancelled on navigation and mode changes. An opening-touch compatibility click
+cannot immediately dismiss the overlay.
+
+GitHub CI run `38734664627` passed all 70 backend/client tests, the asset audit,
+both builds, and all 20 desktop/mobile browser tests. A live Cloudflare browser
+check confirmed the deployed commit and exact SHA-256 matches for the two
+changed reader modules. The homepage, reader, both login challenge endpoints
+and both D1 catalogs return 200. No storage or catalog writes were needed.
+
 `wrangler.jsonc` on this branch is production configuration. It binds the already
 initialized D1 database and supplies the existing bucket's non-secret name/ID.
 Both migrations and the empty seed were independently verified through D1.

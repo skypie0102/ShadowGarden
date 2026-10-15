@@ -56,24 +56,35 @@ Implementation and audit results are appended as work completes.
 - Fixed the cleared asynchronous focus-return target. Pending focus/restoration
   callbacks are invalidated when Reader resets input for navigation or a flow
   switch, and old snapshots cannot move a replacement rendition.
-- Added six regression tests for close controls, nested scrolling, buffering and
+- Added seven regression tests for close controls, nested scrolling, buffering,
+  touch compatibility clicks and
   navigation cancellation, plus desktop/mobile browser scenarios using an
   original generated EPUB and the real recovered Reader layout and runtime.
-- Local asset audit, all 69 backend/client tests, static build and Functions
+- Local asset audit, all 70 backend/client tests, static build and Functions
   compilation pass. The old focus implementation fails the new position-return
-  regressions. All 20 Playwright desktop/mobile cases are discoverable; browser
-  execution has not passed yet. Chromium download was unavailable locally.
+  regressions. All 20 Playwright desktop/mobile cases pass in GitHub CI run
+  `38734664627`, including the real EPUB layout, zoom/pan, both close paths,
+  repeated image visits and chapter expansion. Chromium ran in CI because its
+  download was unavailable locally.
 - The owner explicitly authorized GitHub publication, Cloudflare browser checks
   and deployment on 2026-10-15, resolving the earlier automatic approval blocks.
   Local checks were repeated successfully. Cloudflare's standalone browser
-  requests did not return a result, so browser verification continues in GitHub
-  CI. Publication targets `skypie0102/ShadowGarden` on `deploy/shadowgarden-bon`;
+  requests did not return a result, so browser verification completed in GitHub
+  CI. Published to `skypie0102/ShadowGarden` on `deploy/shadowgarden-bon`;
   production remains the existing `shadowgarden` Pages project.
 - The first GitHub browser run passed all desktop scenarios and 18/20 cases.
   Mobile traces exposed an opening-touch compatibility click dismissing the
   overlay, plus a test using mouse input on the touch device. Added a short
   opening-click guard and its client regression; the mobile pan now uses native
-  touch events. Reverification follows before production deployment.
+  touch events. The complete rerun passed before production deployment.
+- Deployed verified source `9daea7f481ae1f19cc3d0640b83b20d424eab794` to the existing
+  `shadowgarden` Pages project on 2026-10-15 at 12:31 UTC. Production deployment
+  `dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33` serves the original hostname.
+- Live browser checks confirm the version commit and byte-identical hashes for
+  both changed reader modules. The homepage, reader page, Keeper/public login
+  challenges and both current D1 catalogs return 200. The main catalog is empty
+  and the adult catalog contains one series. No secrets, bindings, B2 objects or
+  catalog records were modified by this reader fix or its verification.
 
 ## 2026-09-23 — backend reconstruction
 
