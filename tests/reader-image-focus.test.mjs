@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createImageFocusController} from '../public/assets/js/reader/image-focus.js';
 
-function fixture(t){
+function fixture(t,{finePointer=true}={}){
   const frames=[];
   function element(){
     const node=new EventTarget(),classes=new Set();
@@ -30,7 +30,7 @@ function fixture(t){
   // Reproduce a browser focus scroll after the dialog has closed.
   frame.focus=()=>{focusCalls++;container.scrollTop+=360;root.scrollTop=40};
   const globals={window:{innerWidth:800,innerHeight:700,addEventListener(){}},document,
-    requestAnimationFrame:callback=>frames.push(callback),matchMedia:query=>({matches:query==='(pointer: fine)'})};
+    requestAnimationFrame:callback=>frames.push(callback),matchMedia:query=>({matches:query===(finePointer?'(pointer: fine)':'(pointer: coarse)')})};
   for(const [name,value] of Object.entries(globals)){
     const previous=Object.getOwnPropertyDescriptor(globalThis,name);
     Object.defineProperty(globalThis,name,{value,configurable:true,writable:true});
@@ -60,6 +60,16 @@ test('image return follows its live passage when Continuous buffering changes ab
   f.shift(640);f.container.scrollTop=10000;
   f.controller.closeImageFocus();f.flush();
   assert.equal(f.container.scrollTop,8640);
+});
+
+test('a touch opening click cannot immediately dismiss its focused image',t=>{
+  let now=1000;t.mock.method(Date,'now',()=>now);
+  const f=fixture(t,{finePointer:false});f.open();f.flush();
+  f.viewport.dispatchEvent(new Event('click',{cancelable:true}));
+  assert.equal(f.controller.isFocused(),true);
+  now+=401;f.container.scrollTop+=500;
+  f.viewport.dispatchEvent(new Event('click',{cancelable:true}));f.flush();
+  assert.equal(f.controller.isFocused(),false);assert.equal(f.container.scrollTop,8000);
 });
 
 test('a navigation reset cancels pending image position and focus restoration',t=>{

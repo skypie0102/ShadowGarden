@@ -69,6 +69,11 @@ Implementation and audit results are appended as work completes.
   requests did not return a result, so browser verification continues in GitHub
   CI. Publication targets `skypie0102/ShadowGarden` on `deploy/shadowgarden-bon`;
   production remains the existing `shadowgarden` Pages project.
+- The first GitHub browser run passed all desktop scenarios and 18/20 cases.
+  Mobile traces exposed an opening-touch compatibility click dismissing the
+  overlay, plus a test using mouse input on the touch device. Added a short
+  opening-click guard and its client regression; the mobile pan now uses native
+  touch events. Reverification follows before production deployment.
 
 ## 2026-09-23 — backend reconstruction
 

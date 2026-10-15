@@ -132,6 +132,9 @@ export function createImageFocusController({
     state.returnFocus=document.activeElement;
     returnPosition=captureReadingPosition(doc);
     state.active=true;state.scale=1;state.x=0;state.y=0;state.gesture=null;
+    // A touch pointer-up can open the overlay before its compatibility click.
+    // Do not let that same gesture immediately dismiss the newly focused image.
+    state.suppressCloseClickUntil=Date.now()+400;
     image.src=src;image.alt=String(sourceImage?.alt||"Book image");
     overlay.classList.remove("hidden","reader-image-focus-zoomed");overlay.setAttribute("aria-hidden","false");
     render();showHint();requestAnimationFrame(()=>{
