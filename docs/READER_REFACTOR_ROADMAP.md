@@ -33,7 +33,7 @@ behavior just because it looks unusual.
 | --- | --- | --- | --- |
 | 0 — Production baseline | Exercise the reader page, startup, authorization client and complete adapter stack with original generated EPUBs. Add image, TOC, mode-change and reopen scenarios. | Desktop/mobile browser runs exercise the production entry point, report page errors, and preserve existing tests. Document the remaining coverage gaps. | Complete for the initial Chromium matrix; broader scenarios remain below |
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
-| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Implementation complete; 111 Node tests and targeted desktop/mobile checks pass. Full 48-case matrix and clean CI pending before merge. |
+| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Implementation complete; 113 Node tests and targeted desktop/mobile checks pass. Full 48-case matrix and clean CI pending before merge. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Pending |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
@@ -100,6 +100,7 @@ project and no production credentials or catalog writes.
 | RDR-019 | Continuous 100% seeking can choose the beginning of the last device page while its remaining content exceeds the visible viewport. | Use the last page end CFI for Continuous; retain the last-page start in Page mode. Full-stack tests check the final content and seeking back to the cover. |
 | RDR-020 | An image return can run while a newer seek is still resolving, before the manager generation changes. | Viewport snapshots also record navigation revision and reject pending/newer navigation before restoring scroll or focus. |
 | RDR-021 | A mode request can cancel a still-settling chapter destination and capture the old passage; chapter chrome appears before navigation finishes. | Finish the existing chapter/seek before mode capture, while a later positional request still cancels an uncommitted mode change. The viewer exposes aria-busy during navigation, and a same-turn chapter/mode browser case protects the ordering. |
+| RDR-022 | Vendor paginated mapping reports the first text even when an illustration precedes it on the visible page, so Page-to-Continuous conversion skips that image. | Sample visible blocks in reading/column order and preserve a leading visual CFI. Keep the vendor live text CFI when text comes first. Positive and negative unit cases and the full production-entry mode tests cover the contract. |
 
 ## Progress log
 
@@ -144,6 +145,10 @@ project and no production credentials or catalog writes.
   Mode replacement now preserves that pending destination, and browser setup
   waits for the accessible navigation busy state before placing a passage.
   A new same-turn chapter/mode case expands the full matrix to 48 cases.
+  The next clean run passed 46/48 and pinpointed RDR-022: Page-to-Continuous
+  capture skipped a leading image because vendor mapping starts at text.
+  Capture now preserves a leading visual anchor and keeps text-first behavior;
+  the Node suite expands to 113 cases (50 reader cases).
 - Architecture and current limits are documented in
   [READER_ARCHITECTURE.md](READER_ARCHITECTURE.md). The one-time CI browser-runtime
   export used for restricted-environment debugging was removed from the workflow.

@@ -532,6 +532,38 @@ export function createRendition({book,target,viewerId="viewer",flow="paginated",
   });
 }
 
+function paginatedVisualAnchor(rendition){
+  const manager=rendition?.manager,viewport=continuousViewport(manager);
+  if(!viewport)return null;
+  const columnWidth=Math.max(1,Number(manager?.layout?.pageWidth)||viewport.width);
+  const rtl=manager?.settings?.direction==="rtl";
+  const candidates=[];
+  for(const view of continuousViews(manager)){
+    if(view.displayed===false)continue;
+    const doc=viewDocument(view),frame=viewFrame(view)?.getBoundingClientRect?.();
+    if(!doc||!frame)continue;
+    const nodes=doc.querySelectorAll?.("p,li,dd,dt,blockquote,pre,h1,h2,h3,h4,h5,h6,figcaption,td,th,img,svg,object")||[];
+    for(const node of nodes){
+      const style=doc.defaultView?.getComputedStyle?.(node);
+      if(style?.visibility==="hidden"||style?.display==="none")continue;
+      const rects=node.getClientRects?.()||[node.getBoundingClientRect?.()];
+      for(const rect of rects){
+        if(!rect)continue;
+        const left=frame.left+rect.left,right=frame.left+rect.right,top=frame.top+rect.top,bottom=frame.top+rect.bottom;
+        if(right<=viewport.left+1||left>=viewport.left+viewport.width-1||bottom<=viewport.top+1||top>=viewport.top+viewport.height-1)continue;
+        const leading=rtl?viewport.left+viewport.width-Math.min(right,viewport.left+viewport.width):Math.max(left,viewport.left)-viewport.left;
+        candidates.push({view,node,top,column:Math.floor((leading+1)/columnWidth)});
+      }
+    }
+  }
+  candidates.sort((a,b)=>a.column-b.column||a.top-b.top);
+  const first=candidates[0];
+  if(!first||!["IMG","SVG","OBJECT"].includes(String(first.node.tagName).toUpperCase()))return null;
+  let cfi="";
+  try{cfi=first.view.section?.cfiFromElement?.(first.node)||first.view.contents?.cfiFromNode?.(first.node)||""}catch{}
+  return cfi?{cfi,href:first.view.section?.href||"",sectionIndex:first.view.section?.index}:null;
+}
+
 export async function captureRenditionPosition({rendition,flow,pageMap,fallback}={}){
   if(!rendition)return fallback||null;
   let location=rendition.location;
@@ -542,6 +574,13 @@ export async function captureRenditionPosition({rendition,flow,pageMap,fallback}
     const mapped=pageMap?.positionForLocation?.(location,{rendition,flow})||fallback||null;
     if(viewport?.contentCfi)return{...mapped,cfi:viewport.contentCfi,href:viewport.href||mapped?.href,sectionIndex:viewport.index??mapped?.sectionIndex};
     return mapped;
+  }
+  // Vendor page mapping starts at a text node. A leading illustration is a
+  // real reading anchor too, even when the same page also contains text.
+  const visual=paginatedVisualAnchor(rendition);
+  if(visual){
+    const anchored={...location,start:{...location?.start,cfi:visual.cfi,href:visual.href,index:visual.sectionIndex}};
+    return{...(pageMap?.positionForLocation?.(anchored,{rendition,flow})||fallback),...visual};
   }
   try{
     const live=rendition.currentLocation?.();

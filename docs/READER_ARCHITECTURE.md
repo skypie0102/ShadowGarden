@@ -80,6 +80,11 @@ after preceding vendor moves. A later chapter/seek can cancel the
 capture before replacement starts. A fresh rendition has its own startup
 operation; delayed canonical correction checks that operation before moving it.
 
+Paginated capture checks visible blocks in reading/column order before falling
+back to vendor text mapping. A leading illustration has its own semantic CFI;
+text-first pages retain the vendor live text position. This avoids scrolling
+past a visible illustration when returning to Continuous mode.
+
 Continuous capture samples the live content block without currentLocation(),
 whose vendor implementation mutates layout. Semantic CFIs are retained across
 mode conversion; page-map targets remain a fallback for records without a CFI.
@@ -136,7 +141,7 @@ to the planned cache lifecycle/performance work.
   as `b99e76a4198d032b746676fe9cc286ead3793056`; its main CI run
   [38745346280](https://github.com/skypie0102/ShadowGarden/actions/runs/38745346280)
   also passes. This merge did not deploy to Cloudflare.
-- The navigation milestone passes all 111 Node tests, including 48 reader
+- The navigation milestone passes all 113 Node tests, including 50 reader
   cases, plus the asset audit and both builds. The expanded 48-case desktop/mobile
   browser matrix is being verified after the mode/chapter ordering correction;
   the preceding 46-case local matrix passed. Clean CI must pass before

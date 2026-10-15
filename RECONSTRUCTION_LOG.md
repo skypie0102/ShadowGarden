@@ -662,6 +662,13 @@ still-settling chapter navigation and capture the old passage. Mode replacement
 now finishes the existing positional request before capture; the viewer exposes
 an accessible navigation busy state. A same-turn chapter/mode regression
 expands the full browser matrix to 48 cases before merge.
+
+The next CI run passed 46/48 and isolated another position-contract bug:
+vendor Page mapping starts at text and can omit a visible leading illustration.
+Paginated capture now samples visible blocks in reading/column order and retains
+a leading visual CFI, while text-first pages keep the live vendor CFI. Two
+focused positive/negative tests expand the Node suite to 113 cases (50 reader
+cases). All ten targeted desktop/mobile mode cases pass after this correction.
 Tests exclude offscreen page-map frames and check clipped parent geometry plus
 hit surfaces for translated vendor columns, whose Chromium IntersectionObserver
 ratios can incorrectly be zero while the text is visibly rendered.
