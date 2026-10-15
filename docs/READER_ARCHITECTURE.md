@@ -211,15 +211,20 @@ to the planned cache lifecycle/performance work.
   startup failure/retry and BFCache cases. Long books and non-Chromium engines
   remain explicit roadmap work.
 
-- The Phase 3 implementation is local on `refactor/reader-lifecycle`. All 128
-  Node tests, the recovered-asset audit and both builds pass. The full
-  Chromium desktop/mobile run passes all 62 cases in 4.1 minutes against source
-  `16d8f666904c0913aba0130385763d05547df308`. Seven new cases per
+- The Phase 3 implementation is merged into `main` through
+  [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
+  `61a487502248882e02bcd9bd8d8903fcdad7bdbb`. All 128 Node tests, the
+  recovered-asset audit, both builds and all 62 Chromium desktop/mobile browser
+  cases pass locally and in clean CI runs
+  [38819451742](https://github.com/skypie0102/ShadowGarden/actions/runs/38819451742)
+  and [38819468106](https://github.com/skypie0102/ShadowGarden/actions/runs/38819468106).
+  Verified source: `1456fa12259e3d37c56d757d7f445e57cc3c3406`; its tree
+  exactly matches the locally verified tree. Seven new cases per
   browser cover repeated open/dispose with resource accounting, pending mode
   replacement, partial startup retry, interrupted preparation, cancellation of
   Read Again, actual EPUB open failure/recovery and BFCache suspension.
   Resource accounting checks session-owned main-window listeners, observers,
   marker intervals and visual-cache object URLs; focused scope/Contents tests
   check trimming cleanup and cancellation. This is not a heap-profiler claim
-  about all browser/vendor allocations. GitHub publication/merge is blocked by
-  automatic approval review; the earlier Phase 2 remains the latest main merge.
+  about all browser/vendor allocations. Rendering/diagnostics, broader release
+  verification and production deployment remain roadmap work.

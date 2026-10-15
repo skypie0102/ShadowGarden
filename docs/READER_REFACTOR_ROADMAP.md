@@ -2,8 +2,9 @@
 
 Started 2026-10-15. Canonical branch: `main`. The navigation/position
 milestone is merged through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
-Phase 3 lifecycle ownership is implemented and verified locally on
-`refactor/reader-lifecycle`; publication and the main merge remain pending.
+Phase 3 lifecycle ownership is verified and merged through
+[PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
+`61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phases 4 and 5 remain pending.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -36,7 +37,7 @@ behavior just because it looks unusual.
 | 0 — Production baseline | Exercise the reader page, startup, authorization client and complete adapter stack with original generated EPUBs. Add image, TOC, mode-change and reopen scenarios. | Desktop/mobile browser runs exercise the production entry point, report page errors, and preserve existing tests. Document the remaining coverage gaps. | Complete for the initial Chromium matrix; broader scenarios remain below |
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
-| 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Implemented and verified locally: 128 Node tests and all 62 desktop/mobile Chromium cases, audit and both builds pass. GitHub publication/main merge are blocked by approval review |
+| 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
 
@@ -83,7 +84,7 @@ project and no production credentials or catalog writes.
 | --- | --- | --- |
 | RDR-001 | Six scripts independently overwrite `window.ePub`; behavior is load-order dependent. | Resolved with explicit ordered engine extensions; full-suite verification passes. |
 | RDR-002 | Legacy adapter captures Continuous TOC clicks before the app handler; it also owns a separate Continuous seek path. | Removed duplicate TOC interception, routed internal links/seeks through the app owner and removed the obsolete custom seek handler. |
-| RDR-003 | Several controllers install listeners/observers without a common disposal API; resume cleanup is returned but not owned by app teardown. | Lifecycle scopes, per-session renewal and explicit disposal are implemented locally; verification/publication status is below. |
+| RDR-003 | Several controllers install listeners/observers without a common disposal API; resume cleanup is returned but not owned by app teardown. | Fixed in PR #4: lifecycle scopes, per-session renewal and explicit disposal own teardown; verification is recorded below. |
 | RDR-004 | Image regression fixture omits the production adapter chain and startup. | Resolved for the initial matrix: added ten desktop/mobile production-entry cases while retaining the targeted fixture. Broader lifecycle/reflow coverage remains. |
 | RDR-005 | README still describes the test deployment branch and obsolete recovered-file totals. | Corrected deployment guidance and pointed to the audit for current counts. |
 | RDR-006 | Standalone `<img src="...svg">` artwork is skipped while inline/object SVG is supported. | Fixed shared SVG normalization; advanced the cache payload version to invalidate previously skipped results. Production-entry regression covers the case. |
@@ -103,13 +104,13 @@ project and no production credentials or catalog writes.
 | RDR-020 | An image return can run while a newer seek is still resolving, before the manager generation changes. | Viewport snapshots also record navigation revision and reject pending/newer navigation before restoring scroll or focus. |
 | RDR-021 | A mode request can cancel a still-settling chapter destination and capture the old passage; chapter chrome appears before navigation finishes. | Finish the existing chapter/seek before mode capture, while a later positional request still cancels an uncommitted mode change. The viewer exposes aria-busy during navigation, and a same-turn chapter/mode browser case protects the ordering. |
 | RDR-022 | Vendor paginated mapping reports the first text even when an illustration precedes it on the visible page, so Page-to-Continuous conversion skips that image. | Sample visible blocks in reading/column order and preserve a leading visual CFI. Keep the vendor live text CFI when text comes first. Positive and negative unit cases and the full production-entry mode tests cover the contract. |
-| RDR-023 | Access renewal is permanently bound to the first authorized session by a global installed flag. | Fixed locally: per-session removable bindings, cancellation and repeated-session tests. |
-| RDR-024 | Marker polling, drawer/input handlers and delayed compatibility work can survive their reader/rendition/Contents. | Fixed locally: shared scopes and earlier Contents cleanup; browser resource accounting caught and now protects the drawer-tab handler too. |
-| RDR-025 | Visual-page URLs are revoked on BFCache pagehide, while obsolete preparation can publish over a replacement. | Fixed locally: actual-release ownership, scan abort/generation checks and BFCache/departure coverage. |
-| RDR-026 | EPUB.js openFailed can leave metadata/startup promises pending forever. | Fixed locally: startup listens for the failure, disposes partial state and retries successfully after source recovery. |
-| RDR-027 | Startup or completion Read Again can clear progress or navigate after its reader closes. | Fixed locally: cancellation before state writes, abortable confirmation/focus and unit/browser regressions. |
-| RDR-028 | Continuous neighbor-display deadlines remain live after work succeeds or its manager closes. | Fixed locally: manager-owned child work scopes cancel their deadline/paint callbacks on completion or teardown. |
-| RDR-029 | A controller-wide event scope can retain replaced bookmark/search result DOM until the whole session closes. | Fixed locally: replaceable row/result scopes release old UI immediately. |
+| RDR-023 | Access renewal is permanently bound to the first authorized session by a global installed flag. | Fixed in PR #4: per-session removable bindings, cancellation and repeated-session tests. |
+| RDR-024 | Marker polling, drawer/input handlers and delayed compatibility work can survive their reader/rendition/Contents. | Fixed in PR #4: shared scopes and earlier Contents cleanup; browser resource accounting caught and now protects the drawer-tab handler too. |
+| RDR-025 | Visual-page URLs are revoked on BFCache pagehide, while obsolete preparation can publish over a replacement. | Fixed in PR #4: actual-release ownership, scan abort/generation checks and BFCache/departure coverage. |
+| RDR-026 | EPUB.js openFailed can leave metadata/startup promises pending forever. | Fixed in PR #4: startup listens for the failure, disposes partial state and retries successfully after source recovery. |
+| RDR-027 | Startup or completion Read Again can clear progress or navigate after its reader closes. | Fixed in PR #4: cancellation before state writes, abortable confirmation/focus and unit/browser regressions. |
+| RDR-028 | Continuous neighbor-display deadlines remain live after work succeeds or its manager closes. | Fixed in PR #4: manager-owned child work scopes cancel their deadline/paint callbacks on completion or teardown. |
+| RDR-029 | A controller-wide event scope can retain replaced bookmark/search result DOM until the whole session closes. | Fixed in PR #4: replaceable row/result scopes release old UI immediately. |
 
 ## Phase 3 findings
 
@@ -195,7 +196,7 @@ project and no production credentials or catalog writes.
 
 ## Phase 3 implementation checklist
 
-Implemented locally (publication remains pending):
+Complete and merged into `main` through PR #4:
 
 1. Introduced one disposal scope for listeners, timers, observers and registered
    cleanup callbacks, with idempotent teardown and cancellation of pending work.
@@ -214,9 +215,8 @@ Implemented locally (publication remains pending):
   authorization/renewal, closed-rendition navigation and image-return cancellation.
   The new full production-entry browser cases cover repeated reopen/dispose,
   pending mode changes, partial-startup retry, interrupted preparation and BFCache.
-  Local browser verification is complete. GitHub CI and the main merge remain
-  pending publication; the existing workflow is unchanged. No production
-  deployment has been performed.
+  Local browser verification and both GitHub CI runs pass; the existing workflow
+  is unchanged. No production deployment has been performed.
 
 - Local validation now passes 128 Node tests, including cancellation before
   startup/completion progress resets and interrupted resume/authorization.
@@ -225,23 +225,21 @@ Implemented locally (publication remains pending):
   caught one missed drawer-tab listener; it now has the same owner as the other
   app input. Bookmark/search row scopes release replaced UI immediately, and
   Continuous neighbor deadlines are canceled when completed or disposed.
-- Automatic approval review rejected publishing to the established GitHub
-  destination twice. The optional browser-runtime workflow export was removed;
-  the workflow is unchanged. GitHub read checks confirm the repository is public
-  and the connector has admin/push access, but publication remains blocked.
-  A previously saved CI browser artifact supplied the local verification runtime;
-  no new remote source upload or production deployment occurred.
-
-- Final verified application/test source: `16d8f666904c0913aba0130385763d05547df308`.
+- Published and CI-verified source: `1456fa12259e3d37c56d757d7f445e57cc3c3406`.
+  Its tree `1e492ab23a39e44dedb9546bb12ed0253082b611` exactly matches the
+  locally verified tree. Clean push and pull-request CI runs
+  [38819451742](https://github.com/skypie0102/ShadowGarden/actions/runs/38819451742)
+  and [38819468106](https://github.com/skypie0102/ShadowGarden/actions/runs/38819468106)
+  both pass. [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) merged
+  into `main` as `61a487502248882e02bcd9bd8d8903fcdad7bdbb`.
   All 128 Node tests, all 62 Chromium desktop/mobile browser cases, asset audit,
-  static build and Functions compilation pass locally. The first full run passed
-  60/62: its old foreground-recovery fixture emitted a non-persisted pagehide,
+  static build and Functions compilation pass locally and in CI. The first local
+  full run passed 60/62: its old foreground-recovery fixture emitted a non-persisted pagehide,
   which now correctly disposes the reader. The fixture now explicitly requests
   BFCache suspension, and the lifecycle matrix also asserts non-persisted
   departure cleanup. The clean final run has zero failed cases.
-  Remote `main` remains `e24e9bea424234beb395d07ac048e20d4980d644` and the
-  lifecycle branch has not been published. A fresh read confirms both states;
-  explicit publishing confirmation is required by the automatic approval block.
+  No Cloudflare deployment occurred. Rendering/diagnostics and release
+  verification remain the next two phases.
 
 ## Next implementation slice — rendering and diagnostics
 
