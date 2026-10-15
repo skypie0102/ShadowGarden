@@ -73,7 +73,10 @@ Continuous lifecycle snapshots remain mutation-free.
 Startup and saved-target fallback also use this queue. A stale failed initial
 CFI cannot fall back to the first chapter after a newer request. A flow switch
 locks synchronously before its asynchronous capture, coalesces mode requests
-and captures after preceding vendor moves. A later chapter/seek can cancel the
+and finishes an existing chapter/seek destination before capturing it. The
+viewer exposes aria-busy while an application navigation settles, so assistive
+clients can distinguish partial rendering from completion. Capture then runs
+after preceding vendor moves. A later chapter/seek can cancel the
 capture before replacement starts. A fresh rendition has its own startup
 operation; delayed canonical correction checks that operation before moving it.
 
@@ -134,8 +137,9 @@ to the planned cache lifecycle/performance work.
   [38745346280](https://github.com/skypie0102/ShadowGarden/actions/runs/38745346280)
   also passes. This merge did not deploy to Cloudflare.
 - The navigation milestone passes all 111 Node tests, including 48 reader
-  cases, plus the asset audit and both builds. The expanded 46-case desktop/mobile
-  browser matrix passes locally; clean CI must pass before
+  cases, plus the asset audit and both builds. The expanded 48-case desktop/mobile
+  browser matrix is being verified after the mode/chapter ordering correction;
+  the preceding 46-case local matrix passed. Clean CI must pass before
   [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3) is merged.
 - Engine tests check initialization, repeat initialization, the original vendor
   factory, extension installation and unsupported-runtime failure.

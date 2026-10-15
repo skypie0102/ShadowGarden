@@ -32,6 +32,7 @@ test.describe('production reader integration',()=>{
       }
       return false;
     }).toBe(true);
+    await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true',{timeout:20000});
     return findChapter(page,index);
   }
   async function findChapter(page,index){
@@ -256,6 +257,20 @@ test.describe('production reader integration',()=>{
     await page.waitForTimeout(1600);
     await expect(page.locator('body')).toHaveClass(/reader-flow-scrolled/);
     await expect(page.locator('#chapterTitle')).toContainText('Chapter 4');
+  });
+
+  test('a mode request waits for the chapter destination already being navigated to',async({page})=>{
+    await chapter(page,3);
+    await page.evaluate(()=>{
+      document.querySelector('#tocPanel .toc-entry-link[data-href="chapter6.xhtml"]').click();
+      const select=document.getElementById('flowSelect');select.value='paginated';
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+    await expect(page.locator('body')).toHaveClass(/reader-flow-paginated/,{timeout:20000});
+    await expect(page.locator('#chapterTitle')).toContainText('Chapter 6',{timeout:20000});
+    await visiblePassage(page,6,'#target-6');
+    await page.waitForTimeout(1200);
+    await visiblePassage(page,6,'#target-6');
   });
 
   test('chapter selection cancels a mode capture before it can destroy the active rendition',async({page})=>{

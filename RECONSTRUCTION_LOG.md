@@ -657,7 +657,11 @@ suite passes locally. Source `145d426` is published in PR #3. The first clean
 CI run passed 45/46 cases and exposed an overstrict mobile mode assertion:
 a centered paragraph was expected instead of the retained tracking-line passage.
 The test now samples the actual pre-change visible anchor in each flow; clean
-CI is rerun before merging the milestone.
+CI then exposed a separate ordering race: a mode request could preempt a
+still-settling chapter navigation and capture the old passage. Mode replacement
+now finishes the existing positional request before capture; the viewer exposes
+an accessible navigation busy state. A same-turn chapter/mode regression
+expands the full browser matrix to 48 cases before merge.
 Tests exclude offscreen page-map frames and check clipped parent geometry plus
 hit surfaces for translated vendor columns, whose Chromium IntersectionObserver
 ratios can incorrectly be zero while the text is visibly rendered.

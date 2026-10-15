@@ -16,7 +16,7 @@ import { createReaderResumeController } from "./resume-controller.js";
 import { createRendition, captureContinuousScrollPosition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics } from "./rendition.js";
 import { preferences, urls } from "../domain/index.js";
 import { getReaderEngine } from "./engine.js";
-import { beginRenditionNavigation,cancelRenditionNavigation,holdRenditionNavigation,registerRenditionNavigator,runRenditionMove } from "./navigation-state.js";
+import { beginRenditionNavigation,cancelRenditionNavigation,holdRenditionNavigation,registerRenditionNavigator,renditionNavigationRevision,runRenditionMove } from "./navigation-state.js";
 
 const $=selector=>document.querySelector(selector);
 const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -36,7 +36,7 @@ export async function startReader(session){
   if(!session)return;
   const elements=readerElements();
   const storage=createReaderStorage({sourceIdentity:session.sourcePath,publicIdentity:session.publicBookId});
-  const state={book:null,rendition:null,navigation:null,pageMap:null,currentChapter:"",currentSpineIndex:null,continuousNavigation:null,renditionSerial:0,switchingFlow:false,queuedFlow:null,renderedFlow:null,toastTimer:0,resizeTimer:0,relayoutTimer:0,relayoutIntent:null,pageMapRefreshTimer:0};
+  const state={book:null,rendition:null,navigation:null,pageMap:null,pendingNavigation:null,currentChapter:"",currentSpineIndex:null,continuousNavigation:null,renditionSerial:0,switchingFlow:false,queuedFlow:null,renderedFlow:null,toastTimer:0,resizeTimer:0,relayoutTimer:0,relayoutIntent:null,pageMapRefreshTimer:0};
   let settingsController,progressController,bookmarksController,pageInputController,imageFocusController,paginatedController,continuousController,resumeController,completionController;
 
   const themeController=createThemeController({getSettings:()=>settingsController?.get?.()||{},isAdult:session.adult});
@@ -64,10 +64,22 @@ export async function startReader(session){
     return false;
   }
 
-  async function navigate(target,{operation}={}){
-    if(!target)return;
-    const rendition=state.rendition;if(!rendition)return false;
+  function navigate(target,{operation}={}){
+    const rendition=state.rendition;
+    if(!target||!rendition)return Promise.resolve(false);
     operation=operation||beginRenditionNavigation(rendition);
+    if(!operation.isCurrent())return Promise.resolve(false);
+    const pending={rendition,target,operation,promise:null};
+    state.pendingNavigation=pending;elements.viewer?.setAttribute("aria-busy","true");
+    pending.promise=displayTarget(rendition,target,operation).finally(()=>{
+      if(state.pendingNavigation!==pending)return;
+      state.pendingNavigation=null;elements.viewer?.removeAttribute("aria-busy");
+    });
+    holdRenditionNavigation(rendition,pending.promise,{signal:operation.signal});
+    return pending.promise;
+  }
+
+  async function displayTarget(rendition,target,operation){
     const current=()=>rendition===state.rendition&&operation.isCurrent();
     if(!current())return false;
     resetReaderInput();
@@ -78,9 +90,7 @@ export async function startReader(session){
       const intent=chapter&&Number.isFinite(targetIndex)?{rendition,operation,requested,chapter,targetIndex,fromIndex:state.currentSpineIndex}:null;
       state.continuousNavigation=intent;
       try{
-        const moving=continuousController.display(target,{operation});
-        holdRenditionNavigation(rendition,moving,{signal:operation.signal});
-        await moving;
+        await continuousController.display(target,{operation});
         /* Explicit href navigation owns semantic chapter chrome while EPUB.js settles its
            Continuous buffer. Late relocations from the old side of the target are ignored
            until location reporting reaches the requested spine section. */
@@ -91,9 +101,7 @@ export async function startReader(session){
       }catch(error){if(state.continuousNavigation===intent)state.continuousNavigation=null;throw error}
     }else{
       state.continuousNavigation=null;
-      const moving=runRenditionMove(rendition,operation,()=>rendition.display(target));
-      holdRenditionNavigation(rendition,moving,{signal:operation.signal});
-      await moving;
+      await runRenditionMove(rendition,operation,()=>rendition.display(target));
     }
     return current();
   }
@@ -233,13 +241,21 @@ export async function startReader(session){
     // Lock before the first asynchronous capture. A second mode request is
     // coalesced, while explicit chapter/seek input can cancel this capture.
     state.switchingFlow=true;
-    const operation=beginRenditionNavigation(old,{kind:"flow"});
-    let release;
-    holdRenditionNavigation(old,new Promise(resolve=>{release=resolve}),{signal:operation.signal});
-    const current=()=>old===state.rendition&&operation.isCurrent();
+    const revision=renditionNavigationRevision(old),pending=state.pendingNavigation;
+    let operation=null,release=()=>{};
+    const current=()=>old===state.rendition&&(operation?operation.isCurrent():revision===renditionNavigationRevision(old));
     let target=progressController.currentCfi()||storage.loadProgress()?.cfi||undefined;
     let replaced=false;
     try{
+      // Changing layout should preserve the destination already selected by a
+      // chapter/seek request. Finish its geometry settlement before capturing.
+      // A still newer positional request cancels this uncommitted mode change.
+      if(pending?.rendition===old&&["explicit","seek"].includes(pending.operation.kind)){
+        try{await pending.promise}catch{}
+      }
+      if(!current())return;
+      operation=beginRenditionNavigation(old,{kind:"flow"});
+      holdRenditionNavigation(old,new Promise(resolve=>{release=resolve}),{signal:operation.signal});
       let position;
       if(!await runRenditionMove(old,operation,async()=>{
         position=await captureRenditionPosition({rendition:old,flow:previousFlow,pageMap:state.pageMap,fallback:progressController.currentPosition()});
