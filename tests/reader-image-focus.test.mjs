@@ -1,6 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createImageFocusController} from '../public/assets/js/reader/image-focus.js';
+import {beginRenditionNavigation} from '../public/assets/js/reader/navigation-state.js';
+import {captureRenditionPosition} from '../public/assets/js/reader/rendition.js';
+import {createReaderResumeController} from '../public/assets/js/reader/resume-controller.js';
 
 function fixture(t,{finePointer=true}={}){
   const frames=[];
@@ -40,8 +43,9 @@ function fixture(t,{finePointer=true}={}){
   const source={currentSrc:'https://garden.test/art.png',alt:'Fixture illustration'};
   const flush=()=>{for(let count=0;frames.length&&count<10;count++)frames.splice(0).forEach(callback=>callback())};
   return{controller,container,root,wrapper,viewport,closeButton,flush,open:()=>controller.openImageFocus(source,doc),
+    get rendition(){return rendition},
     shift:amount=>{origin+=amount;container.scrollHeight+=amount},focusCalls:()=>focusCalls,
-    navigate:()=>{manager.__sgGeneration++},switchFlow:()=>{flow='paginated';rendition={manager:{}}}};
+    navigate:()=>{manager.__sgGeneration++},requestNavigation:()=>beginRenditionNavigation(rendition),switchFlow:()=>{flow='paginated';rendition={manager:{}}}};
 }
 
 for(const control of ['close button','double click'])test(`image ${control} restores live Continuous position after focus and inner-frame scroll`,t=>{
@@ -88,4 +92,27 @@ test('an explicit EPUB navigation invalidates an image return snapshot',t=>{
   const f=fixture(t);f.open();f.flush();f.navigate();f.container.scrollTop=12000;
   f.controller.closeImageFocus({restoreFocus:false});f.flush();
   assert.equal(f.container.scrollTop,12000);assert.equal(f.focusCalls(),0);
+});
+
+test('a navigation request cancels delayed image return before its vendor display changes generation',t=>{
+  const f=fixture(t);f.open();f.flush();f.controller.closeImageFocus();
+  f.requestNavigation();f.container.scrollTop=12000;f.flush();
+  assert.equal(f.container.scrollTop,12000);assert.equal(f.focusCalls(),0);
+});
+
+test('Continuous semantic capture reads the live passage without calling the mutating vendor location method',async t=>{
+  const f=fixture(t);
+  const position=await captureRenditionPosition({rendition:f.rendition,flow:'scrolled-doc',fallback:{cfi:'epubcfi(stale)',page:19}});
+  assert.equal(position.cfi,'epubcfi(focus-fixture)');assert.equal(position.page,19);assert.equal(position.sectionIndex,7);
+  assert.equal(f.container.scrollTop,8000);
+});
+
+test('resize capture retains the last stable Continuous passage after viewport geometry has already changed',async t=>{
+  const f=fixture(t);let position={cfi:'epubcfi(before-resize)'},captures=0;
+  const resume=createReaderResumeController({getRendition:()=>f.rendition,getFlow:()=> 'scrolled-doc',getPosition:()=>position,
+    capturePosition:()=>{captures++;return position}});
+  resume.remember();f.container.clientWidth+=100;position={cfi:'epubcfi(after-browser-reflow)'};
+  // A relocated event can arrive before the application's resize handler.
+  resume.remember();
+  assert.equal((await resume.capture()).cfi,'epubcfi(before-resize)');assert.equal(captures,0);
 });

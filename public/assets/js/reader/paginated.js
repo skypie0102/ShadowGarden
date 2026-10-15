@@ -1,5 +1,5 @@
 /* Shadow Garden R4 — Paginated-mode navigation adapter. */
-import { waitForRenditionNavigation } from "./navigation-state.js";
+import { beginRenditionNavigation,holdRenditionNavigation,runRenditionMove } from "./navigation-state.js";
 
 const paint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 
@@ -74,35 +74,44 @@ function showEndPage(){
 }
 
 export function createPaginatedController({getRendition,beforeTurn}={}){
-  let queue=Promise.resolve(true);
+  let queue=Promise.resolve(true),pendingTurns=0,turnOperation=null;
 
-  async function performTurn(direction){
-    const rendition=getRendition?.();if(!rendition)return false;
-    await waitForRenditionNavigation(rendition);
-    if(rendition!==getRendition?.())return false;
-    beforeTurn?.();
-    if(direction<0){await rendition.prev?.();return true}
-    if(endPageVisible())return true;
+  async function performTurn(direction,rendition,operation){
+    const current=()=>rendition===getRendition?.()&&operation.isCurrent();
+    if(!current())return false;
+    return runRenditionMove(rendition,operation,async()=>{
+      if(!current())return;
+      if(direction<0){await rendition.prev?.();return true}
+      if(endPageVisible())return true;
 
-    /* EPUB.js can still adjust manager scroll coordinates on WebKit when next() is called from
-       the last displayed page, so an exact post-turn location-key comparison is not a reliable
-       primary end signal. Detect the last displayed page before navigation and hand ownership
-       to the Reader completion page immediately. Keep the no-op comparison below as a fallback
-       for EPUBs that do not expose displayed page metadata. */
-    const wasFinalSpine=onFinalSpineItem(rendition);
-    if(wasFinalSpine&&onFinalDisplayedPage(rendition)){showEndPage();return true}
-    const before=locationKey(rendition);
-    await rendition.next?.();
-    await paint();
-    if(wasFinalSpine&&before&&locationKey(rendition)===before)showEndPage();
-    return true;
+      /* EPUB.js can still adjust manager scroll coordinates on WebKit when next() is called from
+         the last displayed page, so an exact post-turn location-key comparison is not a reliable
+         primary end signal. Detect the last displayed page before navigation and hand ownership
+         to the Reader completion page immediately. Keep the no-op comparison below as a fallback
+         for EPUBs that do not expose displayed page metadata. */
+      const wasFinalSpine=onFinalSpineItem(rendition);
+      if(wasFinalSpine&&onFinalDisplayedPage(rendition)){showEndPage();return true}
+      const before=locationKey(rendition);
+      await rendition.next?.();
+      await paint();
+      if(current()&&wasFinalSpine&&before&&locationKey(rendition)===before)showEndPage();
+      return true;
+    });
   }
 
   function turn(direction){
-    const task=queue.then(()=>performTurn(direction)).catch(error=>{
+    const rendition=getRendition?.();if(!rendition)return Promise.resolve(false);
+    // Keep intentional repeated page turns in order. A different navigation
+    // cancels the batch, and a new batch invalidates older lifecycle snapshots.
+    if(!pendingTurns||!turnOperation?.isCurrent()||turnOperation.rendition!==rendition)turnOperation=beginRenditionNavigation(rendition,{kind:"turn"});
+    const operation=turnOperation;pendingTurns++;beforeTurn?.();
+    const task=queue.then(()=>performTurn(direction,rendition,operation)).catch(error=>{
       console.warn("Paginated Reader turn skipped",error);
       return false;
+    }).finally(()=>{
+      pendingTurns--;if(!pendingTurns)turnOperation=null;
     });
+    holdRenditionNavigation(rendition,task,{signal:operation.signal});
     queue=task;
     return task;
   }

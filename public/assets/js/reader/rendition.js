@@ -1,4 +1,5 @@
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
+import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
 export function paginatedNeedsSinglePage(){
   const visualWidth=Number(window.visualViewport?.width),innerWidth=Number(window.innerWidth),clientWidth=Number(document.documentElement?.clientWidth);
@@ -489,17 +490,21 @@ export function stabilizeContinuousScrollLifecycle(rendition){
   return true;
 }
 
-export async function displayRenditionTarget(rendition,target){
+export async function displayRenditionTarget(rendition,target,{operation}={}){
   if(!rendition?.display)throw new Error("EPUB rendition is unavailable");
-  if(!target){await rendition.display();return{fallback:false}}
+  operation=operation||beginRenditionNavigation(rendition,{kind:"startup"});
   try{
-    await rendition.display(target);
-    return{fallback:false};
+    const moved=await runRenditionMove(rendition,operation,()=>rendition.display(target));
+    return{fallback:false,...(!moved?{cancelled:true}:{})};
   }catch(error){
+    // A failed old display must not fall back to the first chapter after a
+    // newer navigation has already selected a different target.
+    if(!operation.isCurrent())return{fallback:false,cancelled:true};
+    if(!target)throw error;
     console.warn("Saved EPUB location unavailable; opening first readable content",error);
     try{
-      await rendition.display();
-      return{fallback:true};
+      const moved=await runRenditionMove(rendition,operation,()=>rendition.display());
+      return{fallback:true,...(!moved?{cancelled:true}:{})};
     }catch(fallbackError){
       try{if(fallbackError&&fallbackError.cause===undefined)fallbackError.cause=error}catch{}
       throw fallbackError;
@@ -514,19 +519,69 @@ export function createRendition({book,target,viewerId="viewer",flow="paginated",
     width:"100%",height:"100%",manager:scrolled?"continuous":"default",flow:scrolled?"scrolled-doc":"paginated",
     spread:scrolled||singlePage?"none":"auto",minSpreadWidth:900
   });
-  onCreate?.(rendition);
+  const operation=beginRenditionNavigation(rendition,{kind:"startup"});
+  onCreate?.(rendition,operation);
   wire?.(rendition);
   try{if(themeCss)rendition.themes.default(themeCss)}catch{}
   configureSpread(rendition,flow);
-  return displayRenditionTarget(rendition,target).then(()=>{
+  const displaying=displayRenditionTarget(rendition,target,{operation});
+  holdRenditionNavigation(rendition,displaying,{signal:operation.signal});
+  return displaying.then(()=>{
     if(scrolled)stabilizeContinuousScrollLifecycle(rendition);
     return rendition;
   });
 }
 
+function paginatedVisualAnchor(rendition){
+  const manager=rendition?.manager,viewport=continuousViewport(manager);
+  if(!viewport)return null;
+  const columnWidth=Math.max(1,Number(manager?.layout?.pageWidth)||viewport.width);
+  const rtl=manager?.settings?.direction==="rtl";
+  const candidates=[];
+  for(const view of continuousViews(manager)){
+    if(view.displayed===false)continue;
+    const doc=viewDocument(view),frame=viewFrame(view)?.getBoundingClientRect?.();
+    if(!doc||!frame)continue;
+    const nodes=doc.querySelectorAll?.("p,li,dd,dt,blockquote,pre,h1,h2,h3,h4,h5,h6,figcaption,td,th,img,svg,object")||[];
+    for(const node of nodes){
+      const style=doc.defaultView?.getComputedStyle?.(node);
+      if(style?.visibility==="hidden"||style?.display==="none")continue;
+      const rects=node.getClientRects?.()||[node.getBoundingClientRect?.()];
+      for(const rect of rects){
+        if(!rect)continue;
+        const left=frame.left+rect.left,right=frame.left+rect.right,top=frame.top+rect.top,bottom=frame.top+rect.bottom;
+        if(right<=viewport.left+1||left>=viewport.left+viewport.width-1||bottom<=viewport.top+1||top>=viewport.top+viewport.height-1)continue;
+        const leading=rtl?viewport.left+viewport.width-Math.min(right,viewport.left+viewport.width):Math.max(left,viewport.left)-viewport.left;
+        candidates.push({view,node,top,column:Math.floor((leading+1)/columnWidth)});
+      }
+    }
+  }
+  candidates.sort((a,b)=>a.column-b.column||a.top-b.top);
+  const first=candidates[0];
+  if(!first||!["IMG","SVG","OBJECT"].includes(String(first.node.tagName).toUpperCase()))return null;
+  let cfi="";
+  try{cfi=first.view.section?.cfiFromElement?.(first.node)||first.view.contents?.cfiFromNode?.(first.node)||""}catch{}
+  return cfi?{cfi,href:first.view.section?.href||"",sectionIndex:first.view.section?.index}:null;
+}
+
 export async function captureRenditionPosition({rendition,flow,pageMap,fallback}={}){
   if(!rendition)return fallback||null;
   let location=rendition.location;
+  if(flow==="scrolled-doc"){
+    // currentLocation() calls the vendor's updateLayout(), which can move a
+    // long Continuous iframe before its visible passage has been sampled.
+    const viewport=captureContinuousScrollPosition(rendition);
+    const mapped=pageMap?.positionForLocation?.(location,{rendition,flow})||fallback||null;
+    if(viewport?.contentCfi)return{...mapped,cfi:viewport.contentCfi,href:viewport.href||mapped?.href,sectionIndex:viewport.index??mapped?.sectionIndex};
+    return mapped;
+  }
+  // Vendor page mapping starts at a text node. A leading illustration is a
+  // real reading anchor too, even when the same page also contains text.
+  const visual=paginatedVisualAnchor(rendition);
+  if(visual){
+    const anchored={...location,start:{...location?.start,cfi:visual.cfi,href:visual.href,index:visual.sectionIndex}};
+    return{...(pageMap?.positionForLocation?.(anchored,{rendition,flow})||fallback),...visual};
+  }
   try{
     const live=rendition.currentLocation?.();
     if(live&&typeof live.then==="function")location=await live;else if(live)location=live;

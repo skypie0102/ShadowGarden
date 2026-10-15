@@ -3,7 +3,7 @@
  */
 export function createEpubCompatibilityExtension(){
 
-  let currentBook=null,currentRendition=null,currentTarget=null,viewportTimer=0,seekTimer=0,seekSerial=0,pendingExternalHref="";
+  let currentBook=null,currentRendition=null,currentTarget=null,viewportTimer=0,pendingExternalHref="";
   const progressByCfi=new Map();
   const clamp01=value=>Math.min(1,Math.max(0,Number(value)||0));
 
@@ -325,74 +325,6 @@ export function createEpubCompatibilityExtension(){
     };
     return book;
   }
-
-  async function displaySettled(rendition,target){
-    await rendition.display(target);
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-    if(rendition===currentRendition&&document.body?.classList.contains("reader-flow-scrolled"))await rendition.display(target);
-  }
-
-  function locationCount(book){
-    try{
-      const value=book?.locations?.length?.();
-      if(Number.isFinite(value))return value;
-    }catch{}
-    return Array.isArray(book?.locations?._locations)?book.locations._locations.length:0;
-  }
-
-  async function spineStartTarget(book,percentage){
-    const items=linearSpine(book);
-    if(!items.length)return"";
-    const p=clamp01(percentage);
-    const index=p>=1?items.length-1:Math.min(items.length-1,Math.floor(p*items.length));
-    const section=items[index];
-    if(!section)return"";
-    try{
-      if(!section.document)await section.load(book.load.bind(book));
-      const element=section.document?.body||section.document?.documentElement;
-      if(element&&typeof section.cfiFromElement==="function"){
-        const cfi=section.cfiFromElement(element);
-        if(cfi)return cfi;
-      }
-    }catch(error){console.warn("Continuous spine fallback CFI failed",error)}
-    return section.href||"";
-  }
-
-  function updateProgressUi(percentage){
-    const p=clamp01(percentage);
-    const range=document.getElementById("progressRange"),text=document.getElementById("progressText");
-    if(range)range.value=String(Math.round(p*1000));
-    if(text)text.textContent=`${Math.round(p*100)}%`;
-  }
-
-  async function continuousSeek(percentage){
-    const book=currentBook,rendition=currentRendition;
-    if(!book||!rendition||!document.body?.classList.contains("reader-flow-scrolled"))return;
-    const serial=++seekSerial,p=clamp01(percentage);
-    let target="";
-    if(locationCount(book)>0){
-      try{
-        const candidate=book.locations.cfiFromPercentage(p);
-        if(typeof candidate==="string"&&candidate&&candidate!=="-1")target=candidate;
-      }catch(error){console.warn("Continuous exact seek failed",error)}
-    }
-    if(!target)target=await spineStartTarget(book,p);
-    if(!target||serial!==seekSerial)return;
-    updateProgressUi(p);
-    try{await displaySettled(rendition,target)}catch(error){console.error("Continuous seek failed",error)}
-  }
-
-  /* Dedicated Continuous rail. Native range events are no longer used in Continuous
-     mode; this single custom event is the only seek entry point for that flow. */
-  document.addEventListener("sg-continuous-seek",event=>{
-    if(!document.body?.classList.contains("reader-flow-scrolled"))return;
-    const p=clamp01(event.detail?.percentage);
-    const immediate=event.detail?.immediate===true;
-    updateProgressUi(p);
-    clearTimeout(seekTimer);
-    if(immediate)continuousSeek(p);
-    else seekTimer=setTimeout(()=>continuousSeek(p),140);
-  });
 
   /* Mobile browser chrome continuously changes visualViewport height while scrolling.
      Only paginated mode needs those changes forwarded into EPUB.js page measurement;

@@ -626,3 +626,54 @@ The milestone is in draft PR #2, targeting `deploy/shadowgarden-bon`. It is not
 merged or deployed. No production storage, database, secrets or Cloudflare
 settings changed during this refactor. `docs/READER_ARCHITECTURE.md` describes
 the current engine boundary and remaining compatibility bridges.
+
+## Reader navigation and position refactor — 2026-10-16
+
+The foundation milestone was merged into `main` through PR #2 as
+`b99e76a4198d032b746676fe9cc286ead3793056`; main's CI passed. Continued on
+`refactor/reader-navigation`, with main retained as the destination for each
+verified milestone.
+
+Navigation now has revision-tagged cancellation, multiple tracked barriers and
+an ordered vendor move queue. Chapter/link/footnote navigation, progress seeking,
+page turns, startup fallbacks, mode replacement and resume recovery share the
+application owner. Rapid page turns accumulate intentionally; a later chapter
+selection cancels queued turns. Delayed target resolution, generated-location
+refinement, renewal and stale startup fallback cannot replay an older request.
+
+Production-entry checks exposed additional interaction bugs. Removed the legacy
+core listeners that swallowed progress input and the 750 ms display suppression
+that discarded deliberate Continuous settling. The engine now supplies explicit
+buffer settlement. Continuous captures avoid the mutating vendor location call;
+mode changes preserve precise CFIs, settings reflow freezes its first live
+anchor, and resize recovery retains the last stable viewport across the browser
+reflow boundary. Image-return snapshots also check navigation revision. Footnote
+markers use history replacement/rotation, and delayed notes respect newer
+navigation. Continuous 100% seeks resolve to the last content anchor.
+
+All 111 Node tests (48 reader cases), the asset audit, static build and Pages
+Functions compilation pass locally. The expanded 46-case desktop/mobile Chromium
+suite passes locally. Source `145d426` is published in PR #3. The first clean
+CI run passed 45/46 cases and exposed an overstrict mobile mode assertion:
+a centered paragraph was expected instead of the retained tracking-line passage.
+The test now samples the actual pre-change visible anchor in each flow; clean
+CI then exposed a separate ordering race: a mode request could preempt a
+still-settling chapter navigation and capture the old passage. Mode replacement
+now finishes the existing positional request before capture; the viewer exposes
+an accessible navigation busy state. A same-turn chapter/mode regression
+expands the full browser matrix to 48 cases before merge.
+
+The next CI run passed 46/48 and isolated another position-contract bug:
+vendor Page mapping starts at text and can omit a visible leading illustration.
+Paginated capture now samples visible blocks in reading/column order and retains
+a leading visual CFI, while text-first pages keep the live vendor CFI. Two
+focused positive/negative tests expand the Node suite to 113 cases (50 reader
+cases). All ten targeted desktop/mobile mode cases pass after this correction.
+Tests exclude offscreen page-map frames and check clipped parent geometry plus
+hit surfaces for translated vendor columns, whose Chromium IntersectionObserver
+ratios can incorrectly be zero while the text is visibly rendered.
+
+No backend, production storage, database, secret or deployment configuration was
+changed. Production remains on the prior deployed image-focus fix. Uniform
+session/controller disposal, interrupted startup, repeated create/destroy and
+long-book profiling remain the subsequent roadmap phases.

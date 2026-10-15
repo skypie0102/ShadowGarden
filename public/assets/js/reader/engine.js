@@ -42,6 +42,7 @@ export function initializeReaderEngine(epub=globalThis.ePub){
     runtimeVersion:String(epub.VERSION),
     extensions:Object.freeze(extensions.map(extension=>extension.name)),
     visualPages:extensions.find(extension=>extension.visualPages)?.visualPages,
+    settleNavigation:rendition=>extensions.find(extension=>extension.settleNavigation)?.settleNavigation(rendition),
     createBook(...args){
       let book=epub(...args);
       if(!book||typeof book.renderTo!=='function')throw new Error('EPUB.js did not create a readable book');

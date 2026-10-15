@@ -13,13 +13,11 @@ export function createContinuousCoreExtension(){
   const BUFFER_EACH_SIDE=4;
   const MAX_RETAINED_VIEWS=12;
   const VIEW_TIMEOUT_MS=5000;
-  const DISPLAY_DEDUPE_MS=750;
   const SCROLL_DEBOUNCE_MS=30;
   const TRIM_IDLE_MS=1400;
 
   const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
   const paint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  const clamp01=value=>Math.min(1,Math.max(0,Number(value)||0));
   const targetKey=target=>typeof target==="string"?target:target?.toString?.()||"";
 
   function cleanHref(value){
@@ -46,35 +44,6 @@ export function createContinuousCoreExtension(){
     const items=linearSpine(rendition);
     return items[items.length-1]||null;
   }
-
-  function renderSeekPreview(range){
-    const value=clamp01(Number(range?.value||0)/1000);
-    const total=Number(window.__sgCanonicalPageMap?.totalPages)||0;
-    const text=document.getElementById("progressText");
-    if(!text)return;
-    if(total>0){
-      const page=value>=1?total:Math.min(total,Math.floor(value*total)+1);
-      text.textContent=`${page}/${total}`;
-      text.title=`Page ${page} of ${total} · ${Math.round(value*100)}% · release to navigate`;
-    }else{
-      text.textContent=`${Math.round(value*100)}%`;
-      text.title="Release the seek bar to navigate";
-    }
-  }
-
-  /* Keep legacy reader.js drag handlers from navigating repeatedly. `change` remains the one
-     committed seek event; the dedicated Continuous rail already forwards that event. */
-  document.addEventListener("input",event=>{
-    if(event.target?.id!=="progressRange")return;
-    event.stopImmediatePropagation();
-    renderSeekPreview(event.target);
-  },true);
-  document.addEventListener("pointerup",event=>{
-    if(event.target?.id==="progressRange")event.stopImmediatePropagation();
-  },true);
-  document.addEventListener("touchend",event=>{
-    if(event.target?.id==="progressRange")event.stopImmediatePropagation();
-  },true);
 
   function masterEndPage(){return document.getElementById("volumeEndPage")}
   function pagedEndVisible(){return masterEndPage()?.classList.contains("active")===true}
@@ -501,21 +470,19 @@ export function createContinuousCoreExtension(){
     if(!rendition||rendition.__sgContinuousCorePatched)return rendition;
     rendition.__sgContinuousCorePatched=true;
     const continuous=isContinuous(options,rendition);
-    let lastKey="",lastDoneAt=0,lastPromise=null,lastResult=null;
+    let lastKey="",lastPromise=null;
 
     if(typeof rendition.display==="function"){
       const rawDisplay=rendition.display.bind(rendition);
       rendition.display=(...args)=>{
         hidePagedEnd();
         if(continuous)installManager(rendition);
-        const key=targetKey(args[0]),now=performance.now();
+        const key=targetKey(args[0]);
         if(continuous&&key&&key===lastKey){
           if(lastPromise)return lastPromise;
-          if(now-lastDoneAt<DISPLAY_DEDUPE_MS)return Promise.resolve(lastResult||rendition);
         }
         lastKey=key;
         const task=Promise.resolve(rawDisplay(...args)).then(result=>{
-          lastResult=result;
           if(continuous){
             installManager(rendition);
             const manager=rendition.manager;
@@ -529,8 +496,7 @@ export function createContinuousCoreExtension(){
           }
           return result;
         }).finally(()=>{
-          lastDoneAt=performance.now();
-          lastPromise=null;
+          if(lastPromise===task)lastPromise=null;
         });
         lastPromise=task;
         return task;
@@ -572,5 +538,16 @@ export function createContinuousCoreExtension(){
     return book;
   }
 
-  return {name:"continuous-core",attachBook:patchBook};
+  async function settleNavigation(rendition){
+    const manager=rendition?.manager;
+    if(!manager?.container||manager.__sgDestroyed)return false;
+    const generation=manager.__sgGeneration;
+    await scheduleBuffer(manager,rendition);
+    if(manager.__sgDestroyed||generation!==manager.__sgGeneration)return false;
+    await safeUpdate(manager,0,generation);
+    await paint();
+    return !manager.__sgDestroyed&&generation===manager.__sgGeneration;
+  }
+
+  return {name:"continuous-core",attachBook:patchBook,settleNavigation};
 }

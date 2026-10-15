@@ -690,12 +690,16 @@ export function createPageMapController({
     return clamp01(fallback);
   }
 
-  async function targetForPercentage(percentage) {
+  async function targetForPercentage(percentage, { flow = "paginated" } = {}) {
     if (!activeMap?.totalPages) return "";
     const p = clamp01(percentage);
     const total = activeMap.totalPages;
     if (p >= 1) {
       const last = activeMap.pages[total - 1];
+      // The beginning of the final device page is right for Page mode. In
+      // Continuous, its remaining text can exceed a viewport: reach the final
+      // content anchor so choosing 100% actually exposes the end of the book.
+      if (flow === "scrolled-doc" && last?.endCfi) return last.endCfi;
       return last?.startCfi || last?.href || "";
     }
     const scaled = p * total;
