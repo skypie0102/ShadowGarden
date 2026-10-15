@@ -3,8 +3,8 @@
 Repository: https://github.com/skypie0102/ShadowGarden
 
 Reader work follows the [phased refactor roadmap](docs/READER_REFACTOR_ROADMAP.md).
-The `refactor/reader-foundation` branch is based on `deploy/shadowgarden-bon`;
-its Wrangler configuration references existing production resources. Automated
+Verified milestones are merged into `main`. Its Wrangler configuration
+references existing production resources. Automated
 browser tests create an isolated local project/database. Use the
 [production guide](docs/PRODUCTION_TAKEOVER.md) for the existing site and the
 [test guide](docs/TEST_DEPLOYMENT.md) for a separately configured test project.

@@ -13,10 +13,10 @@ import { createCompletionController } from "./completion.js";
 import { createPaginatedController } from "./paginated.js";
 import { createContinuousController } from "./continuous.js";
 import { createReaderResumeController } from "./resume-controller.js";
-import { createRendition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics } from "./rendition.js";
+import { createRendition, captureContinuousScrollPosition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics } from "./rendition.js";
 import { preferences, urls } from "../domain/index.js";
 import { getReaderEngine } from "./engine.js";
-import { registerRenditionNavigator } from "./navigation-state.js";
+import { beginRenditionNavigation,cancelRenditionNavigation,holdRenditionNavigation,registerRenditionNavigator,runRenditionMove } from "./navigation-state.js";
 
 const $=selector=>document.querySelector(selector);
 const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -36,7 +36,7 @@ export async function startReader(session){
   if(!session)return;
   const elements=readerElements();
   const storage=createReaderStorage({sourceIdentity:session.sourcePath,publicIdentity:session.publicBookId});
-  const state={book:null,rendition:null,navigation:null,pageMap:null,currentChapter:"",currentSpineIndex:null,continuousNavigation:null,renditionSerial:0,switchingFlow:false,queuedFlow:null,renderedFlow:null,toastTimer:0,resizeTimer:0,relayoutTimer:0,pageMapRefreshTimer:0};
+  const state={book:null,rendition:null,navigation:null,pageMap:null,currentChapter:"",currentSpineIndex:null,continuousNavigation:null,renditionSerial:0,switchingFlow:false,queuedFlow:null,renderedFlow:null,toastTimer:0,resizeTimer:0,relayoutTimer:0,relayoutIntent:null,pageMapRefreshTimer:0};
   let settingsController,progressController,bookmarksController,pageInputController,imageFocusController,paginatedController,continuousController,resumeController,completionController;
 
   const themeController=createThemeController({getSettings:()=>settingsController?.get?.()||{},isAdult:session.adult});
@@ -64,28 +64,38 @@ export async function startReader(session){
     return false;
   }
 
-  async function navigate(target){
+  async function navigate(target,{operation}={}){
     if(!target)return;
-    await resumeController?.wait?.();
-    if(!state.rendition)return;
+    const rendition=state.rendition;if(!rendition)return false;
+    operation=operation||beginRenditionNavigation(rendition);
+    const current=()=>rendition===state.rendition&&operation.isCurrent();
+    if(!current())return false;
     resetReaderInput();
-    if(settingsController.get().flow==="scrolled-doc"){
+    if(state.renderedFlow==="scrolled-doc"){
       const requested={start:{href:String(target)}};
       const chapter=tocController?.chapterForLocation?.(requested)||"";
       const targetIndex=targetSpineIndex(target);
-      const intent=chapter&&Number.isFinite(targetIndex)?{rendition:state.rendition,requested,chapter,targetIndex,fromIndex:state.currentSpineIndex}:null;
+      const intent=chapter&&Number.isFinite(targetIndex)?{rendition,operation,requested,chapter,targetIndex,fromIndex:state.currentSpineIndex}:null;
       state.continuousNavigation=intent;
       try{
-        await continuousController.display(target);
+        const moving=continuousController.display(target,{operation});
+        holdRenditionNavigation(rendition,moving,{signal:operation.signal});
+        await moving;
         /* Explicit href navigation owns semantic chapter chrome while EPUB.js settles its
            Continuous buffer. Late relocations from the old side of the target are ignored
            until location reporting reaches the requested spine section. */
-        if(intent&&state.continuousNavigation===intent){
+        if(current()&&intent&&state.continuousNavigation===intent){
           state.currentChapter=chapter;if(elements.chapterTitle)elements.chapterTitle.textContent=chapter;tocController?.setActiveForLocation?.(requested);
           state.continuousNavigation=null;
         }
       }catch(error){if(state.continuousNavigation===intent)state.continuousNavigation=null;throw error}
-    }else{state.continuousNavigation=null;await state.rendition.display(target)}
+    }else{
+      state.continuousNavigation=null;
+      const moving=runRenditionMove(rendition,operation,()=>rendition.display(target));
+      holdRenditionNavigation(rendition,moving,{signal:operation.signal});
+      await moving;
+    }
+    return current();
   }
 
   const bookSearchController=createBookSearchController({getBook:()=>state.book});
@@ -102,20 +112,30 @@ export async function startReader(session){
     },delay);
   }
   function scheduleRelayout(){
+    const rendition=state.rendition;if(!rendition)return;
+    const previous=state.relayoutIntent;
+    // Sample before applying font/width CSS. Repeated slider inputs retain the
+    // first anchor until their coalesced reflow finishes or navigation wins.
+    const keepCfi=previous?.rendition===rendition&&previous.operation.isCurrent()?previous.cfi
+      :(state.renderedFlow==="scrolled-doc"?captureContinuousScrollPosition(rendition)?.contentCfi:"")||progressController.currentCfi();
+    const operation=beginRenditionNavigation(rendition,{kind:"relayout"});
+    const intent={rendition,operation,cfi:keepCfi};state.relayoutIntent=intent;
     clearTimeout(state.relayoutTimer);state.relayoutTimer=setTimeout(async()=>{
-      const rendition=state.rendition;if(!rendition||state.switchingFlow)return;
-      const keepCfi=progressController.currentCfi();
-      try{rendition.resize?.("100%","100%")}catch{}
-      configureSpread(rendition,settingsController.get().flow);
-      if(keepCfi){try{await rendition.display(keepCfi)}catch(error){console.warn("Reader relayout skipped",error)}}
+      try{
+        if(rendition!==state.rendition||!operation.isCurrent()||state.switchingFlow)return;
+        if(!await runRenditionMove(rendition,operation,()=>{rendition.resize?.("100%","100%");configureSpread(rendition,settingsController.get().flow)}))return;
+        if(keepCfi)await navigate(keepCfi,{operation});
+      }catch(error){if(operation.isCurrent())console.warn("Reader relayout skipped",error)}
+      finally{if(state.relayoutIntent===intent)state.relayoutIntent=null}
     },120);
   }
   function applySettings({relayout=false,rebuildPageMap=false}={}){
     if(relayout||rebuildPageMap)resetReaderInput();
     const rendition=state.rendition,settings=settingsController.get();
     if(rendition){
+      if(relayout)scheduleRelayout();
       try{rendition.themes.default(themeController.css(settings))}catch(error){console.warn("Reader theme update skipped",error)}
-      configureSpread(rendition,settings.flow);themeController.refresh(rendition);if(relayout)scheduleRelayout();
+      configureSpread(rendition,settings.flow);themeController.refresh(rendition);
     }
     if(rebuildPageMap)schedulePageMapRefresh();
   }
@@ -141,7 +161,7 @@ export async function startReader(session){
     getRendition:()=>state.rendition,getFlow:()=>settingsController.get().flow
   });
   paginatedController=createPaginatedController({getRendition:()=>state.rendition,beforeTurn:resetReaderInput});
-  continuousController=createContinuousController({getRendition:()=>state.rendition,getBook:()=>state.book,beforeNavigate:resetReaderInput});
+  continuousController=createContinuousController({getRendition:()=>state.rendition,getBook:()=>state.book,beforeNavigate:resetReaderInput,settleNavigation:rendition=>getReaderEngine().settleNavigation(rendition)});
   resumeController=createReaderResumeController({
     getRendition:()=>state.rendition,getFlow:()=>settingsController.get().flow,getPageMap:()=>state.pageMap,
     getPosition:()=>progressController.currentPosition(),getCfi:()=>progressController.currentCfi(),
@@ -153,7 +173,9 @@ export async function startReader(session){
 
   function onRelocated(rendition,location){
     if(rendition!==state.rendition)return;
-    const intent=state.continuousNavigation;
+    const pending=state.continuousNavigation;
+    const intent=pending?.operation.isCurrent()?pending:null;
+    if(pending&&!intent)state.continuousNavigation=null;
     if(intent?.rendition===rendition&&relocationIsBeforeExplicitTarget(location,intent)){themeController.refresh(rendition);return}
     const spineIndex=locationSpineIndex(location);if(Number.isFinite(spineIndex))state.currentSpineIndex=spineIndex;
     const chapter=tocController.chapterForLocation(location);
@@ -168,7 +190,7 @@ export async function startReader(session){
     progressController.save(location);resumeController?.remember();tocController.setActiveForLocation(location);bookmarksController.syncButton();themeController.refresh(rendition);
   }
   function wireRendition(rendition){
-    registerRenditionNavigator(rendition,target=>rendition===state.rendition?navigate(target):Promise.resolve(false));
+    registerRenditionNavigator(rendition,(target,options)=>rendition===state.rendition?navigate(target,options):Promise.resolve(false));
     rendition.hooks.content.register(contents=>themeController.prepare(contents));
     pageInputController.attachRendition(rendition);
     imageFocusController.attachRendition(rendition);
@@ -179,28 +201,70 @@ export async function startReader(session){
 
   async function openRendition(target){
     const serial=++state.renditionSerial,flow=settingsController.get().flow;
-    const rendition=await createRendition({book:state.book,target,flow,wire:wireRendition,onCreate:value=>{state.rendition=value},themeCss:themeController.css(settingsController.get())});
-    if(serial!==state.renditionSerial||rendition!==state.rendition)return rendition;
-    state.renderedFlow=flow;themeController.refresh(rendition);bookmarksController.syncButton();return rendition;
+    let operation;
+    const rendition=await createRendition({book:state.book,target,flow,wire:wireRendition,onCreate:(value,initial)=>{state.rendition=value;state.renderedFlow=flow;operation=initial},themeCss:themeController.css(settingsController.get())});
+    if(serial===state.renditionSerial&&rendition===state.rendition){themeController.refresh(rendition);bookmarksController.syncButton()}
+    return{rendition,operation};
+  }
+
+  async function correctCanonicalPosition(opened,position,flow){
+    if(!state.pageMap||!position)return;
+    const {rendition,operation}=opened;
+    const current=()=>rendition===state.rendition&&operation.isCurrent();
+    if(!current())return;
+    if(position.cfi&&flow==="paginated")return;
+    let target=position.cfi;
+    try{target=target||await state.pageMap.targetForPosition(position,{includeFraction:flow==="scrolled-doc"})}
+    catch(error){if(current())console.warn("Reader canonical correction unavailable",error);return}
+    if(!target||!current())return;
+    if(flow==="scrolled-doc")await nextPaint();
+    if(current()){
+      try{await navigate(target,{operation})}
+      catch(error){if(current())console.warn("Reader canonical correction skipped",error)}
+    }
   }
 
   async function switchFlow(nextFlow){
-    await resumeController?.wait?.();
     const desired=nextFlow==="scrolled-doc"?"scrolled-doc":"paginated";
     if(state.switchingFlow){state.queuedFlow=desired;return}
+    if(!state.rendition){state.queuedFlow=desired;return}
     if(desired===state.renderedFlow&&state.rendition){settingsController.setFlow(desired);return}
     const previousFlow=state.renderedFlow||settingsController.get().flow,old=state.rendition;
-    const position=await captureRenditionPosition({rendition:old,flow:previousFlow,pageMap:state.pageMap,fallback:progressController.currentPosition()});
+    // Lock before the first asynchronous capture. A second mode request is
+    // coalesced, while explicit chapter/seek input can cancel this capture.
+    state.switchingFlow=true;
+    const operation=beginRenditionNavigation(old,{kind:"flow"});
+    let release;
+    holdRenditionNavigation(old,new Promise(resolve=>{release=resolve}),{signal:operation.signal});
+    const current=()=>old===state.rendition&&operation.isCurrent();
     let target=progressController.currentCfi()||storage.loadProgress()?.cfi||undefined;
-    if(state.pageMap&&position){try{target=await state.pageMap.targetForPosition(position,{includeFraction:desired==="scrolled-doc"})||target}catch(error){console.warn("Canonical flow target fallback",error)}}
-    progressController.setPosition(position);settingsController.setFlow(desired);resetReaderInput();state.switchingFlow=true;state.rendition=null;destroyRendition(old,elements.viewer);
+    let replaced=false;
     try{
-      await openRendition(target);
-      if(state.pageMap&&position){const canonicalTarget=await state.pageMap.targetForPosition(position,{includeFraction:desired==="scrolled-doc"});if(canonicalTarget&&state.rendition){if(desired==="scrolled-doc")await nextPaint();await state.rendition.display(canonicalTarget)}}
+      let position;
+      if(!await runRenditionMove(old,operation,async()=>{
+        position=await captureRenditionPosition({rendition:old,flow:previousFlow,pageMap:state.pageMap,fallback:progressController.currentPosition()});
+      }))return;
+      target=position?.cfi||target;
+      if(state.pageMap&&position&&!position.cfi){
+        try{target=await state.pageMap.targetForPosition(position,{includeFraction:desired==="scrolled-doc"})||target}
+        catch(error){if(current())console.warn("Canonical flow target fallback",error)}
+      }
+      if(!current())return;
+      progressController.setPosition(position);settingsController.setFlow(desired);resetReaderInput();
+      state.rendition=null;cancelRenditionNavigation(old);destroyRendition(old,elements.viewer);replaced=true;
+      const opened=await openRendition(target);
+      await correctCanonicalPosition(opened,position,desired);
     }catch(error){
-      console.error("Reader flow switch failed",error);toast("Could not switch reading flow");try{state.rendition?.destroy?.()}catch{}if(elements.viewer)elements.viewer.innerHTML="";settingsController.setFlow(previousFlow);try{await openRendition(target)}catch(recoveryError){console.error("Reader flow recovery failed",recoveryError);elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not restore the reader.</p>"}
+      if(!replaced&&!current())return;
+      console.error("Reader flow switch failed",error);toast("Could not switch reading flow");
+      if(replaced){
+        cancelRenditionNavigation(state.rendition);destroyRendition(state.rendition,elements.viewer);settingsController.setFlow(previousFlow);
+        try{await openRendition(target)}catch(recoveryError){console.error("Reader flow recovery failed",recoveryError);elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not restore the reader.</p>"}
+      }
     }finally{
-      state.switchingFlow=false;resumeController?.remember();const queued=state.queuedFlow;state.queuedFlow=null;if(queued&&queued!==state.renderedFlow)setTimeout(()=>void switchFlow(queued),0);
+      release();
+      state.switchingFlow=false;settingsController.sync();resumeController?.remember();
+      const queued=state.queuedFlow;state.queuedFlow=null;if(queued&&queued!==state.renderedFlow)void switchFlow(queued);
     }
   }
 
@@ -258,8 +322,9 @@ export async function startReader(session){
     const pageMapResult=await state.pageMap.ensure({anchorCfi:saved?.cfi||""});
     let initialTarget=saved?.cfi||undefined;
     if(!initialTarget&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{initialTarget=await state.pageMap.targetForPosition(saved,{includeFraction:settingsController.get().flow==="scrolled-doc"})||initialTarget}catch{}}
-    progressController.startLocationGeneration();await openRendition(initialTarget);
-    if(!saved?.cfi&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{const canonicalTarget=await state.pageMap.targetForPosition(saved,{includeFraction:settingsController.get().flow==="scrolled-doc"});if(canonicalTarget)await state.rendition.display(canonicalTarget)}catch{}}
+    progressController.startLocationGeneration();const opened=await openRendition(initialTarget);
+    if(!saved?.cfi&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{await correctCanonicalPosition(opened,saved,state.renderedFlow)}catch(error){console.warn("Reader startup canonical target unavailable",error)}}
+    const queuedFlow=state.queuedFlow;state.queuedFlow=null;if(queuedFlow)await switchFlow(queuedFlow);
     resumeController.remember();resumeController.bind();
     completionController=await createCompletionController({session,elements,toast});
     elements.loading?.classList.add("hidden");

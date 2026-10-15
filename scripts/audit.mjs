@@ -60,6 +60,11 @@ const deliberate=new Set([
   'public/assets/js/reader/image-focus.js',
   'public/assets/js/reader/continuous.js',
   'public/assets/js/reader/navigation-state.js',
+  'public/assets/js/reader/progress-controller.js',
+  'public/assets/js/reader/resume-controller.js',
+  'public/assets/js/reader/rendition.js',
+  'public/assets/js/reader/page-map.js',
+  'public/assets/js/reader/paginated.js',
   'public/assets/js/reader/app.js'
 ]);
 for(const path of modified)if(!deliberate.has(path))errors.push(`Undocumented change to recovered file ${path}`);

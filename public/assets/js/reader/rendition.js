@@ -1,4 +1,5 @@
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
+import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
 export function paginatedNeedsSinglePage(){
   const visualWidth=Number(window.visualViewport?.width),innerWidth=Number(window.innerWidth),clientWidth=Number(document.documentElement?.clientWidth);
@@ -489,17 +490,21 @@ export function stabilizeContinuousScrollLifecycle(rendition){
   return true;
 }
 
-export async function displayRenditionTarget(rendition,target){
+export async function displayRenditionTarget(rendition,target,{operation}={}){
   if(!rendition?.display)throw new Error("EPUB rendition is unavailable");
-  if(!target){await rendition.display();return{fallback:false}}
+  operation=operation||beginRenditionNavigation(rendition,{kind:"startup"});
   try{
-    await rendition.display(target);
-    return{fallback:false};
+    const moved=await runRenditionMove(rendition,operation,()=>rendition.display(target));
+    return{fallback:false,...(!moved?{cancelled:true}:{})};
   }catch(error){
+    // A failed old display must not fall back to the first chapter after a
+    // newer navigation has already selected a different target.
+    if(!operation.isCurrent())return{fallback:false,cancelled:true};
+    if(!target)throw error;
     console.warn("Saved EPUB location unavailable; opening first readable content",error);
     try{
-      await rendition.display();
-      return{fallback:true};
+      const moved=await runRenditionMove(rendition,operation,()=>rendition.display());
+      return{fallback:true,...(!moved?{cancelled:true}:{})};
     }catch(fallbackError){
       try{if(fallbackError&&fallbackError.cause===undefined)fallbackError.cause=error}catch{}
       throw fallbackError;
@@ -514,11 +519,14 @@ export function createRendition({book,target,viewerId="viewer",flow="paginated",
     width:"100%",height:"100%",manager:scrolled?"continuous":"default",flow:scrolled?"scrolled-doc":"paginated",
     spread:scrolled||singlePage?"none":"auto",minSpreadWidth:900
   });
-  onCreate?.(rendition);
+  const operation=beginRenditionNavigation(rendition,{kind:"startup"});
+  onCreate?.(rendition,operation);
   wire?.(rendition);
   try{if(themeCss)rendition.themes.default(themeCss)}catch{}
   configureSpread(rendition,flow);
-  return displayRenditionTarget(rendition,target).then(()=>{
+  const displaying=displayRenditionTarget(rendition,target,{operation});
+  holdRenditionNavigation(rendition,displaying,{signal:operation.signal});
+  return displaying.then(()=>{
     if(scrolled)stabilizeContinuousScrollLifecycle(rendition);
     return rendition;
   });
@@ -527,6 +535,14 @@ export function createRendition({book,target,viewerId="viewer",flow="paginated",
 export async function captureRenditionPosition({rendition,flow,pageMap,fallback}={}){
   if(!rendition)return fallback||null;
   let location=rendition.location;
+  if(flow==="scrolled-doc"){
+    // currentLocation() calls the vendor's updateLayout(), which can move a
+    // long Continuous iframe before its visible passage has been sampled.
+    const viewport=captureContinuousScrollPosition(rendition);
+    const mapped=pageMap?.positionForLocation?.(location,{rendition,flow})||fallback||null;
+    if(viewport?.contentCfi)return{...mapped,cfi:viewport.contentCfi,href:viewport.href||mapped?.href,sectionIndex:viewport.index??mapped?.sectionIndex};
+    return mapped;
+  }
   try{
     const live=rendition.currentLocation?.();
     if(live&&typeof live.then==="function")location=await live;else if(live)location=live;

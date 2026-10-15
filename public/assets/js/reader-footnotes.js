@@ -1,6 +1,8 @@
 /* Shadow Garden v2.8 — EPUB footnote/endnote compatibility layer.
  * Explicit noterefs open in Reader chrome instead of moving the live rendition.
  */
+import {navigateRendition,renditionNavigationRevision} from "./reader/navigation-state.js";
+
 export function createFootnotesExtension(){
 
   const EPUB_NS="http://www.idpf.org/2007/ops";
@@ -184,18 +186,20 @@ export function createFootnotesExtension(){
   async function fallbackToTarget(contents,anchor,renderedSection){
     const current=currentSectionFor(contents,renderedSection),href=originalNoteHref(anchor),target=resolveInternalTarget(current,href);
     if(!activeRendition||!target?.displayHref)return;
-    try{await activeRendition.display(target.displayHref)}catch(error){console.warn("Footnote fallback navigation failed",error)}
+    try{await navigateRendition(activeRendition,target.displayHref)}catch(error){console.warn("Footnote fallback navigation failed",error)}
   }
 
   function activateNoteReference(contents,anchor,renderedSection){
     const serial=++noteSerial;
+    const rendition=activeRendition,book=activeBook,revision=renditionNavigationRevision(rendition);
+    const current=()=>serial===noteSerial&&rendition===activeRendition&&book===activeBook&&revision===renditionNavigationRevision(rendition);
     (async()=>{
       try{
         const note=await loadNote(contents,anchor,renderedSection);
-        if(serial!==noteSerial)return;
+        if(!current())return;
         if(note&&showNoteDialog(note,anchor))return;
       }catch(error){console.warn("Footnote popup unavailable",error)}
-      if(serial===noteSerial)await fallbackToTarget(contents,anchor,renderedSection);
+      if(current())await fallbackToTarget(contents,anchor,renderedSection);
     })();
   }
 
@@ -242,14 +246,14 @@ export function createFootnotesExtension(){
     try{return decode(String(win?.location?.hash||"").replace(/^#/,""))}catch{return""}
   }
 
-  function resetMarker(contents,marker){
+  function resetMarker(contents,anchor){
     const doc=contents?.document||contents?.contentDocument||contents;
     const win=doc?.defaultView;
-    try{if(win?.location?.hash)win.location.hash=""}catch{}
-    setTimeout(()=>{
-      if(contents.__sgConsumedNoteMarker!==marker)return;
-      if(markerNameFrom(contents)!==marker)contents.__sgConsumedNoteMarker="";
-    },180);
+    try{if(win?.location?.hash)win.history.replaceState(win.history.state,"",win.location.href.split("#")[0])}catch{}
+    if(anchor){
+      delete anchor.dataset.sgNoteMarker;
+      anchor.setAttribute("href",`about:srcdoc#${markerFor(anchor)}`);
+    }
   }
 
   function scanNoteMarkers(){
@@ -265,7 +269,7 @@ export function createFootnotesExtension(){
       try{anchor=doc?.querySelector?.(`[data-sg-note-marker="${marker}"]`)||null}catch{}
       if(!anchor)continue;
       contents.__sgConsumedNoteMarker=marker;
-      resetMarker(contents,marker);
+      resetMarker(contents,anchor);
       activateNoteReference(contents,anchor,contents.__sgNoteSection);
     }
   }

@@ -1,4 +1,6 @@
 /* Shadow Garden R4 — Continuous-mode navigation adapter. */
+import {beginRenditionNavigation,runRenditionMove} from "./navigation-state.js";
+
 const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
 
@@ -32,25 +34,31 @@ async function resolveHrefTarget(book,target){
   }catch{return text}
 }
 
-export function createContinuousController({getRendition,getBook,beforeNavigate}={}){
-  async function display(target,{settle=true,resolve=true}={}){
+export function createContinuousController({getRendition,getBook,beforeNavigate,settleNavigation}={}){
+  async function display(target,{settle=true,resolve=true,operation}={}){
     const rendition=getRendition?.();if(!rendition||!target)return false;
+    operation=operation||beginRenditionNavigation(rendition);
+    const current=()=>rendition===getRendition?.()&&operation.isCurrent();
+    if(!current())return false;
     beforeNavigate?.();
     const exact=resolve?await resolveHrefTarget(getBook?.(),target):target;
-    await rendition.display(exact);
+    if(!current()||!await runRenditionMove(rendition,operation,()=>rendition.display(exact)))return false;
     if(settle){
+      await settleNavigation?.(rendition);
+      if(!current())return false;
       await nextPaint();
-      if(rendition===getRendition?.()){
-        await rendition.display(exact);
+      if(current()){
+        if(!await runRenditionMove(rendition,operation,()=>rendition.display(exact)))return false;
+        await settleNavigation?.(rendition);
         /* EPUB.js schedules reportLocation() from display before WebKit has always committed
            the final Continuous view geometry. Give the second display one more paint, then
            request an authoritative location report so Reader chapter/progress chrome cannot
            remain on the immediately preceding section while the requested content is visible. */
         await nextPaint();
-        if(rendition===getRendition?.())await rendition.reportLocation?.();
+        if(current())await rendition.reportLocation?.();
       }
     }
-    return true;
+    return current();
   }
   return{display,resolveTarget:target=>resolveHrefTarget(getBook?.(),target)};
 }

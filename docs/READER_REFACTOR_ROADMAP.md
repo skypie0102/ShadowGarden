@@ -1,6 +1,7 @@
 # Reader refactor roadmap
 
-Started 2026-10-15. Working branch: `refactor/reader-foundation`.
+Started 2026-10-15. Canonical branch: `main`; current work:
+`refactor/reader-navigation`.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -32,7 +33,7 @@ behavior just because it looks unusual.
 | --- | --- | --- | --- |
 | 0 — Production baseline | Exercise the reader page, startup, authorization client and complete adapter stack with original generated EPUBs. Add image, TOC, mode-change and reopen scenarios. | Desktop/mobile browser runs exercise the production entry point, report page errors, and preserve existing tests. Document the remaining coverage gaps. | Complete for the initial Chromium matrix; broader scenarios remain below |
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
-| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Started: TOC/internal links use the app owner; seek/relayout/resume consolidation remains |
+| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Implementation complete; 111 Node tests and targeted desktop/mobile checks pass. Full 46-case matrix and clean CI pending before merge. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Pending |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
@@ -79,13 +80,25 @@ project and no production credentials or catalog writes.
 | ID | Finding | Treatment / status |
 | --- | --- | --- |
 | RDR-001 | Six scripts independently overwrite `window.ePub`; behavior is load-order dependent. | Resolved with explicit ordered engine extensions; full-suite verification passes. |
-| RDR-002 | Legacy adapter captures Continuous TOC clicks before the app handler; it also owns a separate Continuous seek path. | Removed duplicate TOC interception and routed internal links through the app owner. Separate seek migration remains in Phase 2. |
+| RDR-002 | Legacy adapter captures Continuous TOC clicks before the app handler; it also owns a separate Continuous seek path. | Removed duplicate TOC interception, routed internal links/seeks through the app owner and removed the obsolete custom seek handler. |
 | RDR-003 | Several controllers install listeners/observers without a common disposal API; resume cleanup is returned but not owned by app teardown. | Phase 3: lifecycle tests and disposal scope. This is a structural concern, not a measured memory-leak claim. |
 | RDR-004 | Image regression fixture omits the production adapter chain and startup. | Resolved for the initial matrix: added ten desktop/mobile production-entry cases while retaining the targeted fixture. Broader lifecycle/reflow coverage remains. |
 | RDR-005 | README still describes the test deployment branch and obsolete recovered-file totals. | Corrected deployment guidance and pointed to the audit for current counts. |
 | RDR-006 | Standalone `<img src="...svg">` artwork is skipped while inline/object SVG is supported. | Fixed shared SVG normalization; advanced the cache payload version to invalidate previously skipped results. Production-entry regression covers the case. |
 | RDR-007 | Clearing a consumed srcdoc link marker via `location.hash` can scroll the source iframe back into view and undo explicit navigation. | Replaced native hash navigation with history replacement and marker rotation; repeated-link regression verifies the visible target. |
 | RDR-008 | Vendor fragment handling can apply a text character offset to an element child list. | Resolve fragment text to a collapsed text-node CFI; retain element CFIs for non-text anchors. Added focused tests. |
+| RDR-009 | Delayed seek target resolution or location-generation refinement can replay an old seek after newer navigation. | Resolved: captured book/rendition identity, operation cancellation and bounded refinement. Focused race and production-entry checks pass. |
+| RDR-010 | Resume renewal/capture/paint waits can outlive newer user navigation and restore the old passage. | Revision-tagged snapshots and guarded recovery moves; paused renewal/capture/display regression tests pass. |
+| RDR-011 | A single latest navigation barrier can disappear while an earlier move remains active; raw moves can overlap. | Track all barriers and serialize vendor moves. Cancellation releases obsolete barriers. Tests cover reverse completion order and in-flight displays. |
+| RDR-012 | Initial display and flow replacement still own separate capture/restore sequences. | Resolved: lock mode replacement before capture, serialize capture/startup/fallbacks, guard canonical correction and let newer chapter input cancel an uncommitted mode request. Rapid mode and passage checks added. |
+| RDR-013 | A 750 ms same-target suppression drops the deliberate settling display after Continuous buffering; an older promise can clear a newer pending display. | Resolved: deduplicate only identical calls still in flight, clean up by promise identity and expose explicit buffer settlement through the engine. |
+| RDR-014 | Continuous core still stops native progress input/pointer/touch events before the app sees them. | Removed obsolete global capture listeners and preview writer. Both rail and range use the shared debounced seek path; browser input-only regression added. |
+| RDR-015 | Calling vendor currentLocation() before Continuous capture mutates layout, and mode conversion rounds a precise CFI to a device-page boundary. | Mutation-free viewport sampling supplies the semantic CFI; exact CFIs survive flow conversion. Page-map fallback remains for records without a CFI. |
+| RDR-016 | Repeated font/width input captures an already-reflowed passage. | Freeze the first live CFI before applying CSS and retain it through coalesced input. A newer navigation invalidates it. |
+| RDR-017 | Resize handlers can observe geometry after browser/vendor reflow and remember the wrong passage. | Retain the last stable Continuous semantic/viewport snapshot. Detect the geometry boundary before accepting a relocated update; restore through the app navigator. |
+| RDR-018 | Footnote fallback bypasses navigation ownership; delayed notes can outlive a newer chapter selection, and clearing a note marker triggers a native fragment scroll. | Fallback delegates to the app, asynchronous resolution checks rendition/book/revision, and note markers use history replacement plus marker rotation. Repeated footnotes are covered. |
+| RDR-019 | Continuous 100% seeking can choose the beginning of the last device page while its remaining content exceeds the visible viewport. | Use the last page end CFI for Continuous; retain the last-page start in Page mode. Full-stack tests check the final content and seeking back to the cover. |
+| RDR-020 | An image return can run while a newer seek is still resolving, before the manager generation changes. | Viewport snapshots also record navigation revision and reject pending/newer navigation before restoring scroll or focus. |
 
 ## Progress log
 
@@ -103,10 +116,35 @@ project and no production credentials or catalog writes.
   `5d3856ecf7000fa47714a5e38df0445d2e8f74e9`. That includes ten new
   production-entry cases for SVG preparation, saved progress, image return,
   mode/reopen continuity, footnotes and repeated cross-chapter links.
-- First milestone is available in draft
-  [PR #2](https://github.com/skypie0102/ShadowGarden/pull/2), targeting
-  `deploy/shadowgarden-bon`. It has not been merged or deployed. Next work is
-  Phase 2's seek/relayout/resume coordination, followed by lifecycle ownership.
+- First milestone was retargeted and merged into `main` through
+  [PR #2](https://github.com/skypie0102/ShadowGarden/pull/2) as
+  `b99e76a4198d032b746676fe9cc286ead3793056`, as requested. Main had no
+  divergent commits; the merge also includes the already deployed production
+  fixes. Main CI run `38745346280` passes. No Cloudflare deployment occurred.
+- Continued Phase 2 on `refactor/reader-navigation`: one app seek path,
+  navigation revisions, ordered vendor moves, stale resume/capture cancellation,
+  bounded seek refinement and ordered page-turn batches. Continued with guarded
+  startup/mode replacement, mutation-free Continuous capture, first-anchor
+  settings relayout, stable pre-resize snapshots and engine-owned buffer
+  settlement. All 111 Node tests, asset audit and both builds pass. The expanded
+  46-case desktop/mobile browser matrix and clean CI are running before merge.
+  Production-entry helpers exclude the offscreen page-map frames and reacquire
+  frames across reflow. Passage assertions use clipped parent geometry and
+  actual hit testing: Chromium IntersectionObserver incorrectly reports zero
+  for visibly rendered text in the vendor's translated multi-column iframe.
 - Architecture and current limits are documented in
   [READER_ARCHITECTURE.md](READER_ARCHITECTURE.md). The one-time CI browser-runtime
   export used for restricted-environment debugging was removed from the workflow.
+
+## Next implementation slice — lifecycle ownership
+
+1. Introduce one disposal scope for listeners, timers, observers and registered
+   cleanup callbacks, with idempotent teardown and cancellation of pending work.
+2. Give `startReader()` and its book session an explicit `dispose()` contract;
+   invalidate navigation before destroying the rendition/book or clearing DOM.
+3. Attach controller and engine-extension cleanup to that owner, starting with
+   resume bindings, footnote/link marker polling and compatibility viewport work.
+4. Cover partial startup failure and repeated create/dispose cycles in focused
+   tests, then run the actual production reader through the browser matrix.
+5. Record retained global vendor patches separately from per-reader resources;
+   an installed prototype integration is not evidence of a leaked reader.
