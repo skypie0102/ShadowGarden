@@ -1,4 +1,5 @@
 /* Shadow Garden R4.1 — isolated focused-image viewing, pinch zoom and pan. */
+import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
 
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const distance=(a,b)=>Math.hypot((Number(a?.clientX)||0)-(Number(b?.clientX)||0),(Number(a?.clientY)||0)-(Number(b?.clientY)||0));
@@ -39,9 +40,12 @@ export function createImageFocusController({
   image,
   closeButton,
   hint,
-  shouldSuppressOpen
+  shouldSuppressOpen,
+  getRendition,
+  getFlow
 }={}){
   const state={active:false,scale:1,x:0,y:0,maxScale:4,gesture:null,suppressCloseClickUntil:0,returnFocus:null};
+  let returnPosition=null,focusCycle=0;
   const parentHits=new Map();
   let parentHitFrame=0;
   /* v2.6.6 owner request (#160 follow-up family): desktop focus gets wheel-zoom +
@@ -104,24 +108,59 @@ export function createImageFocusController({
     return setTransform(next,anchor.x-centerX-contentX*next,anchor.y-centerY-contentY*next);
   }
 
+  function captureReadingPosition(doc){
+    const rendition=getRendition?.();
+    if(!rendition||getFlow?.()!=="scrolled-doc")return null;
+    const position=captureContinuousScrollPosition(rendition);
+    if(!position)return null;
+    // Focus can scroll an EPUB's inner document independently of the manager.
+    // Keep those offsets too; the content anchor handles neighbor prepend/trim.
+    const layers=[];
+    if(doc?.scrollingElement)layers.push(doc.scrollingElement);
+    for(let node=doc?.defaultView?.frameElement;node&&node!==rendition.manager?.container;node=node.parentElement)layers.push(node);
+    return{rendition,position,generation:rendition.manager?.__sgGeneration,layers:layers.map(node=>({node,top:node.scrollTop,left:node.scrollLeft}))};
+  }
+  function restoreReadingPosition(saved){
+    if(!saved||saved.rendition!==getRendition?.()||getFlow?.()!=="scrolled-doc"||saved.generation!==saved.rendition.manager?.__sgGeneration)return;
+    for(const {node,top,left} of saved.layers){if(node.isConnected){node.scrollTop=top;node.scrollLeft=left}}
+    restoreContinuousScrollPosition(saved.rendition,saved.position);
+    scheduleParentHitRefresh();
+  }
   function openImageFocus(sourceImage,doc){
     const src=imageSource(sourceImage,doc);if(!src||!overlay||!image)return false;
+    const cycle=++focusCycle;
     state.returnFocus=document.activeElement;
+    returnPosition=captureReadingPosition(doc);
     state.active=true;state.scale=1;state.x=0;state.y=0;state.gesture=null;
     image.src=src;image.alt=String(sourceImage?.alt||"Book image");
     overlay.classList.remove("hidden","reader-image-focus-zoomed");overlay.setAttribute("aria-hidden","false");
-    render();showHint();requestAnimationFrame(()=>closeButton?.focus?.({preventScroll:true}));
+    render();showHint();requestAnimationFrame(()=>{
+      if(cycle!==focusCycle||!state.active)return;
+      closeButton?.focus?.({preventScroll:true});
+      restoreReadingPosition(returnPosition);
+    });
     return true;
   }
   function closeImageFocus({restoreFocus=true}={}){
+    const cycle=++focusCycle;
     if(!state.active)return false;
+    const target=state.returnFocus,saved=returnPosition;
+    state.returnFocus=null;returnPosition=null;
     state.active=false;state.scale=1;state.x=0;state.y=0;state.gesture=null;
     hideHintInstant();
     if(image){image.style.transform="";image.removeAttribute("src");image.alt=""}
     overlay?.classList.add("hidden");overlay?.classList.remove("reader-image-focus-zoomed");overlay?.setAttribute("aria-hidden","true");
     document.body.classList.remove("reader-image-focused");
-    if(restoreFocus&&state.returnFocus&&document.contains(state.returnFocus))requestAnimationFrame(()=>state.returnFocus?.focus?.({preventScroll:true}));
-    state.returnFocus=null;return true;
+    if(restoreFocus){
+      restoreReadingPosition(saved);
+      requestAnimationFrame(()=>{
+        if(cycle!==focusCycle||state.active)return;
+        if(target&&document.contains(target))target.focus?.({preventScroll:true});
+        restoreReadingPosition(saved);
+        requestAnimationFrame(()=>{if(cycle===focusCycle&&!state.active)restoreReadingPosition(saved)});
+      });
+    }
+    return true;
   }
 
   function createParentHit(sourceImage,doc){

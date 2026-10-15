@@ -43,6 +43,33 @@ entry below. No existing remote history has been overwritten.
 
 Implementation and audit results are appended as work completes.
 
+## 2026-10-15 — Continuous image-focus position preservation
+
+- Fixed image-focus return in `reader/image-focus.js` and connected it to the
+  active rendition/flow in `reader/app.js`. The overlay now captures the live
+  Continuous content anchor and inner-frame scroll offsets before opening.
+- Closing with X, desktop double-click, touch return or Escape restores the
+  passage through the existing mutation-free Continuous geometry helper. It
+  does not call `display()` or `currentLocation()` or reload saved progress.
+  Restoration covers focus movement and the next paint; chapter buffering can
+  change absolute scroll offsets without losing the visible passage.
+- Fixed the cleared asynchronous focus-return target. Pending focus/restoration
+  callbacks are invalidated when Reader resets input for navigation or a flow
+  switch, and old snapshots cannot move a replacement rendition.
+- Added six regression tests for close controls, nested scrolling, buffering and
+  navigation cancellation, plus desktop/mobile browser scenarios using an
+  original generated EPUB and the real recovered Reader layout and runtime.
+- Local asset audit, all 69 backend/client tests, static build and Functions
+  compilation pass. The old focus implementation fails the new position-return
+  regressions. All 20 Playwright desktop/mobile cases are discoverable; browser
+  execution has not passed yet. Chromium download was unavailable locally.
+- The owner explicitly authorized GitHub publication, Cloudflare browser checks
+  and deployment on 2026-10-15, resolving the earlier automatic approval blocks.
+  Local checks were repeated successfully. Cloudflare's standalone browser
+  requests did not return a result, so browser verification continues in GitHub
+  CI. Publication targets `skypie0102/ShadowGarden` on `deploy/shadowgarden-bon`;
+  production remains the existing `shadowgarden` Pages project.
+
 ## 2026-09-23 — backend reconstruction
 
 - Implemented all 15 observed routes, with method restrictions, JSON errors,

@@ -135,7 +135,8 @@ export async function startReader(session){
   imageFocusController=createImageFocusController({
     overlay:elements.imageFocus,viewport:elements.imageFocusViewport,layer:elements.imageFocusLayer,image:elements.imageFocusImage,closeButton:elements.imageFocusClose,
     hint:document.getElementById("imageFocusHint"),
-    shouldSuppressOpen:()=>pageInputController.shouldSuppressClick()
+    shouldSuppressOpen:()=>pageInputController.shouldSuppressClick(),
+    getRendition:()=>state.rendition,getFlow:()=>settingsController.get().flow
   });
   paginatedController=createPaginatedController({getRendition:()=>state.rendition,beforeTurn:resetReaderInput});
   continuousController=createContinuousController({getRendition:()=>state.rendition,getBook:()=>state.book,beforeNavigate:resetReaderInput});
