@@ -1,7 +1,8 @@
 # Reader refactor roadmap
 
-Started 2026-10-15. Canonical branch: `main`; current work:
-`refactor/reader-navigation`.
+Started 2026-10-15. Canonical branch: `main`. The navigation/position
+milestone is merged through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
+Next implementation: Phase 3, lifecycle ownership.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -33,7 +34,7 @@ behavior just because it looks unusual.
 | --- | --- | --- | --- |
 | 0 — Production baseline | Exercise the reader page, startup, authorization client and complete adapter stack with original generated EPUBs. Add image, TOC, mode-change and reopen scenarios. | Desktop/mobile browser runs exercise the production entry point, report page errors, and preserve existing tests. Document the remaining coverage gaps. | Complete for the initial Chromium matrix; broader scenarios remain below |
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
-| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Implementation complete; 113 Node tests and targeted desktop/mobile checks pass. Full 48-case matrix and clean CI pending before merge. |
+| 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Pending |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
@@ -123,18 +124,22 @@ project and no production credentials or catalog writes.
   `b99e76a4198d032b746676fe9cc286ead3793056`, as requested. Main had no
   divergent commits; the merge also includes the already deployed production
   fixes. Main CI run `38745346280` passes. No Cloudflare deployment occurred.
-- Continued Phase 2 on `refactor/reader-navigation`: one app seek path,
-  navigation revisions, ordered vendor moves, stale resume/capture cancellation,
-  bounded seek refinement and ordered page-turn batches. Continued with guarded
-  startup/mode replacement, mutation-free Continuous capture, first-anchor
-  settings relayout, stable pre-resize snapshots and engine-owned buffer
-  settlement. All 111 Node tests, asset audit and both builds pass. The expanded
-  46-case desktop/mobile browser matrix passes locally. Clean CI is required
-  before merge through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
-  Production-entry helpers exclude the offscreen page-map frames and reacquire
-  frames across reflow. Passage assertions use clipped parent geometry and
-  actual hit testing: Chromium IntersectionObserver incorrectly reports zero
-  for visibly rendered text in the vendor's translated multi-column iframe.
+- Completed Phase 2 on `refactor/reader-navigation`: one app seek path,
+  navigation revisions, ordered vendor moves, guarded startup/mode replacement,
+  mutation-free Continuous capture, stable pre-resize snapshots and explicit
+  engine buffer settlement. Paginated capture preserves leading illustrations
+  as well as text. All 113 Node tests (50 reader cases), the asset audit,
+  static build, Functions compilation and all 48 desktop/mobile Chromium browser
+  cases pass locally and in clean CI runs
+  [38782520185](https://github.com/skypie0102/ShadowGarden/actions/runs/38782520185)
+  and [38782528728](https://github.com/skypie0102/ShadowGarden/actions/runs/38782528728)
+  against source `a1262eec57ee0b87030a8ce5893245de9183ddd6`.
+  [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3) merged the milestone
+  into `main` as `f20e47e772865e89713ef8c66562da9452420cb0`. No Cloudflare
+  deployment occurred. Production-entry helpers exclude offscreen page-map
+  frames and reacquire frames across reflow. Passage assertions use clipped
+  parent geometry and hit testing because Chromium can report zero
+  IntersectionObserver ratios for visibly rendered translated vendor columns.
 - CI run `38778009831` passed 45/46 browser cases. Its mobile mode trace
   retained the tracking-line passage, while the test expected a different
   centered paragraph to remain on the same page as a large illustration.

@@ -141,11 +141,15 @@ to the planned cache lifecycle/performance work.
   as `b99e76a4198d032b746676fe9cc286ead3793056`; its main CI run
   [38745346280](https://github.com/skypie0102/ShadowGarden/actions/runs/38745346280)
   also passes. This merge did not deploy to Cloudflare.
-- The navigation milestone passes all 113 Node tests, including 50 reader
-  cases, plus the asset audit and both builds. The expanded 48-case desktop/mobile
-  browser matrix is being verified after the mode/chapter ordering correction;
-  the preceding 46-case local matrix passed. Clean CI must pass before
-  [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3) is merged.
+- The navigation milestone passes all 113 Node tests (50 reader cases),
+  all 48 desktop/mobile Chromium browser cases, asset audit and both builds
+  locally and in clean CI runs
+  [38782520185](https://github.com/skypie0102/ShadowGarden/actions/runs/38782520185)
+  and [38782528728](https://github.com/skypie0102/ShadowGarden/actions/runs/38782528728).
+  Verified application source: `a1262eec57ee0b87030a8ce5893245de9183ddd6`.
+  [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3) merged this milestone
+  into `main` as `f20e47e772865e89713ef8c66562da9452420cb0`. No production
+  deployment was performed.
 - Engine tests check initialization, repeat initialization, the original vendor
   factory, extension installation and unsupported-runtime failure.
 - Navigation tests check delegation and ownership cleanup. Continuous target
