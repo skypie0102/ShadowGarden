@@ -1,4 +1,30 @@
-# Reconstruction audit — updated 2026-10-03
+# Reconstruction audit — updated 2026-10-16 (Asia/Manila)
+
+## Reader lifecycle refactor — 2026-10-16 (Asia/Manila)
+
+The navigation foundation remains merged into `main` through PR #3. The next
+milestone is implemented locally on `refactor/reader-lifecycle`: explicit
+session/application/controller disposal, engine-instance and Contents ownership,
+owned compatibility work, canceled access/resume/visual preparation, completion
+confirmation cleanup and retryable startup failure. Progress/bookmark identities,
+security boundaries and backend/provider configuration are unchanged.
+
+All 128 Node tests, the recovered-asset audit, static build and Functions
+compilation pass locally. All 62 desktop/mobile Chromium browser cases pass
+in a clean 4.1-minute run against application/test source
+`16d8f666904c0913aba0130385763d05547df308`, including fourteen new lifecycle
+cases. The suspension fixture now explicitly uses `persisted:true`, and the
+lifecycle matrix separately checks non-persisted departure cleanup. These checks account for owned resources and late
+callbacks, not all browser/vendor heap allocations. See the
+[reader architecture](READER_ARCHITECTURE.md) and
+[roadmap](READER_REFACTOR_ROADMAP.md) for ownership and remaining scope.
+
+Publication and the `main` merge are pending: automatic approval review rejected
+the GitHub push over destination authorization. The workflow has no new artifact
+export or other changes. No production deployment has been performed.
+
+The older reconstruction checkpoints below retain their historical test counts;
+`npm run audit` reports current recovered-file modification counts.
 
 ## B2 upload pod compatibility — 2026-10-03
 

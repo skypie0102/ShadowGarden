@@ -1,3 +1,4 @@
+import {createReaderScope,readerInstanceScope} from "./lifecycle.js";
 const DARK_TEXT = "#17151b";
 const LIGHT_TEXT = "#f1edf6";
 const READER_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap";
@@ -93,6 +94,7 @@ function forceColor(element, color) {
 }
 
 export function createThemeController({ getSettings, isAdult }) {
+  const scope=createReaderScope();
   function themeBase(theme) {
     if (theme === "paper") return solid("#ffffff");
     if (theme === "night") return solid("#0c1020");
@@ -193,15 +195,17 @@ export function createThemeController({ getSettings, isAdult }) {
   }
 
   function prepare(contents) {
+    if(scope.disposed)return;
     const settings = getSettings();
     applyTypeface(contents);
     if (settings.flow === "scrolled-doc") injectScrollChrome(contents);
-    requestAnimationFrame(() => repair(contents));
+    readerInstanceScope(contents).frame(scope.guard(() => repair(contents)));
   }
 
   function refresh(rendition) {
+    if(scope.disposed)return;
     if (!rendition?.getContents) return;
-    requestAnimationFrame(() => {
+    readerInstanceScope(rendition).frame(scope.guard(() => {
       try {
         rendition.getContents().forEach(contents => {
           applyTypeface(contents);
@@ -211,7 +215,7 @@ export function createThemeController({ getSettings, isAdult }) {
       } catch (error) {
         console.warn("Reader theme refresh skipped", error);
       }
-    });
+    }));
   }
 
   function css(settings) {
@@ -358,5 +362,5 @@ export function createThemeController({ getSettings, isAdult }) {
     };
   }
 
-  return { css, prepare, refresh, repair };
+  return { dispose:()=>scope.dispose(), css, prepare, refresh, repair };
 }

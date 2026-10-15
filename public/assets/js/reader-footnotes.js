@@ -1,3 +1,4 @@
+import {readerInstanceScope} from "./reader/lifecycle.js";
 /* Shadow Garden v2.8 — EPUB footnote/endnote compatibility layer.
  * Explicit noterefs open in Reader chrome instead of moving the live rendition.
  */
@@ -8,7 +9,7 @@ export function createFootnotesExtension(){
   const EPUB_NS="http://www.idpf.org/2007/ops";
   const NOTE_REF_CLASSES=new Set(["noteref","note-ref","footnote-ref","endnote-ref"]);
   const NOTE_MARKER_PREFIX="sg-note-";
-  let activeBook=null,activeRendition=null,noteOrigin=null,noteSerial=0,markerSerial=0,markerTimer=0;
+  let activeBook=null,activeRendition=null,noteOrigin=null,noteSerial=0,markerSerial=0;
 
   const cleanText=value=>String(value||"").replace(/\s+/g," ").trim();
   const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
@@ -21,14 +22,22 @@ export function createFootnotesExtension(){
     close:document.getElementById("readerNoteClose")
   }}
 
+  function focusNoteTarget(target){
+    const rendition=activeRendition;if(!rendition)return;
+    readerInstanceScope(rendition).frame(()=>{
+      if(rendition!==activeRendition||!target?.isConnected)return;
+      try{target.focus({preventScroll:true})}catch{target.focus?.()}
+    });
+  }
+
   function closeNoteDialog({restoreFocus=true}={}){
+    const origin=noteOrigin;noteOrigin=null;
     const {dialog}=noteDialogElements();
     if(dialog){
       if(dialog.open&&typeof dialog.close==="function")dialog.close();
       else dialog.removeAttribute("open");
     }
-    const origin=noteOrigin;noteOrigin=null;
-    if(restoreFocus&&origin?.isConnected)requestAnimationFrame(()=>{try{origin.focus({preventScroll:true})}catch{try{origin.focus()}catch{}}});
+    if(restoreFocus)focusNoteTarget(origin);
   }
 
   function setupNoteDialog(){
@@ -39,7 +48,7 @@ export function createFootnotesExtension(){
     dialog.addEventListener("click",event=>{if(event.target===dialog)closeNoteDialog()});
     dialog.addEventListener("close",()=>{
       const origin=noteOrigin;noteOrigin=null;
-      if(origin?.isConnected)requestAnimationFrame(()=>{try{origin.focus({preventScroll:true})}catch{try{origin.focus()}catch{}}});
+      focusNoteTarget(origin);
     });
     return true;
   }
@@ -57,7 +66,7 @@ export function createFootnotesExtension(){
     if(typeof dialog.showModal==="function"){
       if(!dialog.open)dialog.showModal();
     }else dialog.setAttribute("open","");
-    requestAnimationFrame(()=>close?.focus?.({preventScroll:true}));
+    focusNoteTarget(close);
     return true;
   }
 
@@ -275,29 +284,31 @@ export function createFootnotesExtension(){
   }
 
   function ensureMarkerObserver(){
-    if(markerTimer)return;
-    markerTimer=window.setInterval(scanNoteMarkers,50);
+    readerInstanceScope(activeRendition).interval(scanNoteMarkers,50);
   }
 
   function patchRendition(rendition){
     if(!rendition||rendition.__sgFootnotesPatched)return rendition;
     if(activeRendition&&activeRendition!==rendition)closeNoteDialog({restoreFocus:false});
+    const scope=readerInstanceScope(rendition);
+    scope.add(()=>{if(activeRendition===rendition){activeRendition=null;noteSerial++;closeNoteDialog({restoreFocus:false});noteDialogElements().body?.replaceChildren()}});
     activeRendition=rendition;rendition.__sgFootnotesPatched=true;
     ensureMarkerObserver();
-    try{rendition.hooks?.content?.register?.((contents,view)=>installNoteGuard(contents,view?.section))}catch(error){console.warn("EPUB note hook unavailable",error)}
-    try{rendition.on?.("rendered",(section,view)=>{
+    try{scope.hook(rendition.hooks?.content,(contents,view)=>installNoteGuard(contents,view?.section))}catch(error){console.warn("EPUB note hook unavailable",error)}
+    try{scope.on(rendition,"rendered",(section,view)=>{
       if(rendition!==activeRendition)return;
       const contents=view?.contents;
       if(contents){
         installNoteGuard(contents,section);
-        setTimeout(()=>installNoteGuard(contents,section),0);
-      }else setTimeout(()=>{try{rendition.getContents?.().forEach(contentsItem=>installNoteGuard(contentsItem))}catch{}},0);
+        scope.timeout(()=>installNoteGuard(contents,section),0);
+      }else scope.timeout(()=>{try{rendition.getContents?.().forEach(contentsItem=>installNoteGuard(contentsItem))}catch{}},0);
     })}catch{}
     return rendition;
   }
 
   function patchBook(book){
     if(!book)return book;
+    readerInstanceScope(book).add(()=>{if(activeBook===book)activeBook=null});
     activeBook=book;
     if(book.__sgFootnotesPatched)return book;
     book.__sgFootnotesPatched=true;

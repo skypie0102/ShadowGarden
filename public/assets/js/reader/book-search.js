@@ -86,12 +86,14 @@ export function findSectionMatches(section,query,limit=MAX_RESULTS){
 }
 
 export function createBookSearchController({getBook}={}){
+  let disposed=false;
   let runId=0;
   let busy=false;
 
   function cancel(){if(busy)runId+=1;busy=false}
 
   async function search(rawQuery,{onProgress}={}){
+    if(disposed)return{hits:[],cancelled:true};
     const query=normalizeBookSearchQuery(rawQuery);
     if(query.length<MIN_QUERY_LENGTH){cancel();return{hits:[],capped:false,tooShort:true,totalSections:0}}
     const book=getBook?.();
@@ -122,5 +124,5 @@ export function createBookSearchController({getBook}={}){
     return{hits,capped:hits.length>=MAX_RESULTS,totalSections:sections.length};
   }
 
-  return{search,cancel,isBusy:()=>busy,minQueryLength:MIN_QUERY_LENGTH,maxResults:MAX_RESULTS};
+  return{dispose(){disposed=true;cancel()},search,cancel,isBusy:()=>busy,minQueryLength:MIN_QUERY_LENGTH,maxResults:MAX_RESULTS};
 }

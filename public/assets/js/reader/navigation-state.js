@@ -2,6 +2,7 @@
 const barriers=new WeakMap();
 const navigators=new WeakMap();
 const operations=new WeakMap();
+const disposed=new WeakSet();
 
 function navigationState(rendition){
   let state=operations.get(rendition);
@@ -28,10 +29,16 @@ export function beginRenditionNavigation(rendition,{kind="explicit"}={}){
   };
   state.current=operation;
   previous?.cancel();
+  if(disposed.has(rendition))operation.cancel();
   return operation;
 }
 
 export function cancelRenditionNavigation(rendition){operations.get(rendition)?.current?.cancel()}
+
+export function disposeRenditionNavigation(rendition){
+  if(!rendition)return;
+  disposed.add(rendition);cancelRenditionNavigation(rendition);navigators.delete(rendition);
+}
 
 // EPUB.js cannot cancel a display already in progress. Serialize vendor moves
 // so the newer target is applied after that call, and skip stale queued work.
@@ -55,7 +62,7 @@ export function registerRenditionNavigator(rendition,navigate){
 }
 
 export function navigateRendition(rendition,target,options={}){
-  if(!rendition||!target)return Promise.resolve(false);
+  if(!rendition||!target||disposed.has(rendition))return Promise.resolve(false);
   const navigate=navigators.get(rendition);
   if(navigate)return Promise.resolve(navigate(target,options));
   if(options.operation)return runRenditionMove(rendition,options.operation,()=>rendition.display(target));

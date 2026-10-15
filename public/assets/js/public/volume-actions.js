@@ -45,26 +45,39 @@ function ensureDialog() {
     pendingConfirmation = null;
   });
   dialog.addEventListener("close", () => {
-    if (!pendingConfirmation) return;
+    if (dialog.open || !pendingConfirmation) return;
     pendingConfirmation.resolve(dialog.returnValue === "confirm");
     pendingConfirmation = null;
   });
   return dialog;
 }
 
-export function confirmReadAgain(title) {
+export function confirmReadAgain(title, { signal } = {}) {
+  if(signal?.aborted)return Promise.resolve(false);
   const label = title || "this volume";
   const dialog = ensureDialog();
   dialog.querySelector("[data-read-again-title]").textContent = label;
   if (typeof dialog.showModal !== "function") {
     return Promise.resolve(window.confirm(`Walk ${label} from the beginning?\n\nIts reading trail will be cleared, the Finished mark lifted, and the book reopened at page 1. Bookmarks remain untouched.`));
   }
+  if(pendingConfirmation)pendingConfirmation.resolve(false);
   if (dialog.open) dialog.close("cancel");
   return new Promise(resolve => {
-    pendingConfirmation = { resolve };
+    let settled=false,focusFrame=0;
+    const finish=value=>{
+      if(settled)return;settled=true;
+      signal?.removeEventListener("abort",onAbort);
+      if(focusFrame)cancelAnimationFrame(focusFrame);
+      if(pendingConfirmation===record)pendingConfirmation=null;
+      resolve(value);
+    };
+    const record={resolve:finish};
+    const onAbort=()=>{finish(false);if(dialog.open)dialog.close("cancel")};
+    pendingConfirmation=record;
+    signal?.addEventListener("abort",onAbort,{once:true});
     dialog.returnValue = "cancel";
-    dialog.showModal();
-    requestAnimationFrame(() => dialog.querySelector(".read-again-cancel")?.focus());
+    try{dialog.showModal()}catch{finish(false);return}
+    focusFrame=requestAnimationFrame(() => {focusFrame=0;if(!settled)dialog.querySelector(".read-again-cancel")?.focus()});
   });
 }
 
@@ -75,7 +88,8 @@ async function resolveVolume(seriesId, bookId) {
   return catalog.findVolumeEntry(shelf, seriesId, bookId);
 }
 
-export async function resetFinishedVolume(seriesId, bookId) {
+export async function resetFinishedVolume(seriesId, bookId, { signal } = {}) {
+  if(signal?.aborted)return false;
   let entry;
   try {
     entry = await resolveVolume(seriesId, bookId);
@@ -83,7 +97,7 @@ export async function resetFinishedVolume(seriesId, bookId) {
     console.warn("Read Again catalog lookup failed", error);
     return false;
   }
-  if (!entry) return false;
+  if (signal?.aborted || !entry) return false;
   const clearedFinished = readingState.setVolumeFinished(entry.series.id, entry.volume, false, entry.index);
   const clearedProgress = readingState.clearVolumeProgress(entry.series.id, entry.volume, entry.index);
   return Boolean(clearedFinished && clearedProgress && readingState.volumeState(entry.series.id, entry.volume, entry.index) === readingState.STATES.UNREAD);

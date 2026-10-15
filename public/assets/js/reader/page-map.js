@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 const DB_NAME = "shadow-garden-reader";
 const DB_VERSION = 1;
 const STORE_NAME = "page-maps";
@@ -121,11 +122,8 @@ function cfiFromElement(section, element) {
   try { return section.cfiFromElement(element) || ""; } catch { return ""; }
 }
 
-function framePaint(frame) {
-  return new Promise(resolve => {
-    const raf = frame?.contentWindow?.requestAnimationFrame || requestAnimationFrame;
-    raf(() => raf(resolve));
-  });
+function framePaint(scope) {
+  return scope.wait(new Promise(resolve=>scope.frame(()=>scope.frame(resolve))));
 }
 
 function loadScript(document, src) {
@@ -171,26 +169,32 @@ function destroySandbox(sandbox) {
   sandbox.frame = null;
 }
 
-async function waitForMedia(view, frame) {
+async function waitForMedia(view, frame, signal) {
   const document = view?.contents?.document;
   if (!document) return;
-  try { await Promise.race([document.fonts?.ready || Promise.resolve(), sleep(900)]); } catch {}
-  const pending = [];
-  document.querySelectorAll("img,video,object,svg image").forEach(node => {
-    if (node.tagName === "IMG" && node.complete) return;
-    if (node.tagName === "VIDEO" && node.readyState > 0) return;
-    pending.push(new Promise(resolve => {
-      const done = () => resolve();
-      node.addEventListener?.("load", done, { once: true, passive: true });
-      node.addEventListener?.("error", done, { once: true, passive: true });
-      node.addEventListener?.("loadedmetadata", done, { once: true, passive: true });
-      setTimeout(done, 900);
-    }));
-  });
-  if (pending.length) await Promise.all(pending);
-  await framePaint(frame);
-  try { view.stopExpanding = false; view.expand?.(true); } catch {}
-  await framePaint(frame);
+  const scope=createReaderScope();
+  if(signal?.aborted)scope.dispose();else scope.listen(signal,"abort",()=>scope.dispose(),{once:true});
+  try{
+    await scope.wait(Promise.race([
+      document.fonts?.ready||Promise.resolve(),
+      new Promise(resolve=>scope.timeout(resolve,900))
+    ]));
+    const pending=[];
+    document.querySelectorAll("img,video,object,svg image").forEach(node=>{
+      if(node.tagName==="IMG"&&node.complete||node.tagName==="VIDEO"&&node.readyState>0)return;
+      pending.push(new Promise(resolve=>{
+        const media=scope.child(),done=()=>{media.dispose();resolve()};
+        media.listen(node,"load",done,{once:true,passive:true});
+        media.listen(node,"error",done,{once:true,passive:true});
+        media.listen(node,"loadedmetadata",done,{once:true,passive:true});
+        media.timeout(done,900);
+      }));
+    });
+    await scope.wait(Promise.all(pending));
+    await framePaint(scope);
+    try{view.stopExpanding=false;view.expand?.(true)}catch{}
+    await framePaint(scope);
+  }finally{scope.dispose()}
 }
 
 async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreate }) {
@@ -266,7 +270,7 @@ async function mapSection({ rendition, frame, section, signal }) {
   await abortable(rendition.display(section.href), signal);
   const view = sandboxView(rendition, section);
   if (!view) throw new Error(`Could not render ${section.href}`);
-  await abortable(waitForMedia(view, frame), signal);
+  await abortable(waitForMedia(view, frame, signal), signal);
 
   const manager = rendition.manager;
   const layout = manager?.layout;
@@ -357,6 +361,7 @@ export function createPageMapController({
   getPaginatedTheme,
   onUpdate
 }) {
+  let disposed = false;
   let activeFingerprint = "";
   let activeMap = null;
   let partialSections = new Map();
@@ -420,7 +425,7 @@ export function createPageMapController({
   }
 
   function generationIsCurrent(record) {
-    return Boolean(record && !record.controller.signal.aborted && record.serial === generationSerial);
+    return Boolean(!disposed && record && !record.controller.signal.aborted && record.serial === generationSerial);
   }
 
   function cancelGeneration() {
@@ -497,6 +502,7 @@ export function createPageMapController({
   }
 
   async function ensure({ anchorCfi = "", force = false } = {}) {
+    if(disposed)return{map:null,cancelled:true};
     const spec = fingerprintData();
     if (!force && activeMap?.fingerprint === spec.fingerprint) return { map: activeMap, cached: true };
     if (!force && generationPromise && activeFingerprint === spec.fingerprint) return { map: activeMap, generating: true };
@@ -722,6 +728,11 @@ export function createPageMapController({
   function isGenerating() { return Boolean(generationPromise); }
 
   return {
+    dispose(){
+      if(disposed)return;disposed=true;generationSerial++;cancelGeneration();
+      if(window.__sgCanonicalPageMap?.fingerprint===activeFingerprint)delete window.__sgCanonicalPageMap;
+      activeMap=null;partialSections.clear();pagesBySection.clear();
+    },
     ensure,
     map,
     fingerprint,

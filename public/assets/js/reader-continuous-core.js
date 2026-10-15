@@ -1,3 +1,4 @@
+import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
  * Keeps v1.4's single-owner Continuous architecture, but separates three concerns:
@@ -16,8 +17,6 @@ export function createContinuousCoreExtension(){
   const SCROLL_DEBOUNCE_MS=30;
   const TRIM_IDLE_MS=1400;
 
-  const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  const paint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   const targetKey=target=>typeof target==="string"?target:target?.toString?.()||"";
 
   function cleanHref(value){
@@ -51,11 +50,11 @@ export function createContinuousCoreExtension(){
     const page=masterEndPage();if(!page)return;
     page.classList.add("hidden");page.classList.remove("active");
   }
-  function showPagedEnd(){
+  function showPagedEnd(rendition){
     const page=masterEndPage();
     if(!page||!document.body.classList.contains("reader-flow-paginated"))return;
     page.classList.remove("hidden");page.classList.add("active");
-    requestAnimationFrame(()=>page.querySelector("a:not(.hidden)")?.focus?.({preventScroll:true}));
+    readerInstanceScope(rendition).frame(()=>page.querySelector("a:not(.hidden)")?.focus?.({preventScroll:true}));
   }
   function stripCloneIds(root){
     root.removeAttribute("id");root.removeAttribute("aria-labelledby");root.removeAttribute("aria-describedby");
@@ -155,17 +154,19 @@ export function createContinuousCoreExtension(){
 
   async function displayView(view,manager,generation){
     if(!view)return false;
+    const scope=readerInstanceScope(manager).child();
+    if(scope.disposed)return false;
     try{
       const work=Promise.resolve(view.display(manager.request)).then(async shown=>{
         const live=shown||view;
-        if(generation!==undefined&&generation!==manager.__sgGeneration)return false;
+        if(scope.disposed||manager.__sgDestroyed||generation!==undefined&&generation!==manager.__sgGeneration)return false;
         live.stopExpanding=false;
         try{live.expand?.(true)}catch{}
         live.show?.();
-        await paint();
+        await scope.paint();
         return true;
       });
-      const result=await Promise.race([work,delay(VIEW_TIMEOUT_MS).then(()=>false)]);
+      const result=await scope.wait(Promise.race([work,new Promise(resolve=>scope.timeout(()=>resolve(false),VIEW_TIMEOUT_MS))]));
       if(result!==true&&generation===manager.__sgGeneration){
         console.warn("Continuous neighbor display timed out",view?.section?.href||"");
       }
@@ -175,7 +176,7 @@ export function createContinuousCoreExtension(){
         console.warn("Continuous neighbor display skipped",view?.section?.href||"",error);
       }
       return false;
-    }
+    }finally{scope.dispose()}
   }
 
   async function safeUpdate(manager,offset=0,generation=manager.__sgGeneration){
@@ -208,7 +209,7 @@ export function createContinuousCoreExtension(){
   }
   async function restoreAnchor(manager,anchor,generation){
     if(generation!==manager.__sgGeneration||!anchor?.view?.element||!manager.container)return;
-    await paint();
+    await readerInstanceScope(manager).paint();
     if(generation!==manager.__sgGeneration)return;
     const top=anchor.view.element.getBoundingClientRect?.().top;
     if(!Number.isFinite(top))return;
@@ -317,28 +318,31 @@ export function createContinuousCoreExtension(){
 
   function wireBoundaryContents(contents,manager,rendition){
     const doc=contents?.document;
-    if(!doc||doc.documentElement?.dataset.sgContinuousCoreBoundary==="1")return;
+    if(!doc||readerInstanceScope(rendition).disposed||doc.documentElement?.dataset.sgContinuousCoreBoundary==="1")return;
+    const scope=readerContentsScope(rendition,contents);
+    scope.add(()=>delete doc.documentElement.dataset.sgContinuousCoreBoundary);
     doc.documentElement.dataset.sgContinuousCoreBoundary="1";
     doc.documentElement.style.setProperty("overflow-anchor","none","important");
     doc.body?.style?.setProperty("overflow-anchor","none","important");
     const request=()=>{scheduleBuffer(manager,rendition)};
-    doc.addEventListener("wheel",event=>{if(Math.abs(Number(event.deltaY)||0)>1)request()},{passive:true});
+    scope.listen(doc,"wheel",event=>{if(Math.abs(Number(event.deltaY)||0)>1)request()},{passive:true});
     let startY=null;
-    doc.addEventListener("touchstart",event=>{
+    scope.listen(doc,"touchstart",event=>{
       startY=Number(event.touches?.[0]?.clientY);if(!Number.isFinite(startY))startY=null;
     },{passive:true});
-    doc.addEventListener("touchmove",event=>{
+    scope.listen(doc,"touchmove",event=>{
       if(startY==null)return;
       const y=Number(event.touches?.[0]?.clientY);
       if(Number.isFinite(y)&&Math.abs(y-startY)>18)request();
     },{passive:true});
-    doc.addEventListener("touchend",()=>{startY=null},{passive:true});
+    scope.listen(doc,"touchend",()=>{startY=null},{passive:true});
   }
 
   function patchManagerMethods(rendition){
     const manager=rendition?.manager;
     if(!manager||manager.__sgCoreMethodsInstalled)return Boolean(manager?.__sgCoreMethodsInstalled);
     manager.__sgCoreMethodsInstalled=true;
+    readerInstanceScope(manager).link(readerInstanceScope(rendition));
     manager.__sgDestroyed=false;
     manager.__sgGeneration=0;
     manager.__sgBufferGeneration=-1;
@@ -368,7 +372,7 @@ export function createContinuousCoreExtension(){
           if(generation!==manager.__sgGeneration)return result;
           manager.ignore=false;
           if(manager.container)syncScrollPosition(manager);
-          setTimeout(()=>scheduleBuffer(manager,rendition),0);
+          readerInstanceScope(rendition).timeout(()=>scheduleBuffer(manager,rendition),0);
           return result;
         });
       };
@@ -425,8 +429,9 @@ export function createContinuousCoreExtension(){
     try{scroller?.addEventListener?.("scroll",manager._onScroll,{passive:true})}catch{}
 
     try{rendition.getContents?.().forEach(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
-    try{rendition.hooks?.content?.register?.(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
-    try{rendition.on?.("rendered",()=>{
+    const scope=readerInstanceScope(rendition);
+    try{scope.hook(rendition.hooks?.content,contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
+    try{scope.on(rendition,"rendered",()=>{
       try{rendition.getContents?.().forEach(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
       safeUpdate(manager,0,manager.__sgGeneration).catch(()=>{});
       scheduleBuffer(manager,rendition);
@@ -451,16 +456,18 @@ export function createContinuousCoreExtension(){
   }
 
   function installManager(rendition){
+    const scope=readerInstanceScope(rendition);
+    if(scope.disposed)return false;
     const manager=rendition?.manager;
     if(!manager){
-      clearTimeout(rendition.__sgInstallTimer);
-      rendition.__sgInstallTimer=setTimeout(()=>installManager(rendition),25);
+      scope.clearTimeout(rendition.__sgInstallTimer);
+      rendition.__sgInstallTimer=scope.timeout(()=>installManager(rendition),25);
       return false;
     }
     patchManagerMethods(rendition);
     if(!manager.container||!manager.views){
-      clearTimeout(rendition.__sgInstallTimer);
-      rendition.__sgInstallTimer=setTimeout(()=>installManager(rendition),25);
+      scope.clearTimeout(rendition.__sgInstallTimer);
+      rendition.__sgInstallTimer=scope.timeout(()=>installManager(rendition),25);
       return false;
     }
     return bindScrollLifecycle(rendition);
@@ -469,12 +476,19 @@ export function createContinuousCoreExtension(){
   function patchRendition(rendition,options){
     if(!rendition||rendition.__sgContinuousCorePatched)return rendition;
     rendition.__sgContinuousCorePatched=true;
+    const scope=readerInstanceScope(rendition);
+    scope.add(()=>{
+      const manager=rendition.manager;
+      if(manager){manager.__sgDestroyed=true;manager.__sgGeneration=(manager.__sgGeneration||0)+1;clearTimeout(manager.__sgTrimTimer);clearTimeout(manager.afterScrolled);clearTimeout(manager.scrollTimeout);manager._scrolled?.cancel?.()}
+      hidePagedEnd();manager?.__sgEndPage?.remove?.();
+    });
     const continuous=isContinuous(options,rendition);
     let lastKey="",lastPromise=null;
 
     if(typeof rendition.display==="function"){
       const rawDisplay=rendition.display.bind(rendition);
       rendition.display=(...args)=>{
+        if(scope.disposed)return Promise.resolve();
         hidePagedEnd();
         if(continuous)installManager(rendition);
         const key=targetKey(args[0]);
@@ -506,26 +520,28 @@ export function createContinuousCoreExtension(){
     if(typeof rendition.next==="function"){
       const rawNext=rendition.next.bind(rendition);
       rendition.next=(...args)=>{
-        if(!continuous&&locationAtBookEnd(rendition)){showPagedEnd();return Promise.resolve()}
+        if(scope.disposed)return Promise.resolve();
+        if(!continuous&&locationAtBookEnd(rendition)){showPagedEnd(rendition);return Promise.resolve()}
         hidePagedEnd();return rawNext(...args);
       };
     }
     if(typeof rendition.prev==="function"){
       const rawPrev=rendition.prev.bind(rendition);
       rendition.prev=(...args)=>{
+        if(scope.disposed)return Promise.resolve();
         if(!continuous&&pagedEndVisible()){hidePagedEnd();return Promise.resolve()}
         return rawPrev(...args);
       };
     }
 
     if(continuous){
-      const install=()=>installManager(rendition);
+      const install=scope.guard(()=>installManager(rendition));
       install();
-      try{rendition.on?.("started",install)}catch{}
-      try{Promise.resolve(rendition.started).then(()=>{install();setTimeout(install,0)}).catch(()=>{})}catch{}
-      try{rendition.on?.("rendered",()=>syncContinuousEnd(rendition))}catch{}
+      try{scope.on(rendition,"started",install)}catch{}
+      try{Promise.resolve(rendition.started).then(()=>{install();scope.timeout(install,0)}).catch(()=>{})}catch{}
+      try{scope.on(rendition,"rendered",()=>syncContinuousEnd(rendition))}catch{}
     }else{
-      try{rendition.on?.("relocated",()=>hidePagedEnd())}catch{}
+      try{scope.on(rendition,"relocated",()=>hidePagedEnd())}catch{}
     }
     return rendition;
   }
@@ -545,7 +561,7 @@ export function createContinuousCoreExtension(){
     await scheduleBuffer(manager,rendition);
     if(manager.__sgDestroyed||generation!==manager.__sgGeneration)return false;
     await safeUpdate(manager,0,generation);
-    await paint();
+    await readerInstanceScope(manager).paint();
     return !manager.__sgDestroyed&&generation===manager.__sgGeneration;
   }
 

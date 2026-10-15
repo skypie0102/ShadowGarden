@@ -1,3 +1,4 @@
+import {readerInstanceScope} from "./reader/lifecycle.js";
 /* Shadow Garden v1.3.0 — first-run standalone visual-page cache.
  *
  * Scans EPUB spine documents once, identifies genuinely standalone cover/illustration pages,
@@ -16,6 +17,7 @@ export function createVisualPageCacheExtension(){
   const RASTER_MIME=/^image\/(?:jpeg|png|webp|avif|gif)$/i;
   const CONVERT_MIME=/^image\/(?:jpeg|png|avif|svg\+xml)$/i;
 
+  let preparationSerial=0,preparationController=null;
   const current={
     key:"",bookUrl:"",ready:false,preparing:null,records:new Map(),objectUrls:new Map(),summary:null
   };
@@ -361,9 +363,10 @@ export function createVisualPageCacheExtension(){
     };
   }
 
-  async function scanBook(bookUrl){
+  async function scanBook(bookUrl,signal){
+    signal.throwIfAborted();
     const absolute=new URL(bookUrl,location.href).href;
-    const response=await fetch(absolute,{cache:"force-cache",credentials:"same-origin"});
+    const response=await fetch(absolute,{cache:"force-cache",credentials:"same-origin",signal});
     if(!response.ok)throw new Error(`Visual-page scan failed (${response.status})`);
     const zip=await JSZip.loadAsync(await response.arrayBuffer());
     const containerEntry=zip.file("META-INF/container.xml");if(!containerEntry)throw new Error("Visual-page scan: missing container.xml");
@@ -391,12 +394,14 @@ export function createVisualPageCacheExtension(){
 
     const visuals=[];let converted=0,reused=0;
     for(let index=0;index<items.length;index++){
+      signal.throwIfAborted();
       const item=items[index];
       document.dispatchEvent(new CustomEvent("sg-visual-pages-progress",{detail:{index:index+1,total:items.length,href:item.href}}));
       try{
         const visual=await classifySpineDocument({zip,item,coverPath});
         if(visual){visuals.push(visual);if(visual.converted)converted++;else reused++}
       }catch(error){console.warn(`Visual-page preparation skipped ${item.href}`,error)}
+      signal.throwIfAborted();
       if(index%8===7)await new Promise(resolve=>setTimeout(resolve,0));
     }
     return{
@@ -409,28 +414,43 @@ export function createVisualPageCacheExtension(){
     };
   }
 
+  function release(){
+    preparationSerial++;preparationController?.abort();preparationController=null;
+    current.preparing=null;current.ready=false;current.records.clear();current.summary=null;
+    current.key="";current.bookUrl="";revokeUrls();
+    delete window.__sgVisualPageManifest;
+  }
+
   async function prepare(bookUrl){
     const absolute=new URL(bookUrl,location.href).href,key=cacheKey(absolute);
     if(current.ready&&current.key===key)return current.summary;
     if(current.preparing&&current.key===key)return current.preparing;
-    current.key=key;current.bookUrl=absolute;current.ready=false;
+    release();
+    const serial=preparationSerial,controller=new AbortController();preparationController=controller;
+    const isCurrent=()=>serial===preparationSerial&&!controller.signal.aborted;
+    current.key=key;current.bookUrl=absolute;
     setLoadingMessage("Preparing visual pages…");
-    current.preparing=(async()=>{
+    const task=(async()=>{
       const cached=await cacheGet(key);
+      if(!isCurrent())return null;
       if(cached?.version===CACHE_VERSION&&Array.isArray(cached.visuals)){
         const result=activate(cached,true);setLoadingMessage("Opening the book…");return result;
       }
-      const payload=await scanBook(absolute);
+      const payload=await scanBook(absolute,controller.signal);
+      if(!isCurrent())return null;
       await cachePut(payload).catch(()=>false);
+      if(!isCurrent())return null;
       const result=activate(payload,false);setLoadingMessage("Opening the book…");return result;
     })().catch(error=>{
+      if(!isCurrent())return null;
       current.ready=true;current.records=new Map();current.summary={cached:false,scanned:0,visualPages:0,converted:0,reused:0,error:String(error?.message||error)};
       console.warn("Standalone visual-page preparation unavailable; using EPUB source pages",error);
       document.dispatchEvent(new CustomEvent("sg-visual-pages-error",{detail:{error}}));
       setLoadingMessage("Opening the book…");
       return current.summary;
-    }).finally(()=>{current.preparing=null});
-    return current.preparing;
+    }).finally(()=>{if(current.preparing===task)current.preparing=null});
+    current.preparing=task;
+    return task;
   }
 
   function renditionMetrics(rendition,target){
@@ -492,6 +512,7 @@ export function createVisualPageCacheExtension(){
   }
 
   function patchRendition(rendition,target){
+    const scope=readerInstanceScope(rendition);
     if(!rendition||rendition.__sgVisualCachePatched)return rendition;
     rendition.__sgVisualCachePatched=true;
     const patchView=view=>{
@@ -499,7 +520,8 @@ export function createVisualPageCacheExtension(){
       view.__sgVisualCacheViewPatched=true;
       if(typeof view.load==="function"){
         const rawLoad=view.load.bind(view);
-        view.load=(...args)=>Promise.resolve(current.preparing).catch(()=>null).then(()=>rawLoad(...args)).then(result=>{
+        view.load=(...args)=>Promise.resolve(current.preparing).catch(()=>null).then(()=>scope.disposed?null:rawLoad(...args)).then(result=>{
+          if(scope.disposed)return result;
           const applied=applySynthetic(view.contents,view.section?.href,renditionMetrics(rendition,target));
           if(applied){try{view.stopExpanding=false}catch{}}
           return result;
@@ -508,7 +530,7 @@ export function createVisualPageCacheExtension(){
       if(view.contents)applySynthetic(view.contents,view.section?.href,renditionMetrics(rendition,target));
       return view;
     };
-    const install=()=>{
+    const install=scope.guard(()=>{
       const manager=rendition.manager;if(!manager||manager.__sgVisualCacheManagerPatched)return;
       manager.__sgVisualCacheManagerPatched=true;
       if(typeof manager.createView==="function"){
@@ -516,17 +538,19 @@ export function createVisualPageCacheExtension(){
         manager.createView=(...args)=>patchView(rawCreateView(...args));
       }
       try{manager.views?.all?.().forEach(patchView)}catch{}
-    };
+    });
     install();
     try{Promise.resolve(rendition.started).then(install).catch(()=>{})}catch{}
-    try{rendition.on?.("started",install)}catch{}
-    try{rendition.on?.("rendered",(_section,view)=>{patchView(view);applySynthetic(view?.contents,view?.section?.href,renditionMetrics(rendition,target))})}catch{}
+    try{scope.on(rendition,"started",install)}catch{}
+    try{scope.on(rendition,"rendered",(_section,view)=>{patchView(view);applySynthetic(view?.contents,view?.section?.href,renditionMetrics(rendition,target))})}catch{}
     return rendition;
   }
 
   function patchBook(book){
     if(!book||book.__sgVisualCacheBookPatched||typeof book.renderTo!=="function")return book;
     book.__sgVisualCacheBookPatched=true;
+    const preparedKey=current.key;
+    readerInstanceScope(book).add(()=>{if(current.key===preparedKey)release()});
     const rawRenderTo=book.renderTo.bind(book);
     book.renderTo=(target,options={})=>patchRendition(rawRenderTo(target,options),target);
     return book;
@@ -540,12 +564,10 @@ export function createVisualPageCacheExtension(){
     get:href=>recordForHref(href),
     summary:()=>current.summary,
     applyToContents:applySynthetic,
+    release,
     revoke:revokeUrls
   };
   window.__sgVisualPageCache=api;
-  window.addEventListener("pagehide",revokeUrls,{once:true});
-  const initialBook=new URLSearchParams(location.search).get("book");
-  if(initialBook)void prepare(initialBook);
 
   return {name:"visual-cache",attachBook:patchBook,visualPages:api};
 }

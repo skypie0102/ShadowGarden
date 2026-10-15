@@ -1,3 +1,4 @@
+import {createReaderScope} from "./lifecycle.js";
 function childrenOf(item) {
   if (Array.isArray(item?.subitems)) return item.subitems;
   if (Array.isArray(item?.children)) return item.children;
@@ -70,6 +71,8 @@ function locationSpineIndex(location, items) {
 }
 
 export function createTocController({ panel, navigate, closeDrawers, getBook, bookSearch }) {
+  const scope=createReaderScope();
+  let uiScope=scope.child(),resultsScope=uiScope.child();
   let items = [];
   let flat = [];
   let activeButton = null;
@@ -149,7 +152,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
       childBox.className = "toc-children";
       childBox.id = `toc-${path}`;
       toggle.setAttribute("aria-controls", childBox.id);
-      toggle.addEventListener("click", event => {
+      uiScope.listen(toggle,"click", event => {
         event.preventDefault();
         event.stopPropagation();
         const expanded = toggle.getAttribute("aria-expanded") !== "false";
@@ -172,10 +175,10 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
       button.className = "toc-link toc-entry-link";
       button.textContent = label;
       button.dataset.href = href;
-      button.addEventListener("click", async () => {
+      uiScope.listen(button,"click", async () => {
         try {
           await navigate(href);
-          closeDrawers();
+          if(!scope.disposed)closeDrawers();
         } catch (error) {
           console.error("TOC navigation failed", error);
         }
@@ -220,7 +223,8 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
 
   function clearBookResults({hide=true,status=""}={}) {
     bookSearch?.cancel?.();
-    clearTimeout(searchTimer);
+    resultsScope.dispose();resultsScope=uiScope.child();
+    scope.clearTimeout(searchTimer);
     searchTimer = 0;
     searchSerial += 1;
     bookResults?.replaceChildren();
@@ -241,10 +245,10 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     excerpt.className = "book-search-result-excerpt";
     excerpt.textContent = hit.excerpt || "Matching text";
     button.append(chapter, excerpt);
-    button.addEventListener("click", async () => {
+    resultsScope.listen(button,"click", async () => {
       try {
         await navigate(hit.cfi);
-        closeDrawers();
+        if(!scope.disposed)closeDrawers();
       } catch (error) {
         console.error("Book search navigation failed", error);
       }
@@ -264,14 +268,14 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     }
     const serial = searchSerial;
     bookStatus.textContent = "Searching book text…";
-    searchTimer = setTimeout(async () => {
+    searchTimer = scope.timeout(async () => {
       const result = await bookSearch?.search?.(query, {
         onProgress: progress => {
-          if (serial !== searchSerial || !bookStatus) return;
+          if (scope.disposed || serial !== searchSerial || !bookStatus) return;
           bookStatus.textContent = `Searching ${progress.scanned} of ${progress.total} sections… ${progress.count} ${progress.count === 1 ? "match" : "matches"}`;
         }
       });
-      if (serial !== searchSerial || !result || result.cancelled) return;
+      if (scope.disposed || serial !== searchSerial || !result || result.cancelled) return;
       const fragment = document.createDocumentFragment();
       result.hits.forEach((hit, index) => fragment.appendChild(renderBookResult(hit, index)));
       bookResults.replaceChildren(fragment);
@@ -299,7 +303,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     searchTools.hidden = !expanded;
     searchToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
     searchToggle.classList.toggle("active", expanded);
-    if (expanded && focus) queueMicrotask(() => searchInput?.focus());
+    if (expanded && focus) queueMicrotask(scope.guard(() => searchInput?.focus()));
   }
 
   function switchToContentsTab() {
@@ -309,6 +313,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   }
 
   function openSearch() {
+    if(scope.disposed)return;
     switchToContentsTab();
     setSearchExpanded(true);
   }
@@ -327,14 +332,14 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     searchToggle.setAttribute("aria-controls", "tocSearchTools");
     searchToggle.setAttribute("aria-expanded", "false");
     searchToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>';
-    searchToggle.addEventListener("click", () => {
+    uiScope.listen(searchToggle,"click", () => {
       switchToContentsTab();
       setSearchExpanded(searchTools?.hidden !== false);
     });
     tabs.appendChild(searchToggle);
 
     const bookmarksTab = tabs.querySelector('button[data-panel="bookmarks"]');
-    bookmarksTab?.addEventListener("click", () => setSearchExpanded(false, { focus: false }));
+    uiScope.listen(bookmarksTab,"click", () => setSearchExpanded(false, { focus: false }));
   }
 
   function createTools() {
@@ -351,8 +356,8 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     searchInput.placeholder = "Search contents & book";
     searchInput.setAttribute("aria-label", "Search contents and book");
     searchInput.setAttribute("aria-controls", "tocTree tocBookSearchResults");
-    searchInput.addEventListener("input", () => runCombinedSearch(searchInput.value));
-    searchInput.addEventListener("keydown", event => {
+    uiScope.listen(searchInput,"input", () => runCombinedSearch(searchInput.value));
+    uiScope.listen(searchInput,"keydown", event => {
       if (event.key !== "Escape") return;
       event.preventDefault();
       if (searchInput.value) clearFilter();
@@ -369,7 +374,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     currentButton.textContent = "Current";
     currentButton.title = "Show current chapter";
     currentButton.disabled = !activeButton;
-    currentButton.addEventListener("click", () => {
+    uiScope.listen(currentButton,"click", () => {
       if (!activeButton) return;
       clearFilter();
       expandAncestorsOf(activeButton);
@@ -401,6 +406,8 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   }
 
   function render(navigationItems) {
+    if(scope.disposed)return;
+    uiScope.dispose();uiScope=scope.child();resultsScope=uiScope.child();searchSerial++;
     items = Array.isArray(navigationItems) ? navigationItems : [];
     flat = flatten(items);
     activeButton = null;
@@ -413,7 +420,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     bookSection = null;
     bookStatus = null;
     bookResults = null;
-    clearTimeout(searchTimer);
+    scope.clearTimeout(searchTimer);
     bookSearch?.cancel?.();
     panel.closest?.(".reader-drawer")?.querySelector?.(".toc-search-toggle")?.remove();
     searchToggle = null;
@@ -449,6 +456,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   }
 
   function setPageResolver(resolver) {
+    if(scope.disposed)return;
     pageResolver = typeof resolver === "function" ? resolver : null;
     syncPageNumbers();
   }
@@ -519,6 +527,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   }
 
   function setActiveForLocation(location) {
+    if(scope.disposed)return;
     const match = matchForLocation(location);
     const href = String(match?.href || "");
     const previous = activeButton;
@@ -545,5 +554,5 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     }
   }
 
-  return { render, setPageResolver, chapterForLocation, setActiveForLocation, openSearch, cancelSearch: () => bookSearch?.cancel?.() };
+  return { dispose(){searchSerial++;bookSearch?.cancel?.();scope.dispose();panel.replaceChildren();items=[];flat=[];activeButton=null;pageResolver=null}, render, setPageResolver, chapterForLocation, setActiveForLocation, openSearch, cancelSearch(){scope.clearTimeout(searchTimer);searchSerial++;bookSearch?.cancel?.()} };
 }

@@ -227,8 +227,8 @@ test.describe('production reader integration',()=>{
     await page.clock.setSystemTime(new Date(Date.now()+3590*1000));
     const renewing=page.waitForRequest('**/book-access');
     await page.evaluate(()=>{
-      window.dispatchEvent(new PageTransitionEvent('pagehide'));
-      window.dispatchEvent(new PageTransitionEvent('pageshow'));
+      window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+      window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));
     });
     await renewing;
     let frame;

@@ -5,6 +5,8 @@ import {createVisualPageCacheExtension} from '../reader-visual-cache.js';
 import {createPaginatedVisualFitExtension} from '../reader-paginated-visual-fit.js';
 import {createContinuousCoreExtension} from '../reader-continuous-core.js';
 import {installEpubLifecyclePatch} from './epub-lifecycle.js';
+import {readerInstanceScope} from './lifecycle.js';
+import {disposeRenditionNavigation} from './navigation-state.js';
 
 // This is the only production owner of EPUB creation and extension order.
 // Keep vendor methods/version-specific fixes within the integration extensions;
@@ -46,7 +48,17 @@ export function initializeReaderEngine(epub=globalThis.ePub){
     createBook(...args){
       let book=epub(...args);
       if(!book||typeof book.renderTo!=='function')throw new Error('EPUB.js did not create a readable book');
-      for(const extension of extensions)book=extension.attachBook(book);
+      const scope=readerInstanceScope(book),renderTo=book.renderTo;
+      book.renderTo=function(...renderArgs){
+        if(scope.disposed)throw new Error('EPUB book is disposed');
+        const rendition=renderTo.apply(this,renderArgs),lifetime=readerInstanceScope(rendition);
+        const release=scope.add(()=>rendition.destroy());
+        lifetime.add(release.forget);
+        lifetime.add(()=>disposeRenditionNavigation(rendition));
+        return rendition;
+      };
+      try{for(const extension of extensions)book=extension.attachBook(book)}
+      catch(error){book.destroy();throw error}
       return book;
     }
   });

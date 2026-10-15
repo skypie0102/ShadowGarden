@@ -1,3 +1,4 @@
+import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifecycle.js";
 /* Shadow Garden R4.2 — Pages-mode swipe and desktop wheel input only. */
 
 function interactiveTarget(target){
@@ -23,6 +24,7 @@ export function pageSwipeDirection({dx=0,dy=0,elapsed=0}={}){
 }
 
 export function createPageNavigationInput({getFlow,getSwipeTurns,turn}={}){
+  const scope=createReaderScope(),documents=new WeakMap();
   const desktop=window.matchMedia?.("(min-width:900px)");
   const state={swipe:null,suppressClickUntil:0,wheelAccumulated:0,lastWheelTurn:0};
 
@@ -79,31 +81,36 @@ export function createPageNavigationInput({getFlow,getSwipeTurns,turn}={}){
     turn?.(direction);
   }
 
-  function installDocument(doc){
-    if(!doc?.documentElement||doc.documentElement.dataset.sgReaderPageInput==="1")return;
+  function installDocument(doc,owner=scope){
+    if(scope.disposed||owner.disposed||!doc?.documentElement||documents.has(doc))return;
+    const lifetime=owner.child(),release=scope.add(()=>lifetime.dispose());
+    lifetime.add(release.forget);documents.set(doc,lifetime);
+    lifetime.add(()=>{documents.delete(doc);delete doc.documentElement.dataset.sgReaderPageInput;if(state.swipe?.doc===doc)reset()});
     doc.documentElement.dataset.sgReaderPageInput="1";
     const win=doc.defaultView;
     if(typeof win?.PointerEvent==="function"){
       doc.documentElement.dataset.sgReaderSwipeInput="pointer";
-      doc.addEventListener("pointerdown",event=>beginPointer(event,doc),{capture:true,passive:true});
-      doc.addEventListener("pointercancel",()=>{state.swipe=null},{capture:true,passive:true});
-      doc.addEventListener("pointerup",event=>finishPointer(event,doc),{capture:true,passive:false});
+      lifetime.listen(doc,"pointerdown",event=>beginPointer(event,doc),{capture:true,passive:true});
+      lifetime.listen(doc,"pointercancel",()=>{state.swipe=null},{capture:true,passive:true});
+      lifetime.listen(doc,"pointerup",event=>finishPointer(event,doc),{capture:true,passive:false});
     }else{
       doc.documentElement.dataset.sgReaderSwipeInput="touch";
-      doc.addEventListener("touchstart",event=>beginTouch(event,doc),{capture:true,passive:true});
-      doc.addEventListener("touchcancel",()=>{state.swipe=null},{capture:true,passive:true});
-      doc.addEventListener("touchend",event=>finishTouch(event,doc),{capture:true,passive:false});
+      lifetime.listen(doc,"touchstart",event=>beginTouch(event,doc),{capture:true,passive:true});
+      lifetime.listen(doc,"touchcancel",()=>{state.swipe=null},{capture:true,passive:true});
+      lifetime.listen(doc,"touchend",event=>finishTouch(event,doc),{capture:true,passive:false});
     }
-    try{doc.defaultView?.addEventListener("wheel",handleWheel,{capture:true,passive:false})}catch(error){console.warn("Reader page wheel input unavailable",error)}
+    try{lifetime.listen(doc.defaultView,"wheel",handleWheel,{capture:true,passive:false})}catch(error){console.warn("Reader page wheel input unavailable",error)}
   }
 
   function attachRendition(rendition){
-    if(!rendition||rendition.__sgR42PageInput)return;
+    if(scope.disposed||!rendition||rendition.__sgR42PageInput)return;
     rendition.__sgR42PageInput=true;
-    try{rendition.hooks?.content?.register?.(contents=>installDocument(contents?.document||contents?.contentDocument))}catch(error){console.warn("Reader page input hook unavailable",error)}
-    try{rendition.on?.("rendered",(_section,view)=>installDocument(view?.contents?.document||view?.contents?.contentDocument))}catch{}
-    try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument))}catch{}
+    const lifetime=scope.child().link(readerInstanceScope(rendition));
+    lifetime.add(()=>{delete rendition.__sgR42PageInput});
+    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){console.warn("Reader page input hook unavailable",error)}
+    try{lifetime.on(rendition,"rendered",(_section,view)=>installDocument(view?.contents?.document||view?.contents?.contentDocument,view?.contents?readerContentsScope(rendition,view.contents):lifetime))}catch{}
+    try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch{}
   }
 
-  return{attachRendition,installDocument,reset,shouldSuppressClick};
+  return{dispose(){scope.dispose();reset()},attachRendition,installDocument,reset,shouldSuppressClick};
 }

@@ -109,11 +109,10 @@ image position during a pending seek. Footnote fallback delegates to the app;
 late note resolution checks book/rendition/revision before displaying or moving.
 Its native markers use history replacement and rotation, like internal links.
 
-Controller/session disposal and ownership of legacy listeners, observers,
-timers and pending background work remain Phase 3. The queue cannot cancel a
-vendor call already in flight; it serializes the newer destination after that
-call. Broader browser engines and representative long-book profiling remain
-explicit later work.
+Session/controller resources now have explicit disposal ownership, described
+below. The queue cannot cancel a vendor call already in flight; it prevents
+subsequent application work and serializes newer destinations while live.
+Broader browser engines and representative long-book profiling remain later work.
 
 The srcdoc link bridge keeps publication scripts disabled. It consumes a
 temporary link marker using history replacement instead of assigning
@@ -122,6 +121,44 @@ iframe. It rotates the anchor's marker so repeat activation also works if a
 browser refuses history replacement. Fragment text targets use a collapsed
 text-node CFI, avoiding a vendor code path that interprets character offsets as
 element child indexes.
+
+## Lifecycle ownership
+
+`reader/lifecycle.js` defines the common scope. A scope owns removable DOM and
+emitter listeners, content hooks, timers, animation frames, observers and child
+scopes. `dispose()` is idempotent, aborts pending waits and releases resources
+in reverse registration order. Cleanup continues if an individual owner throws.
+A canceled wait detaches its abort handler even if the underlying provider or
+vendor promise never settles; late results cannot continue application startup.
+
+| Owner | Lifetime and cleanup |
+| --- | --- |
+| Protected runtime | `createReaderRuntime().open()` replaces its previous startup/application. `dispose()` removes interaction/touch controllers and their observers, cancels authorization/preparation, closes the app and releases the failure-view actions. Retry uses the same runtime. |
+| Authorized session | `session.dispose()` removes foreground/pageshow renewal listeners. Pending renewals cannot mutate a disposed session's ticket. Each replacement session installs its own bindings. Read Again checks cancellation before clearing progress. |
+| Application | `startReader()` replaces an earlier app and returns an abort signal plus `dispose()`. It owns settings/input/drawer listeners, controller cleanup, startup, relayout timers, the page map and the publication. Teardown invalidates navigation before vendor destruction and clears reader frames, hit surfaces and controller lists. |
+| Book/rendition | The engine installs a resource scope once per instance. Book destruction closes remaining renditions; a destroyed rendition detaches from the book's ownership. Navigation delegation, content hooks, marker polling, compatibility timers and manager work are released before vendor teardown. |
+| Contents/manager | Contents destruction releases iframe listeners and delayed height/theme repair as soon as a view is trimmed, without waiting for the whole book to close. Continuous managers own neighbor-display deadlines, paint waits and cleanup of debounce/trim work. |
+| Controller UI | Bookmark rows and search results have replaceable child scopes. Re-rendering releases old controls immediately. Interaction/touch controllers prune disconnected frames and hit targets from their ownership maps. |
+
+The installed EPUB prototype patches and the page's external-link, footnote and
+Read Again dialog shells remain runtime resources. They do not get installed
+per book. Active book/rendition/origin references are cleared at their respective
+boundaries. Note/image focus returns cannot revive a closed rendition. A Reader
+Read Again confirmation receives the application's abort signal, closes on
+teardown and cannot reset progress or navigate afterward.
+
+A `pagehide` with `persisted:true` suspends a live reader for BFCache; it does not
+dispose the reader or revoke its visual-page object URLs. The existing resume
+controller still captures/restores that live session. A non-persisted departure
+closes the runtime. Visual-page preparation has its own generation and fetch
+cancellation, so an obsolete scan cannot publish into a newer manifest. Object
+URLs are revoked on actual release; the stored IndexedDB cache remains reusable.
+
+Startup listens for EPUB.js `openFailed` while awaiting metadata/navigation and
+the opened book. A provider/archive failure therefore exits through the owned
+failure path rather than leaving the metadata wait hanging. Startup can then be
+retried on the same page. An already-started vendor operation may still complete
+internally; scopes block its application callbacks and close its instance.
 
 ## Visual cache correction
 
@@ -170,5 +207,19 @@ to the planned cache lifecycle/performance work.
   page while retaining the tracking-line passage. Passage checks use parent
   clipping and hit testing because Chromium reports
   false zero IntersectionObserver ratios for visibly rendered vendor columns.
-  Repeated create/destroy, interrupted startup, long books and non-Chromium
-  engines remain explicit roadmap work.
+  The lifecycle milestone adds repeated create/dispose, interrupted startup,
+  startup failure/retry and BFCache cases. Long books and non-Chromium engines
+  remain explicit roadmap work.
+
+- The Phase 3 implementation is local on `refactor/reader-lifecycle`. All 128
+  Node tests, the recovered-asset audit and both builds pass. The full
+  Chromium desktop/mobile run passes all 62 cases in 4.1 minutes against source
+  `16d8f666904c0913aba0130385763d05547df308`. Seven new cases per
+  browser cover repeated open/dispose with resource accounting, pending mode
+  replacement, partial startup retry, interrupted preparation, cancellation of
+  Read Again, actual EPUB open failure/recovery and BFCache suspension.
+  Resource accounting checks session-owned main-window listeners, observers,
+  marker intervals and visual-cache object URLs; focused scope/Contents tests
+  check trimming cleanup and cancellation. This is not a heap-profiler claim
+  about all browser/vendor allocations. GitHub publication/merge is blocked by
+  automatic approval review; the earlier Phase 2 remains the latest main merge.

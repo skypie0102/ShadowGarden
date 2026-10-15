@@ -1,13 +1,14 @@
+import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden v2.8 — Reader lifecycle resume coordination. */
 import { beginRenditionNavigation,hasPendingRenditionNavigation,holdRenditionNavigation,navigateRendition,renditionNavigationRevision,runRenditionMove,waitForRenditionNavigation } from "./navigation-state.js";
 import { captureContinuousScrollPosition,restoreContinuousScrollPosition } from "./rendition.js";
 
-const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 
 export function createReaderResumeController({
   getRendition,getFlow,getPageMap,getPosition,getCfi,capturePosition,renewAccess,resetInput,
   resizeRendition,configureRendition,layoutChanged,onLayoutChanged
 }={}){
+  const scope=createReaderScope();
   const state={anchor:null,cfi:"",scroll:null,live:null,snapshot:null,operation:null,running:null,capturing:null,queued:false,bound:false,layoutProbe:false};
   let cleanup=null;
 
@@ -17,6 +18,7 @@ export function createReaderResumeController({
   }
 
   function remember(position=getPosition?.()){
+    if(scope.disposed)return null;
     const rendition=getRendition?.();
     const scroll=getFlow?.()==="scrolled-doc"?captureContinuousScrollPosition(rendition):null;
     // Window resize events arrive after CSS and the vendor's earlier listener
@@ -38,6 +40,7 @@ export function createReaderResumeController({
   }
 
   function capture({semantic=true}={}){
+    if(scope.disposed)return Promise.resolve(null);
     const rendition=getRendition?.();
     if(!rendition)return Promise.resolve(remember());
     const revision=renditionNavigationRevision(rendition);
@@ -70,13 +73,13 @@ export function createReaderResumeController({
     if(!semantic)return Promise.resolve(remember());
     if(state.capturing)return state.capturing;
     const fallback=state.anchor||getPosition?.()||null;
-    const captureOperation={rendition,isCurrent:()=>rendition===getRendition?.()&&revision===renditionNavigationRevision(rendition)};
+    const captureOperation={rendition,isCurrent:()=>!scope.disposed&&rendition===getRendition?.()&&revision===renditionNavigationRevision(rendition)};
     let position=fallback;
     const task=runRenditionMove(rendition,captureOperation,async()=>{
-      position=await capturePosition?.({rendition,flow,pageMap:getPageMap?.(),fallback})||fallback;
+      position=await scope.wait(capturePosition?.({rendition,flow,pageMap:getPageMap?.(),fallback}))||fallback;
     }).then(current=>current?remember(position):state.anchor)
       .catch(error=>{
-        console.warn("Reader resume live capture skipped",error);
+        if(!scope.disposed)console.warn("Reader resume live capture skipped",error);
         return rendition===getRendition?.()&&revision===renditionNavigationRevision(rendition)?remember(fallback):state.anchor;
       });
     let tracked;
@@ -86,9 +89,9 @@ export function createReaderResumeController({
   }
 
   async function restoreOnce(rendition,position,cfi,nativeScroll,layoutProbe,operation){
-    const current=()=>rendition===getRendition?.()&&operation.isCurrent();
+    const current=()=>!scope.disposed&&rendition===getRendition?.()&&operation.isCurrent();
     if(!current())return false;
-    try{await renewAccess?.()}catch(error){console.warn("Reader access resume renewal delayed",error)}
+    try{await scope.wait(renewAccess?.())}catch(error){if(!scope.disposed)console.warn("Reader access resume renewal delayed",error)}
     if(!current())return false;
 
     const flow=getFlow?.()==="scrolled-doc"?"scrolled-doc":"paginated";
@@ -108,7 +111,7 @@ export function createReaderResumeController({
       let first=false;
       if(!await runRenditionMove(rendition,operation,()=>{first=restoreContinuousScrollPosition(rendition,nativeScroll)}))return false;
       if(first){
-        await nextPaint();
+        await scope.paint();
         if(!current())return false;
         let restored=false;
         if(!await runRenditionMove(rendition,operation,()=>{restored=restoreContinuousScrollPosition(rendition,nativeScroll)}))return false;
@@ -125,7 +128,7 @@ export function createReaderResumeController({
         try{configureRendition?.(rendition,flow)}catch(error){console.warn("Reader resume spread update skipped",error)}
       }))return false;
     }
-    await nextPaint();
+    await scope.paint();
     if(!current())return false;
 
     let target=cfi||position?.cfi||"";
@@ -147,6 +150,7 @@ export function createReaderResumeController({
   }
 
   function restore({queue=false}={}){
+    if(scope.disposed)return Promise.resolve(false);
     if(state.running&&(!state.operation||state.operation.isCurrent())){if(queue)state.queued=true;return state.running}
     const rendition=getRendition?.();
     if(!rendition)return Promise.resolve(false);
@@ -166,7 +170,7 @@ export function createReaderResumeController({
       if(pendingCapture){
         try{await pendingCapture}catch{}
       }
-      if(rendition!==getRendition?.()||revision!==renditionNavigationRevision(rendition))return false;
+      if(scope.disposed||rendition!==getRendition?.()||revision!==renditionNavigationRevision(rendition))return false;
       operation=beginRenditionNavigation(rendition,{kind:"resume"});
       state.operation=operation;
       holdRenditionNavigation(rendition,tracked,{signal:operation.signal});
@@ -174,7 +178,7 @@ export function createReaderResumeController({
       const cfi=position?.cfi||state.cfi||getCfi?.()||"";
       return restoreOnce(rendition,position,cfi,nativeScroll,layoutProbe,operation);
     }).catch(error=>{
-      console.warn("Reader resume recovery skipped",error);
+      if(!scope.disposed)console.warn("Reader resume recovery skipped",error);
       return false;
     });
     let tracked;
@@ -204,6 +208,7 @@ export function createReaderResumeController({
   function wait(){return state.operation&&!state.operation.isCurrent()?Promise.resolve():state.running||Promise.resolve()}
 
   function bind(){
+    if(scope.disposed)return()=>{};
     if(state.bound)return cleanup||(()=>{});
     state.bound=true;
     const captureLifecycle=()=>capture({semantic:getFlow?.()!=="scrolled-doc"});
@@ -223,5 +228,5 @@ export function createReaderResumeController({
     return cleanup;
   }
 
-  return{remember,capture,restore,wait,bind,isRestoring:()=>Boolean(state.running)&&(!state.operation||state.operation.isCurrent())};
+  return{dispose(){scope.dispose();cleanup?.();state.operation?.cancel();state.queued=false;state.anchor=null;state.scroll=null;state.live=null;state.snapshot=null},remember,capture,restore,wait,bind,isRestoring:()=>!scope.disposed&&Boolean(state.running)&&(!state.operation||state.operation.isCurrent())};
 }

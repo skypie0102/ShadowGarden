@@ -28,18 +28,19 @@ function fixture(t,{finePointer=true}={}){
   const manager={container,settings:{axis:'vertical'},views:{all:()=>[view]},__sgGeneration:1};
   let rendition={manager,display(){throw new Error('Image focus must not navigate the EPUB')},currentLocation(){throw new Error('Image focus must not reframe the EPUB')}};
   const viewport=Object.assign(element(),{clientWidth:800,clientHeight:700}),closeButton=element(),overlay=element(),image=element();
-  const document={activeElement:frame,body:element(),contains:node=>node.isConnected,addEventListener(){}};
+  const document={activeElement:frame,body:element(),contains:node=>node.isConnected,addEventListener(){},removeEventListener(){}};
   let focusCalls=0;
   // Reproduce a browser focus scroll after the dialog has closed.
   frame.focus=()=>{focusCalls++;container.scrollTop+=360;root.scrollTop=40};
-  const globals={window:{innerWidth:800,innerHeight:700,addEventListener(){}},document,
-    requestAnimationFrame:callback=>frames.push(callback),matchMedia:query=>({matches:query===(finePointer?'(pointer: fine)':'(pointer: coarse)')})};
+  const globals={window:{innerWidth:800,innerHeight:700,addEventListener(){},removeEventListener(){}},document,
+    requestAnimationFrame:callback=>{frames.push(callback);return callback},cancelAnimationFrame:callback=>{const index=frames.indexOf(callback);if(index>=0)frames.splice(index,1)},matchMedia:query=>({matches:query===(finePointer?'(pointer: fine)':'(pointer: coarse)')})};
   for(const [name,value] of Object.entries(globals)){
     const previous=Object.getOwnPropertyDescriptor(globalThis,name);
     Object.defineProperty(globalThis,name,{value,configurable:true,writable:true});
-    t.after(()=>previous?Object.defineProperty(globalThis,name,previous):delete globalThis[name]);
+    t.after(()=>{controller.dispose();if(previous)Object.defineProperty(globalThis,name,previous);else delete globalThis[name]});
   }
   const controller=createImageFocusController({overlay,viewport,image,closeButton,getRendition:()=>rendition,getFlow:()=>flow});
+  t.after(()=>controller.dispose());
   const source={currentSrc:'https://garden.test/art.png',alt:'Fixture illustration'};
   const flush=()=>{for(let count=0;frames.length&&count<10;count++)frames.splice(0).forEach(callback=>callback())};
   return{controller,container,root,wrapper,viewport,closeButton,flush,open:()=>controller.openImageFocus(source,doc),
@@ -115,4 +116,12 @@ test('resize capture retains the last stable Continuous passage after viewport g
   // A relocated event can arrive before the application's resize handler.
   resume.remember();
   assert.equal((await resume.capture()).cfi,'epubcfi(before-resize)');assert.equal(captures,0);
+});
+
+test('disposing focused artwork cancels its queued return and removes close handling',t=>{
+  const f=fixture(t);f.open();f.flush();f.controller.closeImageFocus();f.controller.dispose();
+  f.container.scrollTop=9500;f.root.scrollTop=250;f.flush();
+  f.closeButton.dispatchEvent(new Event('click',{cancelable:true}));
+  assert.equal(f.controller.isFocused(),false);assert.equal(f.container.scrollTop,9500);assert.equal(f.root.scrollTop,250);
+  assert.equal(f.open(),false);
 });

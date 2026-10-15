@@ -1,3 +1,4 @@
+import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
@@ -100,14 +101,16 @@ export function createEpubCompatibilityExtension(){
     if(typeof dialog.showModal==="function"){
       if(!dialog.open)dialog.showModal();
     }else dialog.setAttribute("open","");
-    requestAnimationFrame(()=>cancel?.focus?.({preventScroll:true}));
+    if(currentRendition)readerInstanceScope(currentRendition).frame(()=>cancel?.focus?.({preventScroll:true}));
   }
 
-  function installExternalLinkGuard(contents){
+  function installExternalLinkGuard(contents,rendition=currentRendition){
     const doc=contents?.document||contents?.contentDocument||contents;
-    if(!doc?.documentElement||doc.documentElement.dataset.sgExternalLinks==="1")return;
+    if(!rendition||readerInstanceScope(rendition).disposed||!doc?.documentElement||doc.documentElement.dataset.sgExternalLinks==="1")return;
     doc.documentElement.dataset.sgExternalLinks="1";
-    doc.addEventListener("click",event=>{
+    const scope=readerContentsScope(rendition,contents);
+    scope.add(()=>delete doc.documentElement.dataset.sgExternalLinks);
+    scope.listen(doc,"click",event=>{
       const anchor=event.target?.closest?.("a[href]");
       const href=externalHttpHref(anchor);
       if(!href)return;
@@ -219,6 +222,8 @@ export function createEpubCompatibilityExtension(){
   function patchRendition(rendition,target){
     if(!rendition||rendition.__sgAdapterPatched)return rendition;
     rendition.__sgAdapterPatched=true;
+    const scope=readerInstanceScope(rendition);
+    scope.add(()=>{if(currentRendition===rendition){currentRendition=null;currentTarget=null;pendingExternalHref="";closeExternalDialog()}});
     currentRendition=rendition;
     currentTarget=target;
 
@@ -236,16 +241,16 @@ export function createEpubCompatibilityExtension(){
     /* Register before reader.js does. The core will therefore receive a location whose
        percentage has already been repaired from the reliable spine index when EPUB.js
        reports a missing/zero generated-location percentage. */
-    try{rendition.on("relocated",location=>normalizeLocationProgress(currentBook,location))}catch{}
-    try{rendition.hooks?.content?.register?.(contents=>installExternalLinkGuard(contents))}catch(error){console.warn("External EPUB link hook unavailable",error)}
+    try{scope.on(rendition,"relocated",location=>normalizeLocationProgress(currentBook,location))}catch{}
+    try{scope.hook(rendition.hooks?.content,contents=>installExternalLinkGuard(contents,rendition))}catch(error){console.warn("External EPUB link hook unavailable",error)}
 
     try{
-      rendition.on("rendered",(_,view)=>{
+      scope.on(rendition,"rendered",(_,view)=>{
         if(rendition!==currentRendition)return;
         const contents=view?.contents;
-        if(contents)setTimeout(()=>{normalizeMobilePage(contents);installExternalLinkGuard(contents);syncContinuousFrameHeights(contents)},0);
-        else setTimeout(()=>{
-          try{rendition.getContents?.().forEach(contents=>{normalizeMobilePage(contents);installExternalLinkGuard(contents);syncContinuousFrameHeights(contents)})}catch{}
+        if(contents)scope.timeout(()=>{normalizeMobilePage(contents);installExternalLinkGuard(contents,rendition);syncContinuousFrameHeights(contents,rendition)},0);
+        else scope.timeout(()=>{
+          try{rendition.getContents?.().forEach(contents=>{normalizeMobilePage(contents);installExternalLinkGuard(contents,rendition);syncContinuousFrameHeights(contents,rendition)})}catch{}
         },0);
       });
     }catch{}
@@ -259,25 +264,28 @@ export function createEpubCompatibilityExtension(){
      the tail beyond the frozen slot where the next section visually crops it. Reconcile
      idempotently: rewrite every frame/wrapper height to its document's exact extent and
      clear stale inline tops; natural flow then always matches real content. */
-  function syncContinuousFrameHeights(contents){
+  function syncContinuousFrameHeights(contents,rendition=currentRendition){
     try{
       const doc=contents?.document,win=doc?.defaultView;
-      if(!win||!doc)return;
+      if(!win||!doc||!rendition||readerInstanceScope(rendition).disposed)return;
+      const scope=readerContentsScope(rendition,contents);
+      if(scope.disposed)return;
       const doc0=doc;
       if(!win.__sgTallSyncBound){
         win.__sgTallSyncBound=true;
+        scope.add(()=>{delete win.__sgTallSyncBound;delete win.__sgTallSyncTimer});
         /* media loads inside a rendered document are what grow it late; reconcile again */
-        doc0.addEventListener("load",event=>{
+        scope.listen(doc0,"load",event=>{
           const target=event.target;
-          if(target&&(target.tagName==="IMG"||(typeof SVGElement!=="undefined"&&target instanceof doc0.defaultView.SVGElement)))syncContinuousFrameHeights(contents);
+          if(target&&(target.tagName==="IMG"||(typeof SVGElement!=="undefined"&&target instanceof doc0.defaultView.SVGElement)))syncContinuousFrameHeights(contents,rendition);
         },true);
         /* media may already be decoded before these hooks attach, and engines differ in
            when async svg sizing settles; guaranteed staggered passes cover both cases
            without spamming the reconciler once growth is exhausted. */
-        [300,1200,2600,4200].forEach(delay=>setTimeout(()=>{try{syncContinuousFrameHeights(contents)}catch{}},delay));
+        [300,1200,2600,4200].forEach(delay=>scope.timeout(()=>{try{syncContinuousFrameHeights(contents,rendition)}catch{}},delay));
       }
-      clearTimeout(win.__sgTallSyncTimer);
-      win.__sgTallSyncTimer=setTimeout(()=>{
+      scope.clearTimeout(win.__sgTallSyncTimer);
+      win.__sgTallSyncTimer=scope.timeout(()=>{
         try{
           const views=[...(document.querySelectorAll(".epub-view")||[])];
           const targets=views.length
@@ -311,6 +319,16 @@ export function createEpubCompatibilityExtension(){
   function patchBook(book){
     if(!book||book.__sgAdapterPatched)return book;
     book.__sgAdapterPatched=true;
+    const scope=readerInstanceScope(book);
+    scope.add(()=>{if(currentBook===book){currentBook=null;progressByCfi.clear()}});
+  /* Mobile browser chrome continuously changes visualViewport height while scrolling.
+     Only paginated mode needs those changes forwarded into EPUB.js page measurement;
+     forwarding them in continuous mode causes repeated reflows and breaks scroll/seek. */
+  scope.listen(window.visualViewport,"resize",()=>{
+    if(!document.body?.classList.contains("reader-flow-paginated"))return;
+    scope.clearTimeout(viewportTimer);
+    viewportTimer=scope.timeout(()=>window.dispatchEvent(new Event("resize")),80);
+  });
     currentBook=book;
     progressByCfi.clear();
     patchLocations(book);
@@ -326,13 +344,5 @@ export function createEpubCompatibilityExtension(){
     return book;
   }
 
-  /* Mobile browser chrome continuously changes visualViewport height while scrolling.
-     Only paginated mode needs those changes forwarded into EPUB.js page measurement;
-     forwarding them in continuous mode causes repeated reflows and breaks scroll/seek. */
-  window.visualViewport?.addEventListener("resize",()=>{
-    if(!document.body?.classList.contains("reader-flow-paginated"))return;
-    clearTimeout(viewportTimer);
-    viewportTimer=setTimeout(()=>window.dispatchEvent(new Event("resize")),80);
-  });
   return {name:"compatibility",attachBook:patchBook};
 }
