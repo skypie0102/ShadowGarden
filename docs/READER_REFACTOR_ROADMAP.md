@@ -127,11 +127,18 @@ project and no production credentials or catalog writes.
   startup/mode replacement, mutation-free Continuous capture, first-anchor
   settings relayout, stable pre-resize snapshots and engine-owned buffer
   settlement. All 111 Node tests, asset audit and both builds pass. The expanded
-  46-case desktop/mobile browser matrix and clean CI are running before merge.
+  46-case desktop/mobile browser matrix passes locally. Clean CI is required
+  before merge through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
   Production-entry helpers exclude the offscreen page-map frames and reacquire
   frames across reflow. Passage assertions use clipped parent geometry and
   actual hit testing: Chromium IntersectionObserver incorrectly reports zero
   for visibly rendered text in the vendor's translated multi-column iframe.
+- CI run `38778009831` passed 45/46 browser cases. Its mobile mode trace
+  retained the tracking-line passage, while the test expected a different
+  centered paragraph to remain on the same page as a large illustration.
+  Corrected the test to independently sample the visible pre-change anchor
+  for each flow and verify that anchor after conversion, including the return
+  direction. The complete clean CI matrix is rerun for the updated test.
 - Architecture and current limits are documented in
   [READER_ARCHITECTURE.md](READER_ARCHITECTURE.md). The one-time CI browser-runtime
   export used for restricted-environment debugging was removed from the workflow.

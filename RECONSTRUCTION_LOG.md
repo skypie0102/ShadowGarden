@@ -653,7 +653,11 @@ navigation. Continuous 100% seeks resolve to the last content anchor.
 
 All 111 Node tests (48 reader cases), the asset audit, static build and Pages
 Functions compilation pass locally. The expanded 46-case desktop/mobile Chromium
-suite and clean GitHub CI are being verified before merging this milestone.
+suite passes locally. Source `145d426` is published in PR #3. The first clean
+CI run passed 45/46 cases and exposed an overstrict mobile mode assertion:
+a centered paragraph was expected instead of the retained tracking-line passage.
+The test now samples the actual pre-change visible anchor in each flow; clean
+CI is rerun before merging the milestone.
 Tests exclude offscreen page-map frames and check clipped parent geometry plus
 hit surfaces for translated vendor columns, whose Chromium IntersectionObserver
 ratios can incorrectly be zero while the text is visibly rendered.

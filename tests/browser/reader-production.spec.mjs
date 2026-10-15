@@ -85,6 +85,28 @@ test.describe('production reader integration',()=>{
     },{timeout:20000}).toBeGreaterThan(0);
   }
 
+  async function visibleAnchor(page,index){
+    const frame=await findChapter(page,index),iframe=await frame.frameElement();
+    const origin=await iframe.boundingBox(),viewer=await page.locator('#viewer').boundingBox();
+    const blocks=await frame.locator('h1[id],p[id],img[id]').evaluateAll(elements=>elements.map(element=>{
+      const box=element.getBoundingClientRect();return{id:element.id,x:box.x,y:box.y,width:box.width,height:box.height};
+    }));
+    const visible=blocks.map(box=>({...box,x:box.x+origin.x,y:box.y+origin.y})).filter(box=>
+      box.y+box.height>viewer.y&&box.y<viewer.y+viewer.height&&box.x+box.width>viewer.x&&box.x<viewer.x+viewer.width);
+    expect(visible.length).toBeGreaterThan(0);
+    if(await page.locator('body').evaluate(body=>body.classList.contains('reader-flow-scrolled'))){
+      const line=viewer.y+viewer.height*.30;
+      const distance=box=>Math.max(box.y-line,line-(box.y+box.height),0);
+      visible.sort((a,b)=>distance(a)-distance(b));
+    }else{
+      // Pagination preserves the beginning of the visible reading page; an
+      // illustration can put a previously centered paragraph on its next page.
+      const left=Math.min(...visible.map(box=>box.x));
+      visible.splice(0,visible.length,...visible.filter(box=>box.x<left+viewer.width*.45).sort((a,b)=>a.y-b.y));
+    }
+    return '#'+visible[0].id;
+  }
+
   test('runs the complete adapter chain and prepares standalone artwork',async({page})=>{
     const report=await page.evaluate(()=>({
       visual:window.__sgVisualPageCache?.summary?.(),
@@ -258,11 +280,12 @@ test.describe('production reader integration',()=>{
     await frame.locator(id).scrollIntoViewIfNeeded();
     await expect(frame.locator(id)).toBeInViewport();
     for(const flow of ['paginated','scrolled-doc']){
+      const anchor=await visibleAnchor(page,4);
       await setFlow(page,flow);
       await expect(page.locator('#chapterTitle')).toContainText('Chapter 4',{timeout:20000});
-      await visiblePassage(page,4,id);
+      await visiblePassage(page,4,anchor);
       await page.waitForTimeout(1200);
-      await visiblePassage(page,4,id);
+      await visiblePassage(page,4,anchor);
     }
   });
 

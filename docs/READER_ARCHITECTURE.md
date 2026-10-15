@@ -135,7 +135,8 @@ to the planned cache lifecycle/performance work.
   also passes. This merge did not deploy to Cloudflare.
 - The navigation milestone passes all 111 Node tests, including 48 reader
   cases, plus the asset audit and both builds. The expanded 46-case desktop/mobile
-  browser matrix and clean CI must pass before this milestone is merged.
+  browser matrix passes locally; clean CI must pass before
+  [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3) is merged.
 - Engine tests check initialization, repeat initialization, the original vendor
   factory, extension installation and unsupported-runtime failure.
 - Navigation tests check delegation and ownership cleanup. Continuous target
@@ -151,7 +152,10 @@ to the planned cache lifecycle/performance work.
   repeated footnotes, rail/range seeks, rapid conflicting navigation, delayed
   access renewal, font reflow and viewport resize. It excludes offscreen
   page-map frames and reacquires content frames after reflow. Multi-column
-  passage checks use parent clipping and hit testing because Chromium reports
+  mode checks independently record the visible pre-change anchor for each
+  flow: pagination can place a formerly centered paragraph on the following
+  page while retaining the tracking-line passage. Passage checks use parent
+  clipping and hit testing because Chromium reports
   false zero IntersectionObserver ratios for visibly rendered vendor columns.
   Repeated create/destroy, interrupted startup, long books and non-Chromium
   engines remain explicit roadmap work.
