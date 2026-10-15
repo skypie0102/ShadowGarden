@@ -25,7 +25,7 @@ function provider(t,env,n=1) {
   const state={files:Array.from({length:n},(_,i)=>({fileName:key,fileId:`v${i}`,bucketId:'bucket',action:['upload','hide','start'][i%3]})),deleted:[],requests:[],beforeDelete:null};
   t.mock.method(globalThis,'fetch',async(input,options={})=>{
     const url=new URL(input);
-    if(url.pathname.endsWith('b2_authorize_account'))return Response.json({apiUrl:'https://api.test.backblazeb2.com',downloadUrl:'https://download.test.backblazeb2.com',authorizationToken:'fixture'});
+    if(url.pathname.endsWith('b2_authorize_account'))return Response.json({authorizationToken:'fixture',apiInfo:{storageApi:{apiUrl:'https://api.test.backblazeb2.com',downloadUrl:'https://download.test.backblazeb2.com',allowed:{buckets:[{id:'bucket',name:'garden'}]}}}});
     if(options.method==='HEAD')return new Response(null,{status:404});
     const payload=JSON.parse(options.body);state.requests.push({path:url.pathname,payload});
     if(url.pathname.endsWith('b2_list_file_versions')){

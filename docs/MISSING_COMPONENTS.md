@@ -10,7 +10,7 @@
 | D1 metadata schema | New design | Provision a separate database, migrate and seed explicitly |
 | Original EPUB files | Out of scope: owner confirmed five disposable test books | Use new test media or the empty seed |
 | Original private book-to-object map | Not needed for disposable test data | New uploads create their own mappings; optional legacy import is documented |
-| Production secrets/bindings | Missing | Configure through the owner's Cloudflare/B2 accounts |
+| Production secrets/bindings | Eight encrypted names supplied; aliases and split B2 keys supported | Values remain private; verify capabilities, bucket identifiers, independent session secret and D1 binding before deployment |
 | Original backups/trash | Missing | Export from original storage before changing retention |
 | Replacement snapshot integrity and damaged-catalog recovery | Verified within the 47 backend/client and 14 browser cases | New reconstruction behavior; original storage schema/history still missing |
 | Original security telemetry/policy | Missing | Original code/configuration; basic replacement is documented |

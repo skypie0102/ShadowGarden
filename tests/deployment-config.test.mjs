@@ -1,0 +1,270 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {fixture,context} from './helpers.mjs';
+import {endpoint} from '../server/http.js';
+import {adminAccess,humanAccess,checkAdminToken,challenge,signed,verified} from '../server/security.js';
+import {bookAccess} from '../server/books.js';
+import {library} from '../server/admin.js';
+import {loadState,saveState} from '../server/state.js';
+import {getObject,uploadObject,deleteObjectVersions,storageConfigured} from '../server/storage.js';
+
+const call=(fn,ctx)=>endpoint(fn)(ctx);
+function legacy(t) {
+  const env=fixture();t.after(()=>env.DB.sqlite.close());
+  for(const [modern,original] of Object.entries({ADMIN_TOKEN:'SG_ADMIN_TOKEN',BOOK_SIGNING_SECRET:'SG_MEDIA_SIGNING_SECRET',TURNSTILE_SITE_KEY:'SG_TURNSTILE_SITE_KEY',TURNSTILE_SECRET_KEY:'SG_TURNSTILE_SECRET_KEY'})){env[original]=env[modern];delete env[modern];}
+  return env;
+}
+function splitStorage() {
+  return {B2_READ_KEY_ID:crypto.randomUUID(),B2_READ_APPLICATION_KEY:'fixture-read-key',B2_WRITE_KEY_ID:crypto.randomUUID(),B2_WRITE_APPLICATION_KEY:'fixture-write-key',B2_BUCKET_ID:'fixture-bucket',B2_BUCKET_NAME:'fixture-garden'};
+}
+const authData=(token='token',buckets=[{id:'fixture-bucket',name:'fixture-garden'}])=>({authorizationToken:token,apiInfo:{storageApi:{apiUrl:'https://api.fixture.backblazeb2.com',downloadUrl:'https://download.fixture.backblazeb2.com',allowed:{buckets}}}});
+const key='shadow-garden/books/config-fixture.epub';
+
+test('B2 uploads accept documented Backblaze pod URLs and preserve the upload request',async t=>{
+  for(const uploadUrl of [
+    'https://pod-000-1005-03.backblaze.com/b2api/v2/b2_upload_file?cvt=fixture&bucket=fixture-bucket',
+    'https://pod-000-1143-18.backblaze.com/b2api/v4/b2_upload_file/fixture-bucket/fixture',
+    'https://upload.fixture.backblazeb2.com/upload'
+  ]){
+    const env=splitStorage(),requests=[],bytes=new Uint8Array([80,75,3,4]);
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      const url=String(input);requests.push(url);assert.equal(options.redirect,'manual');
+      if(url.endsWith('b2_authorize_account'))return Response.json(authData('account-token'));
+      if(url.endsWith('b2_get_upload_url')){
+        assert.equal(options.headers.authorization,'account-token');
+        assert.equal(JSON.parse(options.body).bucketId,env.B2_BUCKET_ID);
+        return Response.json({uploadUrl,authorizationToken:'upload-token'});
+      }
+      assert.equal(url,uploadUrl);assert.equal(options.method,'POST');
+      assert.equal(options.headers.authorization,'upload-token');
+      assert.equal(options.headers['content-type'],'application/epub+zip');
+      assert.equal(options.headers['content-length'],'4');
+      assert.equal(options.headers['x-bz-file-name'],key);
+      assert.match(options.headers['x-bz-content-sha1'],/^[a-f0-9]{40}$/);
+      assert.deepEqual(options.body,bytes);
+      return Response.json({fileId:'fixture-upload'});
+    });
+    assert.deepEqual(await uploadObject(env,key,bytes),{key,size:4,fileId:'fixture-upload'});
+    assert.equal(requests.length,3);
+  }
+});
+
+test('B2 uploads reject untrusted or insecure endpoints before sending bytes or credentials',async t=>{
+  for(const uploadUrl of [
+    'https://pod-000-1005-03.backblaze.com.evil.example/upload',
+    'https://pod-000-1005-03.evilbackblaze.com/upload',
+    'https://www.backblaze.com/upload',
+    'https://pod-.backblaze.com/upload',
+    'https://pod-000-1005-03.backblaze.com:8443/upload',
+    'http://pod-000-1005-03.backblaze.com/upload',
+    'https://user:password@pod-000-1005-03.backblaze.com/upload',
+    'https://upload.backblazeb2.com.evil.example/upload'
+  ]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async input=>{
+      const url=String(input);requests.push(url);
+      if(url.endsWith('b2_authorize_account'))return Response.json(authData());
+      assert.ok(url.endsWith('b2_get_upload_url'));
+      return Response.json({uploadUrl,authorizationToken:'upload-token'});
+    });
+    await assert.rejects(uploadObject(env,key,new Uint8Array([1])),e=>e.code==='storage_error');
+    assert.equal(requests.length,2);
+  }
+});
+
+test('existing SG names support Turnstile login, admin authorization and signed book access',async t=>{
+  const env=legacy(t),requests=[];
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    assert.equal(String(url),'https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    const body=JSON.parse(options.body);requests.push(body);
+    return Response.json({success:true,hostname:'garden.test',action:body.response==='admin-fixture'?'admin_access':'book_access'});
+  });
+  assert.equal(challenge(context(env,'/admin-access'),'admin_access').siteKey,env.SG_TURNSTILE_SITE_KEY);
+  const login=await call(adminAccess,context(env,'/admin-access','POST',{adminToken:env.SG_ADMIN_TOKEN,turnstileToken:'admin-fixture'}));assert.equal(login.status,200);
+  const headers={authorization:`Bearer ${env.SG_ADMIN_TOKEN}`,cookie:login.headers.get('set-cookie').split(';')[0]};
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,headers))).status,200);
+  const row=await loadState(env),bookId=row.document.adult[0].volumes[0].bookId;row.document.books[bookId]=key;await saveState(env,row,row.document,'fixture-map');
+  const human=await call(humanAccess,context(env,'/human-access','POST',{token:'human-fixture'}));assert.equal(human.status,200);
+  const ticket=await call(bookAccess,context(env,'/book-access','POST',{bookId},{cookie:human.headers.get('set-cookie').split(';')[0]}));assert.equal(ticket.status,200);
+  const url=new URL((await ticket.json()).url,'https://garden.test'),claims=await verified(env,url.searchParams.get('sig'),'book','BOOK_SIGNING_SECRET');assert.equal(claims.key,key);
+  assert.equal(await verified({...env,SG_MEDIA_SIGNING_SECRET:'different-fixture-'.repeat(3)},url.searchParams.get('sig'),'book','BOOK_SIGNING_SECRET'),null);
+  assert.ok(requests.every(r=>r.secret===env.SG_TURNSTILE_SECRET_KEY));
+});
+
+test('explicit canonical values win over aliases and signing secrets retain strength checks',async t=>{
+  const env=legacy(t),oldToken=env.SG_ADMIN_TOKEN;env.ADMIN_TOKEN='new-admin-token-'.repeat(3);
+  assert.equal(await checkAdminToken(env,env.ADMIN_TOKEN),true);assert.equal(await checkAdminToken(env,oldToken),false);
+  env.ADMIN_TOKEN='';await assert.rejects(checkAdminToken(env,oldToken),e=>e.code==='security_not_configured');
+  delete env.ADMIN_TOKEN;env.SG_ADMIN_TOKEN='';await assert.rejects(checkAdminToken(env,''),e=>e.code==='security_not_configured');
+  const bookTicket=await signed(env,'book',{},60,'BOOK_SIGNING_SECRET');env.BOOK_SIGNING_SECRET='canonical-book-secret-'.repeat(3);
+  assert.equal(await verified(env,bookTicket,'book','BOOK_SIGNING_SECRET'),null);
+  env.BOOK_SIGNING_SECRET='';await assert.rejects(verified(env,bookTicket,'book','BOOK_SIGNING_SECRET'),e=>e.code==='ticketing_not_configured');
+  delete env.BOOK_SIGNING_SECRET;env.SG_MEDIA_SIGNING_SECRET='short';assert.equal((await call(bookAccess,context(env,'/book-access','POST',{}))).status,503);
+  env.TURNSTILE_SECRET_KEY='';assert.throws(()=>challenge(context(env,'/admin-access'),'admin_access'),e=>e.code==='human_verification_unavailable');
+  delete env.TURNSTILE_SECRET_KEY;delete env.SESSION_SECRET;assert.throws(()=>challenge(context(env,'/admin-access'),'admin_access'),e=>e.code==='security_not_configured');
+});
+
+test('existing shorter Keeper credentials unlock only with the exact token and a verified session',async t=>{
+  const env=legacy(t);env.SG_ADMIN_TOKEN='legacy-keeper-token';
+  t.mock.method(globalThis,'fetch',async()=>Response.json({success:true,hostname:'garden.test',action:'admin_access'}));
+  const login=await call(adminAccess,context(env,'/admin-access','POST',{adminToken:env.SG_ADMIN_TOKEN,turnstileToken:'fixture'}));
+  assert.equal(login.status,200);
+  const headers={authorization:`Bearer ${env.SG_ADMIN_TOKEN}`,cookie:login.headers.get('set-cookie').split(';')[0]};
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,headers))).status,200);
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,{authorization:headers.authorization}))).status,401);
+  assert.equal((await call(library,context(env,'/admin-api/library','GET',undefined,{...headers,authorization:'Bearer wrong-token'}))).status,401);
+  for(const wrong of ['',env.SG_ADMIN_TOKEN+'x',' '+env.SG_ADMIN_TOKEN])assert.equal(await checkAdminToken(env,wrong),false);
+  t.mock.method(globalThis,'fetch',async()=>Response.json({success:false}));
+  assert.equal((await call(adminAccess,context(env,'/admin-access','POST',{adminToken:env.SG_ADMIN_TOKEN,turnstileToken:'invalid'}))).status,403);
+  env.SESSION_SECRET='short';await assert.rejects(checkAdminToken(env,env.SG_ADMIN_TOKEN),e=>e.code==='security_not_configured');
+});
+
+test('missing, blank and non-string Keeper credentials still fail closed',async t=>{
+  const env=legacy(t);
+  for(const invalid of [undefined,null,'','   ',123]){
+    env.SG_ADMIN_TOKEN=invalid;
+    await assert.rejects(checkAdminToken(env,String(invalid)),e=>e.code==='security_not_configured');
+    assert.equal((await call(adminAccess,context(env,'/admin-access'))).status,503);
+    assert.equal((await call(adminAccess,context(env,'/admin-access','POST',{adminToken:'fixture',turnstileToken:'fixture'}))).status,503);
+  }
+  assert.equal(env.DB.sqlite.prepare('SELECT COUNT(*) AS count FROM rate_limits').get().count,0);
+});
+
+test('B2 reads use the read pair and uploads plus exact-version deletion use the write pair',async t=>{
+  const env=splitStorage(),auths=[],operations=[];let exists=true;
+  t.mock.method(globalThis,'fetch',async(input,options={})=>{
+    const url=new URL(input);
+    if(url.pathname.endsWith('b2_authorize_account')){
+      assert.equal(url.pathname,'/b2api/v4/b2_authorize_account');
+      const credentials=atob(options.headers.authorization.slice(6));auths.push(credentials);
+      const token=credentials===`${env.B2_READ_KEY_ID}:${env.B2_READ_APPLICATION_KEY}`?'read-token':'write-token';return Response.json(authData(token));
+    }
+    operations.push({path:url.pathname,method:options.method,token:options.headers.authorization});
+    if(url.pathname.startsWith('/file/'))return new Response(options.method==='HEAD'?null:'fixture-bytes');
+    if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://upload.fixture.backblazeb2.com/upload',authorizationToken:'upload-token'});
+    if(url.pathname==='/upload')return Response.json({fileId:'uploaded'});
+    if(url.pathname.endsWith('b2_list_file_versions'))return Response.json({files:exists?[{fileName:key,fileId:'version',action:'upload',bucketId:env.B2_BUCKET_ID}]:[],nextFileName:null});
+    if(url.pathname.endsWith('b2_delete_file_version')){exists=false;return Response.json({fileName:key,fileId:'version'});}
+    throw new Error('Unexpected request');
+  });
+  assert.equal(storageConfigured(env),true);await getObject(env,key,{head:true});await getObject(env,key);
+  await uploadObject(env,key,new Uint8Array([1,2]));assert.equal((await deleteObjectVersions(env,key)).complete,true);
+  await getObject(env,key,{head:true});
+  assert.deepEqual(auths,[`${env.B2_READ_KEY_ID}:${env.B2_READ_APPLICATION_KEY}`,`${env.B2_WRITE_KEY_ID}:${env.B2_WRITE_APPLICATION_KEY}`]);
+  assert.ok(operations.filter(o=>o.path.startsWith('/file/')).every(o=>o.token==='read-token'));
+  assert.ok(operations.filter(o=>o.path.includes('/b2api/')).every(o=>o.token==='write-token'));
+  assert.equal(operations.find(o=>o.path==='/upload').token,'upload-token');
+});
+
+test('partial or absent B2 role pairs cannot borrow another role or silently use shared credentials',async t=>{
+  const env=splitStorage();let requests=0;t.mock.method(globalThis,'fetch',async()=>{requests++;throw new Error('Unexpected request');});
+  delete env.B2_READ_APPLICATION_KEY;env.B2_APPLICATION_KEY_ID='shared-id';env.B2_APPLICATION_KEY='shared-key';
+  await assert.rejects(getObject(env,key),e=>e.code==='storage_not_configured');
+  assert.equal(storageConfigured(env),false);assert.equal(storageConfigured(env,'write'),true);
+  delete env.B2_READ_KEY_ID;delete env.B2_APPLICATION_KEY_ID;delete env.B2_APPLICATION_KEY;
+  await assert.rejects(getObject(env,key),e=>e.code==='storage_not_configured');
+  env.B2_READ_KEY_ID='read-id';env.B2_READ_APPLICATION_KEY='read-key';delete env.B2_WRITE_APPLICATION_KEY;
+  await assert.rejects(uploadObject(env,key,new Uint8Array()),e=>e.code==='storage_not_configured');
+  await assert.rejects(deleteObjectVersions(env,key),e=>e.code==='storage_not_configured');assert.equal(requests,0);
+});
+
+test('B2 authorization cache respects key rotation and rejects changed bucket bindings',async t=>{
+  const env=splitStorage(),auths=[];t.mock.method(globalThis,'fetch',async(input,options)=>{
+    if(String(input).includes('b2_authorize_account')){auths.push(options.headers.authorization);return Response.json(authData());}
+    return new Response(null);
+  });
+  await getObject(env,key,{head:true});env.B2_READ_APPLICATION_KEY='rotated-fixture-key';await getObject(env,key,{head:true});
+  assert.equal(auths.length,2);assert.notEqual(auths[0],auths[1]);
+  env.B2_BUCKET_ID='different-bucket';await assert.rejects(getObject(env,key,{head:true}),e=>e.code==='storage_auth_failed');
+  env.B2_BUCKET_ID='fixture-bucket';env.B2_BUCKET_NAME='different-name';await assert.rejects(getObject(env,key,{head:true}),e=>e.code==='storage_auth_failed');
+  assert.equal(auths.length,2);
+});
+
+test('rejected B2 read authorization never retries with the write key',async t=>{
+  const env=splitStorage(),auths=[];
+  t.mock.method(globalThis,'fetch',async(input,options)=>{auths.push(atob(options.headers.authorization.slice(6)));return Response.json({code:'unauthorized'},{status:401});});
+  await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');
+  assert.deepEqual(auths,[`${env.B2_READ_KEY_ID}:${env.B2_READ_APPLICATION_KEY}`]);
+});
+
+test('B2 v4 accepts the configured bucket within a group and unrestricted legacy keys',async t=>{
+  for(const buckets of [[{id:'other-bucket',name:'other'},{id:'fixture-bucket',name:'fixture-garden'}],[{id:'fixture-bucket',name:null}],null]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      requests.push(String(input));
+      if(String(input).endsWith('b2_authorize_account'))return Response.json(authData('v4-token',buckets));
+      assert.equal(options.headers.authorization,'v4-token');return new Response('epub-bytes');
+    });
+    assert.equal(await (await getObject(env,key)).text(),'epub-bytes');
+    assert.deepEqual(requests,['https://api.backblazeb2.com/b2api/v4/b2_authorize_account',`https://download.fixture.backblazeb2.com/file/fixture-garden/${key}`]);
+  }
+});
+
+test('B2 v4 rejects absent or mismatched buckets before downloads, uploads or cleanup',async t=>{
+  for(const buckets of [[],[{id:'other-bucket',name:'fixture-garden'}],[{id:'fixture-bucket',name:'other-garden'}]]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async input=>{requests.push(String(input));return Response.json(authData('v4-token',buckets));});
+    for(const operation of [()=>getObject(env,key),()=>uploadObject(env,key,new Uint8Array([1])),()=>deleteObjectVersions(env,key)]){
+      await assert.rejects(operation,e=>e.code==='storage_auth_failed');
+    }
+    assert.equal(requests.length,3);assert.ok(requests.every(url=>url.endsWith('/v4/b2_authorize_account')));
+  }
+});
+
+test('B2 v4 rejects malformed authorization instead of treating missing restrictions as unrestricted',async t=>{
+  const responses=[{},null,{authorizationToken:'token'},authData('',null),authData('token',{}),authData()];
+  delete responses.at(-1).apiInfo.storageApi.allowed.buckets;
+  for(const body of responses){
+    const env=splitStorage();let requests=0;
+    t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(body);});
+    await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');assert.equal(requests,1);
+  }
+  const env=splitStorage();t.mock.method(globalThis,'fetch',async()=>new Response('invalid-json'));
+  await assert.rejects(getObject(env,key),e=>e.code==='storage_auth_failed');
+});
+
+test('B2 v4 validates nested provider URLs before passing authorization to another host',async t=>{
+  for(const field of ['apiUrl','downloadUrl']){
+    for(const url of ['https://storage.invalid.example/','https://pod-000-1005-03.backblaze.com/']){
+      const env=splitStorage(),data=authData();data.apiInfo.storageApi[field]=url;let requests=0;
+      t.mock.method(globalThis,'fetch',async()=>{requests++;return Response.json(data);});
+      await assert.rejects(getObject(env,key),e=>e.code==='storage_error');assert.equal(requests,1);
+    }
+  }
+});
+
+test('B2 authorization refuses redirects without sending credentials to their destination',async t=>{
+  for(const status of [301,302,303,307,308]){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      requests.push(String(input));assert.equal(options.redirect,'manual');
+      return new Response(null,{status,headers:{location:'https://untrusted.example/collect'}});
+    });
+    await assert.rejects(getObject(env,key),e=>e.code==='storage_redirect_refused'&&e.status===502);
+    assert.deepEqual(requests,['https://api.backblazeb2.com/b2api/v4/b2_authorize_account']);
+  }
+});
+
+test('B2 downloads, uploads and version cleanup refuse provider redirects',async t=>{
+  const cases=[
+    ['/file/',env=>getObject(env,key)],
+    ['b2_get_upload_url',env=>uploadObject(env,key,new Uint8Array([1]))],
+    ['/upload',env=>uploadObject(env,key,new Uint8Array([1]))],
+    ['b2_list_file_versions',env=>deleteObjectVersions(env,key)],
+    ['b2_delete_file_version',env=>deleteObjectVersions(env,key)]
+  ];
+  for(const [target,operation] of cases){
+    const env=splitStorage(),requests=[];
+    t.mock.method(globalThis,'fetch',async(input,options)=>{
+      const url=new URL(input);requests.push(url);assert.equal(options.redirect,'manual');
+      assert.ok(url.hostname.endsWith('.backblazeb2.com')||url.hostname==='pod-000-1005-03.backblaze.com');
+      if(url.pathname.endsWith('b2_authorize_account'))return Response.json(authData());
+      if(url.pathname===target||url.pathname.endsWith(target)||url.pathname.startsWith(target))return new Response(null,{status:307,headers:{location:'https://untrusted.example/collect'}});
+      if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://pod-000-1005-03.backblaze.com/upload',authorizationToken:'upload-token'});
+      if(url.pathname.endsWith('b2_list_file_versions'))return Response.json({files:[{fileName:key,fileId:'version',action:'upload',bucketId:env.B2_BUCKET_ID}],nextFileName:null});
+      throw new Error('Unexpected request');
+    });
+    await assert.rejects(operation(env),e=>e.code==='storage_redirect_refused'&&e.status===502);
+    assert.ok(requests.at(-1).pathname.includes(target));
+  }
+});

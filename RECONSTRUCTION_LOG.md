@@ -43,6 +43,49 @@ entry below. No existing remote history has been overwritten.
 
 Implementation and audit results are appended as work completes.
 
+## 2026-10-15 — Continuous image-focus position preservation
+
+- Fixed image-focus return in `reader/image-focus.js` and connected it to the
+  active rendition/flow in `reader/app.js`. The overlay now captures the live
+  Continuous content anchor and inner-frame scroll offsets before opening.
+- Closing with X, desktop double-click, touch return or Escape restores the
+  passage through the existing mutation-free Continuous geometry helper. It
+  does not call `display()` or `currentLocation()` or reload saved progress.
+  Restoration covers focus movement and the next paint; chapter buffering can
+  change absolute scroll offsets without losing the visible passage.
+- Fixed the cleared asynchronous focus-return target. Pending focus/restoration
+  callbacks are invalidated when Reader resets input for navigation or a flow
+  switch, and old snapshots cannot move a replacement rendition.
+- Added seven regression tests for close controls, nested scrolling, buffering,
+  touch compatibility clicks and
+  navigation cancellation, plus desktop/mobile browser scenarios using an
+  original generated EPUB and the real recovered Reader layout and runtime.
+- Local asset audit, all 70 backend/client tests, static build and Functions
+  compilation pass. The old focus implementation fails the new position-return
+  regressions. All 20 Playwright desktop/mobile cases pass in GitHub CI run
+  `38734664627`, including the real EPUB layout, zoom/pan, both close paths,
+  repeated image visits and chapter expansion. Chromium ran in CI because its
+  download was unavailable locally.
+- The owner explicitly authorized GitHub publication, Cloudflare browser checks
+  and deployment on 2026-10-15, resolving the earlier automatic approval blocks.
+  Local checks were repeated successfully. Cloudflare's standalone browser
+  requests did not return a result, so browser verification completed in GitHub
+  CI. Published to `skypie0102/ShadowGarden` on `deploy/shadowgarden-bon`;
+  production remains the existing `shadowgarden` Pages project.
+- The first GitHub browser run passed all desktop scenarios and 18/20 cases.
+  Mobile traces exposed an opening-touch compatibility click dismissing the
+  overlay, plus a test using mouse input on the touch device. Added a short
+  opening-click guard and its client regression; the mobile pan now uses native
+  touch events. The complete rerun passed before production deployment.
+- Deployed verified source `9daea7f481ae1f19cc3d0640b83b20d424eab794` to the existing
+  `shadowgarden` Pages project on 2026-10-15 at 12:31 UTC. Production deployment
+  `dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33` serves the original hostname.
+- Live browser checks confirm the version commit and byte-identical hashes for
+  both changed reader modules. The homepage, reader page, Keeper/public login
+  challenges and both current D1 catalogs return 200. The main catalog is empty
+  and the adult catalog contains one series. No secrets, bindings, B2 objects or
+  catalog records were modified by this reader fix or its verification.
+
 ## 2026-09-23 — backend reconstruction
 
 - Implemented all 15 observed routes, with method restrictions, JSON errors,
@@ -378,3 +421,208 @@ Apply all migrations, including 0002, before deployment; supply scoped B2
 list/delete capabilities for explicit cleanup. No production deployment,
 remote database mutation or live B2 deletion was performed. The documentation
 commit following be25028 records this verified outcome without changing code.
+
+## Existing Cloudflare secret names — 2026-10-01
+
+The owner supplied a Variables and Secrets screenshot containing four `SG_*`
+security names and separate B2 read/write key pairs. Values remain encrypted.
+Prepared `fix/existing-cloudflare-secrets` from `f8cc6c6` to accept those names
+without changing the live deployment or main. Canonical reconstruction names
+remain supported with explicit precedence. B2 downloads use the read pair;
+uploads and cleanup use the write pair. Partial pairs fail closed; authorization
+failures never fall back to the opposite role. Cache tests cover rotation and
+changed bucket restrictions.
+
+Local `npm run check` passes all 53 backend/client cases, recovered-asset audit,
+static build and Functions compilation. Six new regression tests use isolated
+SQLite and mocked providers. No browser assets, routes or migrations changed;
+148 recovered files remain, 139 byte-identical with nine documented adaptations.
+The compatibility branch's GitHub Actions run supplies the follow-up browser
+check; the previous production-reconstruction checkpoint remains recorded above.
+
+Updated the example configuration, deployment guide and API contracts. The
+screenshot does not show the replacement's independent `SESSION_SECRET`, B2
+bucket name/ID or D1 `DB` binding. Secret lengths and provider permissions are
+unverified. Next obtain the non-secret binding inventory and configure an
+isolated test deployment before considering a production switch. No account
+secrets, remote database state or live storage objects were modified.
+
+## Isolated test database supplied — 2026-10-01
+
+The owner showed the live Production bindings list as empty, then created D1
+`shadowgarden-test` with ID `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86`. Its overview
+showed zero tables and zero queries. Prepared `deploy/shadowgarden-test` from
+compatibility commit `368b6e1` with that database bound as `DB`. This branch has
+test-only resource configuration; main and compatibility PR #1 remain separate.
+
+Added Windows initialization steps using tracked Wrangler migrations and the
+empty seed, plus the later separate Pages/B2/Turnstile setup. No remote database
+operation, Cloudflare deployment, secret change or B2 operation was performed.
+The supplied D1 ID is a resource identifier, not a credential. Actual migration
+execution and provider integration remain unverified until the owner runs setup.
+
+Validated the exact resource fields, both migrations and the empty-library
+verification query in isolated SQLite. The pinned Wrangler Pages Functions
+compiler passes with this configuration. No application code changed.
+
+## Test database initialized by owner — 2026-10-02
+
+The owner supplied Wrangler 4.136.3 output identifying the intended D1 UUID and
+showing successful remote application of `0001_reconstructed.sql` and
+`0002_media_purge.sql`. The subsequent empty seed processed one query and wrote
+one row. This confirms test database initialization from owner-provided output;
+no independent remote SELECT was performed here.
+
+PowerShell had blocked `npm.ps1` despite Administrator mode. Switching the guide
+to `npm.cmd` and `npx.cmd` allowed setup without changing the execution policy.
+Updated the test guide with the completed initialization, exact new Pages build
+settings, and expected initial credential-configuration state. Test commit
+`1811668` already passed all 53 backend/client and 14 browser checks in Actions
+run `36844551820`. This follow-up changes documentation only. The new test Pages
+project and real B2/Turnstile checks remain next; main and the live project are
+unchanged by this work.
+
+## Test Pages and Keeper confirmed; B2 authorization updated — 2026-10-02
+
+The owner deployed `shadowgarden-test.pages.dev`, entered the security secrets,
+and successfully retried deployment. Independent HTTP checks confirmed the
+empty D1 catalogs, then 200 responses from both challenge endpoints with their
+expected actions. The owner reported that Keeper opened normally. Secret values
+were never collected. Test B2 upload/read, media signing, backup/restore and
+cleanup remain pending separate disposable storage.
+
+While preparing B2 setup, current provider documentation confirmed that
+bucket-group application keys require v4 authorization and fail against v2.
+Updated the backend to v4, reading endpoints/restrictions from
+`apiInfo.storageApi` and verifying the configured bucket against `allowed.buckets`.
+Legacy keys are supported by the provider's v4 endpoint. Invalid/missing
+authorization data, mismatched buckets and untrusted endpoints fail before
+storage operations; existing role separation and cache rotation checks remain.
+
+All 57 local backend/client tests pass, including four new compatibility/error
+cases. Existing upload, reader, recovery and purge tests now use v4 provider
+fixtures. Asset audit, static build and Pages Functions compilation pass.
+Updated deployment/API/audit documentation and the completed test setup status.
+No browser assets, schema, test resource identifiers or production configuration
+changed. This fix is prepared on the isolated `deploy/shadowgarden-test` branch.
+
+## Existing production takeover prepared — 2026-10-02
+
+The owner explicitly authorized replacing `shadowgarden-bon.pages.dev` and
+reusing the existing private B2 bucket, instead of creating another bucket.
+Cloudflare access confirmed that the Pages project name is `shadowgarden`, all
+eight original encrypted variables remain configured, and its original Git
+repository is `shdwmnrchbks/ShadowGarden`. Cloudflare ignored a source-repository
+change through the API; automatic production/preview builds from that old
+repository are now paused. The previous production deployment is recorded in
+`docs/PRODUCTION_TAKEOVER.md` for rollback.
+
+Read-only D1 queries independently confirmed both migrations and the empty
+revision-0 library. Prepared `deploy/shadowgarden-bon` with the real project
+name, existing bucket name/ID and initialized D1 binding. This reuses the same
+database as the test Pages project, so test writes must now be treated as live
+data changes. No B2 files are deleted by this configuration change.
+
+Static build and Pages Functions compilation pass with the production config;
+the backend remains the version already covered by 57 backend/client tests and
+14 browser tests. Production deployment and live checks follow this preparation.
+
+## Production deployed; B2 runtime failure corrected — 2026-10-02
+
+Deployed commit `26bacb7` into the existing Pages project `shadowgarden` as
+production deployment `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`. It serves the original
+`shadowgarden-bon.pages.dev` URL. All original secrets were preserved and the
+missing independent session secret was generated securely in Cloudflare. Live
+checks confirmed the new version, homepage, both challenge endpoints and empty
+D1 catalogs. The existing Turnstile widget already allows the original hostname.
+
+Paused the orphaned Workers build configuration after confirming the account has
+no Worker scripts. This fixes future unrelated failed build notices while Pages
+continues serving normally.
+
+A public, read-only missing-cover probe returned `storage_unavailable`. The
+cause was `redirect: 'error'`, rejected by workerd before network access. Replaced
+it with manual redirects and explicit rejection of all 3xx responses. A local
+Cloudflare runtime reproduced the old 502 with zero provider requests, then
+served fixture bytes and rejected a redirect with the fix. All 59 backend/client
+tests pass, including two added regression cases covering provider redirects.
+No real B2 file was created or deleted during this diagnosis. Corrected
+production deployment and live storage verification follow this commit.
+
+## Storage correction deployed after connector interruption — 2026-10-03
+
+The GitHub write never completed. Its eventual error reported that the tool
+catalog changed after the call was prepared, despite owner approval. The remote
+branch and production site were independently rechecked and still used `26bacb7`.
+
+Deployed the already-tested Functions bundle directly to the existing Pages
+project as `f8844be0-ae68-4e72-969d-c0812f03109d`, with `commit_dirty: true` and a
+message recording the pending GitHub sync. Cloudflare confirmed production
+success at 00:39 UTC. The homepage, both challenge endpoints and D1 catalog pass.
+The live B2 missing-cover probe now returns the expected `media_not_found` 404,
+confirming provider authorization and read lookup work with the original keys.
+No B2 objects were created or deleted. Real Keeper upload, protected reader and
+write/delete permissions remain to be verified with the owner's login.
+
+## Keeper login credential compatibility — 2026-10-03
+
+The owner reported that Keeper login failed with "Server security is not
+configured." Production had all required secret names and the session/Turnstile
+challenge worked; the protected library endpoint failed the administrator-token
+configuration gate. This gate reused the signing-key helper and rejected an
+existing login token shorter than 32 characters.
+
+The login credential is now checked for nonempty text and still compared exactly
+using the independent session HMAC key. Signing-key length requirements,
+Turnstile, rate limits, and session validation remain enforced. Missing or blank
+login credentials fail during the initial admin challenge and before counting
+a login attempt. All 61 backend/client tests pass, including added complete
+legacy-token login/session and fail-closed configuration cases. Secret values
+were neither inspected nor changed. Production redeployment follows this fix.
+
+## B2 upload endpoint compatibility — 2026-10-03
+
+The owner confirmed login after deployment `12b99509-604b-4566-a0eb-330864686b27`
+and reported that uploads still failed. Read-only production checks confirmed
+the intended bucket and secret names, an upload reservation after EPUB validation
+and the B2 read check, and no catalog insertion.
+
+The storage URL validator incorrectly rejected Backblaze's documented
+`pod-*.backblaze.com` upload servers. Reproduced the 502 with fake credentials
+in both a regression test and the pinned Cloudflare runtime. Allowed those HTTPS
+pods only for provider-issued upload URLs, retaining separate API/download host
+checks, exact returned paths/queries, and refusal of redirects and unsafe URLs.
+The same runtime then completed the fixture upload. All 63 backend/client tests
+pass; upload/catalog fixtures now use realistic pod hosts. Existing B2 secrets,
+bucket settings and objects were unchanged. Production deployment and the
+owner's authenticated upload retry follow this correction.
+
+## Reader refactor — first milestone verified — 2026-10-15
+
+Created `refactor/reader-foundation` from the deployed reader source and recorded
+the phased plan, invariants, ownership map and issue register in
+`docs/READER_REFACTOR_ROADMAP.md`. The first milestone replaces six global
+`window.ePub` wrappers with explicit ordered extensions and one application
+engine API. Initialization is idempotent and rejects unsupported runtime shapes
+before installing integration behavior. The recovered vendor bundles are
+unchanged; manager compatibility remains inside the integration boundary.
+
+Ten new browser cases exercise the production reader HTML, authorization client,
+bootstrap, full extension stack and UI with generated original EPUBs and isolated
+network fixtures. These exposed and verified fixes for skipped external SVG
+artwork, iframe hash scrolling that undid internal-link navigation, and fragment
+CFIs with element/text offset mismatches. Removed duplicate legacy TOC capture
+and routed internal links through the app's active navigation owner. Seek,
+relayout, resume and lifecycle consolidation remain later milestones.
+
+Source `5d3856ecf7000fa47714a5e38df0445d2e8f74e9` passes all 79 Node tests and
+30 desktop/mobile Chromium browser cases in clean GitHub Actions run
+`38743863205`, plus the recovered-asset audit, static build and Pages Functions
+compilation. Broader browser engines, mid-passage reflow and lifecycle cases are
+explicitly tracked rather than claimed as covered. The temporary CI runtime
+export used to debug the restricted local environment has been removed.
+
+The milestone is in draft PR #2, targeting `deploy/shadowgarden-bon`. It is not
+merged or deployed. No production storage, database, secrets or Cloudflare
+settings changed during this refactor. `docs/READER_ARCHITECTURE.md` describes
+the current engine boundary and remaining compatibility bridges.

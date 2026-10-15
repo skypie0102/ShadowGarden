@@ -2,7 +2,7 @@
 import { createAuthorizedBookSession, finalizeBookSession } from "./reader/book-session.js";
 import { startReader } from "./reader/app.js";
 import { showReaderFailure } from "./reader/error-presentation.js";
-import { installEpubLifecyclePatch } from "./reader/epub-lifecycle.js";
+import { initializeReaderEngine } from "./reader/engine.js";
 import { installReaderInteractionController } from "./reader/interaction-controller.js";
 import { urls } from "./domain/index.js";
 import "./reader/image-focus-touch-compat.js";
@@ -18,7 +18,7 @@ function visualPreparationFailure(){
 (async()=>{
   let session=null;
   try{
-    if(!installEpubLifecyclePatch())throw new Error("Unsupported EPUB.js runtime for Reader lifecycle compatibility patch");
+    initializeReaderEngine();
     session=await createAuthorizedBookSession();
     if(!session)return;
     const preparationFailure=visualPreparationFailure();

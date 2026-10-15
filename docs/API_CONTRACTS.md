@@ -103,6 +103,32 @@ totals do not inherit the panel's display limit or load older document payloads.
 - No automatic expiry of media objects or snapshots. Only explicitly requested
   Trash cleanup deletes media. Uncataloged orphan uploads are not swept.
 
+## Deployment configuration compatibility
+
+`ADMIN_TOKEN`, `BOOK_SIGNING_SECRET`, `TURNSTILE_SITE_KEY` and
+`TURNSTILE_SECRET_KEY` accept the owner's corresponding aliases
+`SG_ADMIN_TOKEN`, `SG_MEDIA_SIGNING_SECRET`, `SG_TURNSTILE_SITE_KEY` and
+`SG_TURNSTILE_SECRET_KEY`. An explicitly defined canonical setting takes
+precedence, including an empty or invalid value. Keeper's login token must be a
+nonempty string and is compared exactly; it is not used as a signing key.
+`SESSION_SECRET` and `BOOK_SIGNING_SECRET` still require at least 32 characters.
+`SESSION_SECRET` is independent and has no alias or fallback. The admin challenge
+checks that a login credential is configured, and a missing credential fails
+before consuming a login attempt.
+
+B2 GET/HEAD requests use `B2_READ_KEY_ID` / `B2_READ_APPLICATION_KEY`; uploads
+and cleanup list/delete requests use `B2_WRITE_KEY_ID` / `B2_WRITE_APPLICATION_KEY`.
+For each role, the shared `B2_APPLICATION_KEY_ID` / `B2_APPLICATION_KEY` pair is
+used only if neither role-specific variable is defined. Partial role pairs fail
+closed; read failures never escalate to write credentials. Authorization tokens
+are cached separately by role/key ID, invalidated on key rotation, and checked
+against the configured bucket restriction on both fresh and cached responses.
+`B2_BUCKET_ID` and `B2_BUCKET_NAME` remain explicit requirements.
+
+Storage requests use `redirect: 'manual'`, supported by Cloudflare's workerd
+runtime. Every 3xx response fails with `storage_redirect_refused` (HTTP 502);
+credentials and uploaded bytes are never forwarded to a redirect destination.
+
 ## Permanent Trash purge and cleanup
 
 `POST /admin-api/maintenance` with `{action:"purge-trash",ids:[...]}` requires
@@ -146,9 +172,14 @@ permissions and provider retention locks remain visible, retryable failures.
 
 ## Fidelity limits
 
-The native B2 v2 API is used for authorization/download/upload; original provider
-API choice is unknown. The B2 key needs bucket/prefix-scoped read/write access;
-Trash cleanup additionally needs `listFiles` and `deleteFiles`. Admin uploads check
+The native B2 v4 API is used for authorization, including the nested
+`apiInfo.storageApi` endpoints and `allowed.buckets` restrictions. It supports
+legacy keys and current bucket-group keys; cached authorization rechecks the
+configured bucket ID and any known name. Upload preparation, version listing and
+deletion retain their v2 operations; downloads use the authorized download URL.
+The original provider API choice is unknown. B2 keys need bucket/prefix-scoped access: `readFiles` for
+the read pair and `writeFiles` for the write pair. Trash cleanup additionally
+needs `listFiles` and `deleteFiles` on the write pair. Admin uploads check
 ZIP structure and expansion bounds but do not replace a full EPUBCheck audit.
 
 D1 holds private mappings and catalog revisions. The seed contains no invented

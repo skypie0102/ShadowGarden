@@ -1,4 +1,112 @@
-# Reconstruction audit — updated 2026-09-28
+# Reconstruction audit — updated 2026-10-03
+
+## B2 upload pod compatibility — 2026-10-03
+
+The owner confirmed production Keeper login and then reported an upload failure.
+A read-only D1 check showed one upload reservation at 11:30 UTC, an empty catalog,
+and no active upload lease. The request had passed EPUB validation and the B2
+read/existence check, narrowing the failure to the write step.
+
+The provider URL validator allowed only `*.backblazeb2.com`, but Backblaze's
+[upload URL API](https://www.backblaze.com/apidocs/b2-get-upload-url) returns
+`pod-*.backblaze.com`. Both a regression test and the pinned Cloudflare runtime
+reproduced `storage_error` before the upload POST. The corrected validator
+permits HTTPS pod hosts only for upload URLs; account/download credentials
+remain restricted to their existing hosts. Lookalike domains, unrelated
+Backblaze hosts, URL credentials, nonstandard ports, HTTP and redirects are
+still rejected before upload credentials or bytes can reach them.
+
+All 63 backend/client tests pass, including documented upload URL formats,
+unsafe endpoint rejection, upload-pod redirects and complete upload/catalog
+fixtures using a realistic pod hostname. The Cloudflare runtime completed the
+mocked upload with the expected bytes, content length and upload-specific token.
+No real B2 object was created or deleted, and no secrets or bucket settings were
+changed. A live authenticated retry remains the final provider integration check.
+
+## Existing Keeper credential compatibility — 2026-10-03
+
+The owner reported `security_not_configured` when logging into production.
+Read-only checks showed a working session/Turnstile challenge and configured
+`SG_ADMIN_TOKEN`, while the protected library endpoint failed the admin-token
+configuration gate. The reconstruction had applied its 32-character HMAC key
+minimum to the existing login credential even though an independent session
+key signs the comparison.
+
+Separated credential validation from signing-key validation. Keeper preserves
+the exact nonempty stored token, including existing shorter credentials. Empty,
+whitespace-only and non-string values still fail closed; canonical overrides
+remain explicit. Session/media signing keys retain their length checks. The
+admin challenge now validates credential presence, and configuration errors
+are rejected before counting failed login attempts.
+
+All 61 backend/client tests pass. Added full login/session checks for an existing
+shorter token, wrong-token and failed-Turnstile rejection, and invalid-credential
+configuration checks. No stored secret was read, changed or rotated.
+
+## Production takeover and storage runtime correction — 2026-10-02
+
+The owner authorized taking over `shadowgarden-bon.pages.dev` using its existing
+secrets and B2 bucket. Production deployment `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`
+served commit `26bacb7`. Live HTTP checks verified the homepage, version, both
+Turnstile challenge endpoints and empty D1 catalogs. All eight original secrets
+were retained; an independent `SESSION_SECRET`, D1 binding and bucket variables
+were added. See `PRODUCTION_TAKEOVER.md` for the exact resources and rollback.
+
+A real storage probe exposed a runtime compatibility bug: workerd rejects
+`redirect: 'error'` before contacting B2. Node fetch mocks had not exposed this.
+The pinned Cloudflare runtime reproduced the old 502 with zero provider calls.
+The fix uses `manual` and explicitly rejects every 3xx response without following
+the destination. The same runtime then served fixture media and refused a 307.
+All 59 backend/client tests pass, including authorization and file-operation
+redirect guards. On 2026-10-03, corrected production deployment
+`f8844be0-ae68-4e72-969d-c0812f03109d` passed the live read-only B2 probe: provider
+authorization and a missing-object lookup now return the expected 404. Actual
+EPUB upload/read and real write/delete permissions still require Keeper checks.
+
+The orphaned Workers build configuration was confirmed to reference a deleted
+Worker. Its previews are disabled and production builds exclude all paths;
+Pages deployment configuration is independent of this cleanup.
+
+## Test deployment and B2 authorization compatibility — 2026-10-02
+
+The isolated Pages project now serves the initialized empty D1 catalogs.
+After the owner configured security and redeployed, independent HTTP checks
+confirmed both challenge endpoints return 200. The owner confirmed Keeper
+login opens normally. Actual B2 upload/read, media signing and cleanup remain
+pending the separate test bucket and credentials.
+
+Changed B2 authorization from v2 to v4 so current bucket-group keys work along
+with legacy keys. Nested provider endpoints and returned bucket restrictions
+are validated before storage operations. Malformed authorization fails closed;
+the split credentials, rotation checks and exact-version cleanup remain intact.
+All 57 local backend/client tests, asset audit, build and Functions compilation
+pass. Four additional cases cover bucket groups/unrestricted responses,
+bucket mismatches, malformed responses and untrusted nested endpoints. Existing
+upload, reader, recovery and cleanup fixtures now use the documented v4 shape.
+No browser assets, database schema, live project settings or B2 objects changed.
+
+## Existing deployment configuration compatibility — 2026-10-01
+
+The owner supplied the eight encrypted variable names already configured in
+Cloudflare. Added aliases for the four `SG_*` security settings and separate B2
+read/write credential selection. Reads never retry with write credentials,
+partial role pairs fail closed, canonical overrides remain explicit, and cached
+B2 authorization rechecks bucket restrictions and credential rotation.
+
+Local `npm run check` passes all 53 backend/client tests, the recovered-asset
+audit, static build and Pages Functions compilation. Six new regression tests
+cover actual login/book-access handlers, precedence/strength checks, split B2
+operations, partial pairs, rotation/bucket changes and denied read authorization.
+No browser assets or schema changed. The previous verified fourteen browser
+cases are recorded below; the compatibility branch's Actions run checks them
+again before adoption.
+
+This change is prepared on `fix/existing-cloudflare-secrets`, separately from
+main and the live deployment. No Cloudflare settings, secret values, remote
+database records or B2 objects were changed. The screenshot does not establish
+the presence of `SESSION_SECRET`, bucket identifiers or `DB`, nor the secret
+lengths, B2 permissions or live provider compatibility. Follow the deployment
+guide with separate test resources before switching production traffic.
 
 ## Scope and outcome
 
@@ -24,7 +132,7 @@ production equivalence or complete private-data recovery**.
 | Manual visual review | Established public/recovery views plus four new purge/recovery-control captures reviewed; latest run 36375221866; scope below |
 | Original EPUB rendering | Out of scope: owner confirmed disposable test data; original files are not a recovery gate |
 | Pages/D1 runtime | HTTPS Pages Functions and local D1 verified in CI; this workspace's preview still fails on interface enumeration |
-| Live Cloudflare/B2/Turnstile integration | Unverified: original bindings, credentials and private data unavailable |
+| Live provider integration | Isolated Pages/D1 and owner-reported Keeper login confirmed; B2/media flows pending |
 | Remote Git commit/push | Reconstruction and browser fixes published to skypie0102/ShadowGarden main; remote Git trees checked against local source |
 
 ## Defects found and fixed during reconstruction

@@ -2,13 +2,20 @@
 
 Repository: https://github.com/skypie0102/ShadowGarden
 
+Reader work follows the [phased refactor roadmap](docs/READER_REFACTOR_ROADMAP.md).
+The `refactor/reader-foundation` branch is based on `deploy/shadowgarden-bon`;
+its Wrangler configuration references existing production resources. Automated
+browser tests create an isolated local project/database. Use the
+[production guide](docs/PRODUCTION_TAKEOVER.md) for the existing site and the
+[test guide](docs/TEST_DEPLOYMENT.md) for a separately configured test project.
+
 This repository reconstructs the 2.11.0 Cloudflare Pages deployment from the
 supplied recovery archives. The recovered browser app is retained, with a new
 backend derived from its request/response contracts. It is **not the original
 lost repository or Git history**.
 
-148 deployed files were recovered. Of those, 139 remain byte-identical; nine browser
-scripts have documented compatibility/safety changes. The archive contains one
+148 deployed files were recovered. `npm run audit` reports the current
+byte-identical files and documented changes. The archive contains one
 cataloged series, five opaque book IDs and ten cover images. The owner confirmed that the five EPUBs were disposable test data; their absence
 is not a reconstruction blocker. Original server source and production credentials
 were not in the archive. The backend is a documented replacement.
@@ -56,8 +63,10 @@ developer database, or remote resources. It checks public navigation, the adult
 gate, missing-book errors, admin edits/conflicts, trash restore/purge, cleanup continuation, damaged
 snapshots and recovery of a damaged live catalog. Fault injection is restricted
 to that disposable fixture database; the application has no test bypass. Admin
-tests seed a signed test session; live Turnstile, B2 and actual EPUB reading remain
-separate integration checks. GitHub Actions runs both test suites and retains
+tests seed a signed test session. Production-entry reader tests run the actual
+startup and complete integration stack with original generated EPUBs and mocked
+ticket/media network responses. Live Turnstile and B2 remain separate integration
+checks. GitHub Actions runs both test suites and retains
 the browser report for seven days. Reports also include successful-page captures
 of the public screens, Keeper editor and recovery states for desktop/mobile review.
 
@@ -103,6 +112,11 @@ Apply **all D1 migrations, including `0002_media_purge.sql`, before upgrading**.
 Media cleanup requires B2 `listFiles` and `deleteFiles` capabilities in addition
 to the existing read/write access. Keeper shows failed or protected cleanup jobs
 without claiming their files were deleted.
+
+The owner's existing `SG_*` security names and separate `B2_READ_*` / `B2_WRITE_*`
+credential pairs are supported. Keep those names; the replacement also needs an
+independent `SESSION_SECRET`, explicit B2 bucket identifiers and the new `DB`
+binding. The deployment guide explains precedence, permissions and test setup.
 
 See [RECONSTRUCTION_LOG.md](RECONSTRUCTION_LOG.md),
 [the API contracts](docs/API_CONTRACTS.md), [deployment steps](docs/DEPLOYMENT.md),

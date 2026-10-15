@@ -125,7 +125,7 @@ test('book tickets are bound to exact active objects and support reader cookie f
   const response=await call(bookAccess,context(env,'/book-access','POST',{bookId},{cookie:`${HUMAN_COOKIE}=${human}`}));assert.equal(response.status,200);
   const ticket=await response.json(),cookie=response.headers.get('set-cookie').split(';')[0];
   Object.assign(env,{B2_APPLICATION_KEY_ID:'test-id',B2_APPLICATION_KEY:'test-key',B2_BUCKET_ID:'test-bucket',B2_BUCKET_NAME:'garden'});
-  t.mock.method(globalThis,'fetch',async(url,options)=>String(url).includes('b2_authorize_account')?Response.json({apiUrl:'https://api.example.backblazeb2.com',downloadUrl:'https://download.example.backblazeb2.com',authorizationToken:'private-provider-token'}):new Response(options.method==='HEAD'?null:'epub-bytes',{headers:{'content-type':'application/epub+zip','x-bz-private':'secret'}}));
+  t.mock.method(globalThis,'fetch',async(url,options)=>String(url).includes('b2_authorize_account')?Response.json({authorizationToken:'private-provider-token',apiInfo:{storageApi:{apiUrl:'https://api.example.backblazeb2.com',downloadUrl:'https://download.example.backblazeb2.com',allowed:{buckets:[{id:'test-bucket',name:'garden'}]}}}}):new Response(options.method==='HEAD'?null:'epub-bytes',{headers:{'content-type':'application/epub+zip','x-bz-private':'secret'}}));
   const bytes=await call(media,context(env,'/media/'+key,'GET',undefined,{cookie}));assert.equal(bytes.status,200);assert.equal(await bytes.text(),'epub-bytes');assert.equal(bytes.headers.get('x-bz-private'),null);assert.equal(bytes.headers.get('cache-control'),'private, no-store');
   assert.equal((await call(media,context(env,ticket.url))).status,200);
   assert.equal((await call(media,context(env,'/media/'+key))).status,403);

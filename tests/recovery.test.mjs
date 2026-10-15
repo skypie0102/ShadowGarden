@@ -20,7 +20,7 @@ function provider(t,env,objects) {
   Object.assign(env,{B2_APPLICATION_KEY_ID:crypto.randomUUID(),B2_APPLICATION_KEY:'fixture-key',B2_BUCKET_ID:'fixture-bucket',B2_BUCKET_NAME:'garden'});
   const seen=[];
   t.mock.method(globalThis,'fetch',async(url,options)=>{
-    if(String(url).includes('b2_authorize_account'))return Response.json({apiUrl:'https://api.example.backblazeb2.com',downloadUrl:'https://download.example.backblazeb2.com',authorizationToken:'fixture-provider-token'});
+    if(String(url).includes('b2_authorize_account'))return Response.json({authorizationToken:'fixture-provider-token',apiInfo:{storageApi:{apiUrl:'https://api.example.backblazeb2.com',downloadUrl:'https://download.example.backblazeb2.com',allowed:{buckets:[{id:'fixture-bucket',name:'garden'}]}}}});
     assert.equal(options.method,'HEAD');
     const key=new URL(url).pathname.slice('/file/garden/'.length);seen.push(key);
     return new Response(null,{status:objects.has(key)?200:404});

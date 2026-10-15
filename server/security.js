@@ -1,4 +1,5 @@
 import {bodyJson, fail, json, method, sameOrigin} from './http.js';
+import {setting} from './config.js';
 const encoder = new TextEncoder();
 export const now = () => Math.floor(Date.now() / 1000);
 export const ADMIN_COOKIE = '__Host-sg_admin';
@@ -9,8 +10,9 @@ export async function digest(value) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', typeof value === 'string' ? encoder.encode(value) : value))].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 function secret(env, name) {
-  if (typeof env[name] !== 'string' || env[name].length < 32) fail(503, name === 'BOOK_SIGNING_SECRET' ? 'ticketing_not_configured' : 'security_not_configured', 'Server security is not configured.');
-  return env[name];
+  const value=setting(env,name);
+  if (typeof value !== 'string' || value.length < 32) fail(503, name === 'BOOK_SIGNING_SECRET' ? 'ticketing_not_configured' : 'security_not_configured', 'Server security is not configured.');
+  return value;
 }
 async function hmacKey(value) { return crypto.subtle.importKey('raw', encoder.encode(value), {name:'HMAC', hash:'SHA-256'}, false, ['sign','verify']); }
 export async function signed(env, kind, claims, ttl, keyName = 'SESSION_SECRET') {
@@ -35,8 +37,15 @@ export function cookie(name, value, ttl, path = '/') {
   return `${name}=${value}; Path=${path}; Max-Age=${ttl}; HttpOnly; Secure; SameSite=Strict`;
 }
 export function database(env) { if (!env.DB) fail(503,'database_not_configured','The reconstructed database binding is not configured.'); return env.DB; }
+function adminCredential(env) {
+  // Keeper's existing token is a login credential, not an HMAC signing key.
+  // Preserve its exact value; the independent SESSION_SECRET signs comparisons.
+  const expected = setting(env, 'ADMIN_TOKEN');
+  if (typeof expected !== 'string' || !expected.trim()) fail(503,'security_not_configured','The Keeper admin token is not configured.');
+  return expected;
+}
 export async function checkAdminToken(env, token) {
-  const expected = secret(env, 'ADMIN_TOKEN');
+  const expected = adminCredential(env);
   const key = await hmacKey(secret(env,'SESSION_SECRET'));
   const expectedMac = await crypto.subtle.sign('HMAC',key,encoder.encode(expected));
   return crypto.subtle.verify('HMAC',key,expectedMac,encoder.encode(String(token || '')));
@@ -52,8 +61,9 @@ export async function requireAdmin(context) {
 }
 export function challenge(context, action) {
   secret(context.env,'SESSION_SECRET');
-  if (!context.env.TURNSTILE_SITE_KEY || !context.env.TURNSTILE_SECRET_KEY) fail(503,'human_verification_unavailable','Human verification is not configured.');
-  return {siteKey:context.env.TURNSTILE_SITE_KEY, action};
+  const siteKey=setting(context.env,'TURNSTILE_SITE_KEY');
+  if (!siteKey || !setting(context.env,'TURNSTILE_SECRET_KEY')) fail(503,'human_verification_unavailable','Human verification is not configured.');
+  return {siteKey, action};
 }
 export async function turnstile(context, token, action) {
   challenge(context, action);
@@ -62,7 +72,7 @@ export async function turnstile(context, token, action) {
   try {
     const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method:'POST', headers:{'content-type':'application/json'}, signal:AbortSignal.timeout(10000),
-      body:JSON.stringify({secret:context.env.TURNSTILE_SECRET_KEY, response:token,
+      body:JSON.stringify({secret:setting(context.env,'TURNSTILE_SECRET_KEY'), response:token,
         remoteip:context.request.headers.get('cf-connecting-ip') || undefined})
     });
     if (!response.ok) throw new Error('Siteverify failed'); result = await response.json();
@@ -96,12 +106,17 @@ export async function rateLimit(context, scope, max = 10, windowSeconds = 600) {
 export async function adminAccess(context) {
   const {request,env} = context;
   method(request,['GET','POST','DELETE']); sameOrigin(request);
-  if (request.method === 'GET') return json(challenge(context,'admin_access'));
+  if (request.method === 'GET') {
+    adminCredential(env);
+    return json(challenge(context,'admin_access'));
+  }
   if (request.method === 'DELETE') {
     const session = await verified(env,cookies(request)[ADMIN_COOKIE],'admin');
     if (session) await database(env).prepare('DELETE FROM admin_sessions WHERE id = ?').bind(session.sid).run();
     return json({ok:true},200,{'set-cookie':cookie(ADMIN_COOKIE,'',0)});
   }
+  // Configuration errors are not failed login attempts.
+  adminCredential(env);
   const body = await bodyJson(request,8192);
   await rateLimit(context,'admin',5,600);
   await turnstile(context,body.turnstileToken,'admin_access');

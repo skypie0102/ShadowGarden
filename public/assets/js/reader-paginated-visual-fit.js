@@ -6,9 +6,7 @@
  * Paginated view for visual-only spine items: one viewport-wide iframe, one viewport-high
  * frame, centered contained image, and no intra-page CFI scrolling.
  */
-(()=>{
-  const baseEpub=window.ePub;
-  if(typeof baseEpub!=="function")return;
+export function createPaginatedVisualFitExtension(){
 
   const EDGE_INSET=18;
 
@@ -279,8 +277,5 @@
     return book;
   }
 
-  function wrappedEpub(...args){return patchBook(baseEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,baseEpub)}catch{}
-  try{wrappedEpub.prototype=baseEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-})();
+  return {name:"paginated-visual-fit",attachBook:patchBook};
+}

@@ -8,9 +8,7 @@
  * Visible views are actively repaired/re-shown instead of relying on a no-op update(), so a
  * partially prepared iframe cannot remain as a permanent blank shell after first open.
  */
-(()=>{
-  const baseEpub=window.ePub;
-  if(typeof baseEpub!=="function")return;
+export function createContinuousCoreExtension(){
 
   const BUFFER_EACH_SIDE=4;
   const MAX_RETAINED_VIEWS=12;
@@ -574,8 +572,5 @@
     return book;
   }
 
-  function wrappedEpub(...args){return patchBook(baseEpub.apply(this,args))}
-  try{Object.assign(wrappedEpub,baseEpub)}catch{}
-  try{wrappedEpub.prototype=baseEpub.prototype}catch{}
-  window.ePub=wrappedEpub;
-})();
+  return {name:"continuous-core",attachBook:patchBook};
+}
