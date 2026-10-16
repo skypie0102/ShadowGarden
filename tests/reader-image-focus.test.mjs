@@ -5,7 +5,7 @@ import {beginRenditionNavigation} from '../public/assets/js/reader/navigation-st
 import {captureRenditionPosition} from '../public/assets/js/reader/rendition.js';
 import {createReaderResumeController} from '../public/assets/js/reader/resume-controller.js';
 
-function fixture(t,{finePointer=true}={}){
+function fixture(t,{finePointer=true,visualOnly=false}={}){
   const frames=[];
   function element(){
     const node=new EventTarget(),classes=new Set();
@@ -19,9 +19,10 @@ function fixture(t,{finePointer=true}={}){
   const root=element(),frame=element(),wrapper=element(),paragraph=element();
   wrapper.parentElement=container;frame.parentElement=wrapper;
   frame.getBoundingClientRect=()=>({top:54+origin-container.scrollTop-wrapper.scrollTop,left:0,width:800,height:14000});
-  const doc={scrollingElement:root,defaultView:{frameElement:frame},querySelectorAll:()=>[paragraph],
+  const doc={scrollingElement:root,defaultView:{frameElement:frame},
+    querySelectorAll:selector=>!visualOnly||selector.includes('.sg-synthetic-visual-page')?[paragraph]:[],
     elementFromPoint:()=>paragraph,createRange:()=>({selectNodeContents(){},getBoundingClientRect:()=>paragraph.getBoundingClientRect()})};
-  paragraph.ownerDocument=doc;paragraph.closest=()=>paragraph;
+  paragraph.ownerDocument=doc;paragraph.closest=selector=>!visualOnly||selector.includes('.sg-synthetic-visual-page')?paragraph:null;
   paragraph.getBoundingClientRect=()=>({top:7400-root.scrollTop,left:0,bottom:7500-root.scrollTop,right:700});
   const view={id:'chapter-view',element:{getBoundingClientRect:()=>({...frame.getBoundingClientRect(),bottom:frame.getBoundingClientRect().top+14000})},
     iframe:frame,document:doc,section:{index:7,href:'chapter7.xhtml',cfiFromRange:()=> 'epubcfi(focus-fixture)'}};
@@ -105,6 +106,14 @@ test('Continuous semantic capture reads the live passage without calling the mut
   const f=fixture(t);
   const position=await captureRenditionPosition({rendition:f.rendition,flow:'scrolled-doc',fallback:{cfi:'epubcfi(stale)',page:19}});
   assert.equal(position.cfi,'epubcfi(focus-fixture)');assert.equal(position.page,19);assert.equal(position.sectionIndex,7);
+  assert.equal(f.container.scrollTop,8000);
+});
+
+test('an image-only visual page supplies its own Continuous anchor instead of stale prose progress',async t=>{
+  const f=fixture(t,{visualOnly:true});
+  const position=await captureRenditionPosition({rendition:f.rendition,flow:'scrolled-doc',fallback:{cfi:'epubcfi(stale-prose)',page:19}});
+  assert.equal(position.cfi,'epubcfi(focus-fixture)');
+  assert.equal(position.sectionIndex,7);
   assert.equal(f.container.scrollTop,8000);
 });
 

@@ -1,3 +1,95 @@
+# Reader v2.12.3 — image-only anchors and artwork color protection
+
+Candidate on `fix/reader-partial-image-return`; production remains on the
+verified v2.12.2 deployment recorded below until this correction passes release
+checks and is published.
+
+## Genuine production acceptance — 2026-10-17 (Manila)
+
+- The owner supplied the existing Keeper token through secure browser sign-in
+  and completed the human check. Keeper opened the actual one-series,
+  one-volume catalog. Maintenance reports healthy catalogs, no trash and three
+  retained snapshots; its read-only deep B2 check found all three referenced
+  objects, with none missing.
+- The owner completed the adult-library acknowledgement and public human
+  verification. The real, unintercepted EPUB opened with its 253-page map.
+  These checks establish genuine authorization and provider access; they do not
+  depend on the disposable fixture responses.
+- The real source image and focused image have opacity 1 and no CSS filter;
+  source and overlay tap highlighting is transparent. A focus return from the
+  cover's initial position had zero displacement. A partially scrolled cover
+  returned 281 px to the top on one attempt; subsequent live repeats held the
+  offset. That observation remains a regression to address, not a release pass.
+- Read-only D1 verification before the sign-in confirmed catalog revision 3,
+  timestamp `2026-10-03T11:52:50.670Z`, and exact agreement with the verified
+  sanitized main/adult baseline. Login performs its ordinary session and rate
+  bookkeeping; no catalog edit, migration, media write or credential change was
+  made during these checks.
+
+The Continuous anchor selector excluded the normalized standalone visual-page
+wrapper. On such a page the reader could retain stale prose progress or fall
+back to a browser caret range instead of a concrete image-page block. The
+candidate recognizes that wrapper, preserving the existing prose selection and
+navigation-cancellation rules. A unit regression fails on the old stale-CFI
+behavior; an integration case exercises focus return from a partially scrolled
+cover after settled startup. The anchor-only candidate `c906358` passed all 166
+Node tests and all 220 browser cases in both push and PR CI, including the
+previously intermittent desktop WebKit rerun. The follow-up below requires a
+fresh matrix before release. Pending: guarded release, live correction checks
+and physical-phone confirmation of the reported dimming.
+
+## Android / Soul Browser follow-up
+
+The owner confirmed that focused images still dim on Android in **Soul Browser**
+with v2.12.2. A desktop cloud check and mobile Chromium emulation do not reproduce
+that report. Chromium's automatic-darkening override also preserves the fixture
+artwork with both Garden and Paper themes before this follow-up. This means
+native tap highlighting was not sufficient to resolve the physical-phone report,
+and neither passing pixels nor computed opacity/filter values close that issue.
+
+The candidate adds `color-scheme: only light` to EPUB images and the focused
+image, scoped away from reader text and controls. This is the documented
+[Chromium element-level opt-out](https://developer.chrome.com/blog/auto-dark-theme/#per-element-opt-out)
+from browser color overrides, not a demonstrated diagnosis of Soul's behavior.
+The stylesheet URL advances to v2.12.3. New desktop/mobile Chromium checks use
+the real automatic-darkening override, compare painted artwork with its declared
+color in Garden/Paper at fit and zoom, and verify focus-return position.
+
+[Soul's publisher](https://play.google.com/store/apps/details?id=com.mycompany.app.soulbrowser)
+lists a dark theme and screen filter. Whether either setting contributes to this
+report is unconfirmed. A native app screen filter may operate beyond webpage
+CSS; the standards opt-out cannot guarantee overriding it. Physical Soul testing
+is still required, including a comparison with those effects disabled if present.
+The candidate must not be described as a confirmed fix for Soul until the owner
+verifies it on the phone.
+
+### Current verification and publication status
+
+Artwork follow-up source: local commit `393cde2f74c298135b3376f2dd88d5fb57b0eaa8`.
+`npm run check` passes all 166 Node tests, the asset audit, static build and
+binding-aware Functions package. Both full-reader integration and isolated
+image-focus suites pass all **44 desktop/mobile Chromium cases** locally,
+including partial-cover return and the four new automatic-darkening checks.
+Those local browser runs use a static copy of the production frontend with the
+existing intercepted fixture catalog/ticket/EPUB responses; they do not validate
+live Functions or constitute a new five-engine CI run.
+
+The live main and adult catalogs still exactly match the verified D1 baseline.
+The canonical production deployment remains `e8fe494a-87ce-4731-9aa9-0285f449137d`
+(v2.12.2), retaining the expected D1/bucket bindings and nine encrypted settings.
+
+Automatic approval review rejected the follow-up Git push twice. The second
+rejection persisted after the GitHub connector verified the public repository,
+the connected owner's identity/admin permission, and PR #11's existing branch.
+It requires explicit authorization to publish this payload despite the owner's
+earlier blanket approval. No follow-up source was uploaded, merged or deployed;
+PR #11's remote head remains `c906358`. Its description was updated before the
+push rejection. The next authorized step is to push this prepared follow-up,
+require fresh CI on it, merge it to `main`, and publish with the existing binding
+and catalog guards. Physical Soul Browser acceptance remains open afterward.
+
+---
+
 # Reader v2.12.2 — mobile image patch
 
 Merged on 2026-10-16 through [PR #10](https://github.com/skypie0102/ShadowGarden/pull/10)
@@ -35,11 +127,11 @@ The release includes binding-aware packaging and explicit 503 responses for
 missing live D1 state. Packaging and actual deployment checks pass. No
 migration, seed, catalog edit, B2 write or credential change was performed.
 
-Reader engine, navigation, lifecycle and rendering work is merged. **Phase 5
-remains open** until genuine authorized book opening and Keeper login, plus the
-reported mobile interaction, have been accepted on the live site. Fixture
-browser results are separate from those checks. The prior incident and its
-withdrawn rollout are documented below.
+Reader engine, navigation, lifecycle and rendering work is merged. Genuine
+authorized book opening and Keeper login were subsequently verified as recorded
+above. **Phase 5 remains open** for the image-only position correction and
+physical-mobile acceptance. The prior incident and withdrawn rollout are
+documented below.
 
 ---
 

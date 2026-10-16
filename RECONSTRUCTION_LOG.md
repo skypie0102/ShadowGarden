@@ -803,3 +803,55 @@ No migration, seed, catalog edit, object write or credential change occurred.
 Code milestones and automated release checks are complete; Phase 5 remains
 open for genuine authorized book opening, Keeper login and physical-mobile
 acceptance. Fixture checks are not presented as those credentialed flows.
+
+## 2026-10-17 (Manila) — genuine login/book acceptance and visual anchor follow-up
+
+The owner securely entered the existing Keeper token and completed its human
+verification. Actual Keeper access passed: one series, one volume, healthy
+catalogs, no trash and three retained snapshots. Its read-only deep B2 check
+found all three referenced objects. After the owner's adult-library
+acknowledgement and public verification, the real EPUB opened with a 253-page
+map. These are genuine production flows, separate from intercepted fixtures.
+
+The actual source/focused images have full opacity and no CSS filter; tap
+highlighting is transparent. Initial-position focus return had zero displacement.
+A partial-cover focus return moved 281 px to the top once, while subsequent
+repeats retained the offset. Investigation found that Continuous semantic anchors
+exclude the normalized standalone visual-page wrapper. Prepare v2.12.3 to
+recognize it; the new unit regression fails on stale prose CFI without that
+change. The browser case isolates partial-cover return from pending flow
+replacement and mobile-chrome geometry changes.
+
+Production remains on v2.12.2 pending verified publication of the correction.
+Read-only D1 comparison confirmed revision 3 and both sanitized baseline
+documents before sign-in. Ordinary authentication writes session/rate records;
+no catalog edit, seed, migration, B2 mutation or credential change was performed.
+Physical-phone acceptance remains distinct from desktop and emulated profiles.
+
+## 2026-10-17 (Manila) — Android Soul Browser compatibility investigation
+
+The owner identified the affected environment as Android / Soul Browser and
+confirmed dimming persists on v2.12.2. The earlier statement that the dimming
+correction was live described the tap-feedback code, not a successful phone
+acceptance; the symptom remains open as RDR-046.
+
+The anchor-only v2.12.3 candidate passed all 220 browser cases in both CI runs,
+including the desktop WebKit rerun. Local follow-up `393cde2` adds the documented
+browser-recoloring opt-out only to EPUB/focused images, refreshes the image CSS
+URL, and expands forced-dark painting/zoom/return checks for Garden and Paper.
+It passes all 166 Node tests, the asset audit, both builds and 44 local
+desktop/mobile Chromium integration/image-focus cases. The local browser harness
+serves the frontend statically with the existing intercepted fixture responses;
+it does not replace the full Pages/D1 CI matrix or physical Soul verification.
+Ordinary Chromium automatic darkening did not reproduce the owner's report
+before the guard, so the change is compatibility protection, not a proven Soul
+diagnosis. Whether Soul's dark theme or screen filter contributes is unknown.
+
+Automatic approval review blocked the source push twice, also after verifying
+repository ownership and destination. It demands explicit authorization for this
+payload rather than accepting earlier blanket approval. The follow-up remains
+committed locally; remote PR #11 still points to `c906358`, and its description
+records the investigation. Fresh CI, merge and guarded publication are blocked.
+Production remains v2.12.2 with the expected D1/bucket bindings and all nine
+encrypted-setting names. Both live catalogs exactly match the verified baseline;
+no live catalog, object, credential or deployment setting was changed.

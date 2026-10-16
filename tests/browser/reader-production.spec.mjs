@@ -137,8 +137,45 @@ test.describe('production reader integration',()=>{
     await returned(page,image,before);
   });
 
-  test('image focus preserves artwork colors without a native touch tint',async({page})=>{
-    const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+  test('an image-only cover keeps its partial Continuous scroll after focus return',async({page})=>{
+    // Image-only visual pages have no prose block to use as a return anchor.
+    // Start with the settled Continuous reader so a mode's pending canonical
+    // correction or mobile chrome movement cannot be mistaken for this return.
+    let image;
+    await expect.poll(async()=>{
+      for(const frame of page.frames()){
+        if(frame.isDetached()||frame.parentFrame()!==page.mainFrame())continue;
+        try{
+          const found=frame.getByAltText('Original fixture cover',{exact:true});
+          if(await found.count()){image=found;return true;}
+        }catch(error){if(!frame.isDetached())throw error;}
+      }
+      return false;
+    }).toBe(true);
+    await expect(image).toBeVisible();
+    const tap=async point=>{
+      if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
+      else await page.mouse.click(point.x,point.y);
+      await expect(page.locator('#imageFocus')).toBeVisible();
+    };
+    await page.locator('#tocToggle').focus();
+    await page.locator('#tocToggle').click();
+    await page.getByRole('button',{name:'Close contents drawer',exact:true}).click();
+    await page.locator('#viewer .epub-container').evaluate(element=>{
+      element.scrollTop+=Math.min(281,element.clientHeight*.3);
+    });
+    await expect.poll(async()=>{
+      const box=await image.boundingBox(),viewer=await page.locator('#viewer').boundingBox();
+      return viewer.y-box.y;
+    }).toBeGreaterThan(100);
+    const before=await image.boundingBox(),viewer=await page.locator('#viewer').boundingBox();
+    await tap({x:before.x+before.width/2,
+      y:(Math.max(before.y,viewer.y)+Math.min(before.y+before.height,viewer.y+viewer.height))/2});
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,before);
+  });
+
+  async function paintedCenter(page,focused){
     await focused.evaluate(element=>element.decode());
     const box=await focused.boundingBox();
     const shot=await page.screenshot({scale:'css',clip:{x:Math.floor(box.x+box.width/2),y:Math.floor(box.y+box.height/2),width:1,height:1}});
@@ -151,10 +188,18 @@ test.describe('production reader integration',()=>{
         return Array.from(context.getImageData(0,0,1,1).data);
       }finally{URL.revokeObjectURL(capture.src)}
     },Array.from(shot));
-    // Use the fixture's declared SVG fill as the independent color reference.
-    // WebKit's canvas drawImage(SVG) samples a different point than its paint.
+    return painted;
+  }
+  async function expectArtworkColor(page,image){
+    const painted=await paintedCenter(page,image);
+    // The declared fill is independent of the browser's darkening algorithm.
     const original=[...readerArtworkCenterColor.slice(1).match(/../g).map(value=>parseInt(value,16)),255];
     for(let channel=0;channel<4;channel++)expect(Math.abs(original[channel]-painted[channel]),JSON.stringify({original,painted})).toBeLessThanOrEqual(2);
+  }
+
+  test('image focus preserves artwork colors without a native touch tint',async({page})=>{
+    const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+    await expectArtworkColor(page,focused);
     if(test.info().project.use.hasTouch&&await page.evaluate(()=>CSS.supports('-webkit-tap-highlight-color','transparent'))){
       // The source and the full-screen return surface both receive real taps.
       // Their native highlight must not paint a translucent tint over artwork.
@@ -164,6 +209,25 @@ test.describe('production reader integration',()=>{
     }
     await page.locator('#imageFocusClose').click();
     await returned(page,image,before);
+  });
+
+  for(const theme of ['garden','paper'])test(`image focus retains artwork colors under automatic darkening in ${theme}`,async({page,browserName})=>{
+    test.skip(browserName!=='chromium','Chromium exposes the automatic-darkening override through CDP');
+    await page.locator('#settingsToggle').focus();await page.locator('#settingsToggle').click();
+    await page.locator('#themeSelect').selectOption(theme);
+    await page.locator('#settingsDrawer [data-close]').click();
+    const session=await page.context().newCDPSession(page);
+    try{
+      await session.send('Emulation.setAutoDarkModeOverride',{enabled:true});
+      const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+      await expectArtworkColor(page,focused);
+      const box=await focused.boundingBox(),center={clientX:box.x+box.width/2,clientY:box.y+box.height/2};
+      await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:-650,ctrlKey:true,...center});
+      await expectArtworkColor(page,focused);
+      await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:1800,ctrlKey:true,...center});
+      await page.locator('#imageFocusClose').click();
+      await returned(page,image,before);
+    }finally{await session.detach()}
   });
 
   test('double-click or touch return retains the image on repeated visits',async({page})=>{
