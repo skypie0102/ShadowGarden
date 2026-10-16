@@ -27,7 +27,10 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
     if(scope.disposed)return;
     const button=elements.bookmarkButton;if(!button)return;
     const saved=currentIndex()>=0;
-    button.textContent=saved?"◆":"◇";
+    const icon=saved?"◆":"◇";
+    // WebKit cancels a native click if a relocation replaces its pressed text
+    // node between down/up. Routine position updates must preserve that node.
+    if(button.textContent!==icon)button.textContent=icon;
     button.classList.toggle("bookmarked",saved);
     button.setAttribute("aria-pressed",saved?"true":"false");
     button.title=saved?"Remove bookmark":"Bookmark this location";
