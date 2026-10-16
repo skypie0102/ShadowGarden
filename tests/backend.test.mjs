@@ -9,11 +9,18 @@ import {library,maintenance,seriesBanner,translationUpdate,readiness,statusEndpo
 import {objectKey,getObject} from '../server/storage.js';
 const call=(fn,ctx)=>endpoint(fn)(ctx);
 
-test('static fallback preserves all recovered volumes and never fabricates mappings',async()=>{
-  const row=await loadState({});assert.equal(row.document.adult[0].volumes.length,5);assert.deepEqual(row.document.books,{});
-  const env=fixture();delete env.DB;
+test('a missing database binding never returns recovered books as the live catalog',async t=>{
+  await assert.rejects(loadState({}),error=>error.code==='database_not_configured');
+  const env=fixture(),db=env.DB;t.after(()=>db.sqlite.close());delete env.DB;
   const response=await call(media,context(env,'/media/shadow-garden/data/adult-catalog.json'));
-  assert.equal(response.status,200);assert.equal((await response.json()).series[0].volumes.length,5);
+  assert.equal(response.status,503);assert.equal((await response.json()).code,'database_not_configured');
+});
+test('an uninitialized live database never substitutes the recovered catalog',async t=>{
+  const env=fixture();t.after(()=>env.DB.sqlite.close());
+  env.DB.sqlite.prepare('DELETE FROM library_state').run();
+  await assert.rejects(loadState(env),error=>error.code==='database_not_seeded');
+  const response=await call(media,context(env,'/media/shadow-garden/data/adult-catalog.json'));
+  assert.equal(response.status,503);assert.equal((await response.json()).code,'database_not_seeded');
 });
 test('admin routes require both bearer token and revocable session',async()=>{
   const env=fixture(),headers=await adminHeaders(env);

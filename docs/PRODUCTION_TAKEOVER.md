@@ -1,5 +1,13 @@
 # Existing production project
 
+**Current incident status (2026-10-16):** v2.12.1 was rolled back after its
+package removed the D1 binding and bucket variables. Production runs the
+correctly bound v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`;
+the original D1 data and both current catalogs are intact. Saved production
+settings have also been restored. See the
+[incident report](incidents/2026-10-16-pages-bindings.md). Do not redeploy the
+withdrawn package or infer database health from an HTTP 200 catalog.
+
 The owner authorized replacing the original site on 2026-10-02 and reusing its
 existing B2 bucket. The five recovered EPUB entries were disposable tests. This
 supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
@@ -29,14 +37,16 @@ version, login challenge endpoints and both empty catalogs passed live checks.
 All eight original secrets remain encrypted; `SESSION_SECRET` was added securely.
 The original Turnstile widget already permits the production hostname.
 
-The completed reader refactor is live as v2.12.1 from `main` source
+The withdrawn reader deployment used v2.12.1 from `main` source
 `154381761d6bec1fa246166f0ba300f09471d6ab`, deployment
 `5658687a-f60a-4a1f-8441-78738c2b04e1`, successful 2026-10-16 at 09:18 UTC.
 Both clean CI runs pass 159 Node tests and 215 browser cases. Live desktop/mobile
 checks confirm exact reader assets, image zoom/return position and visible
 `v2.12.1 · 1543817` footers in the main and NSFW libraries. Login challenges and
 catalogs respond correctly; unauthenticated admin library access is denied.
-No migration, seed, catalog/media edit or secret change was needed. See
+Those checks missed the lost bindings and recovered-catalog fallback. The
+deployment is no longer live. No migration, seed, catalog/media edit or secret
+change occurred; recovery restored the previous deployment/configuration. See
 [READER_RELEASE.md](READER_RELEASE.md) for the full matrix, live checks, limits
 and retained v2.12.0/pre-refactor rollback targets.
 
