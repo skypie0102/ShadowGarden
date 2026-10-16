@@ -1,9 +1,12 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 /* Shadow Garden R4.1 — EPUB.js 0.3.93 lifecycle compatibility patch.
    Carries upstream Default/Continuous listener cleanup
    (futurepress/epub.js#326238c + #5daac43), closes the long-lived Book.spine
    rendition hook, and releases Section source DOM after its final live view is
    removed. tools/build.mjs pins the exact npm package revision; the bundle itself
    exposes only the coarse runtime API version below. */
+
+import {ownViewSource} from './section-source.js';
 
 const PATCHED_RUNTIME_VERSION="0.3";
 const renditionPatchMarker=Symbol.for("shadow-garden.epubjs.rendition-lifecycle.v2");
@@ -25,7 +28,7 @@ function sectionStillViewed(manager,section){
 }
 
 function unloadSection(section){
-  try{section?.unload?.()}catch(error){console.warn("EPUB.js section cache release skipped",error)}
+  try{section?.unload?.()}catch(error){recordReaderDiagnostic('source.releaseFailed')}
 }
 
 function patchDefaultManagerListeners(prototype){
@@ -95,6 +98,10 @@ function patchManagerClass(Manager){
 
   const originalDestroy=prototype.destroy;
   const continuous=own(prototype,"addScrollListeners");
+  const createView=prototype.createView;
+  if(typeof createView==='function')prototype.createView=function(section,...args){
+    return ownViewSource(createView.call(this,section,...args),section);
+  };
   if(continuous){
     patchContinuousManagerListeners(prototype);
     patchContinuousErase(prototype);

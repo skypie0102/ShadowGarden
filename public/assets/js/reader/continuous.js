@@ -1,6 +1,8 @@
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Continuous-mode navigation adapter. */
 import {beginRenditionNavigation,runRenditionMove} from "./navigation-state.js";
+import {withSectionSource} from './section-source.js';
+import {recordReaderDiagnostic} from './diagnostics.js';
 
 const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
 
@@ -11,8 +13,7 @@ async function resolveHrefTarget(book,target){
   try{section=book?.spine?.get?.(text)}catch{}
   if(!section){try{section=book?.spine?.get?.(text.split("#")[0])}catch{}}
   if(!section)return text;
-  try{
-    if(!section.document)await section.load(book.load.bind(book));
+  try{return await withSectionSource(section,book.load?.bind(book),()=>{
     const hash=text.indexOf("#"),fragment=hash>=0?decode(text.slice(hash+1)):"";
     let element=null;
     if(fragment){
@@ -31,7 +32,8 @@ async function resolveHrefTarget(book,target){
       }
     }
     return element&&typeof section.cfiFromElement==="function"?(section.cfiFromElement(element)||text):text;
-  }catch{return text}
+  });
+  }catch{recordReaderDiagnostic('navigation.targetFallback');return text}
 }
 
 export function createContinuousController({getRendition,getBook,beforeNavigate,settleNavigation}={}){

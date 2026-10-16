@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope,readerInstanceScope} from "./lifecycle.js";
 const DARK_TEXT = "#17151b";
 const LIGHT_TEXT = "#f1edf6";
@@ -213,7 +214,7 @@ export function createThemeController({ getSettings, isAdult }) {
           repair(contents);
         });
       } catch (error) {
-        console.warn("Reader theme refresh skipped", error);
+        recordReaderDiagnostic('theme.refreshFailed');
       }
     }));
   }

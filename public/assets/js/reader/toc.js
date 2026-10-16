@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 function childrenOf(item) {
   if (Array.isArray(item?.subitems)) return item.subitems;
@@ -180,7 +181,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
           await navigate(href);
           if(!scope.disposed)closeDrawers();
         } catch (error) {
-          console.error("TOC navigation failed", error);
+          recordReaderDiagnostic('navigation.tocFailed');
         }
       });
       row.appendChild(button);
@@ -250,7 +251,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
         await navigate(hit.cfi);
         if(!scope.disposed)closeDrawers();
       } catch (error) {
-        console.error("Book search navigation failed", error);
+        recordReaderDiagnostic('navigation.searchFailed');
       }
     });
     return button;

@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
@@ -242,7 +243,7 @@ export function createEpubCompatibilityExtension(){
        percentage has already been repaired from the reliable spine index when EPUB.js
        reports a missing/zero generated-location percentage. */
     try{scope.on(rendition,"relocated",location=>normalizeLocationProgress(currentBook,location))}catch{}
-    try{scope.hook(rendition.hooks?.content,contents=>installExternalLinkGuard(contents,rendition))}catch(error){console.warn("External EPUB link hook unavailable",error)}
+    try{scope.hook(rendition.hooks?.content,contents=>installExternalLinkGuard(contents,rendition))}catch(error){recordReaderDiagnostic('navigation.hookUnavailable')}
 
     try{
       scope.on(rendition,"rendered",(_,view)=>{

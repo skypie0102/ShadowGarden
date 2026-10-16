@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope} from "./reader/lifecycle.js";
 /* Shadow Garden v2.8 — sandbox-safe internal EPUB link bridge.
  * Keeps EPUB.js as the navigation owner while avoiding native iframe navigation
@@ -135,7 +136,7 @@ export function createInternalLinksExtension(){
     const current=currentSectionFor(contents,renderedSection),target=resolveInternalTarget(current,href);
     if(!activeRendition||!target?.displayHref)return;
     try{await navigateRendition(activeRendition,target.displayHref)}
-    catch(error){console.warn("Internal EPUB navigation failed",error)}
+    catch(error){recordReaderDiagnostic('navigation.linkFailed')}
   }
 
   function scanNavigationMarkers(){
@@ -168,7 +169,7 @@ export function createInternalLinksExtension(){
     rendition.__sgInternalLinksPatched=true;
     ensureMarkerObserver();
     try{scope.hook(rendition.hooks?.content,(contents,view)=>installInternalLinkGuard(contents,view?.section))}
-    catch(error){console.warn("EPUB internal-link hook unavailable",error)}
+    catch(error){recordReaderDiagnostic('navigation.hookUnavailable')}
     try{scope.on(rendition,"rendered",(section,view)=>{
       if(rendition!==activeRendition)return;
       const contents=view?.contents;

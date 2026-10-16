@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 /* Shared Reader navigation ownership and ordered vendor moves. */
 const barriers=new WeakMap();
 const navigators=new WeakMap();
@@ -80,7 +81,7 @@ export function holdRenditionNavigation(rendition,promise,{signal}={}){
   if(!pending){pending=new Set();barriers.set(rendition,pending)}
   let barrier;
   barrier=Promise.race([promise,cancelled]).catch(error=>{
-    console.warn("Reader navigation barrier released after a failed move",error);
+    recordReaderDiagnostic('navigation.barrierFailed');
   }).finally(()=>{
     signal?.removeEventListener("abort",onAbort);
     pending.delete(barrier);

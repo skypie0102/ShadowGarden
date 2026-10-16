@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope,readerInstanceScope} from "./lifecycle.js";
 /* Shadow Garden R4.1 — Reader application orchestrator. */
 import { createReaderStorage } from "./storage.js";
@@ -146,7 +147,7 @@ async function initializeReader(session,scope){
   }
   function schedulePageMapRefresh(delay=700){
     scope.clearTimeout(state.pageMapRefreshTimer);state.pageMapRefreshTimer=scope.timeout(()=>{
-      if(!state.pageMap||!state.book)return;state.pageMap.ensure({anchorCfi:progressController?.currentCfi?.()||""}).catch(error=>console.warn("Page map refresh failed",error));
+      if(!state.pageMap||!state.book)return;state.pageMap.ensure({anchorCfi:progressController?.currentCfi?.()||""}).catch(error=>recordReaderDiagnostic('pageMap.refreshFailed'));
     },delay);
   }
   function scheduleRelayout(){
@@ -163,7 +164,7 @@ async function initializeReader(session,scope){
         if(rendition!==state.rendition||!operation.isCurrent()||state.switchingFlow)return;
         if(!await runRenditionMove(rendition,operation,()=>{rendition.resize?.("100%","100%");configureSpread(rendition,settingsController.get().flow)}))return;
         if(keepCfi)await navigate(keepCfi,{operation});
-      }catch(error){if(operation.isCurrent())console.warn("Reader relayout skipped",error)}
+      }catch(error){if(operation.isCurrent())recordReaderDiagnostic('layout.relayoutFailed')}
       finally{if(state.relayoutIntent===intent)state.relayoutIntent=null}
     },120);
   }
@@ -172,7 +173,7 @@ async function initializeReader(session,scope){
     const rendition=state.rendition,settings=settingsController.get();
     if(rendition){
       if(relayout)scheduleRelayout();
-      try{rendition.themes.default(themeController.css(settings))}catch(error){console.warn("Reader theme update skipped",error)}
+      try{rendition.themes.default(themeController.css(settings))}catch(error){recordReaderDiagnostic('theme.refreshFailed')}
       configureSpread(rendition,settings.flow);themeController.refresh(rendition);
     }
     if(rebuildPageMap)schedulePageMapRefresh();
@@ -255,12 +256,12 @@ async function initializeReader(session,scope){
     if(position.cfi&&flow==="paginated")return;
     let target=position.cfi;
     try{target=target||await state.pageMap.targetForPosition(position,{includeFraction:flow==="scrolled-doc"})}
-    catch(error){if(current())console.warn("Reader canonical correction unavailable",error);return}
+    catch(error){if(current())recordReaderDiagnostic('navigation.canonicalFallback');return}
     if(!target||!current())return;
     if(flow==="scrolled-doc")await scope.paint();
     if(current()){
       try{await navigate(target,{operation})}
-      catch(error){if(current())console.warn("Reader canonical correction skipped",error)}
+      catch(error){if(current())recordReaderDiagnostic('navigation.canonicalFallback')}
     }
   }
 
@@ -296,7 +297,7 @@ async function initializeReader(session,scope){
       target=position?.cfi||target;
       if(state.pageMap&&position&&!position.cfi){
         try{target=await state.pageMap.targetForPosition(position,{includeFraction:desired==="scrolled-doc"})||target}
-        catch(error){if(current())console.warn("Canonical flow target fallback",error)}
+        catch(error){if(current())recordReaderDiagnostic('navigation.canonicalFallback')}
       }
       if(!current())return;
       progressController.setPosition(position);settingsController.setFlow(desired);resetReaderInput();
@@ -305,10 +306,10 @@ async function initializeReader(session,scope){
       await correctCanonicalPosition(opened,position,desired);
     }catch(error){
       if(scope.disposed||(!replaced&&!current()))return;
-      console.error("Reader flow switch failed",error);toast("Could not switch reading flow");
+      recordReaderDiagnostic('flow.switchFailed');toast("Could not switch reading flow");
       if(replaced){
         cancelRenditionNavigation(state.rendition);destroyRendition(state.rendition,elements.viewer);settingsController.setFlow(previousFlow);
-        try{await openRendition(target)}catch(recoveryError){console.error("Reader flow recovery failed",recoveryError);elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not restore the reader.</p>"}
+        try{await openRendition(target)}catch(recoveryError){recordReaderDiagnostic('flow.recoveryFailed');elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not restore the reader.</p>"}
       }
     }finally{
       release();
@@ -365,7 +366,7 @@ async function initializeReader(session,scope){
     scope.signal.throwIfAborted();
     state.book=getReaderEngine().createBook(session.sourcePath);
     const book=state.book;scope.add(()=>book.destroy());
-    const metadataPromise=state.book.loaded.metadata,navigationPromise=state.book.loaded.navigation.catch(error=>{console.warn("EPUB navigation unavailable",error);return{toc:[]}});
+    const metadataPromise=state.book.loaded.metadata,navigationPromise=state.book.loaded.navigation.catch(error=>{recordReaderDiagnostic('navigation.tocUnavailable');return{toc:[]}});
     const opening=scope.child();
     const failed=new Promise((_resolve,reject)=>opening.on(book,"openFailed",reject));
     let metadata,navigation;
@@ -381,7 +382,7 @@ async function initializeReader(session,scope){
     let initialTarget=saved?.cfi||undefined;
     if(!initialTarget&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{initialTarget=await state.pageMap.targetForPosition(saved,{includeFraction:settingsController.get().flow==="scrolled-doc"})||initialTarget}catch{}}
     progressController.startLocationGeneration();const opened=await openRendition(initialTarget);
-    if(!saved?.cfi&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{await correctCanonicalPosition(opened,saved,state.renderedFlow)}catch(error){console.warn("Reader startup canonical target unavailable",error)}}
+    if(!saved?.cfi&&pageMapResult?.map&&saved?.pageMapFingerprint===state.pageMap.fingerprint()&&Number(saved?.page)>0){try{await correctCanonicalPosition(opened,saved,state.renderedFlow)}catch(error){recordReaderDiagnostic('navigation.canonicalFallback')}}
     const queuedFlow=state.queuedFlow;state.queuedFlow=null;if(queuedFlow)await switchFlow(queuedFlow);
     scope.signal.throwIfAborted();
     resumeController.remember();resumeController.bind();
@@ -390,7 +391,7 @@ async function initializeReader(session,scope){
     elements.loading?.classList.add("hidden");
   }catch(error){
     if(scope.disposed)throw error;
-    console.error("Reader initialization failed",error);elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not open this EPUB.</p>";throw error;
+    recordReaderDiagnostic('reader.startupFailed');elements.loading?.classList.remove("hidden");if(elements.loading)elements.loading.innerHTML="<p>Shadow Garden could not open this EPUB.</p>";throw error;
   }
 
   return{session,state,settings:settingsController,progress:progressController,bookmarks:bookmarksController,search:bookSearchController,pageInput:pageInputController,imageFocus:imageFocusController,resume:resumeController,completion:completionController};

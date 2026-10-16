@@ -1,7 +1,6 @@
 import {createReaderScope} from "./lifecycle.js";
-const DB_NAME = "shadow-garden-reader";
-const DB_VERSION = 1;
-const STORE_NAME = "page-maps";
+import {measureReaderOperation,recordReaderDiagnostic} from './diagnostics.js';
+import {createReaderCache} from './cache-store.js';
 const PAGE_MAP_VERSION = 2;
 const VISUAL_SELECTOR = "img,svg,picture,video,object,canvas";
 
@@ -30,58 +29,12 @@ function hashText(input) {
   return (hash >>> 0).toString(36);
 }
 
-function openDatabase() {
-  if (!window.indexedDB) return Promise.resolve(null);
-  return new Promise(resolve => {
-    try {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: "key" });
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => resolve(null);
-      request.onblocked = () => resolve(null);
-    } catch {
-      resolve(null);
-    }
-  });
-}
-
-async function cacheGet(key) {
-  const db = await openDatabase();
-  if (!db) return null;
-  return new Promise(resolve => {
-    try {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const request = tx.objectStore(STORE_NAME).get(key);
-      request.onsuccess = () => resolve(request.result || null);
-      request.onerror = () => resolve(null);
-      tx.oncomplete = () => db.close();
-      tx.onerror = () => db.close();
-    } catch {
-      try { db.close(); } catch {}
-      resolve(null);
-    }
-  });
-}
-
-async function cachePut(value) {
-  const db = await openDatabase();
-  if (!db) return false;
-  return new Promise(resolve => {
-    try {
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      tx.objectStore(STORE_NAME).put(value);
-      tx.oncomplete = () => { db.close(); resolve(true); };
-      tx.onerror = () => { db.close(); resolve(false); };
-      tx.onabort = () => { db.close(); resolve(false); };
-    } catch {
-      try { db.close(); } catch {}
-      resolve(false);
-    }
-  });
-}
+const pageMapCache=createReaderCache({
+  database:'shadow-garden-reader',store:'page-maps',version:PAGE_MAP_VERSION,
+  maxEntries:24,maxPerBook:4,maxBytes:8*1024*1024
+});
+const cacheGet=key=>pageMapCache.get(key);
+const cachePut=value=>pageMapCache.put(value);
 
 function linearSpine(book) {
   const raw = book?.spine?.spineItems || [];
@@ -232,7 +185,11 @@ async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreat
     const absoluteBookUrl = new URL(bookUrl, location.href).href;
     const book = epub(absoluteBookUrl);
     sandbox.book = book;
-    await abortable(book.ready, signal);
+    const opening=createReaderScope();
+    try{
+      const failed=new Promise((_resolve,reject)=>opening.on(book,'openFailed',reject));
+      await abortable(Promise.race([Promise.all([book.ready,book.opened]),failed]),signal);
+    }finally{opening.dispose()}
     if (signal?.aborted) throw abortError();
     const host = documentRef.getElementById("sgPageMapHost");
     const rendition = book.renderTo(host, {
@@ -264,6 +221,19 @@ function sandboxView(rendition, section) {
     if (found) return found;
   } catch {}
   try { return views?.first?.() || views?.all?.()?.[0] || null; } catch { return null; }
+}
+
+function releaseSandboxSources(retained,rendition,section){
+  // The isolated map has no search/note consumers. A displayed view owns only
+  // its current source; earlier sections can be released after view replacement.
+  const visible=new Set(rendition.manager?.views?.all?.().map(view=>view.section)||[]);
+  retained.add(section);
+  for(const item of visible)retained.add(item);
+  for(const item of retained){
+    if(visible.has(item))continue;
+    item.unload();
+    retained.delete(item);
+  }
 }
 
 async function mapSection({ rendition, frame, section, signal }) {
@@ -438,6 +408,7 @@ export function createPageMapController({
   }
 
   async function generate(spec, anchorCfi, serial) {
+    const finish=measureReaderOperation('pageMap.ready');
     const record = { serial, controller: new AbortController(), sandbox: null };
     activeGeneration = record;
     const sectionMap = new Map();
@@ -451,20 +422,22 @@ export function createPageMapController({
       });
       if (!generationIsCurrent(record)) return null;
 
-      const sandboxItems = sandbox.book.spine.spineItems || [];
+      const sandboxItems = new Map((sandbox.book.spine.spineItems || []).map(item=>[Number(item.index),item]));
+      const retainedSources=new Set();
       const order = prioritizedIndices(book, anchorCfi);
       for (const index of order) {
         if (!generationIsCurrent(record)) return null;
-        const section = sandboxItems.find(item => Number(item.index) === index);
+        const section = sandboxItems.get(index);
         if (!section?.href) continue;
         let pages;
         try {
           pages = await mapSection({ rendition: sandbox.rendition, frame: sandbox.frame, section, signal: record.controller.signal });
         } catch (error) {
           if (error?.name === "AbortError" || !generationIsCurrent(record)) return null;
-          console.warn(`Canonical page fallback for ${section.href}`, error);
+          recordReaderDiagnostic('pageMap.sectionFallback');
           pages = fallbackSectionPage(section);
         }
+        releaseSandboxSources(retainedSources,sandbox.rendition,section);
         if (!generationIsCurrent(record)) return null;
         sectionMap.set(index, pages);
         partialSections.set(index, pages);
@@ -486,15 +459,17 @@ export function createPageMapController({
         pages
       };
       activate(map, "ready");
-      cachePut(map).catch(() => {});
+      void cachePut(map).then(saved=>{if(!saved)recordReaderDiagnostic('pageMap.cacheUnavailable')});
+      finish({sections:sectionMap.size,pages:pages.length});
       return map;
     } catch (error) {
       if (error?.name !== "AbortError" && generationIsCurrent(record)) {
         onUpdate?.({ type: "error", error });
-        console.warn("Canonical page map generation failed", error);
+        finish({},'pageMap.failed');
       }
       return null;
     } finally {
+      finish({},'pageMap.cancelled');
       destroySandbox(record.sandbox);
       if (activeGeneration === record) activeGeneration = null;
       if (serial === generationSerial) generationPromise = null;
@@ -522,6 +497,7 @@ export function createPageMapController({
       if (serial !== generationSerial) return { map: activeMap, superseded: true };
       if (cached?.version === PAGE_MAP_VERSION && cached?.fingerprint === spec.fingerprint && Array.isArray(cached.pages) && cached.pages.length) {
         activate(cached, "cached");
+        recordReaderDiagnostic('pageMap.cached',{pages:cached.pages.length});
         return { map: cached, cached: true };
       }
     }

@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Reader-facing bookmark controller over canonical storage. */
 export function createBookmarksController({storage,elements,getPosition,getCfi,getChapter,getPageMap,navigate,closeDrawers,toast}={}){
@@ -59,7 +60,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
           const target=canonical?await pageMap.targetForPosition(bookmark,{includeFraction:true}):bookmark.cfi;
           if(scope.disposed)return;
           await navigate?.(target||bookmark.cfi);if(!scope.disposed)closeDrawers?.();
-        }catch(error){console.error("Bookmark navigation failed",error);toast?.("Could not open bookmark")}
+        }catch(error){recordReaderDiagnostic('navigation.bookmarkFailed');toast?.("Could not open bookmark")}
       });
       const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.setAttribute("aria-label",`Delete bookmark ${index+1}`);
       rows.listen(remove,"click",()=>{

@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifecycle.js";
 /* Shadow Garden R4.1 — isolated focused-image viewing, pinch zoom and pan. */
 import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
@@ -268,7 +269,7 @@ export function createImageFocusController({
     rendition.__sgR41ImageFocus=true;
     const lifetime=scope.child().link(readerInstanceScope(rendition));
     lifetime.add(()=>{delete rendition.__sgR41ImageFocus});
-    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){console.warn("Reader image focus hook unavailable",error)}
+    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){recordReaderDiagnostic('image.hookUnavailable')}
     try{lifetime.on(rendition,"rendered",(_section,view)=>{installDocument(view?.contents?.document||view?.contents?.contentDocument,view?.contents?readerContentsScope(rendition,view.contents):lifetime);scheduleParentHitRefresh()})}catch{}
     try{lifetime.on(rendition,"relocated",scheduleParentHitRefresh);lifetime.on(rendition,"resized",scheduleParentHitRefresh);lifetime.on(rendition,"removed",(_section,view)=>removeParentHits(view?.contents?.document||view?.contents?.contentDocument))}catch{}
     try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch{}
