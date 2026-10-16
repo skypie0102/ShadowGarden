@@ -9,7 +9,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | Public URL | https://shadowgarden-bon.pages.dev/ |
 | Cloudflare Pages project name | `shadowgarden` |
 | Cloudflare account | `fa95f62f96a0ff3b92a45175d94a48b6` |
-| Rebuilt source branch | `skypie0102/ShadowGarden`, `deploy/shadowgarden-bon` |
+| Rebuilt source branch | `skypie0102/ShadowGarden`, `main` |
 | Pages production branch | `main` |
 | D1 binding | `DB` |
 | Existing D1 database | `shadowgarden-test` |
@@ -110,15 +110,15 @@ From a checkout of the rebuilt repository:
 
 ```powershell
 git fetch origin
-git switch deploy/shadowgarden-bon
+git switch main
 git pull --ff-only
 npm.cmd ci
 npm.cmd run build
 npx.cmd wrangler pages deploy dist --project-name shadowgarden --branch main
 ```
 
-Use `--branch main` because it identifies this Pages project's production
-environment, even though the source checkout is `deploy/shadowgarden-bon`.
+Use `--branch main` for both the canonical source checkout and this Pages
+project's production environment.
 Wrangler compiles the `functions/` directory as part of this deployment. A
 dashboard upload of `dist/` alone does not include those Functions.
 

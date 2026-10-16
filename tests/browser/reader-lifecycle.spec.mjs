@@ -77,6 +77,23 @@ test.describe('production reader lifecycle',()=>{
     }
   });
 
+  test('a progress update during a bookmark press preserves its click',async({page})=>{
+    const button=page.locator('#bookmarkButton');
+    await expect(button).toHaveAttribute('aria-pressed','false');
+    await button.hover();await page.mouse.down();
+    await page.evaluate(async url=>{
+      const {readerRuntime}=await import(url),reader=readerRuntime.current;
+      // A delayed relocation/map update can land between native down/up events.
+      // Replacing even identical button text cancels that click in WebKit.
+      reader.progress.pageMapReady();reader.bookmarks.syncButton();
+    },bootstrap);
+    await page.mouse.up();
+    await expect(button).toHaveAttribute('aria-pressed','true');
+    await button.click();
+    await expect(button).toHaveAttribute('aria-pressed','false');
+    await dispose(page);await released(page);
+  });
+
   test('disposal cancels a pending mode change without creating a replacement rendition',async({page})=>{
     await page.evaluate(async url=>{
       const {readerRuntime}=await import(url),select=document.querySelector('#flowSelect');
