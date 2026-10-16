@@ -137,6 +137,53 @@ test.describe('production reader integration',()=>{
     await returned(page,image,before);
   });
 
+  test('an image-only cover keeps its partial Continuous scroll after focus return',async({page})=>{
+    // Match the real-book acceptance failure: enter Continuous from Pages,
+    // inspect the cover, then focus it again while it is partially scrolled.
+    await setFlow(page,'paginated');
+    await setFlow(page,'scrolled-doc');
+    await expect.poll(async()=>{
+      for(const frame of page.frames()){
+        if(frame.isDetached()||frame.parentFrame()!==page.mainFrame())continue;
+        if(await frame.getByAltText('Original fixture cover',{exact:true}).count())return true;
+      }
+      return false;
+    }).toBe(true);
+    let image;
+    for(const candidate of page.frames()){
+      if(candidate.isDetached()||candidate.parentFrame()!==page.mainFrame())continue;
+      const found=candidate.getByAltText('Original fixture cover',{exact:true});
+      if(await found.count()){image=found;break;}
+    }
+    expect(image).toBeTruthy();
+    await expect(image).toBeVisible();
+    const initial=await image.boundingBox();
+    const tap=async point=>{
+      if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
+      else await page.mouse.click(point.x,point.y);
+      await expect(page.locator('#imageFocus')).toBeVisible();
+    };
+    await tap({x:initial.x+initial.width/2,y:initial.y+initial.height/2});
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,initial);
+
+    await page.locator('#tocToggle').focus();
+    await page.locator('#tocToggle').click();
+    await page.getByRole('button',{name:'Close contents drawer',exact:true}).click();
+    await page.locator('#viewer .epub-container').evaluate(element=>{
+      element.scrollTop+=Math.min(281,element.clientHeight*.3);
+    });
+    await expect.poll(async()=>{
+      const box=await image.boundingBox(),viewer=await page.locator('#viewer').boundingBox();
+      return viewer.y-box.y;
+    }).toBeGreaterThan(100);
+    const before=await image.boundingBox(),viewer=await page.locator('#viewer').boundingBox();
+    await tap({x:before.x+before.width/2,
+      y:(Math.max(before.y,viewer.y)+Math.min(before.y+before.height,viewer.y+viewer.height))/2});
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,before);
+  });
+
   test('image focus preserves artwork colors without a native touch tint',async({page})=>{
     const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
     await focused.evaluate(element=>element.decode());
