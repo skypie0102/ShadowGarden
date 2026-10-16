@@ -1,5 +1,13 @@
 # Reader 2.12.1 release verification
 
+**Withdrawn after a production configuration incident.** Production is restored
+to v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`. The v2.12.1
+package omitted the database and bucket bindings. Earlier checks below passed
+without proving actual catalog identity or credentialed access, so the prior
+release-complete conclusion was wrong. Phase 5 is reopened. See the
+[incident report](incidents/2026-10-16-pages-bindings.md) for recovery evidence
+and the corrected acceptance gates.
+
 Phase 5 was merged through [PR #6](https://github.com/skypie0102/ShadowGarden/pull/6)
 as `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e`. Cloudflare deployed v2.12.0
 successfully on 2026-10-16 at 04:25 UTC, deployment
@@ -13,8 +21,9 @@ regression checks the original and rendered image colors, transparent native
 touch feedback and position after closing. It detects the nontransparent
 highlight on the previous release. Keyboard focus indicators remain available.
 This patch changes the image-focus stylesheet deliberately; the reconstruction
-audit records that deviation. This follow-up is merged and deployed; Phase 5 is
-complete. CI and live verification results follow below.
+audit records that deviation. This follow-up remains merged but its deployment
+has been rolled back. The historical CI and initial smoke results follow below;
+they must not be interpreted as successful current production acceptance.
 
 ## Release scope
 
@@ -103,14 +112,16 @@ cache pruning/reopening and page-map download failure. Phase 4's nine profiles
 cover the 80-chapter and repeated/unique illustration fixtures; measured results
 and their limits remain in [READER_PERFORMANCE.md](READER_PERFORMANCE.md).
 
-## Verified production rollout
+## Withdrawn production rollout and insufficient smoke checks
 
 [PR #7](https://github.com/skypie0102/ShadowGarden/pull/7) merged the bookmark
 correction, and [PR #8](https://github.com/skypie0102/ShadowGarden/pull/8) merged
 the image-touch fix and v2.12.1 as `154381761d6bec1fa246166f0ba300f09471d6ab`.
-Pages deployment `5658687a-f60a-4a1f-8441-78738c2b04e1` succeeded on
+Pages deployment `5658687a-f60a-4a1f-8441-78738c2b04e1` reported success on
 2026-10-16 at 09:18:03 UTC. Its canonical production branch is `main`, its
-working-tree marker is clean, and its built metadata identifies that exact SHA.
+working-tree marker was clean, and its built metadata identified that exact SHA.
+It nevertheless omitted the D1/bucket bindings and is now withdrawn. The
+following checks failed to detect that configuration failure.
 
 Live Chromium checks at desktop and Pixel 7 sizes verify both library footers
 show `v2.12.1 · 1543817`, are visible and cause no horizontal overflow. The

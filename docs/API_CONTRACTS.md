@@ -1,5 +1,12 @@
 # API reconstruction contracts
 
+Prepared correction after the 2026-10-16 incident: public catalog reads require
+the configured D1 database and initialized live record. Missing bindings return
+503 `database_not_configured`; a missing live row returns 503
+`database_not_seeded`. The backend must not substitute the recovered catalog
+and resurrect deleted entries. This correction is prepared in source; production
+was restored to v2.12.0 without deploying it during incident recovery.
+
 Implementations are inferred from the recovered client or explicitly designed as
 replacement contracts. Purge and recovery mutations use the replacement policies below. The only server evidence in the archive
 is `recovery-info/FUNCTION_ROUTES.md`, a transcription of the deployment routing

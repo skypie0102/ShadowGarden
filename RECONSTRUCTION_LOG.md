@@ -717,3 +717,30 @@ challenge endpoints and both catalogs return 200; unauthenticated admin library
 access returns 401. No remote catalog/media or secret changes were performed.
 The roadmap marks Phase 5 and the planned refactor complete; the release report
 records provider/device limits and both retained rollback deployments.
+
+## 2026-10-16 — Correction: v2.12.1 withdrawn after deployment binding loss
+
+The owner reported book/login failures and deleted books returning. Inspection
+confirmed that deployment `5658687a-f60a-4a1f-8441-78738c2b04e1` omitted the D1
+binding and both bucket variables. The compile command did not load production
+configuration, but the manual upload supplied a Wrangler configuration hash.
+The database-free backend then returned recovered catalog entries with HTTP 200.
+The previous completion claim and smoke verification were insufficient.
+
+Read-only D1 queries confirmed the original live row at revision 3, updated
+`2026-10-03T11:52:50.670Z`, with zero rows written. Production was rolled back to
+v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`. The saved production
+D1/bucket settings were restored, retaining all nine encrypted setting names.
+Both live catalogs now match the actual sanitized D1 document exactly. The
+retained book requires its ticket; a B2 read probe returns the expected missing
+object result; login challenge configuration and unauthorized Keeper denial
+respond correctly. Credentialed login/human verification was not exercised.
+
+The packaging check now loads configuration explicitly and rejects missing or
+incorrect deployment bindings. Regression coverage includes the incident's
+binding-free Worker metadata, wrong database/bucket settings and recovered
+HTTP 200 catalogs. A prepared backend correction fails with 503 when the live
+DB or its record is missing instead of substituting recovered books. These
+changes are not deployed during recovery. No database restore, seed, migration,
+B2 object mutation or credential rotation was performed. Phase 5 is reopened;
+see `docs/incidents/2026-10-16-pages-bindings.md` for the incident and gates.

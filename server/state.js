@@ -1,4 +1,3 @@
-import recovered from './recovered-state.js';
 import {database, digest} from './security.js';
 import {fail} from './http.js';
 import {catalogError, inspectCatalog} from './catalog-document.js';
@@ -7,16 +6,11 @@ export function counts(doc) {
   return {mainSeries:doc.main.length,adultSeries:doc.adult.length,series:doc.main.length+doc.adult.length,
     volumes:[...doc.main,...doc.adult].reduce((sum,s)=>sum+s.volumes.length,0)};
 }
-export async function loadStateRecord(env, {writable = false} = {}) {
-  if (!env.DB) {
-    if (writable) database(env);
-    return {revision:-1,serialized:JSON.stringify(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
-  }
-  const row=await env.DB.prepare('SELECT revision,document,updated_at FROM library_state WHERE id = 1').first();
-  if (!row) {
-    if (writable) fail(503,'database_not_seeded','Apply the reconstruction migration and explicit catalog seed first.');
-    return {revision:-1,serialized:JSON.stringify(recovered),updated_at:'2026-09-11T07:19:46.602Z',source:'recovered-static'};
-  }
+export async function loadStateRecord(env) {
+  // Missing production state is an outage, not a reason to resurrect the
+  // recovery archive. Never hide a lost binding behind a successful catalog.
+  const row=await database(env).prepare('SELECT revision,document,updated_at FROM library_state WHERE id = 1').first();
+  if (!row) fail(503,'database_not_seeded','The live catalog record is missing. Verify the database binding and initialization.');
   return {revision:row.revision,serialized:row.document,updated_at:row.updated_at,source:'reconstructed-d1'};
 }
 export function readableState(row) {

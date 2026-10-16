@@ -8,11 +8,13 @@ Phase 3 lifecycle ownership is verified and merged through
 through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
 `0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 merged through PR #6 as
 `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e` and v2.12.0 deployed successfully.
-Phase 5 is complete, including the bookmark and mobile image-touch follow-ups in
-PRs #7 and #8. Production serves v2.12.1 from
-`154381761d6bec1fa246166f0ba300f09471d6ab`, deployment
-`5658687a-f60a-4a1f-8441-78738c2b04e1`. Both clean CI runs pass 159 Node tests
-and 215 browser cases; live desktop/mobile reader and footer checks pass.
+Phase 5 is reopened after the v2.12.1 deployment lost database/bucket bindings.
+Production is restored to v2.12.0 from
+`235308a7e1716fa744cee8aaf7c1d53c1c9eef3e`, deployment
+`b13cf583-ad91-43e7-ad1f-55dbc9365802`. The original D1 data is intact. The
+159 Node/215 browser tests and initial smoke checks did not establish correct
+production configuration or real login/book access. See the
+[incident report](incidents/2026-10-16-pages-bindings.md).
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`.
 
 ## Objective and invariants
@@ -46,7 +48,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Complete; 159 Node tests and all 215 browser cases pass in both clean CI runs. v2.12.1 is merged into main and deployed; exact assets, both library footers and desktop/mobile image return pass live checks. |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Reopened: v2.12.1 was withdrawn after losing D1/bucket bindings. v2.12.0 and the actual catalog are restored. Binding-aware packaging and genuine production acceptance are required before another release. |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite
@@ -132,6 +134,7 @@ project and no production credentials or catalog writes.
 | RDR-041 | Vendor scrollTo/scrollBy assign `scrolled = true`, overwriting the Continuous callback with the same name before delayed work runs. | Keep the owned reporter under a separate field and capture it in the debounce. The stabilization boundary calls that reporter while respecting disposal/suppression. Unit and full-reader checks force the vendor boolean and still receive scroll reports. |
 | RDR-042 | Repeated position updates replace the bookmark icon's identical text node during a pointer press, causing WebKit to cancel the native click. | Preserve unchanged icon text. A production-reader regression refreshes progress between native down/up events; the previous implementation fails in both WebKit profiles. |
 | RDR-043 | Native mobile tap highlighting can tint EPUB artwork and the focused-image return surface. | Give those image interactions transparent native feedback while preserving keyboard focus indicators. The full-reader regression checks the fixture's declared artwork color, computed touch feedback and return position. The previous release fails the touch-feedback assertion; all five configurations pass after the fix. |
+| RDR-044 | A source-only Functions bundle plus a configuration hash removed production D1/bucket bindings; recovered-catalog fallback hid the failure behind HTTP 200. | Live rollback and saved configuration restoration completed without data writes. Packaging now validates actual bindings; prepared backend changes fail with 503 instead of resurrecting recovered books. Phase 5 acceptance is reopened. |
 
 ## Phase 3 findings
 
@@ -345,5 +348,7 @@ Live checks confirm exact reader asset hashes, visible `v2.12.1 · 1543817`
 footers in both libraries at desktop/mobile sizes, and image zoom/close with
 zero position displacement and no page errors. Login challenges and both
 catalogs return 200; the admin library denies unauthenticated access with 401.
-Phase 5 and the planned reader refactor are complete. Provider/device limits
-and both retained rollback targets are recorded in the release report.
+Those smoke checks did not compare catalog identity or inspect bindings. The
+subsequent production incident invalidated the completion claim: v2.12.1 is
+withdrawn, v2.12.0 is restored, and Phase 5 is reopened. The incident report
+records the unchanged D1 data, corrected verification and pending release gates.
