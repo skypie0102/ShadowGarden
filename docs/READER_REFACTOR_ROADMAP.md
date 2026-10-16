@@ -6,7 +6,9 @@ Phase 3 lifecycle ownership is verified and merged through
 [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
 `61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is verified and merged
 through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
-`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification is in progress
+`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 merged through PR #6 as
+`235308a7e1716fa744cee8aaf7c1d53c1c9eef3e` and v2.12.0 deployed successfully.
+The v2.12.1 mobile image-touch follow-up and final live verification are in progress
 on `refactor/reader-release`; production still serves the image-focus milestone.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
@@ -304,15 +306,7 @@ Profile timings are local fixture measurements, not a universal speed claim or
 a measurement of all browser/vendor heap allocations. The current publication's
 archive, map records and normalized artwork still scale with its actual content.
 
-## Next implementation slice — release verification
-
-1. Extend checks beyond Chromium and inspect representative long/image-heavy
-   books, including unusual markup and resource failures.
-2. Review remaining limits, deployment configuration and rollback instructions.
-3. Deploy a verified source to the existing production site, identify the release
-   commit and exercise the deployed reader without changing stored identities.
-
-## Phase 5 — release candidate
+## Phase 5 — release verification
 
 The `2.12.0` candidate adds Firefox and desktop/mobile WebKit to the existing
 desktop/mobile Chromium suite. Additional publication cases cover EPUB 2 NCX,
@@ -327,3 +321,13 @@ The recovered `public/data/version.json` remains provenance: the build generates
 the actual release metadata in `dist/data/version.json`.
 
 See [release verification](READER_RELEASE.md) for the matrix, rollout and limits.
+
+PR #6 passed all 159 Node tests and 205 browser cases in both clean CI runs,
+plus the audit, builds and three final profile runs. v2.12.0 was deployed as
+`b13cf583-ad91-43e7-ad1f-55dbc9365802` on 2026-10-16 at 04:25 UTC.
+
+The owner's mobile follow-up exposed nontransparent native tap highlighting on
+the EPUB image and full-screen focus surface. v2.12.1 scopes transparent native
+feedback to those image interactions, preserving keyboard focus styles. A new
+production-entry check compares rendered image colors to the source and checks
+touch feedback and return position. Patch validation and live checks are pending.

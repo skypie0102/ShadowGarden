@@ -1,9 +1,20 @@
-# Reader 2.12.0 release verification
+# Reader 2.12 release verification
 
-Phase 5 candidate, 2026-10-16. Verification and deployment are in progress.
-Canonical source is `skypie0102/ShadowGarden` on `main`; the candidate is reviewed
-on `refactor/reader-release` before merging. No production release is claimed
-until the deployment and live checks below are recorded.
+Phase 5 was merged through [PR #6](https://github.com/skypie0102/ShadowGarden/pull/6)
+as `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e`. Cloudflare deployed v2.12.0
+successfully on 2026-10-16 at 04:25 UTC, deployment
+`b13cf583-ad91-43e7-ad1f-55dbc9365802`. Canonical source remains
+`skypie0102/ShadowGarden` on `main`.
+
+The v2.12.1 follow-up removes native tap highlighting from EPUB image targets
+and the focused-image overlay. Both could paint touch feedback over artwork;
+the WebKit parent hit surface was already transparent. The full-reader
+regression checks the original and rendered image colors, transparent native
+touch feedback and position after closing. It detects the nontransparent
+highlight on the previous release. Keyboard focus indicators remain available.
+This patch changes the image-focus stylesheet deliberately; the reconstruction
+audit records that deviation. Patch CI and deployment results are recorded below
+once complete.
 
 ## Release scope
 
@@ -58,11 +69,17 @@ both WebKit profiles against the old implementation.
 
 | Configuration | Scope | Status |
 | --- | --- | --- |
-| Desktop Chromium | Full production reader and reconstruction suite | Pending |
-| Pixel 7 Chromium | Full suite with touch/mobile layout | Pending |
-| Desktop Firefox | Full production reader and reconstruction suite | Pending |
-| Desktop WebKit | Full production reader and reconstruction suite | Pending |
-| iPhone 13 WebKit | Full suite with touch/mobile layout | Pending |
+| Desktop Chromium | Full production reader and reconstruction suite | v2.12.0 passed |
+| Pixel 7 Chromium | Full suite with touch/mobile layout | v2.12.0 passed |
+| Desktop Firefox | Full production reader and reconstruction suite | v2.12.0 passed |
+| Desktop WebKit | Full production reader and reconstruction suite | v2.12.0 passed |
+| iPhone 13 WebKit | Full suite with touch/mobile layout | v2.12.0 passed |
+
+The v2.12.0 candidate passed all 159 Node tests and 205 browser cases, the asset
+audit and both builds in clean [push CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38849575414)
+and [pull-request CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38849580179).
+All three final long/repeated/unique-illustration profiles passed with unchanged
+page totals, a live source peak of 10 and zero cached-reopen image conversions.
 
 Release-specific EPUB fixtures are original technical publications. They cover
 EPUB 2 NCX navigation, encoded paths containing a space, nested chapters, ruby,

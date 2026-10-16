@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {installReaderFixture,readerURL,readerTitle,readerBookId} from './reader-production-fixture.mjs';
+import {installReaderFixture,readerURL,readerTitle,readerBookId,readerArtworkCenterColor} from './reader-production-fixture.mjs';
 
 test.describe('production reader integration',()=>{
   test.setTimeout(90000);
@@ -133,6 +133,35 @@ test.describe('production reader integration',()=>{
     // The existing immersive zoom UI hides chrome until zoom returns to fit.
     await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:1800,ctrlKey:true,clientX:150,clientY:220});
     await expect(page.locator('#imageFocus')).not.toHaveClass(/reader-image-focus-zoomed/);
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,before);
+  });
+
+  test('image focus preserves artwork colors without a native touch tint',async({page})=>{
+    const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+    await focused.evaluate(element=>element.decode());
+    const box=await focused.boundingBox();
+    const shot=await page.screenshot({scale:'css',clip:{x:Math.floor(box.x+box.width/2),y:Math.floor(box.y+box.height/2),width:1,height:1}});
+    const painted=await page.evaluate(async bytes=>{
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+      const context=canvas.getContext('2d');
+      const capture=new Image();capture.src=URL.createObjectURL(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
+      try{
+        await capture.decode();context.drawImage(capture,0,0);
+        return Array.from(context.getImageData(0,0,1,1).data);
+      }finally{URL.revokeObjectURL(capture.src)}
+    },Array.from(shot));
+    // Use the fixture's declared SVG fill as the independent color reference.
+    // WebKit's canvas drawImage(SVG) samples a different point than its paint.
+    const original=[...readerArtworkCenterColor.slice(1).match(/../g).map(value=>parseInt(value,16)),255];
+    for(let channel=0;channel<4;channel++)expect(Math.abs(original[channel]-painted[channel]),JSON.stringify({original,painted})).toBeLessThanOrEqual(2);
+    if(test.info().project.use.hasTouch&&await page.evaluate(()=>CSS.supports('-webkit-tap-highlight-color','transparent'))){
+      // The source and the full-screen return surface both receive real taps.
+      // Their native highlight must not paint a translucent tint over artwork.
+      for(const target of [image,page.locator('#imageFocusViewport'),page.locator('#imageFocusClose')]){
+        expect(await target.evaluate(element=>getComputedStyle(element).getPropertyValue('-webkit-tap-highlight-color'))).toBe('rgba(0, 0, 0, 0)');
+      }
+    }
     await page.locator('#imageFocusClose').click();
     await returned(page,image,before);
   });
