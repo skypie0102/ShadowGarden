@@ -1,3 +1,26 @@
+# Reader v2.12.2 — mobile image patch
+
+Prepared on 2026-10-16 from the merged reader and incident safeguards. The
+v2.12.0 rollback removed the image touch-feedback correction from production,
+so the owner still observed dimming after recovery. This patch restores the
+transparent native tap feedback on EPUB images and the focused-image surface,
+and changes the stylesheet URL to ensure the new release is fetched.
+
+The release includes binding-aware packaging and explicit 503 responses for
+missing live D1 state. Before deployment, require the configured D1 identity,
+bucket variables and encrypted-setting names to match the restored project.
+After deployment, inspect both the actual deployment and saved configuration,
+then compare both real catalogs with the read-only D1 baseline. No migration,
+seed, catalog edit, B2 write or credential change belongs to this release.
+
+Reader engine, navigation, lifecycle and rendering work is merged. **Phase 5
+remains open** until genuine authorized book opening and Keeper login, plus the
+reported mobile interaction, have been accepted on the live site. Fixture
+browser results are separate from those checks. The prior incident and its
+withdrawn rollout are documented below.
+
+---
+
 # Reader 2.12.1 release verification
 
 **Withdrawn after a production configuration incident.** Production is restored
