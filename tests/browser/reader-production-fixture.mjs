@@ -9,6 +9,7 @@ export const readerBookId=bookId;
 export const readerSeriesId='reader-integration-fixture';
 export const readerBookPath='/media/shadow-garden/books/reader-integration-fixture.epub';
 export const readerTitle='Reader integration fixture';
+export const readerArtworkCenterColor='#b8abd9';
 
 export async function createReaderZip(){
   const module={exports:{}};
@@ -26,7 +27,7 @@ export async function createReaderEpub({chapterCount=9,paragraphCount=12,visualE
   const visualManifest=uniqueVisuals?chapters.filter(i=>visualEvery&&i%visualEvery===0).map(i=>`<item id="art-${i}" href="art-${i}.svg" media-type="image/svg+xml"/>`).join(''):'';
   zip.file('book.opf',`<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="id"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="id">reader-integration-fixture-v1</dc:identifier><dc:title>${readerTitle}</dc:title><dc:language>en</dc:language><meta property="dcterms:modified">2026-10-15T00:00:00Z</meta></metadata><manifest><item id="nav" href="nav.xhtml" properties="nav" media-type="application/xhtml+xml"/><item id="art" href="art.svg" properties="cover-image" media-type="image/svg+xml"/>${visualManifest}<item id="cover" href="cover.xhtml" media-type="application/xhtml+xml"/>${chapters.map(i=>`<item id="c${i}" href="chapter${i}.xhtml" media-type="application/xhtml+xml"/>`).join('')}</manifest><spine><itemref idref="cover"/>${chapters.map(i=>`<itemref idref="c${i}"/>`).join('')}</spine></package>`);
   zip.file('nav.xhtml',`<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>Contents</title></head><body><nav epub:type="toc"><ol><li><a href="cover.xhtml">Cover</a></li>${chapters.map(i=>`<li><a href="chapter${i}.xhtml">Chapter ${i}</a></li>`).join('')}</ol></nav></body></html>`);
-  zip.file('art.svg','<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900"><rect width="600" height="900" fill="#4a426f"/><circle cx="300" cy="450" r="160" fill="#b8abd9"/></svg>');
+  zip.file('art.svg',`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900"><rect width="600" height="900" fill="#4a426f"/><circle cx="300" cy="450" r="160" fill="${readerArtworkCenterColor}"/></svg>`);
   zip.file('cover.xhtml','<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Cover</title></head><body><img src="art.svg" alt="Original fixture cover"/></body></html>');
   for(const i of chapters){
     if(visualEvery&&i%visualEvery===0){

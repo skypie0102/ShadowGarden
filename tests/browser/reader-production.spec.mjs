@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {installReaderFixture,readerURL,readerTitle,readerBookId} from './reader-production-fixture.mjs';
+import {installReaderFixture,readerURL,readerTitle,readerBookId,readerArtworkCenterColor} from './reader-production-fixture.mjs';
 
 test.describe('production reader integration',()=>{
   test.setTimeout(90000);
@@ -142,21 +142,19 @@ test.describe('production reader integration',()=>{
     await focused.evaluate(element=>element.decode());
     const box=await focused.boundingBox();
     const shot=await page.screenshot({scale:'css',clip:{x:Math.floor(box.x+box.width/2),y:Math.floor(box.y+box.height/2),width:1,height:1}});
-    const colors=await focused.evaluate(async(element,bytes)=>{
-      const canvas=document.createElement('canvas');canvas.width=element.naturalWidth;canvas.height=element.naturalHeight;
+    const painted=await page.evaluate(async bytes=>{
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
       const context=canvas.getContext('2d');
-      // Rasterize the whole SVG before sampling: WebKit's cropped SVG drawImage
-      // path does not sample the same source coordinate as its painted image.
-      context.drawImage(element,0,0);
-      const original=Array.from(context.getImageData(Math.floor(canvas.width/2),Math.floor(canvas.height/2),1,1).data);
-      canvas.width=canvas.height=1;
       const capture=new Image();capture.src=URL.createObjectURL(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
       try{
-        await capture.decode();context.clearRect(0,0,1,1);context.drawImage(capture,0,0);
-        return{original,focused:Array.from(context.getImageData(0,0,1,1).data)};
+        await capture.decode();context.drawImage(capture,0,0);
+        return Array.from(context.getImageData(0,0,1,1).data);
       }finally{URL.revokeObjectURL(capture.src)}
     },Array.from(shot));
-    for(let channel=0;channel<4;channel++)expect(Math.abs(colors.original[channel]-colors.focused[channel]),JSON.stringify(colors)).toBeLessThanOrEqual(2);
+    // Use the fixture's declared SVG fill as the independent color reference.
+    // WebKit's canvas drawImage(SVG) samples a different point than its paint.
+    const original=[...readerArtworkCenterColor.slice(1).match(/../g).map(value=>parseInt(value,16)),255];
+    for(let channel=0;channel<4;channel++)expect(Math.abs(original[channel]-painted[channel]),JSON.stringify({original,painted})).toBeLessThanOrEqual(2);
     if(test.info().project.use.hasTouch&&await page.evaluate(()=>CSS.supports('-webkit-tap-highlight-color','transparent'))){
       // The source and the full-screen return surface both receive real taps.
       // Their native highlight must not paint a translucent tint over artwork.
