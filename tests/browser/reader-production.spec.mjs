@@ -143,17 +143,20 @@ test.describe('production reader integration',()=>{
     const box=await focused.boundingBox();
     const shot=await page.screenshot({scale:'css',clip:{x:Math.floor(box.x+box.width/2),y:Math.floor(box.y+box.height/2),width:1,height:1}});
     const colors=await focused.evaluate(async(element,bytes)=>{
-      const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+      const canvas=document.createElement('canvas');canvas.width=element.naturalWidth;canvas.height=element.naturalHeight;
       const context=canvas.getContext('2d');
-      context.drawImage(element,element.naturalWidth/2,element.naturalHeight/2,1,1,0,0,1,1);
-      const original=Array.from(context.getImageData(0,0,1,1).data);
+      // Rasterize the whole SVG before sampling: WebKit's cropped SVG drawImage
+      // path does not sample the same source coordinate as its painted image.
+      context.drawImage(element,0,0);
+      const original=Array.from(context.getImageData(Math.floor(canvas.width/2),Math.floor(canvas.height/2),1,1).data);
+      canvas.width=canvas.height=1;
       const capture=new Image();capture.src=URL.createObjectURL(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
       try{
         await capture.decode();context.clearRect(0,0,1,1);context.drawImage(capture,0,0);
         return{original,focused:Array.from(context.getImageData(0,0,1,1).data)};
       }finally{URL.revokeObjectURL(capture.src)}
     },Array.from(shot));
-    for(let channel=0;channel<4;channel++)expect(Math.abs(colors.original[channel]-colors.focused[channel])).toBeLessThanOrEqual(2);
+    for(let channel=0;channel<4;channel++)expect(Math.abs(colors.original[channel]-colors.focused[channel]),JSON.stringify(colors)).toBeLessThanOrEqual(2);
     if(test.info().project.use.hasTouch&&await page.evaluate(()=>CSS.supports('-webkit-tap-highlight-color','transparent'))){
       // The source and the full-screen return surface both receive real taps.
       // Their native highlight must not paint a translucent tint over artwork.
