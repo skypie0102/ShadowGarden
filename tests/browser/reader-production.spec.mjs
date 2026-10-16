@@ -48,7 +48,12 @@ test.describe('production reader integration',()=>{
     await image.scrollIntoViewIfNeeded();
     const before=await image.boundingBox();
     expect(before).not.toBeNull();
-    if(test.info().project.name.startsWith('mobile'))await image.tap();else await image.click();
+    // WebKit's intentional parent hit surface receives the real user gesture.
+    // Target screen coordinates so the check exercises that surface as well as
+    // direct iframe image input, without bypassing it with a forced DOM click.
+    const point={x:before.x+before.width/2,y:before.y+before.height/2};
+    if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
+    else await page.mouse.click(point.x,point.y);
     await expect(page.locator('#imageFocus')).toBeVisible();
     return{image,before};
   }

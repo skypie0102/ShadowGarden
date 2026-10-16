@@ -48,6 +48,16 @@ test.describe('reader rendering bounds',()=>{
       }).toBe(true);
     }
     await expect.poll(()=>page.evaluate(()=>window.__sgCanonicalPageMap?.totalPages||0),{timeout:60000}).toBeGreaterThan(0);
+    // Map availability precedes its non-blocking cache write. Wait for both
+    // stores to commit before replacing their contents in this fault fixture.
+    await expect.poll(()=>page.evaluate(async()=>{
+      for(const [database,storeName] of [['shadow-garden-reader','page-maps'],['shadow-garden-visual-pages','books']]){
+        const db=await new Promise(resolve=>{const request=indexedDB.open(database,1);request.onsuccess=()=>resolve(request.result)});
+        const count=await new Promise(resolve=>{const request=db.transaction(storeName).objectStore(storeName).count();request.onsuccess=()=>resolve(request.result)});
+        db.close();if(!count)return false;
+      }
+      return true;
+    })).toBe(true);
     // Seed old versions, obsolete layouts and other publications directly into
     // the disposable caches. A normal cached reopen must prune these records.
     await page.evaluate(async()=>{
@@ -97,7 +107,8 @@ test.describe('reader rendering bounds',()=>{
     });
     expect(caches[0].count).toBeLessThanOrEqual(24);expect(caches[0].sameBook).toBeLessThanOrEqual(4);
     expect(caches[1].count).toBeLessThanOrEqual(8);
-    expect(caches.every(cache=>cache.versions.every(version=>version===2))).toBe(true);
+    expect(caches[0].versions.every(version=>version===2)).toBe(true);
+    expect(caches[1].versions.every(version=>version===3)).toBe(true);
     expect(caches.every(cache=>!cache.damaged)).toBe(true);
   });
 

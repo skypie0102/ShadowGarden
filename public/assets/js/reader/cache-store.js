@@ -21,8 +21,8 @@ export function createReaderCache({database,store:storeName,version,...limits}){
   function metadata(value,key=value?.key){
     let bytes=NaN;
     try{
-      const blobs=Array.isArray(value.visuals)?value.visuals.map(record=>record?.blob).filter(Boolean):null;
-      bytes=blobs?[...new Set(blobs)].reduce((total,blob)=>total+blob.size,0):new Blob([JSON.stringify(value)]).size;
+      const assets=Array.isArray(value.visuals)?value.visuals.map(record=>record?.blob||record?.bytes):null;
+      bytes=assets?[...new Set(assets)].reduce((total,asset)=>total+(asset?.size??asset?.byteLength),0):new Blob([JSON.stringify(value)]).size;
     }catch{/* A damaged disposable cache record is selected for eviction. */}
     return{key,book:value?.bookUrl||key,version:value?.version,createdAt:Number(value?.createdAt),bytes};
   }

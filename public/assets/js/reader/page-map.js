@@ -1,6 +1,7 @@
 import {createReaderScope} from "./lifecycle.js";
 import {measureReaderOperation,recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderCache} from './cache-store.js';
+import {installEpubLifecyclePatch} from './epub-lifecycle.js';
 const PAGE_MAP_VERSION = 2;
 const VISUAL_SELECTOR = "img,svg,picture,video,object,canvas";
 
@@ -184,6 +185,7 @@ async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreat
     await abortable(loadScript(documentRef, "/assets/vendor/epub.min.js?v=2.11.0"), signal);
     const epub = frame.contentWindow?.ePub;
     if (typeof epub !== "function") throw new Error("EPUB.js page-map sandbox did not initialize");
+    if(!installEpubLifecyclePatch(epub))throw new Error('EPUB.js page-map lifecycle could not initialize');
 
     const absoluteBookUrl = new URL(bookUrl, location.href).href;
     const book = epub(absoluteBookUrl);

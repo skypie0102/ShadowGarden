@@ -89,6 +89,23 @@ test.describe('production reader lifecycle',()=>{
     await reopen(page);
   });
 
+  test('disposal during vendor render hooks cancels late content hooks and rendered events',async({page})=>{
+    await page.evaluate(async url=>{
+      const {readerRuntime}=await import(url),rendition=readerRuntime.current.state.rendition;
+      const view=rendition.manager.views.all().find(view=>view.contents);
+      let release,contentCalls=0,rendered=0;
+      rendition.hooks.render.register(()=>new Promise(resolve=>{release=resolve}));
+      rendition.hooks.content.register(()=>contentCalls++);
+      rendition.on('rendered',()=>rendered++);
+      rendition.afterDisplayed(view);
+      if(!release)throw Error('Vendor hook was not entered');
+      readerRuntime.dispose();release();
+      await new Promise(resolve=>setTimeout(resolve,50));
+      if(contentCalls||rendered)throw Error('Disposed rendition published late render work');
+    },bootstrap);
+    await released(page);await reopen(page);
+  });
+
   test('a failed partial startup releases handlers and can retry in the same page',async({page})=>{
     await dispose(page);await released(page);
     await page.evaluate(async url=>{

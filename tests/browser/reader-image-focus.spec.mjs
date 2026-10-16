@@ -68,12 +68,15 @@ test('zoom and pan then X returns to the same illustration despite a focus scrol
     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     await session.detach();
   }else if(test.info().project.name.startsWith('mobile')){
-    // Playwright exposes touch movement through CDP only in Chromium. Deliver
-    // native TouchEvents to the same controller for the WebKit touch path.
+    // Playwright exposes touch movement through CDP only in Chromium. Supply
+    // the touch payload directly for this pan check; opening and return above
+    // still use actual browser-delivered taps in WebKit.
     await viewport.evaluate(element=>{
-      const point=(x,y)=>new Touch({identifier:1,target:element,clientX:x,clientY:y,pageX:x,pageY:y});
+      const point=(x,y)=>({identifier:1,target:element,clientX:x,clientY:y,pageX:x,pageY:y});
       for(const [type,touches] of [['touchstart',[point(170,220)]],['touchmove',[point(210,260)]],['touchend',[]]]){
-        element.dispatchEvent(new TouchEvent(type,{touches,targetTouches:touches,changedTouches:touches,bubbles:true,cancelable:true}));
+        const event=new Event(type,{bubbles:true,cancelable:true});
+        for(const key of ['touches','targetTouches','changedTouches'])Object.defineProperty(event,key,{value:touches});
+        element.dispatchEvent(event);
       }
     });
   }else{

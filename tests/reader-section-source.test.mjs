@@ -79,3 +79,28 @@ test('disposal during a load releases the late document instead of retaining it'
   release();release();f.request.resolve({root:{}});await loading;await tick();
   assert.equal(f.section.document,undefined);assert.equal(f.unloads,1);
 });
+
+test('Section destruction preserves pending vendor hooks until the last read lease settles',async()=>{
+  const request=deferred(),hold=deferred();let hooks=0,destroys=0;
+  const section={
+    hooks:{content(){hooks++}},
+    async load(){this.document=await request.promise;this.hooks.content();return this.document},
+    unload(){this.document=undefined},
+    destroy(){destroys++;this.unload();this.hooks=undefined}
+  };
+  const reading=withSectionSource(section,null,async document=>{assert.deepEqual(document,{root:{}});await hold.promise});
+  section.destroy();section.destroy();assert.equal(destroys,0);
+  await assert.rejects(section.load(),{name:'AbortError'});
+  request.resolve({root:{}});await tick();assert.equal(hooks,1);assert.equal(destroys,0);
+  hold.resolve();await reading;assert.equal(destroys,1);assert.equal(section.document,undefined);
+  await assert.rejects(withSectionSource(section,null,()=>{}),{name:'AbortError'});
+});
+
+test('a rejected pending Section load still completes requested destruction exactly once',async()=>{
+  const request=deferred();let destroys=0;
+  const section={load:()=>request.promise,unload(){},destroy(){destroys++}};
+  const reading=withSectionSource(section,null,()=>{});
+  section.destroy();request.reject(Error('fixture load rejected'));
+  await assert.rejects(reading,/fixture load rejected/);await tick();
+  section.destroy();assert.equal(destroys,1);
+});

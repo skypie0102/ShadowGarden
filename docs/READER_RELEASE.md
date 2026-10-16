@@ -18,6 +18,18 @@ iframe. Keeping that isolated iframe transparent within the viewport fixes the
 32-chapter map timeout and restores the expected seek-to-cover progress. The
 frame remains behind the page, non-interactive and excluded from accessibility.
 
+Release checks also exposed vendor render/source continuations after teardown.
+The view/rendition owner now cancels late render events, and Section hooks survive
+only until their pending load/read leases settle. The regression fails against
+the previous implementation; repeated desktop/mobile WebKit checks pass after
+the fix. The map's private runtime receives the same lifecycle integration.
+
+WebKit rejects even a plain Blob IndexedDB write in the tested runtime. Prepared
+visual cache format 3 therefore stores shared ArrayBuffer bytes and rebuilds
+shared Blobs when read. Buffer bytes count toward the existing cache budget;
+old disposable formats are pruned. Progress, bookmarks and settings keep their
+existing schemas and identities.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |
