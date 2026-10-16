@@ -104,3 +104,40 @@ test('a rejected pending Section load still completes requested destruction exac
   await assert.rejects(reading,/fixture load rejected/);await tick();
   section.destroy();assert.equal(destroys,1);
 });
+
+function locationFixture(sections){
+  let parsed=0;
+  const locations={
+    _locations:[],pause:0,spine:{each:fn=>sections.forEach(fn)},q:{stop(){}},
+    generate(){throw Error('obsolete vendor generate')},process(){throw Error('obsolete vendor process')},
+    parse(root){parsed++;return[root.id]},
+    destroy(){this._locations=undefined;this.spine=undefined}
+  };
+  const book={locations,destroy(){locations.destroy()}};ownLocationSources(book);
+  return{book,locations,get parsed(){return parsed}};
+}
+
+test('owned location generation retains vendor parsing and processes linear sections once',async()=>{
+  const sections=[1,2,3].map(id=>({linear:id!==2,cfiBase:'fixture',async load(){this.document={documentElement:{id}}},unload(){this.document=undefined}}));
+  const f=locationFixture(sections),generating=f.locations.generate(1200);
+  assert.equal(f.locations.generate(1200),generating);
+  assert.deepEqual(await generating,[1,3]);assert.equal(f.locations.total,1);assert.equal(f.parsed,2);
+  assert.equal(f.locations.break,1200);f.book.destroy();
+});
+
+test('closing a book during a location source load prevents late parsing or array writes',async()=>{
+  const request=deferred(),section={linear:true,async load(){this.document=await request.promise},unload(){this.document=undefined}};
+  const f=locationFixture([section]),generating=f.locations.generate(1200);
+  f.book.destroy();await assert.rejects(generating,{name:'AbortError'});
+  request.resolve({documentElement:{id:1}});await tick();
+  assert.equal(f.parsed,0);assert.equal(section.document,undefined);
+  await assert.rejects(f.locations.generate(1200),{name:'AbortError'});
+});
+
+test('closing locations after parsing cancels their pending pacing timer',async()=>{
+  const entered=deferred(),section={linear:true,async load(){this.document={documentElement:{id:1}}},unload(){this.document=undefined}};
+  const f=locationFixture([section]),parse=f.locations.parse;
+  f.locations.pause=10000;f.locations.parse=function(...args){entered.resolve();return parse.apply(this,args)};
+  const generating=f.locations.generate(1200);await entered.promise;f.book.destroy();
+  await assert.rejects(generating,{name:'AbortError'});assert.equal(f.parsed,1);
+});

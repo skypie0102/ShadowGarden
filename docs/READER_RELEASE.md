@@ -30,6 +30,11 @@ shared Blobs when read. Buffer bytes count toward the existing cache budget;
 old disposable formats are pruned. Progress, bookmarks and settings keep their
 existing schemas and identities.
 
+The location generator also uses the book's lifetime: its sequential owner keeps
+vendor CFI parsing/pacing but cancels before late work can touch destroyed arrays.
+Unit checks cover closure during source loading and pacing, plus normal/shared
+generation of linear chapters.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |
