@@ -1,6 +1,7 @@
 import {readerInstanceScope} from "./reader/lifecycle.js";
 import {measureReaderOperation,recordReaderDiagnostic} from './reader/diagnostics.js';
 import {createReaderCache} from './reader/cache-store.js';
+import {VISUAL_CACHE_VERSION,serializeVisualCache,deserializeVisualCache} from './reader/visual-cache-record.js';
 /* Shadow Garden v1.3.0 — first-run standalone visual-page cache.
  *
  * Scans EPUB spine documents once, identifies genuinely standalone cover/illustration pages,
@@ -11,7 +12,7 @@ export function createVisualPageCacheExtension(){
 
   const CACHE_DB="shadow-garden-visual-pages";
   const CACHE_STORE="books";
-  const CACHE_VERSION=2;
+  const CACHE_VERSION=VISUAL_CACHE_VERSION;
   const MAX_WEBP_EDGE=2600;
   const TEXT_LIMIT=4;
   const VISUAL_HINT=/(?:cover|illustration|illustrated|insert|plate|frontispiece|full[-_ ]?page|image[-_ ]?page|artwork|map)/i;
@@ -55,8 +56,8 @@ export function createVisualPageCacheExtension(){
     database:CACHE_DB,store:CACHE_STORE,version:CACHE_VERSION,
     maxEntries:8,maxBytes:64*1024*1024
   });
-  const cacheGet=key=>visualCache.get(key);
-  const cachePut=value=>visualCache.put(value);
+  const cacheGet=async key=>deserializeVisualCache(await visualCache.get(key));
+  const cachePut=async value=>visualCache.put(await serializeVisualCache(value));
 
   function setLoadingMessage(message){
     const apply=()=>{

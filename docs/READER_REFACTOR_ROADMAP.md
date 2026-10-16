@@ -6,7 +6,8 @@ Phase 3 lifecycle ownership is verified and merged through
 [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
 `61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is verified and merged
 through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
-`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification remains pending.
+`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification is in progress
+on `refactor/reader-release`; production still serves the image-focus milestone.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -41,7 +42,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | In progress |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite
@@ -119,6 +120,12 @@ project and no production credentials or catalog writes.
 | RDR-033 | Reader warnings include raw Errors, chapter paths and potentially protected source URLs. | Known diagnostic codes accept numeric fields only, retain 64 events, and emit fixed first-occurrence warnings. Expected fallback/cancellation is quiet. |
 | RDR-034 | A failed EPUB open inside the map sandbox can leave book.ready pending. | Race opened/ready against openFailed, remove the sandbox on failure, and keep ordinary reader navigation usable. Desktop/mobile fault cases verify recovery and sanitized output. |
 | RDR-035 | Disposable map/visual caches retain old versions, obsolete layouts and publications without an eviction bound. | Atomic cache maintenance removes invalid/old records and applies count, age and payload budgets. Reopen tests seed obsolete and damaged records and check cache reuse after pruning. |
+| RDR-036 | Firefox throttles animation frames in the hidden/offscreen map document, delaying long-book maps and leaving progress on its fallback. | Keep the isolated measurement iframe transparent within the viewport, non-interactive and excluded from accessibility. Firefox's 32-chapter bound and seek-to-cover regressions pass. Full release matrix verifies the change across engines. |
+| RDR-037 | Vendor render/content continuations can outlive their rendition, and Section destruction can clear hooks while a source load still needs them. | Own the render/unload pipeline at the view/rendition boundary; apply the lifecycle integration in the map sandbox too. Defer final Section destruction until pending work and read leases settle, while refusing new work immediately. Deterministic unit/browser regressions reproduce late work and verify its cancellation. |
+| RDR-038 | WebKit's IndexedDB rejects Blob/File image writes, preventing cached illustration reopening. | Visual cache format 3 persists shared ArrayBuffer assets and reconstructs shared Blobs on read. Byte budgets count buffers, old disposable formats are evicted, and stored progress/bookmark schemas stay unchanged. Cross-engine cache/reopen cases cover the portable representation. |
+| RDR-039 | The vendor location queue can append parsed CFIs after destroy clears its arrays, even when its Section source lease is retained. | Location generation now owns a cancellable sequential loop, retaining vendor CFI parsing and pacing. Closing during a load or pacing timer stops all later parsing/writes; overlapping generation calls share the active operation. |
+| RDR-040 | A correct CFI can land one page early when a new paginated view positions before asynchronous content hooks finish styling its columns. | Track render/content work and complete its paint phase, then reapply the same CFI once for a newly rendered paginated view. Startup and app navigation share that boundary; newer navigation cancels an older correction. Unit and full-reader mode tests cover the ordering. |
+| RDR-041 | Vendor scrollTo/scrollBy assign `scrolled = true`, overwriting the Continuous callback with the same name before delayed work runs. | Keep the owned reporter under a separate field and capture it in the debounce. The stabilization boundary calls that reporter while respecting disposal/suppression. Unit and full-reader checks force the vendor boolean and still receive scroll reports. |
 
 ## Phase 3 findings
 
@@ -303,3 +310,19 @@ archive, map records and normalized artwork still scale with its actual content.
 2. Review remaining limits, deployment configuration and rollback instructions.
 3. Deploy a verified source to the existing production site, identify the release
    commit and exercise the deployed reader without changing stored identities.
+
+## Phase 5 — release candidate
+
+The `2.12.0` candidate adds Firefox and desktop/mobile WebKit to the existing
+desktop/mobile Chromium suite. Additional publication cases cover EPUB 2 NCX,
+encoded nested paths, ruby/multilingual text, tables, notes, retained bookmarks
+and progress identities, and corrupt embedded artwork. Existing long-book,
+illustration, cache, cancellation and layout cases run in the same matrix.
+
+Main and NSFW footer checks verify a visible release number and commit without
+horizontal overflow. The build identifies the actual Git branch instead of the
+old reconstruction fallback; JavaScript and CSS revalidate between deployments.
+The recovered `public/data/version.json` remains provenance: the build generates
+the actual release metadata in `dist/data/version.json`.
+
+See [release verification](READER_RELEASE.md) for the matrix, rollout and limits.

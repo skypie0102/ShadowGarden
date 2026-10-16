@@ -32,7 +32,18 @@ inside the engine integration; replacing them without reproducing their
 browser/layout behavior is outside this first milestone.
 
 The page-map generator intentionally uses a separate, unextended vendor runtime
-inside its offscreen iframe. It does not register a second application engine.
+inside its isolated measurement iframe. It does not register a second application engine.
+The iframe stays transparent within the viewport, behind the page, with pointer
+events disabled and `aria-hidden`. Moving it offscreen or using `visibility:hidden`
+can throttle Firefox/WebKit vendor animation frames and stall long-book mapping.
+Its private vendor runtime receives the same lifecycle integration without
+registering another application engine. Render/content/unload continuations
+belong to view/rendition scopes. Section destruction refuses new work immediately
+and waits for existing loads/read leases before clearing vendor hooks.
+New-view CFI positioning completes the owned render/content pipeline and its
+paint phase before one final paginated correction. A render revision distinguishes
+newly inserted views from already styled ones. Startup and application navigation
+share this boundary, with the same cancellation operation throughout.
 `window.__sgVisualPageCache` and the canonical page-map diagnostic remain legacy
 bridges; subsequent phases will replace global coupling where appropriate.
 

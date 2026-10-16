@@ -1,4 +1,4 @@
-/* Shadow Garden v1.15.9 — deployed repo version in public library footers. */
+/* Deployment identity shared by the main and adult library footers. */
 (()=>{
   async function mount(){
     const target=document.getElementById("libraryVersion");
@@ -9,9 +9,10 @@
       const info=await response.json();
       const version=String(info?.version||"").trim();
       if(!version)return;
-      target.textContent=` · v${version}`;
       const commit=String(info?.shortCommit||"").trim();
-      target.title=commit?`Shadow Garden v${version} · ${commit}`:`Shadow Garden v${version}`;
+      target.textContent=` · v${version}${commit?` · ${commit}`:""}`;
+      target.title=[`Shadow Garden v${version}`,info.commit?`Commit ${info.commit}`:"",
+        info.branch?`Branch ${info.branch}`:"",info.builtAt?`Built ${info.builtAt}`:""].filter(Boolean).join(" · ");
     }catch(error){
       console.warn("Library deployment version unavailable",error);
     }

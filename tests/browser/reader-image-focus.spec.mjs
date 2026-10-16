@@ -61,12 +61,24 @@ test('zoom and pan then X returns to the same illustration despite a focus scrol
   await viewport.dispatchEvent('wheel',{deltaY:-650,ctrlKey:true,clientX:150,clientY:200});
   expect(await page.evaluate(()=>window.focusFixture.focus.isZoomed())).toBe(true);
   // Wheel zoom and pointer pan use the production controller, with real layout.
-  if(test.info().project.name.startsWith('mobile')){
+  if(test.info().project.name==='mobile-chromium'){
     const session=await page.context().newCDPSession(page);
     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:170,y:220}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:210,y:260}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     await session.detach();
+  }else if(test.info().project.name.startsWith('mobile')){
+    // Playwright exposes touch movement through CDP only in Chromium. Supply
+    // the touch payload directly for this pan check; opening and return above
+    // still use actual browser-delivered taps in WebKit.
+    await viewport.evaluate(element=>{
+      const point=(x,y)=>({identifier:1,target:element,clientX:x,clientY:y,pageX:x,pageY:y});
+      for(const [type,touches] of [['touchstart',[point(170,220)]],['touchmove',[point(210,260)]],['touchend',[]]]){
+        const event=new Event(type,{bubbles:true,cancelable:true});
+        for(const key of ['touches','targetTouches','changedTouches'])Object.defineProperty(event,key,{value:touches});
+        element.dispatchEvent(event);
+      }
+    });
   }else{
     await page.mouse.move(170,220);await page.mouse.down();await page.mouse.move(210,260);await page.mouse.up();
   }

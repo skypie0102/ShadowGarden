@@ -18,6 +18,7 @@ const messages=Object.freeze({
   'note.failed':'A footnote could not be shown; following its EPUB link.',
   'navigation.targetFallback':null,
   'reader.startupFailed':'The reader could not start. The error screen offers recovery steps.',
+  'render.hookFailed':'A chapter render hook could not finish.',
   'access.catalogUnavailable':null,
   'access.renewalDelayed':'Book access could not be renewed yet.',
   'visual.handoffFailed':'Visual preparation could not finish; using EPUB source pages.',

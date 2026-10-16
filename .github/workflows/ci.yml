@@ -15,12 +15,51 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:browser
+
+  browser:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: desktop-chromium
+            engine: chromium
+          - project: mobile-chromium
+            engine: chromium
+          - project: desktop-firefox
+            engine: firefox
+          - project: desktop-webkit
+            engine: webkit
+          - project: mobile-webkit
+            engine: webkit
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      # Optional public runtime export permits reproducing a CI failure when the
+      # local network cannot reach Playwright's CDN. No app data is included.
+      - name: Archive browser runtime for reproduction
+        if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
+        run: tar -czf "$RUNNER_TEMP/browser-runtime.tar.gz" -C "$HOME/.cache" ms-playwright
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
+        with:
+          name: browser-runtime-${{ matrix.engine }}
+          path: ${{ runner.temp }}/browser-runtime.tar.gz
+          retention-days: 1
+      - run: npm run test:browser -- --project ${{ matrix.project }} --max-failures=1
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: browser-report
+          name: browser-report-${{ matrix.project }}
           path: |
             playwright-report/
             test-results/

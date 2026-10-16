@@ -1,4 +1,5 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
+import {renditionRenderRevision,settleRenditionContent} from './epub-lifecycle.js';
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
 import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
@@ -471,7 +472,7 @@ export function stabilizeContinuousScrollLifecycle(rendition){
     timer=setTimeout(()=>{
       timer=0;
       if(manager.__sgDestroyed||suppressed())return;
-      const scrolled=manager.scrolled;
+      const scrolled=manager.__sgContinuousScrolled||manager.scrolled;
       if(typeof scrolled==="function")scrolled.apply(manager,args);
     },30);
   };
@@ -491,11 +492,27 @@ export function stabilizeContinuousScrollLifecycle(rendition){
   return true;
 }
 
+export async function displaySettledRenditionTarget(rendition,target,{operation}={}){
+  const revision=renditionRenderRevision(rendition);
+  const moved=await runRenditionMove(rendition,operation,()=>rendition.display(target));
+  if(!moved||!operation.isCurrent())return false;
+  const changed=await settleRenditionContent(rendition,revision);
+  if(!operation.isCurrent())return false;
+  const paginated=rendition.settings?.flow==='paginated'||rendition.manager?.isPaginated===true;
+  if(changed&&paginated&&String(target||'').startsWith('epubcfi(')){
+    // The vendor positions a newly inserted view before asynchronous content
+    // hooks finish styling its columns. Reapply the same explicit CFI once at
+    // the completed content/layout boundary; newer navigation still wins.
+    return runRenditionMove(rendition,operation,()=>rendition.display(target));
+  }
+  return true;
+}
+
 export async function displayRenditionTarget(rendition,target,{operation}={}){
   if(!rendition?.display)throw new Error("EPUB rendition is unavailable");
   operation=operation||beginRenditionNavigation(rendition,{kind:"startup"});
   try{
-    const moved=await runRenditionMove(rendition,operation,()=>rendition.display(target));
+    const moved=await displaySettledRenditionTarget(rendition,target,{operation});
     return{fallback:false,...(!moved?{cancelled:true}:{})};
   }catch(error){
     // A failed old display must not fall back to the first chapter after a

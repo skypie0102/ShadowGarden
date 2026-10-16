@@ -48,7 +48,12 @@ test.describe('production reader integration',()=>{
     await image.scrollIntoViewIfNeeded();
     const before=await image.boundingBox();
     expect(before).not.toBeNull();
-    if(test.info().project.name.startsWith('mobile'))await image.tap();else await image.click();
+    // WebKit's intentional parent hit surface receives the real user gesture.
+    // Target screen coordinates so the check exercises that surface as well as
+    // direct iframe image input, without bypassing it with a forced DOM click.
+    const point={x:before.x+before.width/2,y:before.y+before.height/2};
+    if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
+    else await page.mouse.click(point.x,point.y);
     await expect(page.locator('#imageFocus')).toBeVisible();
     return{image,before};
   }
@@ -188,6 +193,18 @@ test.describe('production reader integration',()=>{
     await page.locator('#continuousSeek').press('Home');
     await expect(page.locator('#chapterTitle')).toHaveText('Cover',{timeout:20000});
     await expect.poll(()=>page.evaluate(()=>Number(document.querySelector('#progressRange').value))).toBeLessThan(100);
+  });
+
+  test('Continuous scroll reporting survives the vendor boolean scroll flag',async({page})=>{
+    const reports=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager;let reports=0;
+      const listener=()=>reports++;manager.on('scroll',listener);
+      manager.scrolled=true;manager.__sgSuppressScrollUntil=0;manager._scrolled();
+      await new Promise(resolve=>setTimeout(resolve,100));manager.off('scroll',listener);
+      return reports;
+    });
+    expect(reports).toBeGreaterThan(0);
   });
 
   test('a chapter selection cancels a debounced seek before it can move the viewport',async({page})=>{

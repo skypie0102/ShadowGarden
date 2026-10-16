@@ -401,7 +401,8 @@ export function createContinuousCoreExtension(){
     manager.scrollDeltaVert=0;
     manager.scrollDeltaHorz=0;
 
-    manager.scrolled=()=>{
+    const onScrolled=()=>{
+      if(manager.__sgDestroyed)return;
       const position=syncScrollPosition(manager);
       try{manager.emit?.("scroll",position)}catch{}
       scheduleBuffer(manager,rendition);
@@ -411,7 +412,11 @@ export function createContinuousCoreExtension(){
         emitScrolled(manager);
       },Number(manager.settings?.afterScrolledTimeout)||10);
     };
-    manager._scrolled=debounce(()=>manager.scrolled(),SCROLL_DEBOUNCE_MS);
+    // Vendor scrollTo/scrollBy also use `scrolled` as a boolean bookkeeping
+    // flag. Keep the owned callback separate from that mutable vendor field.
+    manager.__sgContinuousScrolled=onScrolled;
+    manager.scrolled=onScrolled;
+    manager._scrolled=debounce(onScrolled,SCROLL_DEBOUNCE_MS);
     manager.onScroll=()=>{
       const {top,left}=syncScrollPosition(manager);
       const suppressed=performance.now()<(Number(manager.__sgSuppressScrollUntil)||0);
