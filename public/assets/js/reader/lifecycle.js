@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 /* Resource ownership for reader sessions, controllers and EPUB instances. */
 export function readerAbortError(){return new DOMException("Reader disposed", "AbortError")}
 
@@ -84,7 +85,7 @@ export function createReaderScope(){
       controller.abort();
       // Release children and late-installed resources before their owners.
       for(const release of [...cleanups].reverse()){
-        try{release()}catch(error){console.warn("Reader resource cleanup failed",error)}
+        try{release()}catch(error){recordReaderDiagnostic('lifecycle.cleanupFailed')}
       }
     }
   };

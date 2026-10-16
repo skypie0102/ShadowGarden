@@ -7,6 +7,7 @@ import {createContinuousCoreExtension} from '../reader-continuous-core.js';
 import {installEpubLifecyclePatch} from './epub-lifecycle.js';
 import {readerInstanceScope} from './lifecycle.js';
 import {disposeRenditionNavigation} from './navigation-state.js';
+import {ownLocationSources} from './section-source.js';
 
 // This is the only production owner of EPUB creation and extension order.
 // Keep vendor methods/version-specific fixes within the integration extensions;
@@ -49,6 +50,7 @@ export function initializeReaderEngine(epub=globalThis.ePub){
       let book=epub(...args);
       if(!book||typeof book.renderTo!=='function')throw new Error('EPUB.js did not create a readable book');
       const scope=readerInstanceScope(book),renderTo=book.renderTo;
+      ownLocationSources(book);
       book.renderTo=function(...renderArgs){
         if(scope.disposed)throw new Error('EPUB book is disposed');
         const rendition=renderTo.apply(this,renderArgs),lifetime=readerInstanceScope(rendition);

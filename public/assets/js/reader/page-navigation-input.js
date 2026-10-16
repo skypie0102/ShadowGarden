@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifecycle.js";
 /* Shadow Garden R4.2 — Pages-mode swipe and desktop wheel input only. */
 
@@ -99,7 +100,7 @@ export function createPageNavigationInput({getFlow,getSwipeTurns,turn}={}){
       lifetime.listen(doc,"touchcancel",()=>{state.swipe=null},{capture:true,passive:true});
       lifetime.listen(doc,"touchend",event=>finishTouch(event,doc),{capture:true,passive:false});
     }
-    try{lifetime.listen(doc.defaultView,"wheel",handleWheel,{capture:true,passive:false})}catch(error){console.warn("Reader page wheel input unavailable",error)}
+    try{lifetime.listen(doc.defaultView,"wheel",handleWheel,{capture:true,passive:false})}catch(error){recordReaderDiagnostic('input.pageUnavailable')}
   }
 
   function attachRendition(rendition){
@@ -107,7 +108,7 @@ export function createPageNavigationInput({getFlow,getSwipeTurns,turn}={}){
     rendition.__sgR42PageInput=true;
     const lifetime=scope.child().link(readerInstanceScope(rendition));
     lifetime.add(()=>{delete rendition.__sgR42PageInput});
-    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){console.warn("Reader page input hook unavailable",error)}
+    try{lifetime.hook(rendition.hooks?.content,contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch(error){recordReaderDiagnostic('input.pageUnavailable')}
     try{lifetime.on(rendition,"rendered",(_section,view)=>installDocument(view?.contents?.document||view?.contents?.contentDocument,view?.contents?readerContentsScope(rendition,view.contents):lifetime))}catch{}
     try{rendition.getContents?.().forEach(contents=>installDocument(contents?.document||contents?.contentDocument,readerContentsScope(rendition,contents)))}catch{}
   }

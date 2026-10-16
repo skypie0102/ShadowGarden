@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
 import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
@@ -26,7 +27,7 @@ export function configureSpread(rendition,flow="paginated"){
       if(paginatedNeedsSinglePage())rendition.spread("none");
       else rendition.spread("auto",900);
     }else rendition.spread("none");
-  }catch(error){console.warn("Reader spread configuration skipped",error)}
+  }catch(error){recordReaderDiagnostic('layout.spreadFailed')}
 }
 
 function continuousViewport(manager){
@@ -501,7 +502,7 @@ export async function displayRenditionTarget(rendition,target,{operation}={}){
     // newer navigation has already selected a different target.
     if(!operation.isCurrent())return{fallback:false,cancelled:true};
     if(!target)throw error;
-    console.warn("Saved EPUB location unavailable; opening first readable content",error);
+    recordReaderDiagnostic('navigation.savedPlaceFallback');
     try{
       const moved=await runRenditionMove(rendition,operation,()=>rendition.display());
       return{fallback:true,...(!moved?{cancelled:true}:{})};
@@ -590,6 +591,6 @@ export async function captureRenditionPosition({rendition,flow,pageMap,fallback}
 }
 
 export function destroyRendition(rendition,viewer){
-  try{rendition?.destroy?.()}catch(error){console.warn("Old rendition cleanup skipped",error)}
+  try{rendition?.destroy?.()}catch(error){recordReaderDiagnostic('lifecycle.cleanupFailed')}
   if(viewer)viewer.innerHTML="";
 }

@@ -1,4 +1,6 @@
 import {readerInstanceScope} from "./reader/lifecycle.js";
+import {measureReaderOperation,recordReaderDiagnostic} from './reader/diagnostics.js';
+import {createReaderCache} from './reader/cache-store.js';
 /* Shadow Garden v1.3.0 — first-run standalone visual-page cache.
  *
  * Scans EPUB spine documents once, identifies genuinely standalone cover/illustration pages,
@@ -10,7 +12,6 @@ export function createVisualPageCacheExtension(){
   const CACHE_DB="shadow-garden-visual-pages";
   const CACHE_STORE="books";
   const CACHE_VERSION=2;
-  const DB_VERSION=1;
   const MAX_WEBP_EDGE=2600;
   const TEXT_LIMIT=4;
   const VISUAL_HINT=/(?:cover|illustration|illustrated|insert|plate|frontispiece|full[-_ ]?page|image[-_ ]?page|artwork|map)/i;
@@ -50,46 +51,12 @@ export function createVisualPageCacheExtension(){
   const broken=doc=>Boolean(doc?.querySelector?.("parsererror"));
   const cacheKey=bookUrl=>`${CACHE_VERSION}::${new URL(bookUrl,location.href).href}`;
 
-  function openDb(){
-    if(!window.indexedDB)return Promise.resolve(null);
-    return new Promise(resolve=>{
-      try{
-        const request=indexedDB.open(CACHE_DB,DB_VERSION);
-        request.onupgradeneeded=()=>{
-          const db=request.result;
-          if(!db.objectStoreNames.contains(CACHE_STORE))db.createObjectStore(CACHE_STORE,{keyPath:"key"});
-        };
-        request.onsuccess=()=>resolve(request.result);
-        request.onerror=()=>resolve(null);
-        request.onblocked=()=>resolve(null);
-      }catch{resolve(null)}
-    });
-  }
-
-  async function cacheGet(key){
-    const db=await openDb();if(!db)return null;
-    return new Promise(resolve=>{
-      try{
-        const tx=db.transaction(CACHE_STORE,"readonly"),request=tx.objectStore(CACHE_STORE).get(key);
-        request.onsuccess=()=>resolve(request.result||null);
-        request.onerror=()=>resolve(null);
-        tx.oncomplete=()=>db.close();tx.onerror=()=>db.close();
-      }catch{try{db.close()}catch{}resolve(null)}
-    });
-  }
-
-  async function cachePut(value){
-    const db=await openDb();if(!db)return false;
-    return new Promise(resolve=>{
-      try{
-        const tx=db.transaction(CACHE_STORE,"readwrite");
-        tx.objectStore(CACHE_STORE).put(value);
-        tx.oncomplete=()=>{db.close();resolve(true)};
-        tx.onerror=()=>{db.close();resolve(false)};
-        tx.onabort=()=>{db.close();resolve(false)};
-      }catch{try{db.close()}catch{}resolve(false)}
-    });
-  }
+  const visualCache=createReaderCache({
+    database:CACHE_DB,store:CACHE_STORE,version:CACHE_VERSION,
+    maxEntries:8,maxBytes:64*1024*1024
+  });
+  const cacheGet=key=>visualCache.get(key);
+  const cachePut=value=>visualCache.put(value);
 
   function setLoadingMessage(message){
     const apply=()=>{
@@ -285,7 +252,7 @@ export function createVisualPageCacheExtension(){
     return svgAsset(zip,doc.documentElement,path);
   }
 
-  async function classifySpineDocument({zip,item,coverPath}){
+  async function classifySpineDocument({zip,item,coverPath,loadAsset}){
     const entry=zip.file(item.path);if(!entry)return null;
     const source=await entry.async("string");
     let doc=parseXml(source);
@@ -310,7 +277,7 @@ export function createVisualPageCacheExtension(){
       if(src&&!/^(?:data:|blob:|https?:|\/\/)/i.test(src)){
         sourcePath=resolvePath(dirName(item.path),src);
         cover=hrefMatches(sourcePath,coverPath);
-        asset=await publicationImageAsset(zip,sourcePath);
+        asset=await loadAsset(sourcePath);
         alt=image.getAttribute("alt")||"";
       }
     }
@@ -323,7 +290,7 @@ export function createVisualPageCacheExtension(){
         if(href&&!/^(?:data:|blob:|https?:|\/\/)/i.test(href)){
           sourcePath=resolvePath(dirName(item.path),href);
           cover=hrefMatches(sourcePath,coverPath);
-          asset=await publicationImageAsset(zip,sourcePath);
+          asset=await loadAsset(sourcePath);
         }
       }
       if(!asset){asset=await svgAsset(zip,svg,item.path);sourcePath=item.path;kind="svg"}
@@ -335,10 +302,9 @@ export function createVisualPageCacheExtension(){
       if(data&&!/^(?:data:|blob:|https?:|\/\/)/i.test(data)){
         sourcePath=resolvePath(dirName(item.path),data);
         const mime=mimeFromPath(sourcePath,objects[0].getAttribute("type")||"");
-        if(RASTER_MIME.test(mime))asset=await rasterAsset(zip,sourcePath,mime);
+        if(RASTER_MIME.test(mime))asset=await loadAsset(sourcePath,mime);
         else if(mime==="image/svg+xml"){
-          const svgText=await zip.file(sourcePath)?.async("string");
-          if(svgText){const svgDoc=parseXml(svgText),svgRoot=svgDoc.documentElement;asset=await svgAsset(zip,svgRoot,sourcePath);dimensions=svgDimensions(svgRoot);kind="svg"}
+          asset=await loadAsset(sourcePath,mime);kind="svg";
         }
       }
     }
@@ -392,15 +358,26 @@ export function createVisualPageCacheExtension(){
       spineIndex++;
     }
 
+    // Cache only this scan's normalized assets. Repeated plates share the Blob
+    // without skipping per-page classification, CFIs, alt text or geometry.
+    const assets=new Map();
+    const loadAsset=(path,mime=mimeFromPath(path))=>{
+      const key=path+'::'+mime;
+      if(assets.has(key)){recordReaderDiagnostic('visual.assetReused');return assets.get(key)}
+      const pending=publicationImageAsset(zip,path,mime);
+      assets.set(key,pending);
+      pending.catch(()=>{if(assets.get(key)===pending)assets.delete(key)});
+      return pending;
+    };
     const visuals=[];let converted=0,reused=0;
     for(let index=0;index<items.length;index++){
       signal.throwIfAborted();
       const item=items[index];
       document.dispatchEvent(new CustomEvent("sg-visual-pages-progress",{detail:{index:index+1,total:items.length,href:item.href}}));
       try{
-        const visual=await classifySpineDocument({zip,item,coverPath});
+        const visual=await classifySpineDocument({zip,item,coverPath,loadAsset});
         if(visual){visuals.push(visual);if(visual.converted)converted++;else reused++}
-      }catch(error){console.warn(`Visual-page preparation skipped ${item.href}`,error)}
+      }catch{recordReaderDiagnostic('visual.assetFailed')}
       signal.throwIfAborted();
       if(index%8===7)await new Promise(resolve=>setTimeout(resolve,0));
     }
@@ -425,30 +402,50 @@ export function createVisualPageCacheExtension(){
     const absolute=new URL(bookUrl,location.href).href,key=cacheKey(absolute);
     if(current.ready&&current.key===key)return current.summary;
     if(current.preparing&&current.key===key)return current.preparing;
+
     release();
-    const serial=preparationSerial,controller=new AbortController();preparationController=controller;
+    const serial=preparationSerial;
+    const controller=new AbortController();
+    preparationController=controller;
+    const finish=measureReaderOperation('visual.ready');
     const isCurrent=()=>serial===preparationSerial&&!controller.signal.aborted;
-    current.key=key;current.bookUrl=absolute;
+    current.key=key;
+    current.bookUrl=absolute;
     setLoadingMessage("Preparing visual pages…");
+
     const task=(async()=>{
       const cached=await cacheGet(key);
       if(!isCurrent())return null;
       if(cached?.version===CACHE_VERSION&&Array.isArray(cached.visuals)){
-        const result=activate(cached,true);setLoadingMessage("Opening the book…");return result;
+        const result=activate(cached,true);
+        finish({scanned:result.scanned,assets:result.visualPages},'visual.cached');
+        setLoadingMessage("Opening the book…");
+        return result;
       }
+
       const payload=await scanBook(absolute,controller.signal);
       if(!isCurrent())return null;
-      await cachePut(payload).catch(()=>false);
+      const saved=await cachePut(payload).catch(()=>false);
+      if(!saved)recordReaderDiagnostic('visual.cacheUnavailable');
       if(!isCurrent())return null;
-      const result=activate(payload,false);setLoadingMessage("Opening the book…");return result;
+
+      const result=activate(payload,false);
+      finish({scanned:result.scanned,assets:result.visualPages,converted:result.converted});
+      setLoadingMessage("Opening the book…");
+      return result;
     })().catch(error=>{
       if(!isCurrent())return null;
-      current.ready=true;current.records=new Map();current.summary={cached:false,scanned:0,visualPages:0,converted:0,reused:0,error:String(error?.message||error)};
-      console.warn("Standalone visual-page preparation unavailable; using EPUB source pages",error);
+      current.ready=true;
+      current.records=new Map();
+      current.summary={cached:false,scanned:0,visualPages:0,converted:0,reused:0,error:String(error?.message||error)};
+      finish({},'visual.failed');
       document.dispatchEvent(new CustomEvent("sg-visual-pages-error",{detail:{error}}));
       setLoadingMessage("Opening the book…");
       return current.summary;
-    }).finally(()=>{if(current.preparing===task)current.preparing=null});
+    }).finally(()=>{
+      finish({},'visual.cancelled');
+      if(current.preparing===task)current.preparing=null;
+    });
     current.preparing=task;
     return task;
   }

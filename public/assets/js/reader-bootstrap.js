@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './reader/diagnostics.js';
 /* Shadow Garden — protected Reader runtime and startup ownership. */
 import {createAuthorizedBookSession,finalizeBookSession} from "./reader/book-session.js";
 import {startReader} from "./reader/app.js";
@@ -52,7 +53,7 @@ export function createReaderRuntime(){
       const cancelled=scope.disposed;
       scope.dispose();
       if(cancelled)return null;
-      console.error("Reader book authorization/startup failed",error);
+      recordReaderDiagnostic('reader.startupFailed');
       const loading=document.getElementById("readerLoading"),hasSeries=Boolean(session?.seriesId);
       const returnHref=hasSeries?urls.seriesUrl(session.seriesId):urls.libraryUrl(session?.adult===true);
       failure=showReaderFailure({container:loading,error,phase:session?"open":"authorization",returnHref,returnLabel:hasSeries?"Return to series":"Return to library",retry:()=>void open()});

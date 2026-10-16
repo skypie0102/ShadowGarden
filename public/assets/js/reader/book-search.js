@@ -1,4 +1,6 @@
 /* Shadow Garden v2.8 — bounded EPUB text-search engine shared by Contents search. */
+import {withSectionSource} from './section-source.js';
+import {recordReaderDiagnostic} from './diagnostics.js';
 const MIN_QUERY_LENGTH=3;
 const MAX_RESULTS=100;
 const EXCERPT_RADIUS=78;
@@ -78,7 +80,7 @@ export function findSectionMatches(section,query,limit=MAX_RESULTS){
         range.setStart(start.node,start.offset);
         range.setEnd(end.node,end.offset+1);
         matches.push({cfi:section.cfiFromRange(range),excerpt:excerptFor(text,match.index,match.index+match[0].length)});
-      }catch(error){console.warn("Book search match skipped",error)}
+      }catch(error){recordReaderDiagnostic('search.matchSkipped')}
     }
     if(match[0].length===0)pattern.lastIndex+=1;
   }
@@ -106,16 +108,13 @@ export function createBookSearchController({getBook}={}){
     for(let index=0;index<sections.length&&hits.length<MAX_RESULTS;index++){
       if(id!==runId)return{hits:[],capped:false,cancelled:true,totalSections:sections.length};
       const section=sections[index];
-      const wasLoaded=Boolean(section?.contents);
       try{
-        await section.load(book.load.bind(book));
-        if(id!==runId)return{hits:[],capped:false,cancelled:true,totalSections:sections.length};
-        const remaining=MAX_RESULTS-hits.length;
-        const matches=findSectionMatches(section,query,remaining);
-        for(const match of matches)hits.push({...match,href:section.href||"",sectionIndex:Number(section.index)});
-      }catch(error){console.warn(`Book search skipped section ${section?.href||index}`,error)}finally{
-        if(!wasLoaded){try{section?.unload?.()}catch{}}
-      }
+        await withSectionSource(section,book.load.bind(book),()=>{
+          if(id!==runId)return;
+          const matches=findSectionMatches(section,query,MAX_RESULTS-hits.length);
+          for(const match of matches)hits.push({...match,href:section.href||"",sectionIndex:Number(section.index)});
+        });
+      }catch{recordReaderDiagnostic('search.sectionFailed')}
       if(id===runId)onProgress?.({scanned:Math.min(index+1,sections.length),total:sections.length,count:hits.length});
       await Promise.resolve();
     }

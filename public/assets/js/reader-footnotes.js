@@ -1,4 +1,6 @@
+import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope} from "./reader/lifecycle.js";
+import {withSectionSource} from './reader/section-source.js';
 /* Shadow Garden v2.8 — EPUB footnote/endnote compatibility layer.
  * Explicit noterefs open in Reader chrome instead of moving the live rendition.
  */
@@ -179,23 +181,19 @@ export function createFootnotesExtension(){
     if(!targetInfo?.fragment)return null;
     const section=findSection(book,targetInfo.path,current);
     if(!section)return null;
-    const alreadyLoaded=Boolean(section.document);
-    try{
-      if(!section.document)await section.load(book.load.bind(book));
+    return withSectionSource(section,book.load.bind(book),()=>{
       const target=findFragment(section.document,targetInfo.fragment);
       if(!target)return null;
       const paragraphs=noteParagraphs(target);
       if(!paragraphs.length)return null;
       return{label:noteLabel(target),paragraphs,targetHref:targetInfo.displayHref};
-    }finally{
-      if(!alreadyLoaded&&section!==current){try{section.unload?.()}catch{}}
-    }
+    });
   }
 
   async function fallbackToTarget(contents,anchor,renderedSection){
     const current=currentSectionFor(contents,renderedSection),href=originalNoteHref(anchor),target=resolveInternalTarget(current,href);
     if(!activeRendition||!target?.displayHref)return;
-    try{await navigateRendition(activeRendition,target.displayHref)}catch(error){console.warn("Footnote fallback navigation failed",error)}
+    try{await navigateRendition(activeRendition,target.displayHref)}catch(error){recordReaderDiagnostic('navigation.linkFailed')}
   }
 
   function activateNoteReference(contents,anchor,renderedSection){
@@ -207,7 +205,7 @@ export function createFootnotesExtension(){
         const note=await loadNote(contents,anchor,renderedSection);
         if(!current())return;
         if(note&&showNoteDialog(note,anchor))return;
-      }catch(error){console.warn("Footnote popup unavailable",error)}
+      }catch(error){if(current())recordReaderDiagnostic('note.failed')}
       if(current())await fallbackToTarget(contents,anchor,renderedSection);
     })();
   }
@@ -294,7 +292,7 @@ export function createFootnotesExtension(){
     scope.add(()=>{if(activeRendition===rendition){activeRendition=null;noteSerial++;closeNoteDialog({restoreFocus:false});noteDialogElements().body?.replaceChildren()}});
     activeRendition=rendition;rendition.__sgFootnotesPatched=true;
     ensureMarkerObserver();
-    try{scope.hook(rendition.hooks?.content,(contents,view)=>installNoteGuard(contents,view?.section))}catch(error){console.warn("EPUB note hook unavailable",error)}
+    try{scope.hook(rendition.hooks?.content,(contents,view)=>installNoteGuard(contents,view?.section))}catch(error){recordReaderDiagnostic('note.hookUnavailable')}
     try{scope.on(rendition,"rendered",(section,view)=>{
       if(rendition!==activeRendition)return;
       const contents=view?.contents;

@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Reader-facing progress adapter over the canonical R2 service. */
 import { beginRenditionNavigation,holdRenditionNavigation,navigateRendition } from "./navigation-state.js";
@@ -123,17 +124,17 @@ export function createProgressController({storage,elements,getBook,getRendition,
         const target=await pageMap.targetForPercentage(value,{flow});
         if(!current())return false;
         if(target)return await navigateRendition(rendition,target,{operation});
-      }catch(error){if(!current())return false;console.warn("Canonical page seek failed; using EPUB location fallback",error)}
+      }catch(error){if(!current())return false;recordReaderDiagnostic('progress.canonicalFallback')}
     }
     if(!current())return false;
     if(state.locationsReady&&book.locations){
       try{const cfi=book.locations.cfiFromPercentage(value);if(cfi&&cfi!=="-1")return await navigateRendition(rendition,cfi,{operation})}
-      catch(error){if(!current())return false;console.warn("Exact progress seek failed; using spine fallback",error)}
+      catch(error){if(!current())return false;recordReaderDiagnostic('progress.locationFallback')}
     }
     if(!current())return false;
     const href=spineTarget(value);if(!href){if(state.locationsFailed)toast?.("Progress seeking is unavailable for this EPUB");return}
     try{return await navigateRendition(rendition,href,{operation})}
-    catch(error){if(current()){console.error("Progress seek failed",error);toast?.("Could not seek to that location")}return false}
+    catch(error){if(current()){recordReaderDiagnostic('progress.seekFailed');toast?.("Could not seek to that location")}return false}
   }
   function seekTo(percentage,immediate=false){
     if(scope.disposed)return Promise.resolve(false);
@@ -156,7 +157,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
 
     const run=async()=>{
       try{await performSeek(value,barrier)}
-      catch(error){if(barrier.operation.isCurrent())console.warn("Reader progress seek skipped",error)}
+      catch(error){if(barrier.operation.isCurrent())recordReaderDiagnostic('progress.seekFailed')}
       finally{
         finishInitial();
         if(!needsRefinement)finishSeekBarrier(barrier.operation);
@@ -186,7 +187,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
       state.locationsFailed=true;
       const pending=state.pendingSeek;state.pendingSeek=null;
       if(pending){pending.finishInitial?.();finishSeekBarrier(pending.barrier.operation)}
-      console.warn("EPUB location generation failed",error);
+      recordReaderDiagnostic('progress.locationsFailed');
     });
   }
   function restoreSaved(){

@@ -68,6 +68,7 @@ const deliberate=new Set([
   'public/assets/js/reader/paginated.js',
   'public/assets/js/reader/book-session.js',
   'public/assets/js/reader/book-search.js',
+  'public/assets/js/reader/epub-lifecycle.js',
   'public/assets/js/reader/image-focus-touch-compat.js',
   'public/assets/js/reader/page-navigation-input.js',
   'public/assets/js/reader/bookmarks-controller.js',

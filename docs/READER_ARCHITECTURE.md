@@ -112,7 +112,8 @@ Its native markers use history replacement and rotation, like internal links.
 Session/controller resources now have explicit disposal ownership, described
 below. The queue cannot cancel a vendor call already in flight; it prevents
 subsequent application work and serializes newer destinations while live.
-Broader browser engines and representative long-book profiling remain later work.
+Broader browser engines and release-book inspection remain later work. Generated
+long-book profiling and measured bounds are described below.
 
 The srcdoc link bridge keeps publication scripts disabled. It consumes a
 temporary link marker using history replacement instead of assigning
@@ -166,8 +167,58 @@ Standalone artwork referenced by `<img src="...svg">` now uses the same SVG
 normalization path as inline/object SVG. Embedded publication resources are
 resolved relative to the SVG file. The cache payload version advances to 2 so
 an older cached result that skipped these images is not reused. Progress and
-bookmark identities/formats are unchanged. Old cache-version eviction belongs
-to the planned cache lifecycle/performance work.
+bookmark identities/formats are unchanged. The bounded cache store now removes
+old versions, expired records and excess publications/layouts.
+
+## Parsed sources and rendering bounds
+
+The source DOM stored on a Book.spine Section and the rendered Contents document
+are different objects. `reader/section-source.js` retains a source for every live
+view, search/note read, location-generation task and Continuous target lookup.
+Simultaneous consumers share an in-flight load and wait for its content hooks.
+An unload request is deferred until the final lease and pending load finish.
+Every view releases its lease after its Contents are destroyed, including the
+vendor clear/replacement path as well as Continuous idle trimming. Sources can
+then be reloaded from the archive when revisited.
+
+The page-map sandbox has no application search/note readers. It releases source
+documents after their views are replaced and uses one indexed spine lookup.
+Its retained-source set covers fixed-layout companion views without rescanning
+all chapters after each map operation. The generated long fixture's measured
+peaks are two map source documents and ten live-reader sources for nine views;
+these bounds describe that fixture and the configured buffering neighborhood.
+
+Visual preparation shares normalized asset promises within one scan. Each page
+retains its own href, index, alt text and geometry. The normalized asset map is
+released after scanning; current visual records and their object URLs retain the
+same book lifetime. Different archive assets remain different, and cached reopen
+performs no new image conversions.
+
+`reader/cache-store.js` preserves the existing database versions, stores, keys
+and compatible payloads. Its atomic maintenance applies these logical budgets:
+
+| Cache | Records | Per publication | Payload budget | Maximum age |
+| --- | --- | --- | --- | --- |
+| Canonical page maps | 24 | 4 layouts | 8 MiB of JSON payload | 30 days |
+| Prepared visual books | 8 | 1 preparation per key | 64 MiB of Blob payload | 30 days |
+
+Invalid/obsolete records are removed on access. Oversized results remain usable
+in memory but are not persisted; unavailable IndexedDB is a non-fatal cache miss.
+These are cache payload limits, not a claim about physical browser storage or a
+fixed heap bound for arbitrary publication size. The current archive, final map
+and normalized image data scale with content. Vendor calls already in flight may
+finish internally after application cancellation.
+
+## Diagnostics
+
+`getReaderDiagnostics()` from `reader/diagnostics.js` returns a detached snapshot
+with fixed-code counts and the latest 64 numeric events. Page-map generation,
+visual preparation and Continuous buffering report elapsed milliseconds; cache
+hits, cancellation, expected fallbacks and actionable failures have separate
+codes. Failures emit fixed warning copy once per code. No event accepts paths,
+CFIs, book text, arbitrary strings or Error objects, and no diagnostic is sent to
+a server. The legacy visual manifest is a runtime integration object, not this
+sanitized diagnostic export.
 
 ## Verification boundaries
 

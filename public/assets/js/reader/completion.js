@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — one Reader completion owner for Page and Continuous end pages. */
 import { catalog as catalogDomain, readingState, urls } from "../domain/index.js";
@@ -42,7 +43,7 @@ export async function createCompletionController({session,elements,toast,signal}
         nextEntry=current>=0?ordered[current+1]||null:null;
       }
     }
-  }catch(error){if(!scope.disposed)console.warn("Reader completion context unavailable",error)}
+  }catch(error){if(!scope.disposed)recordReaderDiagnostic('completion.contextUnavailable')}
 
   if(scope.disposed)return{sync(){},dispose,destroy:dispose};
   const aliases=readingState.volumeAliases?.(session?.seriesId,volume,volumeIndex,[volume?.file,volume?.bookId,session?.publicBookId,session?.requested,session?.sourcePath,session?.ticket?.identity])

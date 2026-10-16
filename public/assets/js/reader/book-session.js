@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — protected Reader book-session boundary. */
 import { catalog, identity, preferences, readingState, storage, urls } from "../domain/index.js";
@@ -41,7 +42,7 @@ async function resetReadAgain({requested,seriesId,publicBookId,sourcePath,ticket
     const entry=catalog.findVolumeEntry(shelf,seriesId,publicBookId||requested,identities);
     if(entry)aliases=readingState.volumeAliases(entry.series.id,entry.volume,entry.index,identities);
   }catch(error){
-    console.warn("Read Again catalog lookup skipped",error);
+    recordReaderDiagnostic('access.catalogUnavailable');
   }
   signal?.throwIfAborted();
   const finishedCleared=readingState.setAliasesFinished(aliases,false);
@@ -77,7 +78,7 @@ function installResumeRenewal(session,access,scope){
       if(ticket&&!scope.disposed)session.ticket=ticket;
       return ticket;
     }).catch(error=>{
-      if(!scope.disposed)console.warn("Reader access resume renewal delayed",error);
+      if(!scope.disposed)recordReaderDiagnostic('access.renewalDelayed');
       return null;
     }).finally(()=>{
       if(inFlight===task)inFlight=null;
@@ -129,7 +130,7 @@ export async function createAuthorizedBookSession({access=window.ShadowGardenBoo
   installResumeRenewal(session,access,scope);
   if(context.restartRequested)await scope.wait(resetReadAgain(session));
   try{await scope.wait(window.__sgVisualPageCache?.prepare?.(publicBookId||context.requested||sourcePath))}
-  catch(error){if(scope.disposed)throw error;console.warn("Visual-page preparation handoff skipped",error)}
+  catch(error){if(scope.disposed)throw error;recordReaderDiagnostic('visual.handoffFailed')}
 
   return session;
   }catch(error){scope.dispose();throw error}

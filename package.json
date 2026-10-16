@@ -16,7 +16,8 @@
     "check:functions": "wrangler pages functions build functions --outdir .wrangler/compiled",
     "db:local": "wrangler d1 migrations apply DB --local",
     "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql",
-    "seed:empty": "wrangler d1 execute DB --local --file recovery-info/empty-seed.sql"
+    "seed:empty": "wrangler d1 execute DB --local --file recovery-info/empty-seed.sql",
+    "profile:reader": "npm run build && playwright test --config playwright.profile.config.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

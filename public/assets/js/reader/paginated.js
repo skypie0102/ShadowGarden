@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Paginated-mode navigation adapter. */
 import { beginRenditionNavigation,holdRenditionNavigation,runRenditionMove } from "./navigation-state.js";
@@ -108,7 +109,7 @@ export function createPaginatedController({getRendition,beforeTurn}={}){
     if(!pendingTurns||!turnOperation?.isCurrent()||turnOperation.rendition!==rendition)turnOperation=beginRenditionNavigation(rendition,{kind:"turn"});
     const operation=turnOperation;pendingTurns++;beforeTurn?.();
     const task=queue.then(()=>performTurn(direction,rendition,operation)).catch(error=>{
-      if(!scope.disposed)console.warn("Paginated Reader turn skipped",error);
+      if(!scope.disposed)recordReaderDiagnostic('progress.seekFailed');
       return false;
     }).finally(()=>{
       pendingTurns--;if(!pendingTurns)turnOperation=null;

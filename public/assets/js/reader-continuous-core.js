@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic,measureReaderOperation} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
@@ -167,13 +168,13 @@ export function createContinuousCoreExtension(){
         return true;
       });
       const result=await scope.wait(Promise.race([work,new Promise(resolve=>scope.timeout(()=>resolve(false),VIEW_TIMEOUT_MS))]));
-      if(result!==true&&generation===manager.__sgGeneration){
-        console.warn("Continuous neighbor display timed out",view?.section?.href||"");
+      if(result!==true&&!manager.__sgDestroyed&&generation===manager.__sgGeneration){
+        recordReaderDiagnostic('continuous.timeout');
       }
       return result===true;
     }catch(error){
-      if(generation===undefined||generation===manager.__sgGeneration){
-        console.warn("Continuous neighbor display skipped",view?.section?.href||"",error);
+      if(error?.name!=='AbortError'&&!manager.__sgDestroyed&&(generation===undefined||generation===manager.__sgGeneration)){
+        recordReaderDiagnostic('continuous.failed');
       }
       return false;
     }finally{scope.dispose()}
@@ -227,7 +228,7 @@ export function createContinuousCoreExtension(){
     const first=manager.views?.first?.(),section=first?.section?.prev?.();
     if(!section)return false;
     let view=null;
-    try{view=manager.prepend(section)}catch(error){console.warn("Continuous prepend skipped",error);return false}
+    try{view=manager.prepend(section)}catch(error){recordReaderDiagnostic('continuous.failed');return false}
     return displayView(view,manager,generation);
   }
   async function appendOne(manager,generation){
@@ -235,7 +236,7 @@ export function createContinuousCoreExtension(){
     const last=manager.views?.last?.(),section=last?.section?.next?.();
     if(!section)return false;
     let view=null;
-    try{view=manager.append(section)}catch(error){console.warn("Continuous append skipped",error);return false}
+    try{view=manager.append(section)}catch(error){recordReaderDiagnostic('continuous.failed');return false}
     return displayView(view,manager,generation);
   }
 
@@ -256,8 +257,8 @@ export function createContinuousCoreExtension(){
       const keepEnd=Math.min(views.length-1,range.last+BUFFER_EACH_SIDE);
       const above=views.slice(0,keepStart);
       const below=views.slice(keepEnd+1);
-      try{above.forEach(view=>manager.erase?.(view,true))}catch(error){console.warn("Continuous upper trim skipped",error)}
-      try{below.slice().reverse().forEach(view=>manager.erase?.(view))}catch(error){console.warn("Continuous lower trim skipped",error)}
+      try{above.forEach(view=>manager.erase?.(view,true))}catch(error){recordReaderDiagnostic('continuous.failed')}
+      try{below.slice().reverse().forEach(view=>manager.erase?.(view))}catch(error){recordReaderDiagnostic('continuous.failed')}
       manager.ignore=false;
       syncScrollPosition(manager);
       syncContinuousEnd(rendition);
@@ -305,8 +306,12 @@ export function createContinuousCoreExtension(){
     if(!manager?.container||!manager?.views||manager.__sgDestroyed)return Promise.resolve(false);
     const generation=manager.__sgGeneration||0;
     if(manager.__sgBufferPromise&&manager.__sgBufferGeneration===generation)return manager.__sgBufferPromise;
-    const task=ensureNeighborhood(manager,rendition,generation).catch(error=>{
-      if(generation===manager.__sgGeneration)console.warn("Continuous background buffer skipped",error);
+    const finish=measureReaderOperation('continuous.buffered');
+    const task=ensureNeighborhood(manager,rendition,generation).then(changed=>{
+      finish({views:loadedViews(manager).length},generation===manager.__sgGeneration&&!manager.__sgDestroyed?'continuous.buffered':'continuous.cancelled');
+      return changed;
+    }).catch(error=>{
+      finish({},error?.name==='AbortError'||manager.__sgDestroyed||generation!==manager.__sgGeneration?'continuous.cancelled':'continuous.failed');
       return false;
     }).finally(()=>{
       if(manager.__sgBufferPromise===task){manager.__sgBufferPromise=null;manager.__sgBufferGeneration=-1}

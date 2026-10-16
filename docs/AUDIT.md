@@ -1,5 +1,29 @@
 # Reconstruction audit — updated 2026-10-16 (Asia/Manila)
 
+## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)
+
+Phase 4 is implemented on `refactor/reader-rendering` and is in final
+verification. Generated long/illustrated-book profiles identified retained
+Section source documents and repeated normalization of one illustration.
+Source leases now cover live views, search, notes, location generation and
+target resolution; replaced map/view sources are released. One scan shares
+normalized assets without losing each illustration page's metadata.
+
+The existing IndexedDB stores now prune old versions, damaged/expired entries
+and excess records. Page maps have a 24-record, four-layout-per-publication,
+8 MiB JSON budget; visual caches have an eight-publication, 64 MiB Blob-payload
+budget. Both expire records after 30 days. Oversized results still work in the
+current reader without being persisted. Progress/bookmark storage is unchanged.
+
+Engine/controller diagnostics use fixed codes and numeric fields, retain 64
+events, distinguish expected cancellation/fallback from failure, and do not log
+raw Error objects or protected source paths. A failed map-sandbox archive open
+now exits into ordinary reader navigation with a sanitized diagnostic.
+
+The implementation has 146 Node tests and 68 desktop/mobile Chromium browser
+cases. Final cache/reopen, profile and GitHub CI evidence will be recorded after
+the clean verification runs. No production deployment has been performed.
+
 ## Reader lifecycle refactor — 2026-10-16 (Asia/Manila)
 
 The lifecycle milestone is merged into `main` through

@@ -4,7 +4,8 @@ Started 2026-10-15. Canonical branch: `main`. The navigation/position
 milestone is merged through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
 Phase 3 lifecycle ownership is verified and merged through
 [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
-`61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phases 4 and 5 remain pending.
+`61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is implemented on
+`refactor/reader-rendering` and is undergoing final verification. Phase 5 remains pending.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -38,7 +39,7 @@ behavior just because it looks unusual.
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
-| 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Pending |
+| 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Implemented on refactor/reader-rendering; final cache, profile and CI checks are in progress. |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
@@ -111,6 +112,12 @@ project and no production credentials or catalog writes.
 | RDR-027 | Startup or completion Read Again can clear progress or navigate after its reader closes. | Fixed in PR #4: cancellation before state writes, abortable confirmation/focus and unit/browser regressions. |
 | RDR-028 | Continuous neighbor-display deadlines remain live after work succeeds or its manager closes. | Fixed in PR #4: manager-owned child work scopes cancel their deadline/paint callbacks on completion or teardown. |
 | RDR-029 | A controller-wide event scope can retain replaced bookmark/search result DOM until the whole session closes. | Fixed in PR #4: replaceable row/result scopes release old UI immediately. |
+| RDR-030 | The isolated page map retains every parsed chapter until generation ends; distant Continuous displays also retain sources after clearing their old views. | Release replaced sandbox sources and give every live view a source lease. The measured long fixture falls from 81 to 2 map sources and from 33–34 to 10 reader sources. |
+| RDR-031 | Search, notes, location generation and rendering independently load/unload a shared Section, so one can discard another's source or read unfinished content hooks. | Share pending loads and retain sources through explicit reader/view leases. Overlap, hook completion, retry, disposal and view replacement have focused regressions. |
+| RDR-032 | Every standalone page normalizes its image again, even when many pages reference one archive asset. | Reuse normalized assets within one scan while retaining each page's own metadata. The repeated-plate fixture performs one conversion instead of 21; unique artwork remains distinct. |
+| RDR-033 | Reader warnings include raw Errors, chapter paths and potentially protected source URLs. | Known diagnostic codes accept numeric fields only, retain 64 events, and emit fixed first-occurrence warnings. Expected fallback/cancellation is quiet. |
+| RDR-034 | A failed EPUB open inside the map sandbox can leave book.ready pending. | Race opened/ready against openFailed, remove the sandbox on failure, and keep ordinary reader navigation usable. Desktop/mobile fault cases verify recovery and sanitized output. |
+| RDR-035 | Disposable map/visual caches retain old versions, obsolete layouts and publications without an eviction bound. | Atomic cache maintenance removes invalid/old records and applies count, age and payload budgets. Reopen tests seed obsolete and damaged records and check cache reuse after pruning. |
 
 ## Phase 3 findings
 
@@ -238,18 +245,43 @@ Complete and merged into `main` through PR #4:
   which now correctly disposes the reader. The fixture now explicitly requests
   BFCache suspension, and the lifecycle matrix also asserts non-persisted
   departure cleanup. The clean final run has zero failed cases.
-  No Cloudflare deployment occurred. Rendering/diagnostics and release
-  verification remain the next two phases.
+  No Cloudflare deployment occurred. Phase 4 work follows below.
 
-## Next implementation slice — rendering and diagnostics
+## Phase 4 — rendering and diagnostics
 
-1. Measure page-map generation, standalone-art preparation and Continuous
-   buffering on representative long/image-heavy publications before changing work.
-2. Profile cache/source-section ownership, including overlapping search, note and
-   renderer loads, and document bounds/eviction before optimizing it.
-3. Expand dense integration code around the now-defined engine, navigation and
-   resource boundaries; keep required vendor compatibility behavior covered.
-4. Distinguish expected cancellation/fallbacks from actionable failures without
-   logging book contents, protected source URLs or access tokens.
-5. Finish broader browser/release verification and identify the rollback source
-   before deploying the refactor to the existing production site.
+Measured three original generated publications: an 80-chapter long prose book,
+40 chapters with repeated standalone artwork, and 40 chapters with unique artwork.
+The production entry point, authorization client and complete engine run in the
+disposable Pages/D1 harness. Profile instrumentation is test-only.
+
+`reader/section-source.js` now owns parsed-source leases, including vendor view
+replacement and location generation. The independent page-map sandbox tracks
+only its current/recently replaced sources and indexes sections once, avoiding a
+whole-spine search on every chapter. Visual normalization shares archive assets
+within the current scan. The cancellation/activation path has been expanded for
+readability; existing page metadata and cache identities remain compatible.
+
+`reader/cache-store.js` maintains the existing IndexedDB stores atomically:
+page maps keep at most 24 records, four per publication, and 8 MiB of serialized
+payload; visual preparation keeps eight publications and 64 MiB of normalized
+Blob payload. Both expire records after 30 days and discard obsolete versions
+and damaged records. An oversized record is used in the live reader without
+being cached. Reading progress and bookmarks use their existing storage.
+
+`reader/diagnostics.js` records page-map, visual-preparation and Continuous-buffer
+timings and known fallback/failure codes. Snapshots accept finite nonnegative
+numeric measurements only. Event history is capped at 64, counters have a fixed
+code set, and warning text never includes an Error, source URL or book content.
+
+Final validation and publication evidence will be recorded after the clean runs.
+Profile timings are local fixture measurements, not a universal speed claim or
+a measurement of all browser/vendor heap allocations. The current publication's
+archive, map records and normalized artwork still scale with its actual content.
+
+## Next implementation slice — release verification
+
+1. Extend checks beyond Chromium and inspect representative long/image-heavy
+   books, including unusual markup and resource failures.
+2. Review remaining limits, deployment configuration and rollback instructions.
+3. Deploy a verified source to the existing production site, identify the release
+   commit and exercise the deployed reader without changing stored identities.

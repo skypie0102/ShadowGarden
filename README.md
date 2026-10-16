@@ -72,6 +72,18 @@ checks. GitHub Actions runs both test suites and retains
 the browser report for seven days. Reports also include successful-page captures
 of the public screens, Keeper editor and recovery states for desktop/mobile review.
 
+Reader rendering cases also bound source-document retention across long-book
+navigation, verify repeated-asset normalization and cached reopening, prune
+obsolete/damaged cache records, and recover from a failed page-map sandbox.
+For repeatable long/illustrated-book profiles without timing-based CI thresholds:
+
+```sh
+npm run profile:reader -- --repeat-each=3
+```
+
+The profile attaches JSON with startup/map timing, conversion counts and observed
+source/view peaks. It uses the same isolated server and original generated EPUBs.
+
 ## Layout
 
 | Path | Purpose |

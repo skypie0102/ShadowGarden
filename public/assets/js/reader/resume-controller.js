@@ -1,3 +1,4 @@
+import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden v2.8 — Reader lifecycle resume coordination. */
 import { beginRenditionNavigation,hasPendingRenditionNavigation,holdRenditionNavigation,navigateRendition,renditionNavigationRevision,runRenditionMove,waitForRenditionNavigation } from "./navigation-state.js";
@@ -79,7 +80,7 @@ export function createReaderResumeController({
       position=await scope.wait(capturePosition?.({rendition,flow,pageMap:getPageMap?.(),fallback}))||fallback;
     }).then(current=>current?remember(position):state.anchor)
       .catch(error=>{
-        if(!scope.disposed)console.warn("Reader resume live capture skipped",error);
+        if(!scope.disposed)recordReaderDiagnostic('resume.captureFailed');
         return rendition===getRendition?.()&&revision===renditionNavigationRevision(rendition)?remember(fallback):state.anchor;
       });
     let tracked;
@@ -91,7 +92,7 @@ export function createReaderResumeController({
   async function restoreOnce(rendition,position,cfi,nativeScroll,layoutProbe,operation){
     const current=()=>!scope.disposed&&rendition===getRendition?.()&&operation.isCurrent();
     if(!current())return false;
-    try{await scope.wait(renewAccess?.())}catch(error){if(!scope.disposed)console.warn("Reader access resume renewal delayed",error)}
+    try{await scope.wait(renewAccess?.())}catch(error){if(!scope.disposed)recordReaderDiagnostic('access.renewalDelayed')}
     if(!current())return false;
 
     const flow=getFlow?.()==="scrolled-doc"?"scrolled-doc":"paginated";
@@ -124,8 +125,8 @@ export function createReaderResumeController({
        path when layout changed or its transient live-content anchor no longer exists. */
     if(flow!=="scrolled-doc"||changed){
       if(!await runRenditionMove(rendition,operation,()=>{
-        try{resizeRendition?.(rendition)}catch(error){console.warn("Reader resume resize skipped",error)}
-        try{configureRendition?.(rendition,flow)}catch(error){console.warn("Reader resume spread update skipped",error)}
+        try{resizeRendition?.(rendition)}catch(error){recordReaderDiagnostic('resume.layoutFailed')}
+        try{configureRendition?.(rendition,flow)}catch(error){recordReaderDiagnostic('resume.layoutFailed')}
       }))return false;
     }
     await scope.paint();
@@ -135,7 +136,7 @@ export function createReaderResumeController({
     if(!target&&!changed&&position){
       try{
         target=await getPageMap?.()?.targetForPosition?.(position,{includeFraction:flow==="scrolled-doc"})||"";
-      }catch(error){console.warn("Reader resume canonical target fallback",error)}
+      }catch(error){recordReaderDiagnostic('navigation.canonicalFallback')}
     }
     if(!target)target=position?.href||"";
 
@@ -143,7 +144,7 @@ export function createReaderResumeController({
     if(target){
       if(!await navigateRendition(rendition,target,{operation}))return false;
     }else if(continuousAnchorExpired){
-      console.warn("Reader Continuous resume anchor expired without a semantic fallback");
+      recordReaderDiagnostic('resume.anchorExpired');
     }
     if(current()&&changed)onLayoutChanged?.();
     return current();
@@ -178,7 +179,7 @@ export function createReaderResumeController({
       const cfi=position?.cfi||state.cfi||getCfi?.()||"";
       return restoreOnce(rendition,position,cfi,nativeScroll,layoutProbe,operation);
     }).catch(error=>{
-      if(!scope.disposed)console.warn("Reader resume recovery skipped",error);
+      if(!scope.disposed)recordReaderDiagnostic('resume.failed');
       return false;
     });
     let tracked;
