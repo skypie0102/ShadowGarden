@@ -15,7 +15,7 @@ import { createCompletionController } from "./completion.js";
 import { createPaginatedController } from "./paginated.js";
 import { createContinuousController } from "./continuous.js";
 import { createReaderResumeController } from "./resume-controller.js";
-import { createRendition, captureContinuousScrollPosition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics } from "./rendition.js";
+import { createRendition, captureContinuousScrollPosition, captureRenditionPosition, configureSpread, destroyRendition, pageMapLayoutMetrics, displaySettledRenditionTarget } from "./rendition.js";
 import { preferences, urls } from "../domain/index.js";
 import { getReaderEngine } from "./engine.js";
 import { beginRenditionNavigation,cancelRenditionNavigation,holdRenditionNavigation,registerRenditionNavigator,disposeRenditionNavigation,renditionNavigationRevision,runRenditionMove } from "./navigation-state.js";
@@ -132,7 +132,7 @@ async function initializeReader(session,scope){
       }catch(error){if(state.continuousNavigation===intent)state.continuousNavigation=null;throw error}
     }else{
       state.continuousNavigation=null;
-      await runRenditionMove(rendition,operation,()=>rendition.display(target));
+      await displaySettledRenditionTarget(rendition,target,{operation});
     }
     return current();
   }

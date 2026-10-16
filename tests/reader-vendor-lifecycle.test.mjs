@@ -2,8 +2,18 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {installEpubLifecyclePatch} from '../public/assets/js/reader/epub-lifecycle.js';
+import {displaySettledRenditionTarget} from '../public/assets/js/reader/rendition.js';
+import {beginRenditionNavigation,runRenditionMove} from '../public/assets/js/reader/navigation-state.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
+const tick=()=>new Promise(resolve=>setImmediate(resolve));
+function paint(t){
+  for(const [name,value]of Object.entries({requestAnimationFrame:fn=>setTimeout(fn,0),cancelAnimationFrame:clearTimeout})){
+    const old=Object.getOwnPropertyDescriptor(globalThis,name);
+    Object.defineProperty(globalThis,name,{value,configurable:true});
+    t.after(()=>old?Object.defineProperty(globalThis,name,old):delete globalThis[name]);
+  }
+}
 function fixture(){
   class Book{renderTo(){}}
   class Rendition extends EventEmitter{
@@ -49,4 +59,28 @@ test('late unloaded hooks cannot emit removal on a disposed rendition',async()=>
   rendition.hooks={unloaded:{trigger:()=>gate.promise}};rendition.on('removed',()=>events++);
   const pending=rendition.afterRemoved(view);rendition.destroy();gate.resolve();await pending;
   assert.equal(events,0);
+});
+
+test('a newly rendered paginated CFI is positioned again only after content styling completes',async t=>{
+  paint(t);const {rendition,view}=fixture(),gate=deferred(),calls=[];let styled=false;
+  rendition.settings={flow:'paginated'};
+  rendition.hooks={render:{trigger:()=>Promise.resolve()},content:{trigger:()=>gate.promise.then(()=>{styled=true})}};
+  rendition.display=target=>{calls.push({target,styled});if(calls.length===1)rendition.afterDisplayed(view)};
+  const operation=beginRenditionNavigation(rendition),moving=displaySettledRenditionTarget(rendition,'epubcfi(fixture)',{operation});
+  await tick();assert.deepEqual(calls,[{target:'epubcfi(fixture)',styled:false}]);
+  gate.resolve();assert.equal(await moving,true);
+  assert.deepEqual(calls,[{target:'epubcfi(fixture)',styled:false},{target:'epubcfi(fixture)',styled:true}]);
+  rendition.destroy();
+});
+
+test('a newer navigation cancels an older CFI correction awaiting content styling',async t=>{
+  paint(t);const {rendition,view}=fixture(),gate=deferred(),calls=[];
+  rendition.settings={flow:'paginated'};
+  rendition.hooks={render:{trigger:()=>Promise.resolve()},content:{trigger:()=>gate.promise}};
+  rendition.display=target=>{calls.push(target);if(calls.length===1)rendition.afterDisplayed(view)};
+  const operation=beginRenditionNavigation(rendition),moving=displaySettledRenditionTarget(rendition,'epubcfi(old)',{operation});
+  await tick();const latest=beginRenditionNavigation(rendition);
+  await runRenditionMove(rendition,latest,()=>rendition.display('latest.xhtml'));
+  gate.resolve();assert.equal(await moving,false);
+  assert.deepEqual(calls,['epubcfi(old)','latest.xhtml']);rendition.destroy();
 });

@@ -35,6 +35,13 @@ vendor CFI parsing/pacing but cancels before late work can touch destroyed array
 Unit checks cover closure during source loading and pacing, plus normal/shared
 generation of linear chapters.
 
+The mode matrix also reproduced a CFI landing one page early: vendor positioning
+ran before new-view column styles settled. Startup and application navigation now
+await the owned content/layout phase and correct that same CFI once. Render
+revisions limit the correction to newly rendered paginated views; a newer request
+cancels stale correction. The unit regression and cross-engine passage tests
+verify both positioning order and cancellation.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |
