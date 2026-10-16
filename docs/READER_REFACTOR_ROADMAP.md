@@ -8,10 +8,12 @@ Phase 3 lifecycle ownership is verified and merged through
 through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
 `0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 merged through PR #6 as
 `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e` and v2.12.0 deployed successfully.
-The v2.12.1 mobile image-touch follow-up and final live verification are in progress
-on `refactor/reader-release`; production still serves the image-focus milestone.
-Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
-implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
+Phase 5 is complete, including the bookmark and mobile image-touch follow-ups in
+PRs #7 and #8. Production serves v2.12.1 from
+`154381761d6bec1fa246166f0ba300f09471d6ab`, deployment
+`5658687a-f60a-4a1f-8441-78738c2b04e1`. Both clean CI runs pass 159 Node tests
+and 215 browser cases; live desktop/mobile reader and footer checks pass.
+Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`.
 
 ## Objective and invariants
 
@@ -44,7 +46,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | In progress |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Complete; 159 Node tests and all 215 browser cases pass in both clean CI runs. v2.12.1 is merged into main and deployed; exact assets, both library footers and desktop/mobile image return pass live checks. |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite
@@ -129,6 +131,7 @@ project and no production credentials or catalog writes.
 | RDR-040 | A correct CFI can land one page early when a new paginated view positions before asynchronous content hooks finish styling its columns. | Track render/content work and complete its paint phase, then reapply the same CFI once for a newly rendered paginated view. Startup and app navigation share that boundary; newer navigation cancels an older correction. Unit and full-reader mode tests cover the ordering. |
 | RDR-041 | Vendor scrollTo/scrollBy assign `scrolled = true`, overwriting the Continuous callback with the same name before delayed work runs. | Keep the owned reporter under a separate field and capture it in the debounce. The stabilization boundary calls that reporter while respecting disposal/suppression. Unit and full-reader checks force the vendor boolean and still receive scroll reports. |
 | RDR-042 | Repeated position updates replace the bookmark icon's identical text node during a pointer press, causing WebKit to cancel the native click. | Preserve unchanged icon text. A production-reader regression refreshes progress between native down/up events; the previous implementation fails in both WebKit profiles. |
+| RDR-043 | Native mobile tap highlighting can tint EPUB artwork and the focused-image return surface. | Give those image interactions transparent native feedback while preserving keyboard focus indicators. The full-reader regression checks the fixture's declared artwork color, computed touch feedback and return position. The previous release fails the touch-feedback assertion; all five configurations pass after the fix. |
 
 ## Phase 3 findings
 
@@ -330,4 +333,17 @@ The owner's mobile follow-up exposed nontransparent native tap highlighting on
 the EPUB image and full-screen focus surface. v2.12.1 scopes transparent native
 feedback to those image interactions, preserving keyboard focus styles. A new
 production-entry check compares rendered image colors to the source and checks
-touch feedback and return position. Patch validation and live checks are pending.
+touch feedback and return position. Both clean CI runs
+[38878393099](https://github.com/skypie0102/ShadowGarden/actions/runs/38878393099)
+and [38878389285](https://github.com/skypie0102/ShadowGarden/actions/runs/38878389285)
+pass all 159 Node tests, 215 browser cases, the audit and both builds.
+
+[PR #8](https://github.com/skypie0102/ShadowGarden/pull/8) merged as
+`154381761d6bec1fa246166f0ba300f09471d6ab`. Production deployment
+`5658687a-f60a-4a1f-8441-78738c2b04e1` succeeded on 2026-10-16 at 09:18 UTC.
+Live checks confirm exact reader asset hashes, visible `v2.12.1 · 1543817`
+footers in both libraries at desktop/mobile sizes, and image zoom/close with
+zero position displacement and no page errors. Login challenges and both
+catalogs return 200; the admin library denies unauthenticated access with 401.
+Phase 5 and the planned reader refactor are complete. Provider/device limits
+and both retained rollback targets are recorded in the release report.

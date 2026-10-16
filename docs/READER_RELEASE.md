@@ -1,4 +1,4 @@
-# Reader 2.12 release verification
+# Reader 2.12.1 release verification
 
 Phase 5 was merged through [PR #6](https://github.com/skypie0102/ShadowGarden/pull/6)
 as `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e`. Cloudflare deployed v2.12.0
@@ -13,8 +13,8 @@ regression checks the original and rendered image colors, transparent native
 touch feedback and position after closing. It detects the nontransparent
 highlight on the previous release. Keyboard focus indicators remain available.
 This patch changes the image-focus stylesheet deliberately; the reconstruction
-audit records that deviation. Patch CI and deployment results are recorded below
-once complete.
+audit records that deviation. This follow-up is merged and deployed; Phase 5 is
+complete. CI and live verification results follow below.
 
 ## Release scope
 
@@ -69,11 +69,24 @@ both WebKit profiles against the old implementation.
 
 | Configuration | Scope | Status |
 | --- | --- | --- |
-| Desktop Chromium | Full production reader and reconstruction suite | v2.12.0 passed |
-| Pixel 7 Chromium | Full suite with touch/mobile layout | v2.12.0 passed |
-| Desktop Firefox | Full production reader and reconstruction suite | v2.12.0 passed |
-| Desktop WebKit | Full production reader and reconstruction suite | v2.12.0 passed |
-| iPhone 13 WebKit | Full suite with touch/mobile layout | v2.12.0 passed |
+| Desktop Chromium | Full production reader and reconstruction suite | v2.12.1: 43 cases pass |
+| Pixel 7 Chromium | Full suite with touch/mobile layout | v2.12.1: 43 cases pass |
+| Desktop Firefox | Full production reader and reconstruction suite | v2.12.1: 43 cases pass |
+| Desktop WebKit | Full production reader and reconstruction suite | v2.12.1: 43 cases pass |
+| iPhone 13 WebKit | Full suite with touch/mobile layout | v2.12.1: 43 cases pass |
+
+The v2.12.1 candidate passed all 159 Node tests and 215 browser cases, the asset
+audit and both builds in [PR CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38878393099)
+and [push CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38878389285).
+The Git tree `660cc08962ee77dbbebf734e0c2998821c8e30e1` matches the local
+source and merged release exactly. Local verification also includes the entire
+84-case Chromium suite before bookmark integration, the four combined
+bookmark/image regressions and both final color-reference checks.
+
+The image color check uses the generated fixture's declared SVG fill as its
+independent reference. WebKit's canvas SVG sampling returned the background
+color while the actual screenshot correctly displayed the center circle;
+canvas SVG rasterization is therefore not used as the expected pixel value.
 
 The v2.12.0 candidate passed all 159 Node tests and 205 browser cases, the asset
 audit and both builds in clean [push CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38849575414)
@@ -90,6 +103,35 @@ cache pruning/reopening and page-map download failure. Phase 4's nine profiles
 cover the 80-chapter and repeated/unique illustration fixtures; measured results
 and their limits remain in [READER_PERFORMANCE.md](READER_PERFORMANCE.md).
 
+## Verified production rollout
+
+[PR #7](https://github.com/skypie0102/ShadowGarden/pull/7) merged the bookmark
+correction, and [PR #8](https://github.com/skypie0102/ShadowGarden/pull/8) merged
+the image-touch fix and v2.12.1 as `154381761d6bec1fa246166f0ba300f09471d6ab`.
+Pages deployment `5658687a-f60a-4a1f-8441-78738c2b04e1` succeeded on
+2026-10-16 at 09:18:03 UTC. Its canonical production branch is `main`, its
+working-tree marker is clean, and its built metadata identifies that exact SHA.
+
+Live Chromium checks at desktop and Pixel 7 sizes verify both library footers
+show `v2.12.1 · 1543817`, are visible and cause no horizontal overflow. The
+actual deployed reader opens an original intercepted EPUB, zooms its image and
+closes focus with zero vertical displacement on both profiles. Native image
+feedback is transparent, and neither session reports a page error.
+
+Both login challenge endpoints and both catalogs return 200. Unauthenticated
+`GET /admin-api/library` returns 401, and a nonexistent raw EPUB probe returns
+404. This probe does not establish real provider access; ticket enforcement is
+covered by the isolated suite, with provider limits retained below.
+
+All four checked assets match the merged source exactly:
+
+| Asset under `public/` | Served SHA-256 |
+| --- | --- |
+| `assets/css/reader-image-focus.css` | `0824b36d4e4aee3651cd54fec51b1fbe26caf1a3fa9c4ac4b64143e252ea8f36` |
+| `assets/js/reader/image-focus.js` | `b4455bb69dd1cf94ca5b0c733506512183afbd720812d46816bafab3a69b9eb2` |
+| `assets/js/reader/bookmarks-controller.js` | `6fa8f7dcc6fb824ab1647569d714424f2fc4423ee1762a915ec284b6e4245f39` |
+| `assets/js/reader/engine.js` | `c53d8d37dea992a1ec77ee9d447eea34c342ed6cc775a76c78fef01449bd7d3b` |
+
 ## Deployment and rollback
 
 1. Require the Node suite, asset audit, both builds and complete browser matrix
@@ -102,11 +144,15 @@ and their limits remain in [READER_PERFORMANCE.md](READER_PERFORMANCE.md).
    timestamp. Compile and include Pages Functions as well as the static manifest.
 4. Confirm the canonical production deployment, served metadata, exact reader
    asset hashes, both footer labels, login challenge endpoints, both catalogs,
-   denied unauthenticated admin access and raw protected book access. Exercise
+   denied unauthenticated admin access and an unknown raw book request. Exercise
    the actual deployed reader using an original intercepted EPUB in an isolated
    browser context; this changes no live catalog or stored object.
-5. Keep deployment `dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33` as the pre-refactor
-   rollback target. Cloudflare's Pages rollback endpoint is
+5. Keep v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802` as the patch
+   rollback target. The pre-refactor deployment
+   `dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33` is also retained. Cloudflare's Pages
+   rollback endpoint for v2.12.0 is
+   `POST /accounts/fa95f62f96a0ff3b92a45175d94a48b6/pages/projects/shadowgarden/deployments/b13cf583-ad91-43e7-ad1f-55dbc9365802/rollback`.
+   For the pre-refactor source, use
    `POST /accounts/fa95f62f96a0ff3b92a45175d94a48b6/pages/projects/shadowgarden/deployments/dfac687d-06fa-4bc5-9f3f-6eae5a9f4a33/rollback`.
    A code rollback does not reverse browser progress or remote catalog/media
    edits. This release performs no remote catalog/media edits.

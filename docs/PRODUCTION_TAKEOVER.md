@@ -29,6 +29,17 @@ version, login challenge endpoints and both empty catalogs passed live checks.
 All eight original secrets remain encrypted; `SESSION_SECRET` was added securely.
 The original Turnstile widget already permits the production hostname.
 
+The completed reader refactor is live as v2.12.1 from `main` source
+`154381761d6bec1fa246166f0ba300f09471d6ab`, deployment
+`5658687a-f60a-4a1f-8441-78738c2b04e1`, successful 2026-10-16 at 09:18 UTC.
+Both clean CI runs pass 159 Node tests and 215 browser cases. Live desktop/mobile
+checks confirm exact reader assets, image zoom/return position and visible
+`v2.12.1 · 1543817` footers in the main and NSFW libraries. Login challenges and
+catalogs respond correctly; unauthenticated admin library access is denied.
+No migration, seed, catalog/media edit or secret change was needed. See
+[READER_RELEASE.md](READER_RELEASE.md) for the full matrix, live checks, limits
+and retained v2.12.0/pre-refactor rollback targets.
+
 The initial B2 probe exposed an unsupported `redirect: 'error'` fetch option in
 workerd. This branch corrects it to manual redirects with explicit refusal of
 every 3xx response. The failure and fix were reproduced in the Cloudflare local

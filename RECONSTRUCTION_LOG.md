@@ -686,3 +686,34 @@ this milestone into `main` as `f20e47e772865e89713ef8c66562da9452420cb0`.
 The completion checkpoint updates documentation only. Phase 2 is complete;
 Phase 3 begins with uniform session/controller disposal and repeated lifecycle
 verification. No Cloudflare production deployment was performed.
+
+## 2026-10-16 — Reader refactor completed and released as v2.12.1
+
+Phases 3 and 4 merged through PRs #4 and #5, establishing session/controller
+ownership, cancellable vendor work, shared chapter-source leases, bounded caches
+and sanitized diagnostics. The measured source-retention and repeated-artwork
+improvements are recorded in `docs/READER_PERFORMANCE.md`.
+
+Phase 5 merged through PR #6, adding the five-configuration browser matrix,
+EPUB 2/multilingual/damaged-resource checks and visible release/commit details
+in both libraries. Release verification also corrected Firefox measurement-frame
+throttling, WebKit visual-cache persistence, late vendor work, layout settlement
+and the Continuous scroll callback collision. PR #7 corrected native WebKit
+bookmark clicks interrupted by progress updates.
+
+PR #8 merged the owner's mobile image-touch follow-up and v2.12.1 as
+`154381761d6bec1fa246166f0ba300f09471d6ab`. Source images and the focused-image
+surface now use transparent native touch feedback while preserving keyboard
+focus indicators. The full-reader regression checks the declared artwork color,
+native feedback and return position; the previous reader fails the touch-feedback assertion.
+Both clean GitHub runs `38878393099` and `38878389285` pass all 159 Node tests,
+215 browser cases, the audit and both builds.
+
+Production deployment `5658687a-f60a-4a1f-8441-78738c2b04e1` succeeded on
+2026-10-16 at 09:18 UTC. Live asset hashes match the merged source. Desktop and
+mobile checks confirm `v2.12.1 · 1543817` is visible in the main and NSFW footers;
+image zoom/close returns with zero displacement and no page errors. Login
+challenge endpoints and both catalogs return 200; unauthenticated admin library
+access returns 401. No remote catalog/media or secret changes were performed.
+The roadmap marks Phase 5 and the planned refactor complete; the release report
+records provider/device limits and both retained rollback deployments.
