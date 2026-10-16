@@ -855,3 +855,38 @@ records the investigation. Fresh CI, merge and guarded publication are blocked.
 Production remains v2.12.2 with the expected D1/bucket bindings and all nine
 encrypted-setting names. Both live catalogs exactly match the verified baseline;
 no live catalog, object, credential or deployment setting was changed.
+
+## 2026-10-17 (Manila) — v2.12.3 published; live acceptance remains open
+
+The owner explicitly approved the prepared patch's push, merge and publication,
+resolving the earlier approval block. The connected GitHub account transferred
+the exact approved tree as `fd512c59e590ac4f1230076877cd5d204aae404c`.
+CI run `38970210426` passes all 166 Node tests, audit and both builds, and all
+five browser profiles: 224 passed plus six intentional Chromium-only skips.
+PR #11 merged as `23970ebfd93147ee11c7d63ff20d11ead8bbf9d7`; its source tree
+`d60251394cf240e445a6476803e207ec7ae1afca` matches the tested candidate exactly.
+
+The guarded release uploaded five changed assets and reused 149. Deployment
+`edba47e6-43a9-4c5f-abf5-73092d671957` succeeded at 2026-10-16 21:44:31 UTC
+(05:44 in Manila). Actual deployment and saved project configuration retain
+the original D1/bucket bindings and all nine encrypted-setting names/types.
+Read-only post-release checks confirm unchanged revision 3, timestamp and all
+three snapshots, with zero rows written. Both catalogs match the D1 baseline;
+all five checked reader asset hashes match source, both challenge endpoints are
+configured and unauthenticated Keeper access returns 401. Both actual library
+footers show `v2.12.3 · 23970eb`. The real EPUB reopened with its 253-page map
+using retained public authorization; Keeper's ephemeral token was not retained,
+so its earlier successful privileged login was not repeated during this rollout.
+
+Live RDR-045 verification remains unsuccessful overall: the first partially
+scrolled cover returned from image top -246 px to 54 px (a 300 px jump). A repeat
+held its -245 px offset; a fresh reopen held scrollTop 300 after opening focus
+had settled. These results keep the intermittent return open despite the fixed
+selector gap and passing fixture regressions. No further source correction was
+made without a demonstrated cause. RDR-046 also remains open until Android Soul
+Browser phone testing verifies whether the new artwork-color protection helps.
+The refactor's implementation milestones are merged; Phase 5 is still open.
+
+Rollback target: correctly bound v2.12.2 deployment
+`e8fe494a-87ce-4731-9aa9-0285f449137d`. No seed, migration, catalog edit, B2
+object write or credential change was performed.

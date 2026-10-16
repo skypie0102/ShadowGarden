@@ -1,10 +1,14 @@
 # Reader v2.12.3 — image-only anchors and artwork color protection
 
-Candidate on `fix/reader-partial-image-return`; production remains on the
-verified v2.12.2 deployment recorded below until this correction passes release
-checks and is published.
+**Live:** deployment `edba47e6-43a9-4c5f-abf5-73092d671957`, successful at
+2026-10-16 21:44:31 UTC (2026-10-17 05:44 in Manila). [PR #11](https://github.com/skypie0102/ShadowGarden/pull/11)
+merged to `main` as `23970ebfd93147ee11c7d63ff20d11ead8bbf9d7`. The owner
+explicitly approved this patch's push, merge and publication. The release's
+source tree exactly matches tested PR tree `d60251394cf240e445a6476803e207ec7ae1afca`.
+**Phase 5 remains open:** the intermittent real-cover return and Android Soul
+Browser dimming still require resolution/physical-device acceptance.
 
-## Genuine production acceptance — 2026-10-17 (Manila)
+## Earlier genuine production acceptance — v2.12.2
 
 - The owner supplied the existing Keeper token through secure browser sign-in
   and completed the human check. Keeper opened the actual one-series,
@@ -29,14 +33,14 @@ checks and is published.
 The Continuous anchor selector excluded the normalized standalone visual-page
 wrapper. On such a page the reader could retain stale prose progress or fall
 back to a browser caret range instead of a concrete image-page block. The
-candidate recognizes that wrapper, preserving the existing prose selection and
+release recognizes that wrapper, preserving the existing prose selection and
 navigation-cancellation rules. A unit regression fails on the old stale-CFI
 behavior; an integration case exercises focus return from a partially scrolled
 cover after settled startup. The anchor-only candidate `c906358` passed all 166
 Node tests and all 220 browser cases in both push and PR CI, including the
-previously intermittent desktop WebKit rerun. The follow-up below requires a
-fresh matrix before release. Pending: guarded release, live correction checks
-and physical-phone confirmation of the reported dimming.
+previously intermittent desktop WebKit rerun. The complete artwork follow-up
+subsequently passed the fresh matrix below and is now published. The real-cover
+return still needs investigation as recorded in the current acceptance results.
 
 ## Android / Soul Browser follow-up
 
@@ -47,7 +51,7 @@ artwork with both Garden and Paper themes before this follow-up. This means
 native tap highlighting was not sufficient to resolve the physical-phone report,
 and neither passing pixels nor computed opacity/filter values close that issue.
 
-The candidate adds `color-scheme: only light` to EPUB images and the focused
+The release adds `color-scheme: only light` to EPUB images and the focused
 image, scoped away from reader text and controls. This is the documented
 [Chromium element-level opt-out](https://developer.chrome.com/blog/auto-dark-theme/#per-element-opt-out)
 from browser color overrides, not a demonstrated diagnosis of Soul's behavior.
@@ -60,33 +64,51 @@ lists a dark theme and screen filter. Whether either setting contributes to this
 report is unconfirmed. A native app screen filter may operate beyond webpage
 CSS; the standards opt-out cannot guarantee overriding it. Physical Soul testing
 is still required, including a comparison with those effects disabled if present.
-The candidate must not be described as a confirmed fix for Soul until the owner
+The release must not be described as a confirmed fix for Soul until the owner
 verifies it on the phone.
 
-### Current verification and publication status
+### Verification and deployment acceptance
 
-Artwork follow-up source: local commit `393cde2f74c298135b3376f2dd88d5fb57b0eaa8`.
-`npm run check` passes all 166 Node tests, the asset audit, static build and
-binding-aware Functions package. Both full-reader integration and isolated
-image-focus suites pass all **44 desktop/mobile Chromium cases** locally,
-including partial-cover return and the four new automatic-darkening checks.
-Those local browser runs use a static copy of the production frontend with the
-existing intercepted fixture catalog/ticket/EPUB responses; they do not validate
-live Functions or constitute a new five-engine CI run.
+After explicit approval, the prepared local source was transferred through the
+connected GitHub account as `fd512c59e590ac4f1230076877cd5d204aae404c`; its
+tree exactly matches the locally tested source. [Fresh CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38970210426)
+passes all 166 Node tests, the asset audit, static build, binding-aware Functions
+package and all five browser profiles: **224 passed**, plus six intentional skips
+for the Chromium-only automatic-darkening override. Desktop/mobile Chromium each
+pass 46 cases; Firefox and desktop/mobile WebKit each pass 44 with two skips.
+The earlier 44-case local frontend run is separate from this Pages/D1 CI evidence.
 
-The live main and adult catalogs still exactly match the verified D1 baseline.
-The canonical production deployment remains `e8fe494a-87ce-4731-9aa9-0285f449137d`
-(v2.12.2), retaining the expected D1/bucket bindings and nine encrypted settings.
+The merged tree matches that tested tree exactly. Its rebuilt release bundle
+passed the D1/bucket checks before upload. Five changed static assets were
+uploaded; the other 149 were already present. The production deployment and saved
+project configuration both retain D1 `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86`,
+the original bucket name/ID and all nine encrypted-setting names/types.
 
-Automatic approval review rejected the follow-up Git push twice. The second
-rejection persisted after the GitHub connector verified the public repository,
-the connected owner's identity/admin permission, and PR #11's existing branch.
-It requires explicit authorization to publish this payload despite the owner's
-earlier blanket approval. No follow-up source was uploaded, merged or deployed;
-PR #11's remote head remains `c906358`. Its description was updated before the
-push rejection. The next authorized step is to push this prepared follow-up,
-require fresh CI on it, merge it to `main`, and publish with the existing binding
-and catalog guards. Physical Soul Browser acceptance remains open afterward.
+Post-publication read-only comparison confirms unchanged catalog revision 3,
+timestamp `2026-10-03T11:52:50.670Z`, and all three retained snapshots; the query
+reports zero rows written and `changed_db: false`. Both live catalog documents
+exactly match the verified D1 baseline (main: zero series/volumes; adult: one
+series/volume). No seed, migration, catalog edit, B2 object write or credential
+change occurred. Both challenge endpoints are configured; unauthenticated Keeper
+access returns 401. The earlier ephemeral Keeper tab token was not retained, so
+this rollout did not repeat the previously successful privileged sign-in.
+
+The served reader requests `reader-image-focus.css?v=2.12.3`; all five checked
+reader asset hashes match the merged source. Both actual library footers show
+`v2.12.3 · 23970eb`. The real EPUB reopened successfully using the browser's
+retained public authorization and displayed its 253-page map. Original/focused
+artwork has the scoped `light only` color scheme, opacity 1 and no CSS filter.
+
+**RDR-045 remains open.** On the first live partial-cover cycle, the image top
+moved from -246 px to 54 px after focus closed: a 300 px jump to the top. A repeat
+held its -245 px image offset, and a fresh reopen held manager scrollTop 300 after
+the opening focus callback had settled. The wrapper selector gap is corrected,
+but these results do not establish a complete fix for the intermittent live
+return. Its precise cause needs a failing reproduction before another change.
+Physical Android/Soul dimming verification (RDR-046) also remains open.
+
+The immediately preceding, correctly bound v2.12.2 deployment
+`e8fe494a-87ce-4731-9aa9-0285f449137d` is the rollback target.
 
 ---
 

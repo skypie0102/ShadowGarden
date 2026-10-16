@@ -27,9 +27,15 @@ version fields pass the production checks. On 2026-10-17 (Manila), genuine
 Keeper login, the actual one-series/one-volume catalog, all three referenced B2
 objects and real authorized EPUB opening passed with the owner's secure sign-in
 and human verification. A partially scrolled cover exposed a remaining image-only
-anchor gap (RDR-045). Phase 5 remains open for that correction and physical-mobile
-confirmation; the implementation milestones and earlier deployment checks are
-complete. See the current [release record](READER_RELEASE.md).
+anchor gap (RDR-045). PR #11 subsequently merged as
+`23970ebfd93147ee11c7d63ff20d11ead8bbf9d7`, and v2.12.3 deployed as
+`edba47e6-43a9-4c5f-abf5-73092d671957` at 21:44 UTC on 2026-10-16. All 166
+Node tests and 224 browser cases pass across five profiles (six intentional
+Chromium-only skips). Bindings, nine encrypted settings, catalog revision 3,
+three snapshots, source hashes and both footers pass; the real book reopens.
+The first partial-cover live return still jumped 300 px while repeats held their
+position. Phase 5 remains open for that intermittent return and physical Android
+Soul Browser dimming acceptance. See the current [release record](READER_RELEASE.md).
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`.
 
 ## Objective and invariants
@@ -63,7 +69,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | v2.12.2 is live; configuration, catalog identity, genuine Keeper login, real book opening and all three referenced B2 objects pass. RDR-045 image-only position correction and physical-mobile acceptance remain open. |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | v2.12.3 is live; 166 Node/224 browser cases pass, configuration and catalog identity are retained, and the real book reopens. Prior genuine Keeper/B2 checks passed. RDR-045 intermittent live return and RDR-046 Android/Soul acceptance remain open. |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite
@@ -150,8 +156,8 @@ project and no production credentials or catalog writes.
 | RDR-042 | Repeated position updates replace the bookmark icon's identical text node during a pointer press, causing WebKit to cancel the native click. | Preserve unchanged icon text. A production-reader regression refreshes progress between native down/up events; the previous implementation fails in both WebKit profiles. |
 | RDR-043 | Native mobile tap highlighting can tint EPUB artwork and the focused-image return surface. | Give those image interactions transparent native feedback while preserving keyboard focus indicators. The full-reader regression checks the fixture's declared artwork color, computed touch feedback and return position. The previous release fails the touch-feedback assertion; all five configurations pass after the fix. |
 | RDR-044 | A source-only Functions bundle plus a configuration hash removed production D1/bucket bindings; recovered-catalog fallback hid the failure behind HTTP 200. | Live rollback and saved configuration restoration completed without data writes. Packaging now validates actual bindings; prepared backend changes fail with 503 instead of resurrecting recovered books. Phase 5 acceptance is reopened. |
-| RDR-045 | An image-only cover can lose its partial Continuous offset; the semantic block selector excludes normalized visual pages and can retain stale prose CFI progress. | Candidate v2.12.3 recognizes the standalone visual-page wrapper as an anchor. A new unit case proves the old stale-CFI path; browser coverage exercises partial-cover focus return. All 220 cases passed on the anchor-only candidate; the artwork follow-up needs a fresh matrix and live verification. |
-| RDR-046 | The owner still sees focused artwork dim on Android in Soul Browser after v2.12.2. Desktop/mobile Chromium, including automatic darkening, does not reproduce it. | Open. Candidate v2.12.3 scopes the documented browser-recoloring opt-out to original/focused images and expands forced-dark painting coverage. Soul's dark theme/screen filter are possible contributors, not an established cause. Physical-phone confirmation remains required. |
+| RDR-045 | An image-only cover can lose its partial Continuous offset; the semantic block selector excludes normalized visual pages and can retain stale prose CFI progress. | Open. The selector gap is corrected in live v2.12.3 and 224 browser cases pass, but the first real partial-cover return still jumped 300 px. A repeat and a settled fresh-open return held their offsets. A precise failing reproduction is required before another change. |
+| RDR-046 | The owner still sees focused artwork dim on Android in Soul Browser after v2.12.2. Desktop/mobile Chromium, including automatic darkening, does not reproduce it. | Open. Live v2.12.3 scopes the documented browser-recoloring opt-out to original/focused images and passes forced-dark painting coverage. Soul's dark theme/screen filter are possible contributors, not an established cause. Physical-phone confirmation remains required. |
 
 ## Phase 3 findings
 
