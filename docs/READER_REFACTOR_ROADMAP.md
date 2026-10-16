@@ -120,6 +120,7 @@ project and no production credentials or catalog writes.
 | RDR-033 | Reader warnings include raw Errors, chapter paths and potentially protected source URLs. | Known diagnostic codes accept numeric fields only, retain 64 events, and emit fixed first-occurrence warnings. Expected fallback/cancellation is quiet. |
 | RDR-034 | A failed EPUB open inside the map sandbox can leave book.ready pending. | Race opened/ready against openFailed, remove the sandbox on failure, and keep ordinary reader navigation usable. Desktop/mobile fault cases verify recovery and sanitized output. |
 | RDR-035 | Disposable map/visual caches retain old versions, obsolete layouts and publications without an eviction bound. | Atomic cache maintenance removes invalid/old records and applies count, age and payload budgets. Reopen tests seed obsolete and damaged records and check cache reuse after pruning. |
+| RDR-036 | Firefox throttles animation frames in the hidden/offscreen map document, delaying long-book maps and leaving progress on its fallback. | Keep the isolated measurement iframe transparent within the viewport, non-interactive and excluded from accessibility. Firefox's 32-chapter bound and seek-to-cover regressions pass. Full release matrix verifies the change across engines. |
 
 ## Phase 3 findings
 

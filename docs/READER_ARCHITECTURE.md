@@ -32,7 +32,10 @@ inside the engine integration; replacing them without reproducing their
 browser/layout behavior is outside this first milestone.
 
 The page-map generator intentionally uses a separate, unextended vendor runtime
-inside its offscreen iframe. It does not register a second application engine.
+inside its isolated measurement iframe. It does not register a second application engine.
+The iframe stays transparent within the viewport, behind the page, with pointer
+events disabled and `aria-hidden`. Moving it offscreen or using `visibility:hidden`
+can throttle Firefox/WebKit vendor animation frames and stall long-book mapping.
 `window.__sgVisualPageCache` and the canonical page-map diagnostic remain legacy
 bridges; subsequent phases will replace global coupling where appropriate.
 

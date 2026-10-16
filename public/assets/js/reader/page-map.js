@@ -159,12 +159,15 @@ async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreat
   frame.dataset.sgPageMapSandbox = "1";
   Object.assign(frame.style, {
     position: "fixed",
-    left: "-100000px",
+    // Keep the measurement document in the viewport's rendering lifecycle.
+    // Firefox/WebKit may suspend vendor animation frames in invisible/offscreen
+    // iframes, leaving a valid long publication without a finished page map.
+    left: "0",
     top: "0",
     width: `${metrics.width}px`,
     height: `${metrics.height}px`,
     border: "0",
-    visibility: "hidden",
+    opacity: "0",
     pointerEvents: "none",
     zIndex: "-2147483647"
   });

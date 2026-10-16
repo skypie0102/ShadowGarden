@@ -13,6 +13,11 @@ the release number and source commit in both libraries, including mobile.
 Public JS/CSS revalidate so an old module cache cannot hide an update indefinitely.
 Stored book IDs, progress, bookmarks and settings retain their existing formats.
 
+The expanded matrix exposed Firefox throttling in the hidden/offscreen map
+iframe. Keeping that isolated iframe transparent within the viewport fixes the
+32-chapter map timeout and restores the expected seek-to-cover progress. The
+frame remains behind the page, non-interactive and excluded from accessibility.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |
