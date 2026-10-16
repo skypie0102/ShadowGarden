@@ -4,8 +4,9 @@ Started 2026-10-15. Canonical branch: `main`. The navigation/position
 milestone is merged through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
 Phase 3 lifecycle ownership is verified and merged through
 [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
-`61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is implemented on
-`refactor/reader-rendering` and is undergoing final verification. Phase 5 remains pending.
+`61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is verified and merged
+through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
+`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification remains pending.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -39,7 +40,7 @@ behavior just because it looks unusual.
 | 1 — Engine boundary | Replace six implicit global EPUB factory wrappers with explicit installers, a single ordered integration module and one application book-creation API. Keep version-specific manager patches inside that boundary. | Initialization is idempotent, unsupported runtimes fail clearly, no feature script replaces `window.ePub`, and full-stack tests pass. | Complete; clean CI passes all 79 Node and 30 browser tests |
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
-| 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Implemented on refactor/reader-rendering; final cache, profile and CI checks are in progress. |
+| 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
 | 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
@@ -273,7 +274,24 @@ timings and known fallback/failure codes. Snapshots accept finite nonnegative
 numeric measurements only. Event history is capped at 64, counters have a fixed
 code set, and warning text never includes an Error, source URL or book content.
 
-Final validation and publication evidence will be recorded after the clean runs.
+Published source `9b59c5ce5e207e539c9c3b939010707ceb6b012b` has the exact
+locally verified public tree `8cbfea2bd6de2145a360f8b88b391f656fdb7ea6`.
+Clean push and pull-request CI runs
+[38828402947](https://github.com/skypie0102/ShadowGarden/actions/runs/38828402947)
+and [38828428816](https://github.com/skypie0102/ShadowGarden/actions/runs/38828428816)
+both pass all 146 Node tests, all 68 browser cases, the asset audit and both
+builds. The local rendering milestone also passed all 68 browser cases; the
+final cache changes passed the six targeted desktop/mobile cases and all nine
+final profile runs. [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5)
+merged the milestone as `0d33b7220e500e4e2225fd8044486bf226faeff6`.
+
+[Measured results](READER_PERFORMANCE.md) and
+[raw profile data](reader-performance-results.json) record three baseline and
+three candidate runs per fixture. Repeated-plate median startup falls from
+1653 ms to 704 ms (57%); its actual conversions fall from 21 to 1. Unique assets
+retain 21 conversions. All canonical totals are unchanged, and every candidate
+cached reopen performs zero conversions. No production deployment occurred.
+
 Profile timings are local fixture measurements, not a universal speed claim or
 a measurement of all browser/vendor heap allocations. The current publication's
 archive, map records and normalized artwork still scale with its actual content.

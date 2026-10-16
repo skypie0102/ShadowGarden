@@ -83,6 +83,8 @@ npm run profile:reader -- --repeat-each=3
 
 The profile attaches JSON with startup/map timing, conversion counts and observed
 source/view peaks. It uses the same isolated server and original generated EPUBs.
+The [reader performance report](docs/READER_PERFORMANCE.md) records the measured
+before/after results, cache limits and remaining release-verification scope.
 
 ## Layout
 

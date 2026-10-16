@@ -259,8 +259,8 @@ sanitized diagnostic export.
   clipping and hit testing because Chromium reports
   false zero IntersectionObserver ratios for visibly rendered vendor columns.
   The lifecycle milestone adds repeated create/dispose, interrupted startup,
-  startup failure/retry and BFCache cases. Long books and non-Chromium engines
-  remain explicit roadmap work.
+  startup failure/retry and BFCache cases. Phase 4 adds generated long-book
+  profiles; non-Chromium engines and release-book inspection remain roadmap work.
 
 - The Phase 3 implementation is merged into `main` through
   [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
@@ -277,5 +277,16 @@ sanitized diagnostic export.
   Resource accounting checks session-owned main-window listeners, observers,
   marker intervals and visual-cache object URLs; focused scope/Contents tests
   check trimming cleanup and cancellation. This is not a heap-profiler claim
-  about all browser/vendor allocations. Rendering/diagnostics, broader release
-  verification and production deployment remain roadmap work.
+  about all browser/vendor allocations. Phase 4's measured rendering work follows.
+- Phase 4 is merged through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5)
+  as `0d33b7220e500e4e2225fd8044486bf226faeff6`. Source
+  `9b59c5ce5e207e539c9c3b939010707ceb6b012b` passes all 146 Node tests,
+  all 68 desktop/mobile Chromium cases, the asset audit and both builds in
+  [push CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38828402947)
+  and [PR CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38828428816).
+  All nine final local profile runs and six final rendering/cache/failure cases
+  pass. The public source tree matches the local measurements exactly. The
+  [performance report](READER_PERFORMANCE.md) records the raw-run provenance,
+  unchanged canonical totals and scope of the measured bounds. Phase 5 still
+  covers broader engines, release-book inspection and production verification;
+  no deployment was performed.

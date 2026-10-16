@@ -2,8 +2,9 @@
 
 ## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)
 
-Phase 4 is implemented on `refactor/reader-rendering` and is in final
-verification. Generated long/illustrated-book profiles identified retained
+Phase 4 is verified and merged into `main` through
+[PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
+`0d33b7220e500e4e2225fd8044486bf226faeff6`. Generated long/illustrated-book profiles identified retained
 Section source documents and repeated normalization of one illustration.
 Source leases now cover live views, search, notes, location generation and
 target resolution; replaced map/view sources are released. One scan shares
@@ -20,9 +21,23 @@ events, distinguish expected cancellation/fallback from failure, and do not log
 raw Error objects or protected source paths. A failed map-sandbox archive open
 now exits into ordinary reader navigation with a sanitized diagnostic.
 
-The implementation has 146 Node tests and 68 desktop/mobile Chromium browser
-cases. Final cache/reopen, profile and GitHub CI evidence will be recorded after
-the clean verification runs. No production deployment has been performed.
+Both clean CI runs
+[38828402947](https://github.com/skypie0102/ShadowGarden/actions/runs/38828402947)
+and [38828428816](https://github.com/skypie0102/ShadowGarden/actions/runs/38828428816)
+pass all 146 Node tests, all 68 desktop/mobile Chromium browser cases, the asset
+audit and both builds against source `9b59c5ce5e207e539c9c3b939010707ceb6b012b`.
+All nine final local profile runs pass, as do the six final focused cache,
+rendering and recovery browser cases. The earlier full rendering run passes all
+68 cases. The published public tree matches the locally verified source exactly.
+
+The long fixture's peaks fall from 81 to 2 map source documents and from 33–34
+to 10 reader sources. Repeated-plate median startup falls from 1653 to 704 ms,
+with one conversion instead of 21. Distinct artwork, canonical totals and cached
+reopening remain intact. See the [performance report](READER_PERFORMANCE.md)
+and [raw measurements](reader-performance-results.json) for the three-run
+comparisons and limits. Phases 0–4 are complete for the documented matrix;
+broader release verification and deployment remain Phase 5 work. No production
+deployment has been performed.
 
 ## Reader lifecycle refactor — 2026-10-16 (Asia/Manila)
 
@@ -49,9 +64,9 @@ Clean push and pull-request CI runs
 [38819451742](https://github.com/skypie0102/ShadowGarden/actions/runs/38819451742)
 and [38819468106](https://github.com/skypie0102/ShadowGarden/actions/runs/38819468106)
 both pass all 128 Node tests, all 62 browser cases, the audit and both builds.
-The workflow is unchanged. Phases 0–3 are complete for the documented Chromium
-matrix; rendering/diagnostics and release verification remain. No production
-deployment has been performed.
+The workflow was unchanged at the lifecycle checkpoint, with Phases 0–3 complete
+for its documented Chromium matrix. The subsequent Phase 4 verification is
+recorded above. No production deployment occurred at either checkpoint.
 
 The older reconstruction checkpoints below retain their historical test counts;
 `npm run audit` reports current recovered-file modification counts.

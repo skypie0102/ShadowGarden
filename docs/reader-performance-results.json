@@ -1,0 +1,630 @@
+{
+  "measuredDate": "2026-10-16",
+  "timezone": "Asia/Manila",
+  "baselineCommit": "8c247ce571bf62184f96665b1939867936d34a71",
+  "candidateCommit": "9b59c5ce5e207e539c9c3b939010707ceb6b012b",
+  "candidatePublicTree": "8cbfea2bd6de2145a360f8b88b391f656fdb7ea6",
+  "environment": {
+    "node": "24.19.0",
+    "playwright": "1.63.0",
+    "chromiumRevision": 1243,
+    "headless": true,
+    "platform": "linux",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "timingDefinitions": {
+    "startupMs": "Navigation to hidden loading screen, including harness polling.",
+    "mapReadyMs": "Navigation to completed canonical map, including harness polling.",
+    "visualReadyMs": "Navigation to visual-pages-ready event.",
+    "warmStartupMs": "Cached reload to hidden loading screen."
+  },
+  "summary": [
+    {
+      "fixture": "long-prose",
+      "runsPerVersion": 3,
+      "totalPages": 1761,
+      "before": {
+        "startupMs": 1292,
+        "mapReadyMs": 8386,
+        "visualReadyMs": 629.3,
+        "conversions": 1,
+        "mapSources": {
+          "min": 81,
+          "max": 81
+        },
+        "readerSources": {
+          "min": 33,
+          "max": 34
+        }
+      },
+      "after": {
+        "startupMs": 1252,
+        "mapReadyMs": 8369,
+        "visualReadyMs": 550.2,
+        "conversions": 1,
+        "mapSources": {
+          "min": 2,
+          "max": 2
+        },
+        "readerSources": {
+          "min": 10,
+          "max": 10
+        },
+        "warmStartupMs": 682
+      }
+    },
+    {
+      "fixture": "repeated-plates",
+      "runsPerVersion": 3,
+      "totalPages": 261,
+      "before": {
+        "startupMs": 1653,
+        "mapReadyMs": 5600,
+        "visualReadyMs": 1068.2,
+        "conversions": 21,
+        "mapSources": {
+          "min": 41,
+          "max": 41
+        },
+        "readerSources": {
+          "min": 33,
+          "max": 33
+        }
+      },
+      "after": {
+        "startupMs": 704,
+        "mapReadyMs": 4725,
+        "visualReadyMs": 450.9,
+        "conversions": 1,
+        "mapSources": {
+          "min": 2,
+          "max": 2
+        },
+        "readerSources": {
+          "min": 10,
+          "max": 10
+        },
+        "warmStartupMs": 604
+      }
+    },
+    {
+      "fixture": "unique-plates",
+      "runsPerVersion": 3,
+      "totalPages": 261,
+      "before": {
+        "startupMs": 1721,
+        "mapReadyMs": 5690,
+        "visualReadyMs": 1122,
+        "conversions": 21,
+        "mapSources": {
+          "min": 41,
+          "max": 41
+        },
+        "readerSources": {
+          "min": 33,
+          "max": 33
+        }
+      },
+      "after": {
+        "startupMs": 1659,
+        "mapReadyMs": 5627,
+        "visualReadyMs": 1056.5,
+        "conversions": 21,
+        "mapSources": {
+          "min": 2,
+          "max": 2
+        },
+        "readerSources": {
+          "min": 10,
+          "max": 10
+        },
+        "warmStartupMs": 608
+      }
+    }
+  ],
+  "baseline": [
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "startupMs": 1292,
+      "mapReadyMs": 8386,
+      "conversions": 1,
+      "visualReadyMs": 629.2999999999884,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 122,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 81,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "startupMs": 1644,
+      "mapReadyMs": 5592,
+      "conversions": 21,
+      "visualReadyMs": 1081.5,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "startupMs": 1364,
+      "mapReadyMs": 8530,
+      "conversions": 1,
+      "visualReadyMs": 678,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 122,
+          "peakSources": 34,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 81,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "startupMs": 1661,
+      "mapReadyMs": 5622,
+      "conversions": 21,
+      "visualReadyMs": 1068.1999999999534,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "startupMs": 1228,
+      "mapReadyMs": 8326,
+      "conversions": 1,
+      "visualReadyMs": 528.1999999999534,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 122,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 81,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "startupMs": 1653,
+      "mapReadyMs": 5600,
+      "conversions": 21,
+      "visualReadyMs": 1037.5999999999767,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 567,
+        "conversions": 0
+      },
+      "startupMs": 1753,
+      "mapReadyMs": 5722,
+      "conversions": 21,
+      "visualReadyMs": 1209.3999999999069,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 640,
+        "conversions": 0
+      },
+      "startupMs": 1721,
+      "mapReadyMs": 5690,
+      "conversions": 21,
+      "visualReadyMs": 1081.4000000000233,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 634,
+        "conversions": 0
+      },
+      "startupMs": 1710,
+      "mapReadyMs": 5670,
+      "conversions": 21,
+      "visualReadyMs": 1122,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 33,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 41,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    }
+  ],
+  "candidate": [
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "warm": {
+        "startupMs": 646,
+        "conversions": 0
+      },
+      "startupMs": 1252,
+      "mapReadyMs": 8369,
+      "conversions": 1,
+      "visualReadyMs": 550.1999999999534,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 122,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 625,
+        "conversions": 0
+      },
+      "startupMs": 710,
+      "mapReadyMs": 4736,
+      "conversions": 1,
+      "visualReadyMs": 466,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 627,
+        "conversions": 0
+      },
+      "startupMs": 1672,
+      "mapReadyMs": 5627,
+      "conversions": 21,
+      "visualReadyMs": 1129.5999999998603,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "warm": {
+        "startupMs": 682,
+        "conversions": 0
+      },
+      "startupMs": 1254,
+      "mapReadyMs": 8409,
+      "conversions": 1,
+      "visualReadyMs": 580.5999999998603,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 121,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 504,
+        "conversions": 0
+      },
+      "startupMs": 627,
+      "mapReadyMs": 4565,
+      "conversions": 1,
+      "visualReadyMs": 373.5,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 608,
+        "conversions": 0
+      },
+      "startupMs": 1608,
+      "mapReadyMs": 5583,
+      "conversions": 21,
+      "visualReadyMs": 964.6000000000931,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "warm": {
+        "startupMs": 914,
+        "conversions": 0
+      },
+      "startupMs": 1219,
+      "mapReadyMs": 8363,
+      "conversions": 1,
+      "visualReadyMs": 525.9000000001397,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 122,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 604,
+        "conversions": 0
+      },
+      "startupMs": 704,
+      "mapReadyMs": 4725,
+      "conversions": 1,
+      "visualReadyMs": 450.89999999990687,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 584,
+        "conversions": 0
+      },
+      "startupMs": 1659,
+      "mapReadyMs": 5644,
+      "conversions": 21,
+      "visualReadyMs": 1056.5,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 82,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 2,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    }
+  ]
+}
