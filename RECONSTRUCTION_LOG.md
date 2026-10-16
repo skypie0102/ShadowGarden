@@ -803,3 +803,27 @@ No migration, seed, catalog edit, object write or credential change occurred.
 Code milestones and automated release checks are complete; Phase 5 remains
 open for genuine authorized book opening, Keeper login and physical-mobile
 acceptance. Fixture checks are not presented as those credentialed flows.
+
+## 2026-10-17 (Manila) — genuine login/book acceptance and visual anchor follow-up
+
+The owner securely entered the existing Keeper token and completed its human
+verification. Actual Keeper access passed: one series, one volume, healthy
+catalogs, no trash and three retained snapshots. Its read-only deep B2 check
+found all three referenced objects. After the owner's adult-library
+acknowledgement and public verification, the real EPUB opened with a 253-page
+map. These are genuine production flows, separate from intercepted fixtures.
+
+The actual source/focused images have full opacity and no CSS filter; tap
+highlighting is transparent. Initial-position focus return had zero displacement.
+A partial-cover focus return moved 281 px to the top once, while subsequent
+repeats retained the offset. Investigation found that Continuous semantic anchors
+exclude the normalized standalone visual-page wrapper. Prepare v2.12.3 to
+recognize it; the new unit regression fails on stale prose CFI without that
+change. The browser case isolates partial-cover return from pending flow
+replacement and mobile-chrome geometry changes.
+
+Production remains on v2.12.2 pending verified publication of the correction.
+Read-only D1 comparison confirmed revision 3 and both sanitized baseline
+documents before sign-in. Ordinary authentication writes session/rate records;
+no catalog edit, seed, migration, B2 mutation or credential change was performed.
+Physical-phone acceptance remains distinct from desktop and emulated profiles.

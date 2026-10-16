@@ -109,7 +109,10 @@ function viewDocument(view){
   return view?.document||view?.contents?.document||viewFrame(view)?.contentDocument||null;
 }
 
-const continuousBlockSelector="p,li,dd,dt,blockquote,pre,h1,h2,h3,h4,h5,h6,figcaption,figure,td,th";
+// Standalone covers/plates are normalized into this wrapper without prose.
+// Anchor their real block so focus return does not depend on an empty caret
+// range or on a CFI left over from an earlier passage.
+const continuousBlockSelector="p,li,dd,dt,blockquote,pre,h1,h2,h3,h4,h5,h6,figcaption,figure,td,th,.sg-synthetic-visual-page";
 
 function semanticBlockAtPoint(doc,x,y){
   let hitBlock=null;

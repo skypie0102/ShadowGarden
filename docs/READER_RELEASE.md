@@ -1,3 +1,42 @@
+# Reader v2.12.3 — image-only position anchors
+
+Candidate on `fix/reader-partial-image-return`; production remains on the
+verified v2.12.2 deployment recorded below until this correction passes release
+checks and is published.
+
+## Genuine production acceptance — 2026-10-17 (Manila)
+
+- The owner supplied the existing Keeper token through secure browser sign-in
+  and completed the human check. Keeper opened the actual one-series,
+  one-volume catalog. Maintenance reports healthy catalogs, no trash and three
+  retained snapshots; its read-only deep B2 check found all three referenced
+  objects, with none missing.
+- The owner completed the adult-library acknowledgement and public human
+  verification. The real, unintercepted EPUB opened with its 253-page map.
+  These checks establish genuine authorization and provider access; they do not
+  depend on the disposable fixture responses.
+- The real source image and focused image have opacity 1 and no CSS filter;
+  source and overlay tap highlighting is transparent. A focus return from the
+  cover's initial position had zero displacement. A partially scrolled cover
+  returned 281 px to the top on one attempt; subsequent live repeats held the
+  offset. That observation remains a regression to address, not a release pass.
+- Read-only D1 verification before the sign-in confirmed catalog revision 3,
+  timestamp `2026-10-03T11:52:50.670Z`, and exact agreement with the verified
+  sanitized main/adult baseline. Login performs its ordinary session and rate
+  bookkeeping; no catalog edit, migration, media write or credential change was
+  made during these checks.
+
+The Continuous anchor selector excluded the normalized standalone visual-page
+wrapper. On such a page the reader could retain stale prose progress or fall
+back to a browser caret range instead of a concrete image-page block. The
+candidate recognizes that wrapper, preserving the existing prose selection and
+navigation-cancellation rules. A unit regression fails on the old stale-CFI
+behavior; an integration case exercises focus return from a partially scrolled
+cover after settled startup. Pending: complete browser matrix, guarded release,
+live correction checks and physical-phone confirmation of the reported dimming.
+
+---
+
 # Reader v2.12.2 — mobile image patch
 
 Merged on 2026-10-16 through [PR #10](https://github.com/skypie0102/ShadowGarden/pull/10)
@@ -35,11 +74,11 @@ The release includes binding-aware packaging and explicit 503 responses for
 missing live D1 state. Packaging and actual deployment checks pass. No
 migration, seed, catalog edit, B2 write or credential change was performed.
 
-Reader engine, navigation, lifecycle and rendering work is merged. **Phase 5
-remains open** until genuine authorized book opening and Keeper login, plus the
-reported mobile interaction, have been accepted on the live site. Fixture
-browser results are separate from those checks. The prior incident and its
-withdrawn rollout are documented below.
+Reader engine, navigation, lifecycle and rendering work is merged. Genuine
+authorized book opening and Keeper login were subsequently verified as recorded
+above. **Phase 5 remains open** for the image-only position correction and
+physical-mobile acceptance. The prior incident and withdrawn rollout are
+documented below.
 
 ---
 
