@@ -19,6 +19,7 @@ jobs:
   browser:
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +55,7 @@ jobs:
           name: browser-runtime-${{ matrix.engine }}
           path: ${{ runner.temp }}/browser-runtime.tar.gz
           retention-days: 1
-      - run: npm run test:browser -- --project ${{ matrix.project }}
+      - run: npm run test:browser -- --project ${{ matrix.project }} --max-failures=1
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
