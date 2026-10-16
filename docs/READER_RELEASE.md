@@ -47,6 +47,13 @@ vendor's boolean `scrolled` flag. Its owned reporter survives vendor scroll call
 and still respects teardown/suppression; deterministic unit/browser checks force
 the collision explicitly.
 
+A post-merge repeat exposed a native WebKit click race: routine position updates
+replaced the bookmark icon's identical text node between mouse down and up.
+WebKit then cancelled the click before the bookmark handler ran. The button now
+preserves its text node when the icon is unchanged. A deterministic full-reader
+regression refreshes progress while the bookmark button is pressed; it fails in
+both WebKit profiles against the old implementation.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |
