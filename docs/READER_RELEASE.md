@@ -1,7 +1,21 @@
 # Reader v2.12.2 — mobile image patch
 
-Prepared on 2026-10-16 from the merged reader and incident safeguards. The
-v2.12.0 rollback removed the image touch-feedback correction from production,
+Merged on 2026-10-16 through [PR #10](https://github.com/skypie0102/ShadowGarden/pull/10)
+as `d6527742a2cde9f878a7ae23547734d858d24521`. The release and incident
+safeguards pass the complete five-profile browser matrix and verification job
+in [merged-commit CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38886017934).
+Its source tree exactly matches the tested PR tree
+`05e5498b163cd7a3fafdde186c360fec29bccbb6`.
+
+**Not deployed:** production remains on v2.12.0 deployment
+`b13cf583-ad91-43e7-ad1f-55dbc9365802`. Automatic approval review rejected
+the production deployment request and requires fresh explicit authorization.
+No new production deployment was created. The v2.12.2 assets are staged, and
+the compiled Worker passes the D1/bucket-binding guard. Both live catalogs
+were compared exactly with read-only D1 revision 3 before staging; query
+metadata reported zero rows written and `changed_db: false`.
+
+The v2.12.0 rollback removed the image touch-feedback correction from production,
 so the owner still observed dimming after recovery. This patch restores the
 transparent native tap feedback on EPUB images and the focused-image surface,
 and changes the stylesheet URL to ensure the new release is fetched.

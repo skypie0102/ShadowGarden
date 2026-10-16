@@ -755,3 +755,22 @@ new image stylesheet URL, using the guarded release bundle. Reader refactor
 implementation milestones are merged; Phase 5 real production acceptance
 remains open. A healthy catalog/configuration check must never be described
 as a completed credentialed login or authorized book-open test.
+
+## 2026-10-16 — v2.12.2 merged; production publish blocked
+
+PR #10 merged as `d6527742a2cde9f878a7ae23547734d858d24521`. Both candidate
+CI runs and the merged commit pass verification and all five browser profiles.
+The merged source exactly matches tested tree
+`05e5498b163cd7a3fafdde186c360fec29bccbb6`. The compiled release passes the
+binding guard, and both live catalogs match the sanitized read-only D1 record
+at revision 3. D1 query metadata reports zero rows written and no database
+change. Two changed static assets were staged; the other 152 already existed.
+
+Automatic approval review rejected the production deployment request. A check
+of the earlier user publishing authorization did not unblock that review,
+which requires fresh explicit approval. No new production deployment was
+created: canonical deployment remains `b13cf583-ad91-43e7-ad1f-55dbc9365802`
+at v2.12.0. Thus the image-touch fix is merged and tested but is not yet live.
+Implementation milestones are complete; Phase 5 still requires the live
+deployment/configuration checks, genuine authorized book opening, Keeper login
+and physical-mobile acceptance. No credentialed flow is claimed as verified.

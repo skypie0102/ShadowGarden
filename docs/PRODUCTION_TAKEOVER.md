@@ -8,6 +8,15 @@ settings have also been restored. See the
 [incident report](incidents/2026-10-16-pages-bindings.md). Do not redeploy the
 withdrawn package or infer database health from an HTTP 200 catalog.
 
+The v2.12.2 image-touch correction and release safeguards are merged on `main`
+at `d6527742a2cde9f878a7ae23547734d858d24521` through PR #10. Verification
+and the full five-profile browser matrix pass on the merged source. Both live
+catalogs match read-only D1 revision 3, and the guarded Worker retains the
+original database/bucket bindings. Automatic approval review rejected the
+production deployment pending fresh explicit authorization; no new production
+deployment was created. v2.12.0 remains live. See the current release status in
+[READER_RELEASE.md](READER_RELEASE.md).
+
 The owner authorized replacing the original site on 2026-10-02 and reusing its
 existing B2 bucket. The five recovered EPUB entries were disposable tests. This
 supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
