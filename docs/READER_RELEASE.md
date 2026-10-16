@@ -1,6 +1,11 @@
 # Reader v2.12.4 — focused-image filter correction
 
-**Prepared:** the owner supplied fresh Android / Soul Browser screenshots showing
+**Live:** deployment `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1` succeeded at
+2026-10-16 22:25:17 UTC (2026-10-17 06:25 in Manila). [PR #12](https://github.com/skypie0102/ShadowGarden/pull/12)
+merged as `bf1dd7141e59c534ed561b5179dc8fd47ec659d4`. Its source tree
+`731b3e61e52763d4b5c9543f6093266d786550ac` exactly matches the tested candidate.
+
+The owner supplied fresh Android / Soul Browser screenshots showing
 that the v2.12.3 color-scheme opt-out did not resolve RDR-046. The large pink area
 changes from RGB (227, 0, 81) to (159, 0, 58); aligned smooth regions retain about
 70% of their channel values. Browser chrome remains unchanged.
@@ -29,9 +34,30 @@ v2.12.3 the focused pixel is (129, 120, 152) instead of (184, 171, 217), failing
 by 55 red levels. This reproduces the mechanism missing from previous tests.
 
 The asset audit, all 166 Node tests, static build and binding-aware Functions
-package pass locally. Browser verification and guarded publication are pending.
+package pass locally and in [CI run 38974652347](https://github.com/skypie0102/ShadowGarden/actions/runs/38974652347).
+All five browser profiles pass **229 cases**, with six intentional skips for
+the Chromium-only automatic-darkening override. The new injected-filter case
+passes in each profile. The existing 44 local reader cases and both new
+desktop/mobile Chromium cases also pass.
+
+The clean merged source was rebuilt with the binding-aware package guard. Three
+changed assets were uploaded and 151 reused. Actual deployment and saved project
+configuration retain the original D1 binding, bucket settings and all nine
+encrypted-setting names/types. Read-only post-deployment checks confirm unchanged
+catalog revision 3, timestamp `2026-10-03T11:52:50.670Z` and all three snapshots;
+both queries report zero rows written and `changed_db: false`. Both public
+catalogs exactly match that database baseline. No seed, migration, catalog edit,
+B2 object write or credential change occurred.
+
+The public version endpoint identifies v2.12.4, `main`, and the merged source
+above. The served reader requests `reader-image-focus.css?v=2.12.4`, and all five
+checked reader asset hashes match source, including the new filter reset. Both
+challenge endpoints are configured; unauthenticated Keeper access returns 401.
 RDR-046 remains open until the owner verifies the new release on Soul; the
 separate intermittent real-cover return RDR-045 also remains open.
+
+Rollback target: the correctly bound v2.12.3 deployment
+`edba47e6-43a9-4c5f-abf5-73092d671957`.
 
 ---
 

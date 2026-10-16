@@ -913,3 +913,34 @@ Production remains v2.12.3 while the candidate is verified. Read-only baseline
 checks confirm revision 3, the same three snapshots, correct D1/bucket settings
 and all nine encrypted-setting names/types. RDR-045 and physical Soul acceptance
 remain open. No live catalog, object or credential was modified.
+
+
+## 2026-10-17 (Manila) — v2.12.4 published with reproduced filter regression
+
+PR #12 passed exact-candidate CI run 38974652347: audit, all 166 Node tests,
+static build, binding-aware Functions package and 229 browser cases across five
+profiles, with six intentional Chromium-only skips. The injected Soul filter
+case passes in every profile, preserving colors at fit/zoom and reading-position
+return while an ordinary parent-image control stays dim. The existing 44 local
+reader cases and both new desktop/mobile cases also pass.
+
+The PR merged as bf1dd7141e59c534ed561b5179dc8fd47ec659d4. Its source tree
+731b3e61e52763d4b5c9543f6093266d786550ac exactly matches the tested candidate.
+After rebuilding and validating bindings, three changed assets were uploaded
+and 151 reused. Production deployment f1bf6889-4e7d-4af6-b3d2-bedb6b517da1
+succeeded on 2026-10-16 at 22:25:17 UTC (06:25 in Manila).
+
+Actual deployment and saved project configuration retain the original D1/bucket
+settings and all nine encrypted-setting names/types. Read-only verification
+confirms unchanged catalog revision 3, timestamp and three snapshots, with zero
+rows written and changed_db false. Both public catalogs match that baseline.
+Public version metadata identifies v2.12.4, main and the merged source; the
+reader requests the v2.12.4 CSS URL and all five checked reader assets match
+source bytes. Both challenge endpoints are configured and unauthenticated
+Keeper access returns 401. No seed, migration, catalog edit, B2 object write
+or credential change occurred.
+
+RDR-046 stays open for the owner's physical Soul confirmation. RDR-045 remains
+open independently; no further position code changed in this release. The
+rollback target is correctly bound v2.12.3 deployment
+edba47e6-43a9-4c5f-abf5-73092d671957.
