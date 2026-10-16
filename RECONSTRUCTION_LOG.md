@@ -744,3 +744,14 @@ DB or its record is missing instead of substituting recovered books. These
 changes are not deployed during recovery. No database restore, seed, migration,
 B2 object mutation or credential rotation was performed. Phase 5 is reopened;
 see `docs/incidents/2026-10-16-pages-bindings.md` for the incident and gates.
+
+
+## 2026-10-16 — mobile image correction after incident rollback
+
+The owner confirmed database recovery and reported that image dimming remained.
+The production rollback restored v2.12.0, which predates the already-merged
+native touch-feedback correction. Prepare v2.12.2 with that correction and a
+new image stylesheet URL, using the guarded release bundle. Reader refactor
+implementation milestones are merged; Phase 5 real production acceptance
+remains open. A healthy catalog/configuration check must never be described
+as a completed credentialed login or authorized book-open test.
