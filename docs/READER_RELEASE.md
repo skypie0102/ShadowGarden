@@ -42,6 +42,11 @@ revisions limit the correction to newly rendered paginated views; a newer reques
 cancels stale correction. The unit regression and cross-engine passage tests
 verify both positioning order and cancellation.
 
+Continuous scroll reporting no longer shares its callback identity with the
+vendor's boolean `scrolled` flag. Its owned reporter survives vendor scroll calls
+and still respects teardown/suppression; deterministic unit/browser checks force
+the collision explicitly.
+
 ## Verification matrix
 
 | Configuration | Scope | Status |

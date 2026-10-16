@@ -472,7 +472,7 @@ export function stabilizeContinuousScrollLifecycle(rendition){
     timer=setTimeout(()=>{
       timer=0;
       if(manager.__sgDestroyed||suppressed())return;
-      const scrolled=manager.scrolled;
+      const scrolled=manager.__sgContinuousScrolled||manager.scrolled;
       if(typeof scrolled==="function")scrolled.apply(manager,args);
     },30);
   };

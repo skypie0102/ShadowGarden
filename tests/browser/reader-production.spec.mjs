@@ -195,6 +195,18 @@ test.describe('production reader integration',()=>{
     await expect.poll(()=>page.evaluate(()=>Number(document.querySelector('#progressRange').value))).toBeLessThan(100);
   });
 
+  test('Continuous scroll reporting survives the vendor boolean scroll flag',async({page})=>{
+    const reports=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager;let reports=0;
+      const listener=()=>reports++;manager.on('scroll',listener);
+      manager.scrolled=true;manager.__sgSuppressScrollUntil=0;manager._scrolled();
+      await new Promise(resolve=>setTimeout(resolve,100));manager.off('scroll',listener);
+      return reports;
+    });
+    expect(reports).toBeGreaterThan(0);
+  });
+
   test('a chapter selection cancels a debounced seek before it can move the viewport',async({page})=>{
     await chapter(page,3);
     // Dispatch both public controls in the same event turn so the delayed seek
