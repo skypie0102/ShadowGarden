@@ -38,7 +38,8 @@ try {
   }));
   const migration=(await Promise.all((await readdir(resolve(root,'migrations'))).filter(name=>name.endsWith('.sql')).sort().map(name=>readFile(resolve(root,'migrations',name),'utf8')))).join('\n');
   const seed=await readFile(resolve(root,'recovery-info/seed.sql'),'utf8');
-  const damaged=['desktop-chromium','mobile-chromium'].map(name=>`INSERT INTO snapshots(id,reason,created_at,document,sha256) VALUES('damaged-${name}','Damaged test snapshot','2026-09-27T00:00:00.000Z','{}','${createHash('sha256').update('{}').digest('hex')}');`).join('\n');
+  const {default:browserConfig}=await import('../playwright.config.mjs');
+  const damaged=browserConfig.projects.map(({name})=>`INSERT INTO snapshots(id,reason,created_at,document,sha256) VALUES('damaged-${name}','Damaged test snapshot','2026-09-27T00:00:00.000Z','{}','${createHash('sha256').update('{}').digest('hex')}');`).join('\n');
   await writeFile(resolve(project,'fixture.sql'),`${migration}\n${seed}\n${damaged}\nINSERT INTO admin_sessions(id,expires_at) VALUES('${sessionId}',${Math.floor(Date.now()/1000)+3600});\n`);
   const persist=resolve(project,'state');
   await run(['d1','execute','DB','--local','--file','fixture.sql','--persist-to',persist]);

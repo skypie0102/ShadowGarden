@@ -6,7 +6,8 @@ Phase 3 lifecycle ownership is verified and merged through
 [PR #4](https://github.com/skypie0102/ShadowGarden/pull/4) as
 `61a487502248882e02bcd9bd8d8903fcdad7bdbb`. Phase 4 is verified and merged
 through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
-`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification remains pending.
+`0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 release verification is in progress
+on `refactor/reader-release`; production still serves the image-focus milestone.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`; deployed reader
 implementation: `9daea7f481ae1f19cc3d0640b83b20d424eab794`.
 
@@ -41,7 +42,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Pending |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | In progress |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite
@@ -303,3 +304,19 @@ archive, map records and normalized artwork still scale with its actual content.
 2. Review remaining limits, deployment configuration and rollback instructions.
 3. Deploy a verified source to the existing production site, identify the release
    commit and exercise the deployed reader without changing stored identities.
+
+## Phase 5 — release candidate
+
+The `2.12.0` candidate adds Firefox and desktop/mobile WebKit to the existing
+desktop/mobile Chromium suite. Additional publication cases cover EPUB 2 NCX,
+encoded nested paths, ruby/multilingual text, tables, notes, retained bookmarks
+and progress identities, and corrupt embedded artwork. Existing long-book,
+illustration, cache, cancellation and layout cases run in the same matrix.
+
+Main and NSFW footer checks verify a visible release number and commit without
+horizontal overflow. The build identifies the actual Git branch instead of the
+old reconstruction fallback; JavaScript and CSS revalidate between deployments.
+The recovered `public/data/version.json` remains provenance: the build generates
+the actual release metadata in `dist/data/version.json`.
+
+See [release verification](READER_RELEASE.md) for the matrix, rollout and limits.

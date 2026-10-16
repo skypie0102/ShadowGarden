@@ -10,13 +10,17 @@ export const readerSeriesId='reader-integration-fixture';
 export const readerBookPath='/media/shadow-garden/books/reader-integration-fixture.epub';
 export const readerTitle='Reader integration fixture';
 
-export async function createReaderEpub({chapterCount=9,paragraphCount=12,visualEvery=0,uniqueVisuals=false}={}){
+export async function createReaderZip(){
   const module={exports:{}};
   runInNewContext(await readFile(new URL('../../public/assets/vendor/jszip.min.js',import.meta.url),'utf8'),{
     module,exports:module.exports,require:createRequire(import.meta.url),Buffer,
     setTimeout,clearTimeout,setImmediate,clearImmediate,Promise,Uint8Array,ArrayBuffer
   });
-  const zip=new module.exports(),chapters=Array.from({length:chapterCount},(_,index)=>index);
+  return new module.exports();
+}
+
+export async function createReaderEpub({chapterCount=9,paragraphCount=12,visualEvery=0,uniqueVisuals=false}={}){
+  const zip=await createReaderZip(),chapters=Array.from({length:chapterCount},(_,index)=>index);
   zip.file('mimetype','application/epub+zip');
   zip.file('META-INF/container.xml','<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="book.opf" media-type="application/oebps-package+xml"/></rootfiles></container>');
   const visualManifest=uniqueVisuals?chapters.filter(i=>visualEvery&&i%visualEvery===0).map(i=>`<item id="art-${i}" href="art-${i}.svg" media-type="image/svg+xml"/>`).join(''):'';
