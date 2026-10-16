@@ -211,6 +211,33 @@ test.describe('production reader integration',()=>{
     await returned(page,image,before);
   });
 
+  test('image focus preserves artwork when the browser injects image dimming',async({page})=>{
+    // Soul's separate image-darkening option injects this rule in the parent
+    // document; its default is 70%. It does not reach the EPUB iframe.
+    await page.addStyleTag({content:'img{-webkit-filter:brightness(70%)}'});
+    const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+    // Keep an ordinary parent image as a negative control: the injected rule
+    // must really darken pixels, rather than silently doing nothing in this engine.
+    await focused.evaluate(element=>{
+      const control=document.createElement('img');control.id='dimmedImageControl';control.src=element.src;
+      control.style.cssText='position:fixed;left:2px;top:2px;width:60px;height:90px;z-index:100;pointer-events:none';
+      document.body.appendChild(control);
+    });
+    const control=page.locator('#dimmedImageControl');
+    try{
+      const dimmed=await paintedCenter(page,control);
+      const original=readerArtworkCenterColor.slice(1).match(/../g).map(value=>parseInt(value,16));
+      for(let channel=0;channel<3;channel++)expect(Math.abs(dimmed[channel]-original[channel]*.7),JSON.stringify({original,dimmed})).toBeLessThanOrEqual(2);
+      await expectArtworkColor(page,focused);
+      const box=await focused.boundingBox();
+      await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:-650,ctrlKey:true,clientX:box.x+box.width/2,clientY:box.y+box.height/2});
+      await expectArtworkColor(page,focused);
+      await page.locator('#imageFocusViewport').dispatchEvent('wheel',{deltaY:1800,ctrlKey:true,clientX:box.x+box.width/2,clientY:box.y+box.height/2});
+    }finally{await control.evaluate(element=>element.remove())}
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,before);
+  });
+
   for(const theme of ['garden','paper'])test(`image focus retains artwork colors under automatic darkening in ${theme}`,async({page,browserName})=>{
     test.skip(browserName!=='chromium','Chromium exposes the automatic-darkening override through CDP');
     await page.locator('#settingsToggle').focus();await page.locator('#settingsToggle').click();
