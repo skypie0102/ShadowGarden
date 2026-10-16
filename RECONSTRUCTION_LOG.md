@@ -890,3 +890,26 @@ The refactor's implementation milestones are merged; Phase 5 is still open.
 Rollback target: correctly bound v2.12.2 deployment
 `e8fe494a-87ce-4731-9aa9-0285f449137d`. No seed, migration, catalog edit, B2
 object write or credential change was performed.
+
+
+## 2026-10-17 (Manila) — Soul image-filter reproduction and v2.12.4 candidate
+
+Fresh owner screenshots confirm v2.12.3 did not fix RDR-046. Aligned smooth
+artwork areas retain about 70% brightness, while the browser toolbar is unchanged.
+A targeted inspection of publicly available decompiled Soul code found
+MainUtil.z0 injecting an img -webkit-filter brightness rule into the parent
+document. PrefWeb defaults the separate Dark image option to enabled and image
+brightness to 70. Source provenance and pinned links are in READER_RELEASE.md.
+This is a strong match, not a direct DOM capture from the physical phone.
+
+The new production-reader regression injects the actual rule and keeps a dimmed
+parent-image control. It fails on v2.12.3 with focused RGB (129,120,152) instead of
+(184,171,217). The v2.12.4 candidate resets only the focused image's prefixed and
+unprefixed filter, and advances its CSS cache key. It preserves the original
+colors at fit and zoom; full browser/return verification is pending. All 166
+Node tests, audit, static build and binding-aware Functions package pass.
+
+Production remains v2.12.3 while the candidate is verified. Read-only baseline
+checks confirm revision 3, the same three snapshots, correct D1/bucket settings
+and all nine encrypted-setting names/types. RDR-045 and physical Soul acceptance
+remain open. No live catalog, object or credential was modified.

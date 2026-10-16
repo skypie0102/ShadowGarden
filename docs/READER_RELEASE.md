@@ -1,3 +1,40 @@
+# Reader v2.12.4 — focused-image filter correction
+
+**Prepared:** the owner supplied fresh Android / Soul Browser screenshots showing
+that the v2.12.3 color-scheme opt-out did not resolve RDR-046. The large pink area
+changes from RGB (227, 0, 81) to (159, 0, 58); aligned smooth regions retain about
+70% of their channel values. Browser chrome remains unchanged.
+
+Investigation found a concrete matching mechanism in the publicly available
+decompiled Soul source, rather than Chromium's automatic-darkening emulation:
+[MainUtil.z0](https://git.kaki87.net/VibedByKaKi/soul-browser/src/commit/6a5016ab8b5aadeb8ff915fa70aaf46ce8abbe5f/sources/java/com/mycompany/app/main/MainUtil.java)
+injects a parent-document `img` brightness filter under style ID `sb_dark_style`.
+[PrefWeb](https://git.kaki87.net/VibedByKaKi/soul-browser/src/commit/6a5016ab8b5aadeb8ff915fa70aaf46ce8abbe5f/sources/java/com/mycompany/app/pref/PrefWeb.java)
+defaults `mThemeImg` to true and `mImgBright` to 70. The source is a third-party
+decompilation of Soul v1.4.85 with subsequent modifications, not an official
+SoulSoft source release or a DOM capture from the owner's phone. The matching
+filter and screenshot ratios strongly support this diagnosis; phone acceptance
+is still separate.
+
+The focused image now explicitly resets both `-webkit-filter` and `filter` to
+`none !important`, scoped to that image. The stylesheet URL advances to v2.12.4.
+The book image stays in its EPUB iframe, while the focused copy lives in the
+parent document where the injected rule applies. No brightness compensation,
+image-byte transformation, backdrop change or reader-theme change is involved.
+
+A production-reader paint regression injects Soul's actual 70% rule. An ordinary
+parent image proves the filter is active; the focused copy must retain its
+declared source color at fit and zoom and return to its reading position. On
+v2.12.3 the focused pixel is (129, 120, 152) instead of (184, 171, 217), failing
+by 55 red levels. This reproduces the mechanism missing from previous tests.
+
+The asset audit, all 166 Node tests, static build and binding-aware Functions
+package pass locally. Browser verification and guarded publication are pending.
+RDR-046 remains open until the owner verifies the new release on Soul; the
+separate intermittent real-cover return RDR-045 also remains open.
+
+---
+
 # Reader v2.12.3 — image-only anchors and artwork color protection
 
 **Live:** deployment `edba47e6-43a9-4c5f-abf5-73092d671957`, successful at
