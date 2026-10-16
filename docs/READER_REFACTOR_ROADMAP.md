@@ -9,7 +9,7 @@ through [PR #5](https://github.com/skypie0102/ShadowGarden/pull/5) as
 `0d33b7220e500e4e2225fd8044486bf226faeff6`. Phase 5 merged through PR #6 as
 `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e` and v2.12.0 deployed successfully.
 Phase 5 is reopened after the v2.12.1 deployment lost database/bucket bindings.
-Production is restored to v2.12.0 from
+Incident recovery restored v2.12.0 from
 `235308a7e1716fa744cee8aaf7c1d53c1c9eef3e`, deployment
 `b13cf583-ad91-43e7-ad1f-55dbc9365802`. The original D1 data is intact. The
 159 Node/215 browser tests and initial smoke checks did not establish correct
@@ -18,12 +18,14 @@ production configuration or real login/book access. See the
 The v2.12.2 correction and binding-aware packaging are merged through
 [PR #10](https://github.com/skypie0102/ShadowGarden/pull/10) as
 `d6527742a2cde9f878a7ae23547734d858d24521`; verification and all five browser
-profiles pass on that exact commit. Production deployment was rejected by
-automatic approval review pending fresh explicit authorization. Production
-therefore still runs v2.12.0, which does not include the image touch-feedback
-correction. Both live catalogs match read-only D1 revision 3. Phase 5 remains
-open for deployment acceptance, genuine authorized book access, Keeper login
-and physical-mobile confirmation; the code milestones are complete.
+profiles pass on that exact commit. Following the owner's explicit publishing
+approval, production deployment `e8fe494a-87ce-4731-9aa9-0285f449137d`
+succeeded at 10:29 UTC on 2026-10-16. The live reader contains the image-touch
+correction. Actual/saved bindings, all nine encrypted-setting names, unchanged
+D1 revision 3, both exact catalog documents, deployed source hashes and footer
+version fields pass the production checks. Phase 5 remains open for genuine
+authorized book access, Keeper login and physical-mobile confirmation; the
+code milestones and automated deployment checks are complete.
 Baseline source: `93e5aad9107db4a8c4efee521e8fedf36f2fe1a4`.
 
 ## Objective and invariants
@@ -57,7 +59,7 @@ behavior just because it looks unusual.
 | 2 — Navigation and position | Establish one navigation coordinator for TOC, links, seeks, mode changes, relayout and temporary viewport restoration. Remove duplicate event interception after callers are migrated. Use navigation generations/cancellation rather than unrelated timers competing to restore position. | Old restoration cannot override a newer user action; all navigation entry points use the coordinator; passage survives mode/viewport/settings changes. | Complete; 113 Node tests and all 48 desktop/mobile browser cases pass locally and in both clean CI runs. Merged into main through PR #3. |
 | 3 — Lifecycle | Give reader/session/controllers a uniform disposal contract. Track event listeners, observers, timers, pending work and object URLs by owner. Handle partial initialization and repeated create/destroy cycles. | Repeated startup/teardown leaves no active callbacks or retained reader DOM owned by disposed controllers; suspended-page restoration remains functional. | Complete; 128 Node tests, all 62 desktop/mobile Chromium cases, audit and both builds pass locally and in both clean CI runs. Merged into main through PR #4. |
 | 4 — Rendering and diagnostics | Profile page-map generation, visual preparation and chapter buffering; remove redundant work only with evidence. Expand dense source and give expected fallbacks distinguishable diagnostics. | Measured before/after results for performance changes, bounded memory/work for long books, and useful diagnostics without private book/token logging. | Complete for the documented generated-publication matrix; 146 Node tests, all 68 desktop/mobile Chromium browser cases and nine final profile runs pass. Both clean CI runs pass. Merged into main through PR #5. |
-| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Open: v2.12.2 and binding-aware packaging are merged and pass the full matrix. Automatic approval review blocks production publishing pending fresh explicit authorization. v2.12.0 remains live; actual deployment/configuration acceptance, authorized book access, Keeper login and physical-mobile confirmation remain. |
+| 5 — Release verification | Run the complete matrix, inspect representative long/image-heavy books, review changes and rollback instructions, then release verified milestones. | All required checks pass, remaining limits are recorded, and deployed code can be identified and rolled back. | Open for manual acceptance: v2.12.2 is merged and live; the full browser matrix, guarded packaging, actual/saved bindings, unchanged D1/catalogs and deployed assets pass. Genuine authorized book access, Keeper login and physical-mobile confirmation remain. |
 
 Phases are milestones, not permission checkpoints. Continue on the authorized
 branch and fix failures before marking a milestone complete. A browser suite

@@ -7,13 +7,24 @@ in [merged-commit CI](https://github.com/skypie0102/ShadowGarden/actions/runs/38
 Its source tree exactly matches the tested PR tree
 `05e5498b163cd7a3fafdde186c360fec29bccbb6`.
 
-**Not deployed:** production remains on v2.12.0 deployment
-`b13cf583-ad91-43e7-ad1f-55dbc9365802`. Automatic approval review rejected
-the production deployment request and requires fresh explicit authorization.
-No new production deployment was created. The v2.12.2 assets are staged, and
-the compiled Worker passes the D1/bucket-binding guard. Both live catalogs
-were compared exactly with read-only D1 revision 3 before staging; query
-metadata reported zero rows written and `changed_db: false`.
+**Live:** production deployment `e8fe494a-87ce-4731-9aa9-0285f449137d`
+succeeded on 2026-10-16 at 10:29:44 UTC (18:29 in Manila), using the exact
+verified source above. The owner explicitly approved publishing after the
+earlier automatic approval rejection.
+
+The actual deployment and saved project configuration both match the original
+D1/bucket settings and retain all nine encrypted-setting names/types. The D1
+row is unchanged at revision 3; the read-only checks report zero rows written
+and `changed_db: false`. Both live catalogs match that sanitized D1 baseline
+exactly. The served version identifies `v2.12.2 · d652774`; canonical
+`/reader` requests the refreshed image stylesheet, and all four reader asset
+hashes listed below match the tested source. Both challenge endpoints are
+configured, and unauthenticated Keeper library access returns 401. Browser
+inspection confirms the main footer and the NSFW footer's runtime version
+field identify this release; the NSFW age gate was left in place.
+
+The correctly bound v2.12.0 deployment
+`b13cf583-ad91-43e7-ad1f-55dbc9365802` remains the rollback target.
 
 The v2.12.0 rollback removed the image touch-feedback correction from production,
 so the owner still observed dimming after recovery. This patch restores the
@@ -21,11 +32,8 @@ transparent native tap feedback on EPUB images and the focused-image surface,
 and changes the stylesheet URL to ensure the new release is fetched.
 
 The release includes binding-aware packaging and explicit 503 responses for
-missing live D1 state. Before deployment, require the configured D1 identity,
-bucket variables and encrypted-setting names to match the restored project.
-After deployment, inspect both the actual deployment and saved configuration,
-then compare both real catalogs with the read-only D1 baseline. No migration,
-seed, catalog edit, B2 write or credential change belongs to this release.
+missing live D1 state. Packaging and actual deployment checks pass. No
+migration, seed, catalog edit, B2 write or credential change was performed.
 
 Reader engine, navigation, lifecycle and rendering work is merged. **Phase 5
 remains open** until genuine authorized book opening and Keeper login, plus the
@@ -37,8 +45,9 @@ withdrawn rollout are documented below.
 
 # Reader 2.12.1 release verification
 
-**Withdrawn after a production configuration incident.** Production is restored
-to v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`. The v2.12.1
+**Withdrawn after a production configuration incident.** Incident recovery
+restored v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`; the
+current v2.12.2 deployment is recorded above. The v2.12.1
 package omitted the database and bucket bindings. Earlier checks below passed
 without proving actual catalog identity or credentialed access, so the prior
 release-complete conclusion was wrong. Phase 5 is reopened. See the

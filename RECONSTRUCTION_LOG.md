@@ -774,3 +774,32 @@ at v2.12.0. Thus the image-touch fix is merged and tested but is not yet live.
 Implementation milestones are complete; Phase 5 still requires the live
 deployment/configuration checks, genuine authorized book opening, Keeper login
 and physical-mobile acceptance. No credentialed flow is claimed as verified.
+
+## 2026-10-16 — v2.12.2 published after explicit approval
+
+The owner approved publishing and asked not to repeat permission requests.
+Production deployment `e8fe494a-87ce-4731-9aa9-0285f449137d` succeeded at
+10:29:44 UTC (18:29 Manila) from verified main source
+`d6527742a2cde9f878a7ae23547734d858d24521`. The intervening main commit
+`f845d20` changes documentation only; runtime/configuration bytes match the
+five-profile CI source exactly. The binding-aware package was rechecked before
+publishing; no new application change or unrelated test expansion was needed.
+
+Actual deployment and saved project settings match the pre-release baseline:
+the original D1 and bucket variables remain correct and all nine encrypted
+settings retain their names/types. Read-only D1 comparisons confirm the whole
+library row is unchanged at revision 3, with zero rows written and no database
+change. Both live catalog documents exactly match the sanitized D1 record.
+The live version identifies `v2.12.2 · d652774`. Canonical `/reader` requests
+the refreshed image CSS and the served image CSS, focus controller, bookmarks
+controller and engine match the tested source hashes. Both challenge endpoints
+are configured; unauthenticated Keeper library access returns 401. Browser
+inspection confirms the main footer and NSFW footer's runtime version field;
+the existing adult gate was left in place.
+
+The dimming correction is now live. v2.12.0 deployment
+`b13cf583-ad91-43e7-ad1f-55dbc9365802` remains available for rollback.
+No migration, seed, catalog edit, object write or credential change occurred.
+Code milestones and automated release checks are complete; Phase 5 remains
+open for genuine authorized book opening, Keeper login and physical-mobile
+acceptance. Fixture checks are not presented as those credentialed flows.

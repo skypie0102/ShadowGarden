@@ -1,10 +1,11 @@
 # Existing production project
 
-**Current incident status (2026-10-16):** v2.12.1 was rolled back after its
-package removed the D1 binding and bucket variables. Production runs the
-correctly bound v2.12.0 deployment `b13cf583-ad91-43e7-ad1f-55dbc9365802`;
-the original D1 data and both current catalogs are intact. Saved production
-settings have also been restored. See the
+**Current production status (2026-10-16):** v2.12.2 is live as deployment
+`e8fe494a-87ce-4731-9aa9-0285f449137d`, source `d652774`, successfully
+deployed at 10:29 UTC (18:29 Manila). The v2.12.1 incident was recovered by
+restoring v2.12.0; the new binding-aware package preserves the original D1 data,
+bucket variables and all nine encrypted-setting names. Both current catalogs
+match the unchanged D1 revision 3. See the
 [incident report](incidents/2026-10-16-pages-bindings.md). Do not redeploy the
 withdrawn package or infer database health from an HTTP 200 catalog.
 
@@ -12,9 +13,11 @@ The v2.12.2 image-touch correction and release safeguards are merged on `main`
 at `d6527742a2cde9f878a7ae23547734d858d24521` through PR #10. Verification
 and the full five-profile browser matrix pass on the merged source. Both live
 catalogs match read-only D1 revision 3, and the guarded Worker retains the
-original database/bucket bindings. Automatic approval review rejected the
-production deployment pending fresh explicit authorization; no new production
-deployment was created. v2.12.0 remains live. See the current release status in
+original database/bucket bindings. The owner explicitly approved publishing
+after automatic approval review initially blocked the request. Actual/saved
+deployment settings and served reader assets pass the release checks. Genuine
+authorized book opening, Keeper login and physical-mobile acceptance remain
+unverified. See the current release status in
 [READER_RELEASE.md](READER_RELEASE.md).
 
 The owner authorized replacing the original site on 2026-10-02 and reusing its

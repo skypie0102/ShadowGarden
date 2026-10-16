@@ -6,6 +6,15 @@ Status: production restored to v2.12.0 deployment
 `5658687a-f60a-4a1f-8441-78738c2b04e1` is withdrawn. No new production
 deployment was made during the recovery.
 
+Subsequent verified release: v2.12.2 is now live as deployment
+`e8fe494a-87ce-4731-9aa9-0285f449137d`, source
+`d6527742a2cde9f878a7ae23547734d858d24521`, successful 2026-10-16 at
+10:29 UTC. Its actual/saved bindings retain the original D1/bucket settings
+and all nine encrypted-setting names. D1 revision 3 and both live catalogs are
+unchanged. The guarded package and deployed reader assets pass. See the
+[current release](../READER_RELEASE.md) for verification and remaining manual
+acceptance; the v2.12.1 deployment remains withdrawn.
+
 ## Impact and cause
 
 The owner reported books failing to open, deleted entries reappearing and Keeper
