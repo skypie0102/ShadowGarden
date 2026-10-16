@@ -1,7 +1,8 @@
 /* Shadow Garden R4.1 — isolated focused-image overlay. */
 .reader-image-focus-hit{position:fixed;z-index:24;display:block;margin:0;padding:0;border:0;background:transparent;appearance:none;cursor:zoom-in;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
 .reader-image-focus-hit[hidden]{display:none!important}
-.reader-image-focus{position:fixed;inset:0;z-index:90;display:block;overflow:hidden;background:rgba(5,3,8,.94);backdrop-filter:blur(10px)}
+/* Native touch feedback must not tint the artwork or its full-screen return surface. */
+.reader-image-focus{position:fixed;inset:0;z-index:90;display:block;overflow:hidden;background:rgba(5,3,8,.94);backdrop-filter:blur(10px);-webkit-tap-highlight-color:transparent}
 .reader-image-focus.hidden{display:none!important}
 .reader-image-focus-viewport{position:absolute;inset:0;overflow:hidden;touch-action:none;overscroll-behavior:none}
 .reader-image-focus-layer{position:absolute;inset:0;display:grid;place-items:center}

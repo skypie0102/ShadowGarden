@@ -137,6 +137,34 @@ test.describe('production reader integration',()=>{
     await returned(page,image,before);
   });
 
+  test('image focus preserves artwork colors without a native touch tint',async({page})=>{
+    const {image,before}=await openImage(page),focused=page.locator('#imageFocusImage');
+    await focused.evaluate(element=>element.decode());
+    const box=await focused.boundingBox();
+    const shot=await page.screenshot({scale:'css',clip:{x:Math.floor(box.x+box.width/2),y:Math.floor(box.y+box.height/2),width:1,height:1}});
+    const colors=await focused.evaluate(async(element,bytes)=>{
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+      const context=canvas.getContext('2d');
+      context.drawImage(element,element.naturalWidth/2,element.naturalHeight/2,1,1,0,0,1,1);
+      const original=Array.from(context.getImageData(0,0,1,1).data);
+      const capture=new Image();capture.src=URL.createObjectURL(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
+      try{
+        await capture.decode();context.clearRect(0,0,1,1);context.drawImage(capture,0,0);
+        return{original,focused:Array.from(context.getImageData(0,0,1,1).data)};
+      }finally{URL.revokeObjectURL(capture.src)}
+    },Array.from(shot));
+    for(let channel=0;channel<4;channel++)expect(Math.abs(colors.original[channel]-colors.focused[channel])).toBeLessThanOrEqual(2);
+    if(test.info().project.use.hasTouch&&await page.evaluate(()=>CSS.supports('-webkit-tap-highlight-color','transparent'))){
+      // The source and the full-screen return surface both receive real taps.
+      // Their native highlight must not paint a translucent tint over artwork.
+      for(const target of [image,page.locator('#imageFocusViewport'),page.locator('#imageFocusClose')]){
+        expect(await target.evaluate(element=>getComputedStyle(element).getPropertyValue('-webkit-tap-highlight-color'))).toBe('rgba(0, 0, 0, 0)');
+      }
+    }
+    await page.locator('#imageFocusClose').click();
+    await returned(page,image,before);
+  });
+
   test('double-click or touch return retains the image on repeated visits',async({page})=>{
     for(let i=0;i<2;i++){
       const {image,before}=await openImage(page);

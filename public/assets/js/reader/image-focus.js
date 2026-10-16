@@ -238,7 +238,7 @@ export function createImageFocusController({
     lifetime.add(release.forget);documents.set(doc,lifetime);
     lifetime.add(()=>{documents.delete(doc);delete doc.documentElement.dataset.sgReaderImageFocus;});
     doc.documentElement.dataset.sgReaderImageFocus="1";
-    try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{cursor:zoom-in}";doc.head?.appendChild(style)}catch{}
+    try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{cursor:zoom-in;-webkit-tap-highlight-color:transparent!important}";doc.head?.appendChild(style)}catch{}
     installParentHits(doc);
     let pointerStart=null;
     const activate=(sourceImage,event)=>{
