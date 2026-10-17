@@ -212,3 +212,9 @@ document mismatch or disagreement above 0.01 px between saved `y` and snapshot
 top. The missing-measurement hypothesis is not reproduced either. Keep the
 original event open; this round establishes better reproduction fidelity and
 better evidence collection, not a confirmed root cause.
+
+The next comparison uses the opt-in [recording harness](READER_SCROLL_DIAGNOSTICS.md)
+on the original and current source in CI. It records the actual anchor choice,
+post-change correction and scroll writes in the native case's original suite
+position and in 30 later warm probes. Normal tests and production source retain
+their existing behavior; the dedicated jobs explicitly account for logging overhead.

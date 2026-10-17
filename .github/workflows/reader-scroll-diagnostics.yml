@@ -1,0 +1,60 @@
+name: Reader scroll investigation
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/reader-scroll-diagnostics.yml'
+      - 'scripts/prepare-reader-scroll-diagnostics.mjs'
+      - 'scripts/summarize-reader-scroll-diagnostics.mjs'
+      - 'tests/browser/scroll-diagnostics.mjs'
+permissions:
+  contents: read
+jobs:
+  original-and-current:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [original, current]
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+      SG_SCROLL_REPETITIONS: '30'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: harness
+      - uses: actions/checkout@v4
+        with:
+          path: source
+          ref: ${{ matrix.source == 'original' && '81da5dd6e52766c5b37c84a9bce2ebfcff732019' || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+      - run: npm ci
+        working-directory: source
+      - run: npx playwright install --with-deps chromium
+        working-directory: source
+      - run: node harness/scripts/prepare-reader-scroll-diagnostics.mjs source
+      - name: Record runtime environment
+        working-directory: source
+        run: |
+          node --version > scroll-diagnostic-results/environment.txt
+          npx playwright --version >> scroll-diagnostic-results/environment.txt
+          fc-match "Times New Roman" >> scroll-diagnostic-results/environment.txt
+          uname -srv >> scroll-diagnostic-results/environment.txt
+      - run: npm run build
+        working-directory: source
+      - run: npx playwright test --config playwright.scroll-diagnostics.config.mjs --project mobile-chromium
+        working-directory: source
+      - name: Summarize recorded evidence
+        if: ${{ !cancelled() }}
+        run: node harness/scripts/summarize-reader-scroll-diagnostics.mjs source/scroll-diagnostic-results/report.json source/scroll-diagnostic-results/summary.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: scroll-investigation-${{ matrix.source }}
+          path: source/scroll-diagnostic-results/
+          retention-days: 14
