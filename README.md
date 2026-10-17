@@ -29,8 +29,9 @@ that device result from automated checks and the remaining intermittent
 first-open cover-return case, RDR-045.
 
 Current development focuses on gradual reader simplification: explicit service
-boundaries, shared section helpers, private Continuous task/input state, readable
-orchestration and documented EPUB.js compatibility contracts. See the
+boundaries, shared section helpers, private Continuous task/input state, cohesive
+search presentation, readable orchestration and documented EPUB.js compatibility
+contracts. See the
 [code review](docs/READER_CODE_REVIEW.md) and
 [maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and
 next steps. Verified changes are merged into `main`; a merge and a production

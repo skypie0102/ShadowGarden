@@ -39,6 +39,7 @@ without registering another application engine.
 | Continuous buffer state | The same manager record groups the active buffer promise/generation, repeat requests and trim timer. Core owns mutations and scheduling; test waiters use a passive accessor to the exact current promise. |
 | Continuous input state | Core and rendition share a private suppression deadline, recent-input timestamp, owned scroll reporter and wrapper-installation flag. Vendor coordinates, deltas, timers and boolean `scrolled` bookkeeping stay on the manager. |
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
+| Contents search | TOC tree/location ownership stays in `reader/toc.js`; `reader/toc-book-search.js` presents book-text queries/results using the same app navigator, root/UI scopes and bounded text-search engine. No additional vendor override is installed. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
 | Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
 

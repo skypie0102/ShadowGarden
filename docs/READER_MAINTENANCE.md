@@ -21,7 +21,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a in validation; later increments planned |
 
 ## M1 implementation
 
@@ -397,3 +397,53 @@ ownership. Timing/readiness changes remain separately reviewable work.
 
 Production remains the separately recorded v2.12.5 deployment. This maintenance
 does not change catalog data, migrations, storage or configuration.
+
+## M5 — presentation and timing
+
+| Step | Boundary | Status |
+| --- | --- | --- |
+| M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | In validation |
+| M5b | Document/name media deadlines and evaluate readiness or polling changes only against equivalent regression coverage. | Planned |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | Planned |
+
+### M5a implementation
+
+`reader/toc-book-search.js` groups the book-text results section, status messages,
+query debounce/serial guards and replaceable result listeners. The TOC supplies
+its existing root/UI scopes, chapter-label lookup and application navigation.
+`reader/toc.js` retains its public controller methods, chapter tree, label filter,
+current/active chapter controls, page numbering, toolbar and location matching.
+The bounded text engine and its section-source lease ownership remain unchanged.
+
+The five moved normalization/query/result/section function bodies match pre-M5
+`main` (`0f86868557596a8282934ffa76f07be2e92a3839`). Restoring the delegations and
+render-reset assignments also makes normalized TOC JavaScript match that baseline.
+The same 180 ms debounce, minimum-query fallback, stale-result/progress checks,
+result navigation/failure diagnostic and drawer-close liveness check remain.
+Contents label folding and book-query whitespace normalization keep their
+intentional differences. DOM identity, text-only excerpts, accessible status
+messages and chapter-label fallbacks are preserved.
+
+Each query replaces its result-listener scope. Re-rendering disposes the old UI
+scope, creates its replacement, then resets query state before replacing DOM.
+The reset's private assignments now sit together at that boundary; cancellation
+still precedes DOM replacement. Closing a drawer cancels pending work while
+retaining current results. Parent disposal invalidates query publication before
+disposing its root scope. This extraction adds no new vendor patch or scheduler.
+
+Five browser regressions exercise the public TOC controller with real DOM,
+controlled time and a provider that can complete after cancellation. They cover
+distinct label/query normalization and the exact debounce, stale progress/results,
+minimum/unavailable/empty/capped status, result fallbacks, pending cancellation,
+rerendered/retired controls, disposal and awaited/failed result navigation.
+Existing production-reader assertions, waits and timeouts remain unchanged.
+
+Local `npm run check` passes all **187 Node tests**, the asset audit, static build
+and binding-aware Functions package. All 78 local Markdown file links resolve.
+All **10 new desktop/mobile Chromium search cases** pass against both baseline
+and candidate, using the identical tests and public controller without adapters.
+All **22 targeted desktop/mobile Chromium cases** pass on the candidate, including
+the new cases, real publication text search/navigation, encoded EPUB 2 paths,
+notes/progress reopening, damaged artwork, mode changes, repeated disposal and
+partial-startup recovery. The local runs serve static assets with technical
+publication/fixture responses; full CI also uses disposable Pages/D1 state.

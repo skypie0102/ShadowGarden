@@ -1,6 +1,7 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 import {cleanSectionHref,sectionHrefMatches} from './sections.js';
+import {createTocBookSearch} from './toc-book-search.js';
 function childrenOf(item) {
   if (Array.isArray(item?.subitems)) return item.subitems;
   if (Array.isArray(item?.children)) return item.children;
@@ -17,10 +18,6 @@ function flatten(items, depth = 0, output = []) {
 
 function normalizeSearchText(value) {
   return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").trim().toLocaleLowerCase();
-}
-
-function normalizeBookQuery(value) {
-  return String(value || "").replace(/\s+/g, " ").trim();
 }
 
 function genericVisualLabel(item) {
@@ -62,7 +59,7 @@ function locationSpineIndex(location, items) {
 
 export function createTocController({ panel, navigate, closeDrawers, getBook, bookSearch }) {
   const scope=createReaderScope();
-  let uiScope=scope.child(),resultsScope=uiScope.child();
+  let uiScope=scope.child();
   let items = [];
   let flat = [];
   let activeButton = null;
@@ -74,11 +71,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   let currentButton = null;
   let filterEmpty = null;
   let contentsHeading = null;
-  let bookSection = null;
-  let bookStatus = null;
-  let bookResults = null;
-  let searchTimer = 0;
-  let searchSerial = 0;
+  const bookSearchUi = createTocBookSearch({scope,uiScope,bookSearch,navigate,closeDrawers,chapterForLocation});
 
   function readerSpineItems() {
     const values = getBook?.()?.spine?.spineItems;
@@ -211,80 +204,15 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     return visible;
   }
 
-  function clearBookResults({hide=true,status=""}={}) {
-    bookSearch?.cancel?.();
-    resultsScope.dispose();resultsScope=uiScope.child();
-    scope.clearTimeout(searchTimer);
-    searchTimer = 0;
-    searchSerial += 1;
-    bookResults?.replaceChildren();
-    if (bookStatus) bookStatus.textContent = status;
-    if (bookSection) bookSection.hidden = hide;
-  }
-
-  function renderBookResult(hit, index) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "book-search-result";
-    button.dataset.cfi = hit.cfi;
-    const chapter = document.createElement("span");
-    chapter.className = "book-search-result-chapter";
-    const location = { start: { href: hit.href || "", index: Number(hit.sectionIndex) } };
-    chapter.textContent = chapterForLocation(location) || hit.href || `Result ${index + 1}`;
-    const excerpt = document.createElement("span");
-    excerpt.className = "book-search-result-excerpt";
-    excerpt.textContent = hit.excerpt || "Matching text";
-    button.append(chapter, excerpt);
-    resultsScope.listen(button,"click", async () => {
-      try {
-        await navigate(hit.cfi);
-        if(!scope.disposed)closeDrawers();
-      } catch (error) {
-        recordReaderDiagnostic('navigation.searchFailed');
-      }
-    });
-    return button;
-  }
-
-  function scheduleBookSearch(value) {
-    const query = normalizeBookQuery(value);
-    clearBookResults({ hide: !query });
-    if (!query || !bookSection || !bookStatus || !bookResults) return;
-    bookSection.hidden = false;
-    const minimum = Number(bookSearch?.minQueryLength) || 3;
-    if (query.length < minimum) {
-      bookStatus.textContent = `Enter at least ${minimum} characters to search book text.`;
-      return;
-    }
-    const serial = searchSerial;
-    bookStatus.textContent = "Searching book text…";
-    searchTimer = scope.timeout(async () => {
-      const result = await bookSearch?.search?.(query, {
-        onProgress: progress => {
-          if (scope.disposed || serial !== searchSerial || !bookStatus) return;
-          bookStatus.textContent = `Searching ${progress.scanned} of ${progress.total} sections… ${progress.count} ${progress.count === 1 ? "match" : "matches"}`;
-        }
-      });
-      if (scope.disposed || serial !== searchSerial || !result || result.cancelled) return;
-      const fragment = document.createDocumentFragment();
-      result.hits.forEach((hit, index) => fragment.appendChild(renderBookResult(hit, index)));
-      bookResults.replaceChildren(fragment);
-      if (result.unavailable) bookStatus.textContent = "Book text search is unavailable for this EPUB.";
-      else if (!result.hits.length) bookStatus.textContent = "No matching book text.";
-      else if (result.capped) bookStatus.textContent = `${result.hits.length}+ book-text matches · Refine your search for more precise results.`;
-      else bookStatus.textContent = `${result.hits.length} book-text ${result.hits.length === 1 ? "match" : "matches"}.`;
-    }, 180);
-  }
-
   function runCombinedSearch(value) {
     applyFilter(value);
-    scheduleBookSearch(value);
+    bookSearchUi.schedule(value);
   }
 
   function clearFilter() {
     if (searchInput) searchInput.value = "";
     applyFilter("");
-    clearBookResults();
+    bookSearchUi.clear();
   }
 
   function setSearchExpanded(expanded, { focus = true } = {}) {
@@ -376,28 +304,9 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     return tools;
   }
 
-  function createBookSection() {
-    const section = document.createElement("section");
-    section.className = "toc-book-search-section";
-    section.hidden = true;
-    const heading = document.createElement("h3");
-    heading.className = "toc-search-section-label";
-    heading.textContent = "Book text";
-    bookStatus = document.createElement("p");
-    bookStatus.className = "book-search-status";
-    bookStatus.setAttribute("role", "status");
-    bookStatus.setAttribute("aria-live", "polite");
-    bookResults = document.createElement("div");
-    bookResults.id = "tocBookSearchResults";
-    bookResults.className = "book-search-results";
-    bookResults.setAttribute("aria-label", "Book text search results");
-    section.append(heading, bookStatus, bookResults);
-    return section;
-  }
-
   function render(navigationItems) {
     if(scope.disposed)return;
-    uiScope.dispose();uiScope=scope.child();resultsScope=uiScope.child();searchSerial++;
+    uiScope.dispose();uiScope=scope.child();bookSearchUi.reset(uiScope);
     items = Array.isArray(navigationItems) ? navigationItems : [];
     flat = flatten(items);
     activeButton = null;
@@ -407,11 +316,6 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     currentButton = null;
     filterEmpty = null;
     contentsHeading = null;
-    bookSection = null;
-    bookStatus = null;
-    bookResults = null;
-    scope.clearTimeout(searchTimer);
-    bookSearch?.cancel?.();
     panel.closest?.(".reader-drawer")?.querySelector?.(".toc-search-toggle")?.remove();
     searchToggle = null;
     panel.replaceChildren();
@@ -440,8 +344,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     filterEmpty.hidden = Boolean(items.length);
     panel.appendChild(filterEmpty);
 
-    bookSection = createBookSection();
-    panel.appendChild(bookSection);
+    panel.appendChild(bookSearchUi.createSection());
     syncPageNumbers();
   }
 
@@ -544,5 +447,5 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
     }
   }
 
-  return { dispose(){searchSerial++;bookSearch?.cancel?.();scope.dispose();panel.replaceChildren();items=[];flat=[];activeButton=null;pageResolver=null}, render, setPageResolver, chapterForLocation, setActiveForLocation, openSearch, cancelSearch(){scope.clearTimeout(searchTimer);searchSerial++;bookSearch?.cancel?.()} };
+  return { dispose(){bookSearchUi.invalidate();scope.dispose();panel.replaceChildren();items=[];flat=[];activeButton=null;pageResolver=null}, render, setPageResolver, chapterForLocation, setActiveForLocation, openSearch, cancelSearch(){bookSearchUi.cancel()} };
 }

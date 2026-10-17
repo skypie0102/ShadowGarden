@@ -73,4 +73,12 @@ and defensive-wrapper installation state into that private record. Core and
 rendition retain the same writers, readers, clocks and deadlines. Native movement
 still cancels stale navigation; a vendor boolean cannot replace the owned
 reporter. Vendor geometry/bookkeeping and private layout anchors retain their
-owners. M5's presentation and timing work follows after full validation of M4c.
+owners. M4 is complete; maintenance records its validation and merges.
+
+M5a separates book-text query/results presentation into
+`reader/toc-book-search.js`. TOC tree/filter/location controls and the bounded
+text-search engine retain their owners. The moved query/result/section functions
+keep their bodies; root/UI scopes, stale-query guards, the 180 ms debounce,
+accessible status and navigation behavior are preserved. Maintenance tracks
+validation and publication. Media timing/readiness and diagnostic classification
+remain later M5 increments.
