@@ -21,7 +21,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup in validation, M5c planned |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21), M5c planned |
 
 ## M1 implementation
 
@@ -403,7 +403,7 @@ does not change catalog data, migrations, storage or configuration.
 | Step | Boundary | Status |
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
-| M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup in validation; scroll-stress cause remains open |
+| M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
 | M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | Planned |
 
 ### M5a implementation
@@ -566,3 +566,36 @@ section/iframe removal and repeated/racing disposal. The local run serves static
 assets with technical publication/fixture responses. The original native input,
 waits and stress/trim assertion blocks match pre-M5b byte for byte; all 81 local
 Markdown file links resolve. Full CI also uses disposable Pages/D1 state.
+
+Passing local traces also contain 12/17/14 displayed-view height decreases of
+56 px across the three repetitions, with intervening increases. Samples tracking
+a surviving block remain at 0 or +180 px passage movement. The pinned vendor's
+vertical view expands using `Contents.textHeight()` (the rounded bottom of a
+content Range), whereas the compatibility sweep uses the maximum document/body
+scroll height. Comparing these measurements at a failing section transition is
+the next concrete reproduction task. The two measurement paths and matching
+magnitude are a lead; they do not establish the cause of the earlier reversal.
+
+### M5b CI and merge
+
+[CI run 39052142447](https://github.com/skypie0102/ShadowGarden/actions/runs/39052142447)
+passes the audit, all **194 Node tests**, both builds and **302 browser cases**
+across five profiles on the first attempt. Desktop/mobile Chromium pass 62 cases
+each; Firefox and desktop WebKit pass 60 each with two skips; mobile WebKit passes
+58 with four skips. These are the same eight existing platform skips. The upward
+scroll assertion passes in all profiles where it runs. No assertion, timeout,
+explicit wait or tolerance was weakened.
+
+The tested PR head is `f5e804af8802c7ca44d9a01eb12b1f4414d5fbc7`, tree
+`ce9eede1a1e6b0b9d373781e280833bbc9791680`.
+[PR #21](https://github.com/skypie0102/ShadowGarden/pull/21) merged as
+`0f01ab2ae1863a273156375c5394d1f9caae3e8a` with that exact tree. A
+documentation-only follow-up records final validation and the measurement lead.
+
+M5b's timing cleanup and readiness assessment are complete. The scroll-stress
+cause remains open; retain the original witness and the enriched observer.
+M5c follows with diagnostic classification for expected cancellation and quiet
+teardown versus actionable failures.
+
+Production remains the separately recorded v2.12.5 deployment. This maintenance
+does not change catalog data, migrations, storage or configuration.
