@@ -4,6 +4,7 @@
 import {readerAbortError,readerInstanceScope} from './lifecycle.js';
 import {captureContinuousLayoutAnchor} from './rendition.js';
 import {continuousGeneration,isContinuousDestroyed} from './continuous-state.js';
+import {ownContinuousContentHeight} from './continuous-height.js';
 const transactions=new WeakSet();
 const wrappedViews=new WeakSet();
 const contentAnchors=new WeakMap();
@@ -100,6 +101,7 @@ async function renderContinuousView(view,lifetime,request){
     if(vertical&&view.settings.flow==='paginated')view.layout.delta=view.layout.height;
     view.setAxis(axis);view.emit('axis',axis);
     view.setWritingMode(writingMode);view.emit('writingMode',writingMode);
+    if(axis==='vertical'&&view.settings.flow!=='paginated'&&view.layout.name!=='pre-paginated')ownContinuousContentHeight(view.contents);
     view.layout.format(view.contents,view.section,view.axis);
     view.addListeners();view.expand();
     if(view.settings.forceRight)view.element.style.marginLeft=`${view.width()}px`;

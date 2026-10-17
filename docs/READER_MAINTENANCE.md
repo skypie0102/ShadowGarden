@@ -664,3 +664,44 @@ before extending guards. Do not suppress active failures or actual cleanup error
 Production remains the separately recorded v2.12.5 deployment. This maintenance
 does not change catalog data, migrations, storage or configuration. The earlier
 scroll-stress cause remains open and its archived witness is unchanged.
+
+## Scroll follow-up — shared intrinsic sizing
+
+The owner requested resolution of the earlier scroll reversal before further
+cleanup. Investigation on `80025883330a8a1a38a186980f117c48ed7ac673` reproduces
+a competing-height defect in the original generated publication. Vendor expansion
+uses a Range bottom of 1311 px; compatibility reconciliation uses a 1367 px
+scroll extent. An unchanged chapter repeatedly loses/regains 56 px. The
+[scroll audit](READER_SCROLL_AUDIT.md) records the evidence and the limit of the
+older witness, whose single reversal has no resize payloads.
+
+Vertical, reflowable Continuous contents now share one intrinsic measurement for
+vendor expansion/polling and adapter reconciliation. It includes body padding
+and overflow, translates viewport-relative geometry to document coordinates,
+and avoids the current iframe viewport floor so real shrinkage remains possible.
+It is installed before initial layout. Other layouts retain their existing path.
+Body CSS, fallback timings, reconciliation debounce, layout-transaction ownership,
+source lifetimes, persistence and navigation cancellation remain unchanged.
+
+Five Node cases cover measurement agreement, growth/shrinkage, iframe scrolling,
+overflow, idempotence and fallback. Two production-reader browser cases fail on
+the baseline: unchanged chapter sizing differs by 56 px, and a 120 px image
+shrink produces only 64 px of frame reduction after reconciliation. Both pass
+locally on the candidate, including passage preservation within 2 px. The
+original upward-scroll and trim assertions are unchanged.
+
+The historical reversal does not recur in 20 ordinary, 40 loaded and 10 throttled
+baseline repetitions or the synchronous transition sweep. This fixes its proven
+height-oscillation lead; the sparse old trace cannot prove the cause of that
+individual event. Keep the original witness and enriched stress tracing.
+
+Local `npm run check` passes the audit, all **203 Node tests**, static build and
+binding-aware Functions package. Raw baseline/candidate height phases are in
+[reader-height-contract.json](reader-height-contract.json). Full browser validation
+follows before merge.
+Production remains v2.12.5; source maintenance does not deploy or alter data.
+
+All **48 targeted desktop/mobile Chromium cases** pass across Continuous scroll
+stability, image focus/return and lifecycle suites. The original native upward
+scroll/trim test is byte-identical to the baseline. All 86 local Markdown file
+links resolve; the numeric height evidence and production-source hashes validate.

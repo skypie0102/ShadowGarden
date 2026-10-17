@@ -3,6 +3,7 @@ import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 import {preserveContinuousLayout} from './reader/continuous-layout.js';
 import {linearSpineItems} from './reader/sections.js';
 import {isContinuousDestroyed} from './reader/continuous-state.js';
+import {continuousContentHeight} from './reader/continuous-height.js';
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
@@ -305,10 +306,7 @@ export function createEpubCompatibilityExtension(){
           preserveContinuousLayout(manager,()=>{for(const entry of targets){
             const entryDoc=entry.frame?.contentDocument;
             if(!entry.view.displayed||!entry.view.contents||!entry.frame||!entryDoc||!entryDoc.documentElement)continue;
-            const need=Math.max(
-              entryDoc.documentElement.scrollHeight,
-              entryDoc.body?entryDoc.body.scrollHeight:0
-            );
+            const need=continuousContentHeight(entry.view.contents);
             if(!need)continue;
             const current=Math.round(entry.frame.getBoundingClientRect().height);
             if(Math.abs(need-current)>2){
