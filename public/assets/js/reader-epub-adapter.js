@@ -1,6 +1,7 @@
 import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 import {preserveContinuousLayout} from './reader/continuous-layout.js';
+import {linearSpineItems} from './reader/sections.js';
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
@@ -133,14 +134,8 @@ export function createEpubCompatibilityExtension(){
     return Boolean(left&&right&&(left===right||left.endsWith(`/${right}`)||right.endsWith(`/${left}`)));
   }
 
-  function linearSpine(book){
-    const raw=book?.spine?.spineItems||[];
-    const linear=raw.filter(item=>item?.href&&item.linear!=="no");
-    return linear.length?linear:raw.filter(item=>item?.href);
-  }
-
   function spinePosition(book,start={}){
-    const items=linearSpine(book);
+    const items=linearSpineItems(book);
     if(!items.length)return{index:-1,total:0};
     const raw=book?.spine?.spineItems||[];
     const rawIndex=Number(start.index);

@@ -37,6 +37,7 @@ without registering another application engine.
 | Continuous settlement | Engine settlement checks manager generation/disposal while completing its current neighborhood. |
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
+| Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
 
 The visual manifest and canonical page-map globals are instrumentation snapshots,
 not production dependencies. The visual manifest contains publication metadata;

@@ -2,24 +2,7 @@ import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Paginated-mode navigation adapter. */
 import { beginRenditionNavigation,holdRenditionNavigation,runRenditionMove } from "./navigation-state.js";
-
-
-function cleanHref(value){
-  let href=String(value||"").split("#")[0].split("?")[0];
-  try{href=decodeURIComponent(href)}catch{}
-  return href.replace(/^\.\//,"").replace(/^\//,"");
-}
-
-function hrefMatches(a,b){
-  const left=cleanHref(a),right=cleanHref(b);
-  return Boolean(left&&right&&(left===right||left.endsWith(`/${right}`)||right.endsWith(`/${left}`)));
-}
-
-function linearSpine(rendition){
-  const raw=rendition?.book?.spine?.spineItems||[];
-  const linear=raw.filter(item=>item?.href&&item.linear!=="no");
-  return linear.length?linear:raw.filter(item=>item?.href);
-}
+import {cleanSectionHref,sectionHrefMatches,linearSpineItems} from './sections.js';
 
 function currentSection(rendition){
   const location=rendition?.location||{},start=location.start||{},end=location.end||{};
@@ -32,13 +15,13 @@ function currentSection(rendition){
 }
 
 function onFinalSpineItem(rendition){
-  const items=linearSpine(rendition),last=items[items.length-1];
+  const items=linearSpineItems(rendition?.book),last=items[items.length-1];
   if(!last)return false;
   const current=currentSection(rendition);
   const currentIndex=Number(current?.index),lastIndex=Number(last.index);
   if(Number.isFinite(currentIndex)&&Number.isFinite(lastIndex)&&currentIndex===lastIndex)return true;
   const location=rendition?.location,start=location?.start||{},end=location?.end||{};
-  return Boolean(last.href&&hrefMatches(end.href||start.href,last.href));
+  return Boolean(last.href&&sectionHrefMatches(end.href||start.href,last.href));
 }
 
 function onFinalDisplayedPage(rendition){
@@ -58,7 +41,7 @@ function locationKey(rendition){
   const scrollLeft=Number(manager?.container?.scrollLeft??manager?.scrollLeft)||0;
   const scrollTop=Number(manager?.container?.scrollTop??manager?.scrollTop)||0;
   return[
-    Number(current?.index)||0,cleanHref(current?.href),
+    Number(current?.index)||0,cleanSectionHref(current?.href),
     String(start.cfi||""),Number(start.displayed?.page)||0,Number(start.displayed?.total)||0,
     String(end.cfi||""),Number(end.displayed?.page)||0,Number(end.displayed?.total)||0,
     Math.round(scrollLeft),Math.round(scrollTop)

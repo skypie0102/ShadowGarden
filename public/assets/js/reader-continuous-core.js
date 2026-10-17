@@ -2,6 +2,7 @@ import {recordReaderDiagnostic,measureReaderOperation} from './reader/diagnostic
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 import {installContinuousLayout,rememberContinuousLayout} from './reader/continuous-layout.js';
 import {interruptRenditionNavigation} from './reader/navigation-state.js';
+import {sectionHrefMatches,linearSpineItems} from './reader/sections.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
  * Keeps v1.4's single-owner Continuous architecture, but separates three concerns:
@@ -22,28 +23,14 @@ export function createContinuousCoreExtension(){
 
   const targetKey=target=>typeof target==="string"?target:target?.toString?.()||"";
 
-  function cleanHref(value){
-    let href=String(value||"").split("#")[0].split("?")[0];
-    try{href=decodeURIComponent(href)}catch{}
-    return href.replace(/^\.\//,"").replace(/^\//,"");
-  }
-  function hrefMatches(a,b){
-    const left=cleanHref(a),right=cleanHref(b);
-    return Boolean(left&&right&&(left===right||left.endsWith(`/${right}`)||right.endsWith(`/${left}`)));
-  }
   function isContinuous(options,rendition){
     return options?.manager==="continuous"||String(options?.flow||rendition?.settings?.flow||"").startsWith("scrolled");
   }
   function loadedViews(manager){
     try{return manager?.views?.all?.()||[]}catch{return[]}
   }
-  function linearSpine(rendition){
-    const raw=rendition?.book?.spine?.spineItems||[];
-    const linear=raw.filter(item=>item?.href&&item.linear!=="no");
-    return linear.length?linear:raw.filter(item=>item?.href);
-  }
   function lastSpineItem(rendition){
-    const items=linearSpine(rendition);
+    const items=linearSpineItems(rendition?.book);
     return items[items.length-1]||null;
   }
 
@@ -68,7 +55,7 @@ export function createContinuousCoreExtension(){
     if(!manager||!container||!document.body.classList.contains("reader-flow-scrolled"))return;
     const finalSection=lastSpineItem(rendition);
     const views=loadedViews(manager);
-    const finalLoaded=Boolean(finalSection&&views.some(view=>view?.displayed&&hrefMatches(view?.section?.href,finalSection.href)));
+    const finalLoaded=Boolean(finalSection&&views.some(view=>view?.displayed&&sectionHrefMatches(view?.section?.href,finalSection.href)));
     const existing=container.querySelector?.(".volume-end-page-continuous");
     if(!finalLoaded){existing?.remove();return}
     if(existing)return;
@@ -83,7 +70,7 @@ export function createContinuousCoreExtension(){
     const location=rendition?.location;
     if(location?.atEnd===true)return true;
     const last=lastSpineItem(rendition),end=location?.end||location?.start;
-    if(!last||!end||!hrefMatches(end.href,last.href))return false;
+    if(!last||!end||!sectionHrefMatches(end.href,last.href))return false;
     const displayed=end.displayed||location?.start?.displayed;
     const page=Number(displayed?.page),total=Number(displayed?.total);
     return Number.isFinite(page)&&Number.isFinite(total)&&total>0&&page>=total;

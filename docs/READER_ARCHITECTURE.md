@@ -222,6 +222,26 @@ set and releases it at the same point after section measurement/fallback; final
 disposal still belongs to the generation's cancellation/finally paths. Module
 extraction changes neither the pinned render lifecycle nor cache/progress formats.
 
+## Section identity and spine selection
+
+`reader/sections.js` owns the shared pure section helpers. `cleanSectionHref`
+strips literal query/fragment suffixes, decodes once while tolerating malformed
+escapes, then removes the existing leading `./` and `/` prefixes. The matcher
+requires nonempty identities and accepts equal paths or a directory-qualified
+suffix at a `/` boundary. Continuous completion, paginated navigation, the visual
+cache, page maps and TOC use that same contract.
+
+`linearSpineItems(book)` preserves href-bearing section order and object identity,
+excluding `linear="no"` entries when any linear entries exist. An entirely
+non-linear publication retains its href-bearing spine as the existing fallback.
+Page maps, paginated/Continuous completion and both progress adapters share this
+selection; TOC keeps the full spine for publication navigation.
+
+These helpers do not resolve URLs. Internal links and notes retain their relative
+path/decoded-fragment resolution and iframe-local markers. Legacy progress href
+matching and environment-dependent mobile-pagination decisions retain their
+separate rules. Cache keys, serialization and navigation ownership are unchanged.
+
 ## Parsed sources and rendering bounds
 
 The source DOM stored on a Book.spine Section and the rendered Contents document
