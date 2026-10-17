@@ -975,3 +975,47 @@ retains the expected database, bucket settings and all nine secret-setting
 names/types. No catalog, B2 object or credential mutation is part of this work.
 RDR-045 real-cover acceptance and physical-phone acceptance of the new scroll
 correction remain open.
+
+## 2026-10-17 — v2.12.5 published with verified scroll and lifecycle corrections
+
+The completed audit also reproduced a 320 px jump from late artwork growth
+inside the current chapter. Live layout transactions now remember document-local
+block geometry, compensate at the current scroll position and reject an anchor
+that no longer belongs at the reading line after newer movement. Full integration
+exposed focus-owned drift in WebKit and a detached vendor render rejection in
+Firefox; both are corrected. Partial-view tests cover pending Section and iframe
+loads. The native-resume test follows the actual visible block after five quiet
+paints instead of comparing a chapter wrapper after a fixed delay.
+
+Exact-head CI run 39001700811 passes the asset audit, all 166 Node tests, static
+build, binding-aware Functions package and 277 browser cases across five
+profiles. Eight intentional skips cover six Chromium-only forced-dark cases
+and two unsupported native-wheel cases in mobile WebKit. The final local
+three-profile reader integration passes 142 cases with two expected skips.
+Ten new production-reader regressions use original disposable publications.
+
+PR #13 merged as 8a7e07fc06fdcd38a3fafcaed1f0baff44584d75. Its source tree
+1b60f0dae288f75d43d94116db3367a63124b75e exactly matches verified PR head
+cd6af43be384c39e326b90a95b46af5f598e75eb. The clean merged source was rebuilt
+through the binding guard, with eight assets uploaded and 147 reused. Production
+deployment 0ceadeec-4e53-4e20-a841-83c72bde66a2 succeeded on 2026-10-17 at
+04:24:41 UTC (12:24 in Manila).
+
+Actual deployment and saved project settings retain the original database,
+bucket settings and all nine encrypted-setting names/types. Read-only queries
+confirm the exact library document at revision 3, timestamp
+2026-10-03T11:52:50.670Z and unchanged IDs/hashes for all three snapshots; zero
+rows were written and changed_db is false. Both public catalogs exactly match
+the baseline: main has zero series/volumes, adult has one series/volume. No seed,
+migration, catalog edit, B2 object write or credential change occurred.
+
+The public version endpoint and both library version targets show v2.12.5 and
+8a7e07f on main. All seven changed JavaScript assets, the accepted image-focus
+stylesheet and footer loader match source bytes. Both challenge endpoints remain
+configured; unauthenticated Keeper access returns 401. No new authenticated
+real-book cycle was claimed. Rollback target is correctly bound v2.12.4
+deployment f1bf6889-4e7d-4af6-b3d2-bedb6b517da1.
+
+RDR-046 is resolved by the owner's physical Soul confirmation. RDR-045's
+intermittent real-cover return and physical-phone acceptance of the new upward
+scroll correction remain open, so Phase 5 is not declared complete.

@@ -1,8 +1,14 @@
 # Reader v2.12.5 — Continuous scroll stability
 
-**Prepared; not yet published.** The owner confirmed that v2.12.4 solved Android /
-Soul image dimming, then reported intermittent jumping during fast upward
-scrolling. The audit starts from `8324e78dad81031a370e28ab26abd54a655e47d6`.
+**Live:** deployment `0ceadeec-4e53-4e20-a841-83c72bde66a2` succeeded at
+2026-10-17 04:24:41 UTC (12:24 in Manila). [PR #13](https://github.com/skypie0102/ShadowGarden/pull/13)
+merged as `8a7e07fc06fdcd38a3fafcaed1f0baff44584d75`. Its source tree
+`1b60f0dae288f75d43d94116db3367a63124b75e` exactly matches the tested PR head
+`cd6af43be384c39e326b90a95b46af5f598e75eb`.
+
+The owner confirmed that v2.12.4 solved Android / Soul image dimming, then
+reported intermittent jumping during fast upward scrolling. The audit starts
+from `8324e78dad81031a370e28ab26abd54a655e47d6`.
 See [READER_SCROLL_AUDIT.md](READER_SCROLL_AUDIT.md) for the complete inventory,
 reproductions and distinctions between demonstrated faults and prevention work.
 
@@ -26,36 +32,53 @@ stale resume after wheel/continuing scrolling, and removed-view display leak.
 The initial layout candidate also exposed a distinct 56 px edge-chapter anchor
 error, corrected by following the same tracking line as reading-position capture.
 
-The candidate passes the asset audit, all **166 Node tests**, static build and
-binding-aware Functions package. All eight new cases pass on desktop and mobile
-Chromium (**16 checks**). Broader integration and the complete five-profile CI
-matrix are required before publication; their exact results will be recorded
-with the merged source and deployment identity.
-
-The broader local Chromium run subsequently passed all 92 reader checks, plus
-six strengthened scroll/location checks. Initial CI run 38999535380 passed
-verification and both Chromium profiles, but stopped in WebKit on the existing
-focus-drift return test and in Firefox on an uncaught disposal cancellation.
-The candidate was held. The follow-up preserves focus-owned drift and owns the
-entire render/display promise chain; pending-view coverage now tests both Section
-and iframe loading. Fresh complete CI is required for that source.
-
 Further audit reproduced a separate 320 px jump when artwork grows above the
-passage within its current chapter. The final candidate remembers document-local
+passage within its current chapter. The release remembers document-local
 block geometry and compensates its layout change at the current scroll position,
 without replaying an old screen coordinate. It also checks that the old block
 still belongs at the tracking line, so newer movement into the image wins.
-Chromium and Firefox pass that two-part regression. The pinned IframeView render
-sequence is now owned directly, and Firefox's previously failing partial-startup
-teardown passes locally. Fresh final CI is pending. Mobile WebKit skips only the
-two wheel cases unsupported by its Playwright adapter, alongside the six existing
-Chromium-only dark-mode skips across the matrix.
+Focus-owned drift remains excluded from passive user-movement detection; real
+input still cancels older work. The pinned IframeView render sequence is owned
+directly so partial-startup cancellation also settles in Firefox.
 
-Production remains correctly bound v2.12.4 while this candidate is verified.
-Read-only checks confirm unchanged D1 revision 3, timestamp
-`2026-10-03T11:52:50.670Z`, three retained snapshots, expected bucket settings
-and all nine encrypted-setting names/types. Publication must retain that
-configuration and exact public-catalog identity. Rollback target:
+The asset audit, all **166 Node tests**, static build and binding-aware Functions
+package pass in [CI run 39001700811](https://github.com/skypie0102/ShadowGarden/actions/runs/39001700811).
+All five browser profiles pass **277 cases**, with eight intentional platform
+skips. The release adds ten production-reader regressions.
+
+| Profile | Passed | Skipped |
+| --- | ---: | ---: |
+| Desktop Chromium | 57 | 0 |
+| Mobile Chromium | 57 | 0 |
+| Firefox | 55 | 2 |
+| Desktop WebKit | 55 | 2 |
+| Mobile WebKit | 53 | 4 |
+
+Six skips are the existing Chromium-only automatic-darkening override. Two are
+native wheel cases unsupported by Playwright's mobile WebKit adapter; its
+scroll-continuation, resize, late-layout, slow-load and removal cases still run.
+The final local three-profile reader integration run passes 142 cases with two
+expected dark-mode skips. The native resume regression waits for five quiet
+paints and compares the actual visible block, retaining its two-pixel tolerance.
+
+The clean merged source was rebuilt through the binding guard. Eight assets
+were uploaded and 147 reused. Actual deployment and saved project configuration
+retain the original D1 binding, bucket settings and all nine encrypted-setting
+names/types. Read-only post-deployment queries confirm unchanged D1 revision 3,
+timestamp `2026-10-03T11:52:50.670Z`, the exact library document and all three
+snapshot IDs/hashes, with zero rows written and `changed_db: false`. Both public
+catalogs exactly match the database baseline: main has no series or volumes;
+adult has one series and one volume. No seed, migration, catalog edit, B2 object
+write or credential change occurred.
+
+The live version endpoint and both library version targets identify v2.12.5 and
+source `8a7e07f` on `main`. All seven changed JavaScript assets, the accepted Soul
+image-focus stylesheet and the footer loader match source bytes. The reader
+retains the accepted v2.12.4 image-focus CSS URL. Both challenge endpoints are
+configured and unauthenticated Keeper access returns 401. These public checks
+do not repeat the earlier authenticated real-book acceptance.
+
+Rollback target: the correctly bound v2.12.4 deployment
 `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1`.
 
 RDR-046 is resolved by the owner's Soul confirmation. RDR-045's intermittent

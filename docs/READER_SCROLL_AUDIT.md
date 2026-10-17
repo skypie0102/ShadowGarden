@@ -26,15 +26,20 @@ does not establish physical-phone acceptance or prove that no other bug exists.
 | Location reporting | Vendor Continuous `currentLocation()` calls `updateLayout()` before querying location. | Query `scrolledLocation()` directly for the supported nonpaginated Continuous manager. Check formatting calls as well as DOM mutations; an idempotent style write alone is insufficient evidence. |
 | Window resize / browser chrome | Height-only stage resize clears/reopens live chapters; app recovery also replays a snapshot. | Demonstrated on v2.12.4: a 100 px height-only viewport change disconnects the original chapter. Keep live frames when width is unchanged, refresh stage metrics, and remember the new height without starting semantic recovery. Width/orientation recovery retains its existing path. |
 | User input versus delayed work | Only explicit navigation previously invalidated ownership. | Demonstrated with both wheel input and scroll continuation while access renewal waits. Native movement now invalidates older work. Track owned scroll writes synchronously so buffer compensation is not mistaken for user movement; cover wheel, touch, keyboard, scrollbar and inertia paths. |
-| Focus / notes / settings / flow | Existing callbacks share navigation/lifecycle ownership. | Full integration checks must still cover focus return, notes, settings, mode changes, width reflow, BFCache and disposal. RDR-045's intermittent real-cover return remains open pending a faithful live reproduction/acceptance. |
+| Focus / notes / settings / flow | Existing callbacks share navigation/lifecycle ownership. | The complete five-profile matrix passes focus return, notes, settings, mode changes, width reflow, BFCache and disposal. RDR-045's intermittent real-cover return remains open pending a faithful live reproduction/acceptance. |
 
-## Candidate and evidence
+## Release and evidence
 
-The v2.12.5 candidate passes all **166 Node tests**, the asset audit, static
-build and binding-aware Functions package. Eight new production-reader cases
-pass on desktop and mobile Chromium (**16 checks**). They exercise real EPUB.js
-views from an original disposable publication; fault injection uses no real
-book data or production mutations.
+v2.12.5 is merged through [PR #13](https://github.com/skypie0102/ShadowGarden/pull/13)
+as `8a7e07fc06fdcd38a3fafcaed1f0baff44584d75` and live in deployment
+`0ceadeec-4e53-4e20-a841-83c72bde66a2`. The merged tree exactly matches the
+verified PR head. [CI run 39001700811](https://github.com/skypie0102/ShadowGarden/actions/runs/39001700811)
+passes all **166 Node tests**, the asset audit, static build, binding-aware
+Functions package and **277 browser cases** across all five profiles, with eight
+intentional platform skips. Ten new production-reader regressions exercise real
+EPUB.js views from an original disposable publication; fault injection uses no
+real book data or production mutations. The final local three-profile reader
+integration run passes 142 cases with two expected dark-mode skips.
 
 The upward test follows the same visible DOM block across successive paints,
 then samples a fresh visible block. Absolute scrollTop is deliberately unsuitable
@@ -66,18 +71,21 @@ enabled. Desktop WebKit, Firefox and both Chromium profiles retain native wheel
 coverage. The generated-book navigation setup allows 30 seconds to finish
 buffering rather than interpreting a five-second setup timeout as a resize fault.
 
-The final product source passed both Chromium profiles, Firefox and mobile
+The product source passed both Chromium profiles, Firefox and mobile
 WebKit in run 39001079221. Desktop WebKit cancelled the stale resume correctly
 but missed a new wrapper-position assertion by 3 px after a fixed 100 ms wait.
 That regression now waits for native scroll offsets to be quiet for five paints
 and compares the actual visible block; its two-pixel tolerance is unchanged.
-This is a test-measurement correction, with no reader source change. The local
-three-profile integration run passed 142 cases with two expected dark-mode skips.
+This is a test-measurement correction, with no reader source change. The final
+five-profile run above passes that assertion.
 
-Baseline reproductions and complete integration/CI results are recorded in the
-release record as they finish. A passing emulated browser test does not replace
-Android / Soul acceptance. RDR-046 is resolved by the owner's explicit confirmation;
-RDR-045 and acceptance of the new upward-scroll correction remain open.
+Post-deployment checks verify the source bytes, both version targets, actual and
+saved D1/bucket/secret metadata, exact public catalogs, unchanged D1 revision 3
+and all three snapshot IDs/hashes. The [release record](READER_RELEASE.md) contains
+the complete identities and rollback target. A passing emulated browser test does
+not replace Android / Soul acceptance. RDR-046 is resolved by the owner's explicit
+confirmation; RDR-045 and physical acceptance of the new upward-scroll correction
+remain open.
 
 ## Verification requirements
 
