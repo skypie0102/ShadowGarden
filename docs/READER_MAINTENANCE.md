@@ -21,7 +21,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21), M5c planned |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21), M5c diagnostic cleanup in progress |
 
 ## M1 implementation
 
@@ -404,7 +404,7 @@ does not change catalog data, migrations, storage or configuration.
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
 | M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
-| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | Planned |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 search/TOC ownership in validation; bookmark and app callbacks follow separately |
 
 ### M5a implementation
 
@@ -599,3 +599,42 @@ teardown versus actionable failures.
 
 Production remains the separately recorded v2.12.5 deployment. This maintenance
 does not change catalog data, migrations, storage or configuration.
+
+### M5c1 — search and TOC diagnostic ownership
+
+A cancelled, disposed or superseded book query could still record
+`search.sectionFailed` when its outstanding section load rejected. Shared source
+loads can fail for both old and current queries; only the query that still owns
+its run records the failure. The existing run ID now guards that diagnostic.
+Cancellation results, progress guards, result limits, pacing and source leases
+retain their existing behavior. The source is still released after rejection.
+
+Chapter and book-result click handlers now guard `navigation.tocFailed` and
+`navigation.searchFailed` with their existing root scope. A rejected navigation
+after controller disposal is quiet. An active rejection still records the same
+fixed diagnostic. Success, drawer-close behavior and navigation ownership are
+unchanged. This is ownership-based classification: an active failure remains
+visible even if its error is named `AbortError`; there is no blanket name filter.
+Actual resource-release failures remain actionable during disposal.
+
+Four Node regressions cover cancelled/disposed/superseded search loads, shared
+load failure ownership, source release and continued scanning after an active
+failure. On pre-M5c `main` (`d6a7d5afc1bc7926acf3fe0ba2f695ea732851af`),
+the three stale-owner cases fail while the active-failure case passes. All four
+pass on the candidate. Two browser regressions exercise active rejection followed
+by disposal/rejection through the public TOC controller, one each for chapter and
+book-result navigation. Both fail on that baseline in mobile Chromium because
+the post-disposal diagnostic count increases. Existing assertions and waits are
+unchanged.
+
+The review also identified the bookmark navigation catch and app-level asynchronous
+callbacks as separate follow-up boundaries. M5c remains in progress; this increment
+covers search and TOC ownership only. Media timing/readiness policy and the open
+scroll-stress investigation retain their existing records.
+
+Local validation passes the asset audit, all **198 Node tests**, static build and
+binding-aware Functions package. All **14 desktop/mobile Chromium TOC/search
+cases** pass, including the two new cases. A final four-case rerun confirms that
+active failures named `AbortError` still report while disposed failures do not.
+The complete five-profile CI matrix is required before merge. Production remains
+v2.12.5; this increment changes source diagnostics, not deployment or data.

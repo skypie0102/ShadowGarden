@@ -43,7 +43,7 @@ export function createTocBookSearch({scope,uiScope,bookSearch,navigate,closeDraw
         await navigate(hit.cfi);
         if(!scope.disposed)closeDrawers();
       } catch (error) {
-        recordReaderDiagnostic('navigation.searchFailed');
+        if(!scope.disposed)recordReaderDiagnostic('navigation.searchFailed');
       }
     });
     return button;

@@ -163,7 +163,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
           await navigate(href);
           if(!scope.disposed)closeDrawers();
         } catch (error) {
-          recordReaderDiagnostic('navigation.tocFailed');
+          if(!scope.disposed)recordReaderDiagnostic('navigation.tocFailed');
         }
       });
       row.appendChild(button);

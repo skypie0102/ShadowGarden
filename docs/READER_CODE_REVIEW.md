@@ -92,3 +92,10 @@ coverage for a replacement has not been established. The native scroll trace now
 includes frame changes and resize payloads without changing its assertion or
 adding geometry reads. The earlier 56 px observation remains unconfirmed and
 tracked; M5c's diagnostic classification review is still separate work.
+
+M5c1 applies existing query-run and TOC-root ownership to failure diagnostics.
+Late rejected search loads and disposed chapter/result clicks stay quiet; active
+failures still report fixed messages, and source release remains unchanged.
+Failing-before regressions establish these specific reporting faults. Bookmark
+and app callback ownership remain separate M5c follow-up work; maintenance records
+validation and merge status.

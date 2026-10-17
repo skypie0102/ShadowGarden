@@ -152,4 +152,26 @@ test.describe('TOC book-search presentation',()=>{
     await page.evaluate(()=>{window.tocFixture.controller.dispose();window.tocFixture.navigation[2].resolve()});
     expect(await page.evaluate(()=>window.tocFixture.closed)).toBe(1);
   });
+
+  for(const kind of ['chapter','search'])test(`${kind} navigation reports active failures but stays quiet after disposal`,async({page})=>{
+    const code=kind==='chapter'?'navigation.tocFailed':'navigation.searchFailed';
+    if(kind==='search'){
+      await startSearch(page,'navigation');await complete(page,0,{hits:[hit('destination')]});
+    }
+    const button=kind==='chapter'?page.locator('.toc-entry-link[data-href="chapter2.xhtml"]'):page.locator('.book-search-result');
+    await button.click();
+    await page.evaluate(()=>window.tocFixture.navigation[0].reject(new DOMException('Active navigation failure','AbortError')));
+    const count=()=>page.evaluate(async code=>{
+      const {getReaderDiagnostics}=await import('/assets/js/reader/diagnostics.js');
+      return getReaderDiagnostics().counts[code]||0;
+    },code);
+    expect(await count()).toBe(1);
+    await button.click();
+    await page.evaluate(()=>{
+      window.tocFixture.controller.dispose();
+      window.tocFixture.navigation[1].reject(new DOMException('Reader disposed','AbortError'));
+    });
+    expect(await count()).toBe(1);
+    expect(await page.evaluate(()=>window.tocFixture.closed)).toBe(0);
+  });
 });
