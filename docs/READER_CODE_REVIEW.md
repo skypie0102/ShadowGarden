@@ -45,3 +45,8 @@ M1 removes the functional visual-cache global, expands app wiring without changi
 normalized JavaScript behavior, and documents the vendor contract. See
 [maintenance](READER_MAINTENANCE.md), [architecture](READER_ARCHITECTURE.md),
 [scroll audit](READER_SCROLL_AUDIT.md) and [release evidence](READER_RELEASE.md).
+
+M2 extracts the existing iframe/runtime, media-settlement and section-measurement
+functions to `reader/page-map-measurement.js`. Generation/cache/lookup policy
+remains in the controller. The function bodies and operation order are retained;
+[maintenance](READER_MAINTENANCE.md) records final validation and merge status.

@@ -43,6 +43,12 @@ not production dependencies. The visual manifest contains publication metadata;
 it is distinct from the sanitized numeric diagnostics API. There is no functional
 global visual-cache export.
 
+The page-map measurement operations live in `reader/page-map-measurement.js`.
+They create the isolated unextended runtime with lifecycle integration, sample
+paginated section geometry/CFIs and dispose the sandbox. Generation, fallback
+and cache policy stay in the controller; the original operation order and
+partial-startup cancellation handoff remain unchanged.
+
 ## Adapted vendor surface
 
 | Boundary | Existing adaptation and reason |

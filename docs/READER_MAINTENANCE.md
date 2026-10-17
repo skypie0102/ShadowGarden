@@ -18,7 +18,7 @@ validation separately from deployment.
 | Increment | Scope and completion check | Status |
 | --- | --- | --- |
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
-| M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Next |
+| M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Implemented; validation in progress |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Planned |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Planned |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
@@ -43,7 +43,7 @@ project-wide `reconstructed` label. The EPUB.js render sequence, Continuous
 geometry, accepted image CSS, authorization requirements, configuration and
 persistence formats are unchanged.
 
-## Validation and publication
+## M1 validation and publication
 
 The recovered candidate is commit
 `c93477a7a055a6978c5d753cb6014e9c2e06df03`, with Git tree
@@ -84,6 +84,30 @@ results and retains explanatory navigation-ownership notes in `reader/app.js`;
 normalized JavaScript remains identical to the tested source. The provenance
 asset audit and local Markdown links also pass for that follow-up.
 
-M1 is complete. M2, the cohesive page-map measurement boundary, is next.
+M1 is complete. M2 follows below.
 Production remains the separately recorded v2.12.5 release; this source-maintenance
 merge is not another deployment.
+
+## M2 — page-map measurement boundary
+
+`reader/page-map-measurement.js` owns isolated iframe/runtime setup, media/font
+settlement, visual-page classification, section layout/CFI sampling, bounded
+source release and sandbox disposal. `reader/page-map.js` imports those operations
+and retains generation revisions/cancellation ownership, section order, fallback
+policy, cache identity/retention, map activation/indexes and position lookup.
+
+The moved function bodies are unchanged. The controller still creates/records
+its sandbox before awaiting startup, releases prior section sources at the same
+point after successful measurement or a recoverable section fallback, and
+destroys it on cancellation and final settlement. The abortable task helper is
+shared with the controller's existing cooperative yield; no new scheduler or
+service layer is introduced. Vendor URLs, iframe geometry, media deadlines,
+page-map version/fingerprint, cache data and progress formats are preserved.
+
+The controller falls from 729 to 486 lines; measurement is a cohesive 257-line
+module. These counts describe the split, not a complexity or speed claim.
+Exact source-block comparison and existing integration/profile checks validate
+that the extraction preserves behavior. Local `npm run check` passes all 167 Node tests, the asset audit and both builds.
+Paired long-prose, repeated-plate and unique-plate profiles and the full browser
+matrix remain in progress. Final validation/merge identities will be recorded
+here before marking M2 complete. Production remains v2.12.5.
