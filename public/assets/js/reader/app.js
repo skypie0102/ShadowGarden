@@ -247,6 +247,8 @@ async function initializeReader(session, scope) {
       state.continuousNavigation = intent;
       try {
         await continuousController.display(target, { operation });
+        // Explicit href navigation owns chapter chrome while the Continuous buffer
+        // settles. Ignore old-side relocations until the requested section is reached.
         if (current() && intent && state.continuousNavigation === intent) {
           state.currentChapter = chapter;
           if (elements.chapterTitle) elements.chapterTitle.textContent = chapter;
@@ -293,6 +295,8 @@ async function initializeReader(session, scope) {
     const rendition = state.rendition;
     if (!rendition) return;
     const previous = state.relayoutIntent;
+    // Capture before applying font/width CSS. Repeated slider input keeps the
+    // first anchor until the coalesced reflow finishes or newer navigation wins.
     const keepCfi = previous?.rendition === rendition && previous.operation.isCurrent()
       ? previous.cfi
       : (state.renderedFlow === "scrolled-doc"
@@ -436,6 +440,9 @@ async function initializeReader(session, scope) {
     const chapter = tocController.chapterForLocation(location);
     if (intent?.rendition === rendition) {
       const reachedChapter = Boolean(intent.chapter && chapter === intent.chapter);
+      // WebKit may report the destination index before its chapter href catches up.
+      // The requested chapter completes the intent; navigate() clears the remainder
+      // after its explicit display/reportLocation sequence settles.
       if (reachedChapter) state.continuousNavigation = null;
     }
     state.currentChapter = chapter;
@@ -518,6 +525,8 @@ async function initializeReader(session, scope) {
       return;
     }
     const previousFlow = state.renderedFlow || settingsController.get().flow, old = state.rendition;
+    // Lock before asynchronous capture. Coalesce mode requests while allowing
+    // explicit chapter/seek input to cancel this uncommitted capture.
     state.switchingFlow = true;
     const revision = renditionNavigationRevision(old), pending = state.pendingNavigation;
     let operation = null, release = () => {
@@ -526,6 +535,8 @@ async function initializeReader(session, scope) {
     let target = progressController.currentCfi() || storage.loadProgress()?.cfi || void 0;
     let replaced = false;
     try {
+      // Finish the destination already selected by chapter/seek before capturing
+      // geometry. A newer positional request still cancels the uncommitted switch.
       if (pending?.rendition === old && ["explicit", "seek"].includes(pending.operation.kind)) {
         try {
           await pending.promise;
