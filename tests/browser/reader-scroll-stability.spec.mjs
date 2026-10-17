@@ -272,8 +272,9 @@ test.describe('Continuous scroll stability',()=>{
     const result=await page.evaluate(async()=>{
       window.releaseSlowPrepend();
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const {pendingContinuousBuffer}=await import('/assets/js/reader/continuous-state.js');
       const manager=readerRuntime.current.state.rendition.manager;
-      await manager.__sgBufferPromise;
+      await pendingContinuousBuffer(manager);
       const views=manager.views.all(),viewport=manager.container.getBoundingClientRect();
       const index=views.findIndex(view=>view.element.getBoundingClientRect().bottom>viewport.top+viewport.height*.3);
       return{index,href:views[index].section.href,displayed:views.slice(0,index).every(view=>view.displayed)};

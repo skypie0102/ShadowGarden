@@ -20,7 +20,7 @@ validation separately from deployment.
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
-| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17); M4b/c planned |
+| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17); M4b local checks pass; M4c planned |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
 ## M1 implementation
@@ -210,7 +210,7 @@ independently verified.
 | Step | Boundary | Status |
 | --- | --- | --- |
 | M4a | Generation and destruction shared by core buffering, layout, image return and delayed scroll/media work. | Merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17); verified below |
-| M4b | Buffer/trim task ownership and scheduling state. | Planned |
+| M4b | Buffer/trim task ownership and scheduling state. | Local checks pass; browser CI pending |
 | M4c | Input/scroll suppression shared by core and rendition; retain layout anchors with their layout owner. | Planned |
 
 ### M4a implementation
@@ -269,6 +269,36 @@ The tested PR head is `345aab49421199ac8f1f5c965cb00fd358efbfd6`, tree
 `bfb6f606a814838edc3aedc794bde0a152833543` with that exact tree. A documentation-only
 follow-up records targeted/CI validation and the remaining state boundaries.
 
-M4a is complete; M4 remains in progress. M4b buffer/trim task ownership is next.
+M4a is complete; M4 remains in progress. M4b follows below.
 Production remains the separately recorded v2.12.5 deployment. This source
 maintenance does not change catalog data, migrations, storage or configuration.
+
+### M4b implementation
+
+The private manager record in `reader/continuous-state.js` now groups the active
+buffer promise, its generation, repeat-request flag and trim timer. Only core
+obtains the mutable buffer group. It remains the same object across navigation
+and teardown, so captured tasks retain their ownership comparison against the
+current promise. The old `__sgBufferPromise`, `__sgBufferGeneration`,
+`__sgBufferAgain` and `__sgTrimTimer` properties have no remaining production or
+test consumers.
+
+`pendingContinuousBuffer(manager)` returns the exact current promise without
+creating state, queueing work or requesting another pass. Node and browser test
+waiters use that accessor; their assertions, explicit delays and paint counts
+remain unchanged. Core keeps the existing buffering/trim algorithm, generation resets,
+repeat-request coalescing, old-task completion guard, timer clear points, 1400 ms
+idle trim deadline, recent-input gate and four-neighbor retention policy.
+
+After reversing only state bindings and normalizing JavaScript, the core matches
+pre-M4b `main` (`9410ae6b63ce11b52ae7c613051430b656991a66`). All seven buffer/lifetime
+regressions pass before and after the change; the baseline test adapter maps only
+the passive promise accessor back to its old field. Four new cases verify
+repeat-request coalescing, replacement of a pending trim deadline and pending
+trim cancellation at manager and rendition teardown.
+
+Lifetime transitions, input suppression, vendor scroll bookkeeping, layout/view
+geometry, source leases, render order and persistence/cache formats retain their
+existing owners. Local `npm run check` passes all **182 Node tests**, the asset
+audit, static build and binding-aware Functions package. Local Markdown links
+resolve. The five-profile browser matrix is required before M4b is marked complete.

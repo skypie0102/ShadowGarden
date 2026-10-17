@@ -73,7 +73,7 @@ preparation-error classification. Runtime and book scopes retain release
 ownership. No functional global cache export remains; visual manifest and
 canonical page-map globals are diagnostic snapshots, not production dependencies.
 
-## Continuous work lifetime
+## Continuous work ownership
 
 `reader/continuous-state.js` keeps each manager's generation and destroyed flag
 in a private WeakMap. Continuous core initializes them when installing its
@@ -89,9 +89,18 @@ it, including for non-Continuous views. Late work still checks its captured
 generation at the same points. Navigation revisions remain owned by
 `reader/navigation-state.js`; resource disposal remains owned by reader scopes.
 
-This first state-ownership step preserves buffer/trim task fields, input
-suppression, timers, view geometry and the pinned render sequence. Those remain
-separate follow-ups in the maintenance roadmap.
+The same private manager record contains a buffer group: the active promise,
+its generation, the repeat-request flag and the trim timer. Only Continuous core
+receives that mutable group. It preserves task-identity checks so an older
+completion cannot clear a newer task, and keeps the record stable across
+navigation and teardown. `pendingContinuousBuffer(manager)` passively returns
+the exact current promise for test waiters without creating state or scheduling
+another pass.
+
+Buffering and trim algorithms remain in core with the same operation order,
+deadlines and retained-neighborhood rules. Input suppression, vendor scroll
+bookkeeping, view geometry, source leases and the pinned render sequence retain
+their existing owners. The maintenance roadmap tracks the remaining state work.
 
 ## Navigation and position ownership
 

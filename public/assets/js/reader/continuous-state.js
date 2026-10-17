@@ -1,11 +1,15 @@
-// Continuous core owns initialization, navigation generations and destruction.
-// Other reader modules only observe them; none is stored on the vendor manager.
+// Continuous core owns lifetime transitions and mutable buffer/trim bookkeeping.
+// Shared readers observe lifetime or pending work without scheduling new work.
 const states = new WeakMap();
 
 function stateFor(manager) {
   let state = states.get(manager);
   if (!state) {
-    state = { generation: undefined, destroyed: false };
+    state = {
+      generation: undefined,
+      destroyed: false,
+      buffer: { promise: undefined, generation: undefined, again: undefined, trimTimer: undefined }
+    };
     states.set(manager, state);
   }
   return state;
@@ -19,6 +23,17 @@ export function continuousGeneration(manager) {
 
 export function isContinuousDestroyed(manager) {
   return states.get(manager)?.destroyed === true;
+}
+
+// Only Continuous core mutates this record. Keep it stable across navigation
+// and teardown so a late task can compare ownership with the current promise.
+export function continuousBufferState(manager) {
+  return stateFor(manager).buffer;
+}
+
+// Passive observation preserves the exact task identity and creates no state.
+export function pendingContinuousBuffer(manager) {
+  return states.get(manager)?.buffer.promise;
 }
 
 export function initializeContinuousState(manager) {
