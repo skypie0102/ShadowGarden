@@ -4,6 +4,7 @@ import {createImageFocusController} from '../public/assets/js/reader/image-focus
 import {beginRenditionNavigation} from '../public/assets/js/reader/navigation-state.js';
 import {captureRenditionPosition} from '../public/assets/js/reader/rendition.js';
 import {createReaderResumeController} from '../public/assets/js/reader/resume-controller.js';
+import {initializeContinuousState,advanceContinuousGeneration} from '../public/assets/js/reader/continuous-state.js';
 
 function fixture(t,{finePointer=true,visualOnly=false}={}){
   const frames=[];
@@ -26,7 +27,8 @@ function fixture(t,{finePointer=true,visualOnly=false}={}){
   paragraph.getBoundingClientRect=()=>({top:7400-root.scrollTop,left:0,bottom:7500-root.scrollTop,right:700});
   const view={id:'chapter-view',element:{getBoundingClientRect:()=>({...frame.getBoundingClientRect(),bottom:frame.getBoundingClientRect().top+14000})},
     iframe:frame,document:doc,section:{index:7,href:'chapter7.xhtml',cfiFromRange:()=> 'epubcfi(focus-fixture)'}};
-  const manager={container,settings:{axis:'vertical'},views:{all:()=>[view]},__sgGeneration:1};
+  const manager={container,settings:{axis:'vertical'},views:{all:()=>[view]}};
+  initializeContinuousState(manager);advanceContinuousGeneration(manager);
   let rendition={manager,display(){throw new Error('Image focus must not navigate the EPUB')},currentLocation(){throw new Error('Image focus must not reframe the EPUB')}};
   const viewport=Object.assign(element(),{clientWidth:800,clientHeight:700}),closeButton=element(),overlay=element(),image=element();
   const document={activeElement:frame,body:element(),contains:node=>node.isConnected,addEventListener(){},removeEventListener(){}};
@@ -47,7 +49,7 @@ function fixture(t,{finePointer=true,visualOnly=false}={}){
   return{controller,container,root,wrapper,viewport,closeButton,flush,open:()=>controller.openImageFocus(source,doc),
     get rendition(){return rendition},
     shift:amount=>{origin+=amount;container.scrollHeight+=amount},focusCalls:()=>focusCalls,
-    navigate:()=>{manager.__sgGeneration++},requestNavigation:()=>beginRenditionNavigation(rendition),switchFlow:()=>{flow='paginated';rendition={manager:{}}}};
+    navigate:()=>{advanceContinuousGeneration(manager)},requestNavigation:()=>beginRenditionNavigation(rendition),switchFlow:()=>{flow='paginated';rendition={manager:{}}}};
 }
 
 for(const control of ['close button','double click'])test(`image ${control} restores live Continuous position after focus and inner-frame scroll`,t=>{

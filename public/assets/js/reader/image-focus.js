@@ -3,6 +3,7 @@ import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifec
 /* Shadow Garden R4.1 — isolated focused-image viewing, pinch zoom and pan. */
 import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
 import {hasPendingRenditionNavigation,renditionNavigationRevision} from "./navigation-state.js";
+import {continuousGeneration} from './continuous-state.js';
 
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const distance=(a,b)=>Math.hypot((Number(a?.clientX)||0)-(Number(b?.clientX)||0),(Number(a?.clientY)||0)-(Number(b?.clientY)||0));
@@ -122,10 +123,10 @@ export function createImageFocusController({
     const layers=[];
     if(doc?.scrollingElement)layers.push(doc.scrollingElement);
     for(let node=doc?.defaultView?.frameElement;node&&node!==rendition.manager?.container;node=node.parentElement)layers.push(node);
-    return{rendition,position,revision:renditionNavigationRevision(rendition),generation:rendition.manager?.__sgGeneration,layers:layers.map(node=>({node,top:node.scrollTop,left:node.scrollLeft}))};
+    return{rendition,position,revision:renditionNavigationRevision(rendition),generation:continuousGeneration(rendition.manager),layers:layers.map(node=>({node,top:node.scrollTop,left:node.scrollLeft}))};
   }
   function restoreReadingPosition(saved){
-    if(!saved||saved.rendition!==getRendition?.()||getFlow?.()!=="scrolled-doc"||saved.generation!==saved.rendition.manager?.__sgGeneration)return;
+    if(!saved||saved.rendition!==getRendition?.()||getFlow?.()!=="scrolled-doc"||saved.generation!==continuousGeneration(saved.rendition.manager))return;
     if(saved.revision!==renditionNavigationRevision(saved.rendition)||hasPendingRenditionNavigation(saved.rendition))return;
     for(const {node,top,left} of saved.layers){if(node.isConnected){node.scrollTop=top;node.scrollLeft=left}}
     restoreContinuousScrollPosition(saved.rendition,saved.position);

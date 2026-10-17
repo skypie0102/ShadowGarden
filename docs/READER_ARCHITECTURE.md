@@ -73,6 +73,26 @@ preparation-error classification. Runtime and book scopes retain release
 ownership. No functional global cache export remains; visual manifest and
 canonical page-map globals are diagnostic snapshots, not production dependencies.
 
+## Continuous work lifetime
+
+`reader/continuous-state.js` keeps each manager's generation and destroyed flag
+in a private WeakMap. Continuous core initializes them when installing its
+manager methods, advances the generation before the existing display call, and
+marks destruction/advances it at manager destruction and rendition-scope disposal.
+Both existing teardown boundaries retain their invalidation; state remains
+observable until the manager can be collected.
+
+Buffering, layout compensation, image return, rendition scroll/trim guards and
+delayed compatibility-media work read the same state through accessors. Reads do
+not initialize a manager: its generation remains undefined before core installs
+it, including for non-Continuous views. Late work still checks its captured
+generation at the same points. Navigation revisions remain owned by
+`reader/navigation-state.js`; resource disposal remains owned by reader scopes.
+
+This first state-ownership step preserves buffer/trim task fields, input
+suppression, timers, view geometry and the pinned render sequence. Those remain
+separate follow-ups in the maintenance roadmap.
+
 ## Navigation and position ownership
 
 The app registers a navigator for each rendition in `reader/navigation-state`.
