@@ -463,3 +463,18 @@ sanitized diagnostic export.
   unchanged canonical totals and scope of the measured bounds. Phase 5 still
   covers broader engines, release-book inspection and production verification;
   no deployment was performed.
+
+## Diagnostic ownership
+
+Diagnostics retain known codes and finite numeric measurements, with fixed
+warning text emitted once per actionable code. They never retain publication
+text, source URLs or Error objects. Quiet counters remain available for expected
+cancellation and fallback observations.
+
+Book-text search records a rejected section load only while its run ID remains
+current. Cancelling, superseding or disposing a query retires that ownership but
+still releases its source lease. TOC chapter/result navigation reports a rejected
+move only while the root controller scope is live. Active failures remain
+reportable regardless of error name; cleanup failures remain actionable even
+while a scope is being disposed. Bookmark and application callback review follows
+separately in the maintenance roadmap.

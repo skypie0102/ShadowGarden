@@ -114,7 +114,10 @@ export function createBookSearchController({getBook}={}){
           const matches=findSectionMatches(section,query,MAX_RESULTS-hits.length);
           for(const match of matches)hits.push({...match,href:section.href||"",sectionIndex:Number(section.index)});
         });
-      }catch{recordReaderDiagnostic('search.sectionFailed')}
+      }catch{
+        // A superseded query no longer owns this load's failure diagnostic.
+        if(id===runId)recordReaderDiagnostic('search.sectionFailed');
+      }
       if(id===runId)onProgress?.({scanned:Math.min(index+1,sections.length),total:sections.length,count:hits.length});
       await Promise.resolve();
     }
