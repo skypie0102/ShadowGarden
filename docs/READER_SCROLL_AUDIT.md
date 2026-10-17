@@ -140,3 +140,11 @@ Raw baseline/candidate height phases and production-source hashes are retained i
 [reader-height-contract.json](reader-height-contract.json). Validation and
 publication are recorded in [maintenance](READER_MAINTENANCE.md).
 This source fix is separate from physical-phone acceptance and deployment.
+
+The shared measurement is merged through [PR #23](https://github.com/skypie0102/ShadowGarden/pull/23).
+Its first CI attempt passes 203 Node tests and 322 browser cases across five
+profiles, with eight existing skips. Ten further candidate native-scroll runs
+pass without the repeated 56 px changes seen in the baseline traces (239 shrink
+events across twenty ordinary runs; none across ten candidate runs). The numeric
+evidence retains per-run counters and matching production-source hashes. This
+establishes the sizing fix; it does not add missing causal data to the old trace.

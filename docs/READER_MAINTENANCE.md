@@ -705,3 +705,34 @@ All **48 targeted desktop/mobile Chromium cases** pass across Continuous scroll
 stability, image focus/return and lifecycle suites. The original native upward
 scroll/trim test is byte-identical to the baseline. All 86 local Markdown file
 links resolve; the numeric height evidence and production-source hashes validate.
+
+### Intrinsic-sizing CI and merge
+
+[CI run 39075906419](https://github.com/skypie0102/ShadowGarden/actions/runs/39075906419)
+passes the audit, all **203 Node tests**, both builds and **322 browser cases**
+across five profiles on the first attempt. Desktop/mobile Chromium pass 66 cases
+each; Firefox and desktop WebKit pass 64 each with two skips; mobile WebKit passes
+62 with four skips. These are the same eight existing platform skips. Both new
+sizing regressions pass in every profile. The original native upward-scroll test
+passes wherever native input is supported, with its assertion and waits intact.
+
+The tested PR head is `81b2e61f289550eec8ba291161541483b977443c`, tree
+`fe26f991541f15b2daa1306739ddbb2bdcf827ae`.
+[PR #23](https://github.com/skypie0102/ShadowGarden/pull/23) merged as
+`8be8e7903deb6034bd7daca73a83563a4aa72cb8` with that exact tree. A documentation-only follow-up
+archives the additional stress observations and final publication identities.
+
+Ten additional candidate mobile-Chromium native-scroll repetitions pass, with
+185–205 passage samples per run and no reversal below -3 px. Each trace contains
+ten resize payloads: initial media growth remains, while repeated 56 px shrink/
+growth disappears. The twenty ordinary baseline traces contain 239 shrink events
+of 56 px; the ten candidate traces contain none. Per-run counters are archived
+with the existing height phases and matching production-source hashes in
+[reader-height-contract.json](reader-height-contract.json). These local fixture
+observations are not performance measurements or proof of the older event's cause.
+
+The demonstrated competing-height defect is fixed. The historical single
+reversal remains causally unattributed because its witness lacks resize data;
+retain that distinction, the original witness and the unchanged stress assertion.
+Production remains the separately recorded v2.12.5 release; this source fix does
+not deploy or change catalog data, migrations, storage or configuration.
