@@ -97,10 +97,25 @@ navigation and teardown. `pendingContinuousBuffer(manager)` passively returns
 the exact current promise for test waiters without creating state or scheduling
 another pass.
 
-Buffering and trim algorithms remain in core with the same operation order,
-deadlines and retained-neighborhood rules. Input suppression, vendor scroll
-bookkeeping, view geometry, source leases and the pinned render sequence retain
-their existing owners. The maintenance roadmap tracks the remaining state work.
+The private input group is shared by core and rendition through
+`continuousInputState(manager)`. Core records recent input and its owned scroll
+reporter; rendition sets the restoration-suppression deadline and installs the
+defensive scroll/trim wrapper. The reporter remains independent of the vendor's
+`scrolled` field, which vendor scrolling can replace with a boolean. Before core
+installs its reporter, the wrapper still falls back to a callable vendor reporter.
+
+Restoration keeps its 320 ms suppression window and existing clock choices.
+Explicit wheel/touch/key intent clears that window immediately; native movement
+after it expires also invalidates stale navigation. The scroll debounce stays
+30 ms, and trim retains its 1400 ms idle deadline and 650 ms recent-input gate.
+The input record remains stable across installation, navigation and teardown.
+
+Buffering and trim algorithms remain in core with the same operation order and
+retained-neighborhood rules. Vendor geometry, scroll coordinates/deltas, timers,
+boolean bookkeeping and patch-installation markers remain on their vendor
+objects. Gesture coordinates remain local to listeners; layout transactions and
+content anchors remain private to `reader/continuous-layout.js`. Source leases
+and the pinned render sequence retain their existing owners.
 
 ## Navigation and position ownership
 

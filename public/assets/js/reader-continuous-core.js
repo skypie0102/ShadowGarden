@@ -9,7 +9,8 @@ import {
   initializeContinuousState,
   advanceContinuousGeneration,
   destroyContinuousState,
-  continuousBufferState
+  continuousBufferState,
+  continuousInputState
 } from './reader/continuous-state.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
@@ -225,10 +226,11 @@ export function createContinuousCoreExtension(){
 
   function scheduleTrim(manager,rendition){
     const buffer=continuousBufferState(manager);
+    const input=continuousInputState(manager);
     clearTimeout(buffer.trimTimer);
     buffer.trimTimer=setTimeout(()=>{
       if(isContinuousDestroyed(manager))return;
-      if(buffer.promise||Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
+      if(buffer.promise||Date.now()-(Number(input.lastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
       const range=visibleRange(manager),views=range.views;
       if(range.first<0||views.length<=MAX_RETAINED_VIEWS)return;
       const keepStart=Math.max(0,range.first-BUFFER_EACH_SIDE);
@@ -308,8 +310,9 @@ export function createContinuousCoreExtension(){
 
   function noteUserScroll(manager,rendition){
     interruptRenditionNavigation(rendition);
-    manager.ignore=false;manager.__sgSuppressScrollUntil=0;
-    manager.__sgLastUserScrollAt=Date.now();
+    const input=continuousInputState(manager);
+    manager.ignore=false;input.suppressScrollUntil=0;
+    input.lastUserScrollAt=Date.now();
   }
 
   function wireBoundaryContents(contents,manager,rendition){
@@ -399,6 +402,7 @@ export function createContinuousCoreExtension(){
     if(!manager||manager.__sgCoreScrollBound||!manager.container||!manager.views)return false;
     patchManagerMethods(rendition);
     manager.__sgCoreScrollBound=true;
+    const input=continuousInputState(manager);
     const scroller=scrollerFor(manager);
     // Native anchoring and owned compensation must not both adjust the same
     // inserted/resized chapter. EPUB iframe roots are disabled separately.
@@ -441,19 +445,19 @@ export function createContinuousCoreExtension(){
     };
     // Vendor scrollTo/scrollBy also use `scrolled` as a boolean bookkeeping
     // flag. Keep the owned callback separate from that mutable vendor field.
-    manager.__sgContinuousScrolled=onScrolled;
+    input.onScrolled=onScrolled;
     manager.scrolled=onScrolled;
     manager._scrolled=debounce(onScrolled,SCROLL_DEBOUNCE_MS);
     manager.onScroll=()=>{
       const {top,left}=syncScrollPosition(manager);
-      const suppressed=performance.now()<(Number(manager.__sgSuppressScrollUntil)||0);
+      const suppressed=performance.now()<(Number(input.suppressScrollUntil)||0);
       if(!suppressed){
         // Focus owns temporary browser-induced drift beneath its overlay.
         // Real wheel/touch intent still interrupts through the input handlers.
         if(!document.body.classList.contains('reader-image-focused')&&(Math.abs(top-(Number(manager.prevScrollTop)||0))>.5||Math.abs(left-(Number(manager.prevScrollLeft)||0))>.5))noteUserScroll(manager,rendition);
         if(!manager.ignore)manager._scrolled();
         else manager.ignore=false;
-        manager.__sgLastUserScrollAt=Date.now();
+        input.lastUserScrollAt=Date.now();
       }else{
         manager.ignore=false;
       }

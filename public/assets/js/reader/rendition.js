@@ -1,6 +1,6 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {renditionRenderRevision,settleRenditionContent} from './epub-lifecycle.js';
-import {continuousGeneration,isContinuousDestroyed} from './continuous-state.js';
+import {continuousGeneration,isContinuousDestroyed,continuousInputState} from './continuous-state.js';
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
 import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
@@ -448,7 +448,7 @@ export function restoreContinuousScrollPosition(rendition,snapshot){
   if(!Number.isFinite(deltaTop)||!Number.isFinite(deltaLeft))return false;
 
   const now=globalThis.performance?.now?.()||Date.now();
-  manager.__sgSuppressScrollUntil=now+320;
+  continuousInputState(manager).suppressScrollUntil=now+320;
   try{manager._scrolled?.cancel?.()}catch{}
   try{clearTimeout(manager.trimTimeout);manager.trimTimeout=0}catch{}
 
@@ -482,19 +482,20 @@ export function restoreContinuousScrollPosition(rendition,snapshot){
    window so stale pre-suspend maintenance cannot undo the restored viewport. */
 export function stabilizeContinuousScrollLifecycle(rendition){
   const manager=rendition?.manager;
-  if(!manager||manager.__sgSafeScrollLifecycle)return Boolean(manager?.__sgSafeScrollLifecycle);
+  const input=manager&&continuousInputState(manager);
+  if(!manager||input.stabilized)return Boolean(input?.stabilized);
   const current=manager._scrolled;
   if(typeof current!=="function")return false;
   let timer=0;
   const clock=()=>globalThis.performance?.now?.()||Date.now();
-  const suppressed=()=>Number(manager.__sgSuppressScrollUntil||0)>clock();
+  const suppressed=()=>Number(input.suppressScrollUntil||0)>clock();
   const safe=(...args)=>{
     clearTimeout(timer);timer=0;
     if(suppressed())return;
     timer=setTimeout(()=>{
       timer=0;
       if(isContinuousDestroyed(manager)||suppressed())return;
-      const scrolled=manager.__sgContinuousScrolled||manager.scrolled;
+      const scrolled=input.onScrolled||manager.scrolled;
       if(typeof scrolled==="function")scrolled.apply(manager,args);
     },30);
   };
@@ -510,7 +511,7 @@ export function stabilizeContinuousScrollLifecycle(rendition){
     };
   }
 
-  manager.__sgSafeScrollLifecycle=true;
+  input.stabilized=true;
   return true;
 }
 

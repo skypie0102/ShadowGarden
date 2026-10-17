@@ -66,5 +66,11 @@ M4b groups buffer promise/generation, repeat requests and trim timer in that
 private manager record. Core remains the only mutating consumer. Test waiters
 observe the exact pending promise through a passive accessor. The scheduling
 algorithm and operation order match the baseline; repeat-request, trim-deadline
-and teardown regressions preserve the prior behavior. Shared input suppression
-is the next state concern.
+and teardown regressions preserve the prior behavior.
+
+M4c moves shared input suppression, recent-input timing, the owned scroll reporter
+and defensive-wrapper installation state into that private record. Core and
+rendition retain the same writers, readers, clocks and deadlines. Native movement
+still cancels stale navigation; a vendor boolean cannot replace the owned
+reporter. Vendor geometry/bookkeeping and private layout anchors retain their
+owners. M5's presentation and timing work follows after full validation of M4c.

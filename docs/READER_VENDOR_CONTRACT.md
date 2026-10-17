@@ -37,6 +37,7 @@ without registering another application engine.
 | Continuous settlement | Engine settlement checks manager generation/disposal while completing its current neighborhood. |
 | Continuous lifetime state | `reader/continuous-state.js` owns private generation/destruction data. Continuous core retains initialization/display/teardown transitions; layout, image return and delayed work only read it. |
 | Continuous buffer state | The same manager record groups the active buffer promise/generation, repeat requests and trim timer. Core owns mutations and scheduling; test waiters use a passive accessor to the exact current promise. |
+| Continuous input state | Core and rendition share a private suppression deadline, recent-input timestamp, owned scroll reporter and wrapper-installation flag. Vendor coordinates, deltas, timers and boolean `scrolled` bookkeeping stay on the manager. |
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
 | Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
@@ -70,8 +71,12 @@ remain unchanged, including undefined generations before core installation and
 invalidation at both teardown boundaries. Reader scopes still own actual resource
 disposal. M4b moves buffer/trim bookkeeping into the same private manager record,
 retaining task-identity checks, repeat-request coalescing, deadlines and the core
-scheduling algorithm. Shared input suppression remains M4c work; live block
-anchors retain their existing layout owner.
+scheduling algorithm. M4c groups shared input suppression and the scroll reporter
+privately, preserving clock choices, the 320 ms correction window, 30 ms debounce
+and 650 ms recent-input trim gate. Explicit input clears suppression and native
+continuation invalidates older navigation at the same points. The defensive
+wrapper keeps its callable vendor fallback before core installs a reporter and
+remains idempotent. Live block anchors retain their existing layout owner.
 
 ## Owned Continuous render order
 

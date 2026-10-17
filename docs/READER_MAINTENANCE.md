@@ -20,7 +20,7 @@ validation separately from deployment.
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
-| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18); M4c planned |
+| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18); M4c in validation |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
 ## M1 implementation
@@ -211,7 +211,7 @@ independently verified.
 | --- | --- | --- |
 | M4a | Generation and destruction shared by core buffering, layout, image return and delayed scroll/media work. | Merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17); verified below |
 | M4b | Buffer/trim task ownership and scheduling state. | Merged through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18); verified below |
-| M4c | Input/scroll suppression shared by core and rendition; retain layout anchors with their layout owner. | Planned |
+| M4c | Input/scroll suppression shared by core and rendition; retain layout anchors with their layout owner. | In validation |
 
 ### M4a implementation
 
@@ -325,6 +325,43 @@ The tested PR head is `10fcbdbf5fe68fb61226f2bf129adcde806fc9ee`, tree
 `7196ae7d13c6797369c31e0bf8158c97fd2bbc73` with that exact tree. A documentation-only
 follow-up records targeted/CI validation and the remaining state boundary.
 
-M4b is complete; M4c shared input/scroll suppression is next. M4 remains in
-progress. Production remains the separately recorded v2.12.5 deployment, with
+M4b is complete; M4c follows below. Production remains the separately recorded v2.12.5 deployment, with
 catalog data, migrations, storage and configuration unchanged by this maintenance.
+
+### M4c implementation
+
+The private manager record now groups the restoration-suppression deadline,
+recent-user-input timestamp, owned scroll reporter and defensive-wrapper
+installation flag. `continuousInputState(manager)` gives core and rendition the
+same stable group. The old `__sgSuppressScrollUntil`, `__sgLastUserScrollAt`,
+`__sgContinuousScrolled` and `__sgSafeScrollLifecycle` properties have no remaining
+production or test consumers.
+
+Core still invalidates navigation before recording user input. Explicit gestures
+clear suppression immediately, and subsequent native movement can cancel newer
+stale navigation without another gesture. Restoration and the defensive wrapper
+keep their existing clocks and comparisons, 320 ms correction window and 30 ms
+debounce. The trim scheduler retains its 650 ms recent-input gate and 1400 ms idle
+deadline. The owned reporter survives the vendor's boolean `scrolled` flag, while
+the wrapper still supports a callable vendor reporter before core installs one.
+
+Vendor scroll coordinates/deltas, timers, flags and patch-installation markers
+remain on their existing objects. Gesture coordinates stay in listener closures;
+layout transactions and block anchors remain private to their layout owner.
+No lifetime transition, buffering algorithm, view/source geometry, render order,
+cache/persistence format or compatibility rule changes in this increment.
+
+Five new regressions cover continuation at the exact correction deadline,
+explicit-input cancellation followed by native continuation, recent-input trim
+deferral, idempotent wrapper installation with vendor-reporter fallback, and the
+shared image-return scroll/trim correction window. Browser instrumentation resets
+the deadline through its new state group; assertions and explicit waits remain
+unchanged. Validation and merge results will be recorded after the complete run.
+
+After reversing only input-state bindings and normalizing JavaScript, both core
+and rendition match pre-M4c `main`
+(`cdcde090e6bb13b05fe2ef8cd35a60d732bd99c6`). All **31 focused Node cases** pass
+against both baseline and candidate. The baseline adapter maps only test access
+to the four old fields; it does not alter production source or assertions.
+Local `npm run check` passes all **187 Node tests**, the asset audit, static build
+and binding-aware Functions package. All 78 local Markdown file links resolve.

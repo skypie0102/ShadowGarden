@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createContinuousController} from '../public/assets/js/reader/continuous.js';
 import {createContinuousCoreExtension} from '../public/assets/js/reader-continuous-core.js';
 import {stabilizeContinuousScrollLifecycle} from '../public/assets/js/reader/rendition.js';
-import {initializeContinuousState,advanceContinuousGeneration,destroyContinuousState} from '../public/assets/js/reader/continuous-state.js';
+import {initializeContinuousState,advanceContinuousGeneration,destroyContinuousState,continuousInputState} from '../public/assets/js/reader/continuous-state.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
@@ -72,8 +72,23 @@ test('completed same-target displays can settle new geometry instead of being su
 
 test('vendor boolean scroll bookkeeping cannot replace the owned scroll reporter',t=>{
   t.mock.timers.enable({apis:['setTimeout']});let calls=0;
-  const manager={scrolled:true,_scrolled(){},__sgContinuousScrolled(){calls++}};
+  const manager={scrolled:true,_scrolled(){}};
+  continuousInputState(manager).onScrolled=()=>{calls++};
   assert.equal(stabilizeContinuousScrollLifecycle({manager}),true);
   manager._scrolled();t.mock.timers.tick(31);assert.equal(calls,1);
   destroyContinuousState(manager);manager._scrolled();t.mock.timers.tick(31);assert.equal(calls,1);
+});
+
+test('scroll stabilization keeps vendor fallback until the owned reporter is installed',t=>{
+  t.mock.timers.enable({apis:['setTimeout']});const calls=[];
+  const manager={scrolled(value){assert.equal(this,manager);calls.push(`vendor:${value}`)},_scrolled(){}};
+  const rendition={manager};
+  assert.equal(stabilizeContinuousScrollLifecycle(rendition),true);
+  const safe=manager._scrolled;
+  assert.equal(stabilizeContinuousScrollLifecycle(rendition),true);
+  assert.equal(manager._scrolled,safe);
+  manager._scrolled('first');t.mock.timers.tick(31);
+  continuousInputState(manager).onScrolled=function(value){assert.equal(this,manager);calls.push(`owned:${value}`)};
+  manager.scrolled=true;manager._scrolled('next');t.mock.timers.tick(31);
+  assert.deepEqual(calls,['vendor:first','owned:next']);
 });

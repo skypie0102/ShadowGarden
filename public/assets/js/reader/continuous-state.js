@@ -1,5 +1,5 @@
-// Continuous core owns lifetime transitions and mutable buffer/trim bookkeeping.
-// Shared readers observe lifetime or pending work without scheduling new work.
+// Continuous core owns lifetime transitions and buffer/trim bookkeeping.
+// Core and rendition share input suppression and the owned scroll reporter.
 const states = new WeakMap();
 
 function stateFor(manager) {
@@ -8,7 +8,8 @@ function stateFor(manager) {
     state = {
       generation: undefined,
       destroyed: false,
-      buffer: { promise: undefined, generation: undefined, again: undefined, trimTimer: undefined }
+      buffer: { promise: undefined, generation: undefined, again: undefined, trimTimer: undefined },
+      input: { suppressScrollUntil: undefined, lastUserScrollAt: undefined, onScrolled: undefined, stabilized: undefined }
     };
     states.set(manager, state);
   }
@@ -29,6 +30,12 @@ export function isContinuousDestroyed(manager) {
 // and teardown so a late task can compare ownership with the current promise.
 export function continuousBufferState(manager) {
   return stateFor(manager).buffer;
+}
+
+// Core records input/reporter state; rendition restores and guards scrolling.
+// Vendor geometry and boolean scroll bookkeeping remain on the manager.
+export function continuousInputState(manager) {
+  return stateFor(manager).input;
 }
 
 // Passive observation preserves the exact task identity and creates no state.

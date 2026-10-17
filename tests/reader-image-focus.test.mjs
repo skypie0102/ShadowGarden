@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createImageFocusController} from '../public/assets/js/reader/image-focus.js';
 import {beginRenditionNavigation} from '../public/assets/js/reader/navigation-state.js';
-import {captureRenditionPosition} from '../public/assets/js/reader/rendition.js';
+import {captureRenditionPosition,stabilizeContinuousScrollLifecycle} from '../public/assets/js/reader/rendition.js';
 import {createReaderResumeController} from '../public/assets/js/reader/resume-controller.js';
 import {initializeContinuousState,advanceContinuousGeneration} from '../public/assets/js/reader/continuous-state.js';
 
@@ -68,6 +68,19 @@ test('image return follows its live passage when Continuous buffering changes ab
   f.shift(640);f.container.scrollTop=10000;
   f.controller.closeImageFocus();f.flush();
   assert.equal(f.container.scrollTop,8640);
+});
+
+test('image return suppresses scroll reporting and trim for the same correction window',async t=>{
+  t.mock.timers.enable({apis:['setTimeout']});let now=1000,reports=0,trims=0;
+  t.mock.method(performance,'now',()=>now);
+  const f=fixture(t),manager=f.rendition.manager;
+  manager._scrolled=()=>{};manager.scrolled=()=>{reports++};manager.trim=()=>{trims++};
+  assert.equal(stabilizeContinuousScrollLifecycle(f.rendition),true);
+  f.open();f.flush();f.controller.closeImageFocus();f.flush();
+  now=1319;manager._scrolled();t.mock.timers.tick(31);await manager.trim();
+  assert.equal(reports,0);assert.equal(trims,0);
+  now=1320;manager._scrolled();t.mock.timers.tick(31);await manager.trim();
+  assert.equal(reports,1);assert.equal(trims,1);
 });
 
 test('a touch opening click cannot immediately dismiss its focused image',t=>{
