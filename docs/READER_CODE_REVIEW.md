@@ -50,3 +50,8 @@ M2 extracts the existing iframe/runtime, media-settlement and section-measuremen
 functions to `reader/page-map-measurement.js`. Generation/cache/lookup policy
 remains in the controller. The function bodies and operation order are retained;
 [maintenance](READER_MAINTENANCE.md) records final validation and merge status.
+
+M3 shares identical section href identity/matching and linear-spine selection in
+`reader/sections.js`. Relative links, notes, legacy progress href matching and
+mobile-pagination rules retain their existing behavior. The architecture records
+that boundary; maintenance tracks its checks and merge status.

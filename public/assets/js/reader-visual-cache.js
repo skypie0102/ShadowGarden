@@ -2,6 +2,7 @@ import {readerInstanceScope} from "./reader/lifecycle.js";
 import {measureReaderOperation,recordReaderDiagnostic} from './reader/diagnostics.js';
 import {createReaderCache} from './reader/cache-store.js';
 import {VISUAL_CACHE_VERSION,serializeVisualCache,deserializeVisualCache} from './reader/visual-cache-record.js';
+import {cleanSectionHref,sectionHrefMatches} from './reader/sections.js';
 /* Shadow Garden v1.3.0 — first-run standalone visual-page cache.
  *
  * Scans EPUB spine documents once, identifies genuinely standalone cover/illustration pages,
@@ -24,15 +25,6 @@ export function createVisualPageCacheExtension(){
     key:"",bookUrl:"",ready:false,preparing:null,records:new Map(),objectUrls:new Map(),summary:null
   };
 
-  const cleanHref=value=>{
-    let href=String(value||"").split("#")[0].split("?")[0];
-    try{href=decodeURIComponent(href)}catch{}
-    return href.replace(/^\.\//,"").replace(/^\//,"");
-  };
-  const hrefMatches=(a,b)=>{
-    const left=cleanHref(a),right=cleanHref(b);
-    return Boolean(left&&right&&(left===right||left.endsWith(`/${right}`)||right.endsWith(`/${left}`)));
-  };
   const dirName=path=>{const parts=String(path||"").split("/");parts.pop();return parts.join("/")};
   const resolvePath=(base,relative)=>{
     const raw=String(relative||"").trim();
@@ -79,7 +71,7 @@ export function createVisualPageCacheExtension(){
     current.key=payload.key;
     current.bookUrl=payload.bookUrl;
     current.records=new Map();
-    for(const record of payload.visuals||[])current.records.set(cleanHref(record.href),record);
+    for(const record of payload.visuals||[])current.records.set(cleanSectionHref(record.href),record);
     current.ready=true;
     current.summary={
       cached:Boolean(cached),
@@ -99,15 +91,15 @@ export function createVisualPageCacheExtension(){
   }
 
   function recordForHref(href){
-    const clean=cleanHref(href);
+    const clean=cleanSectionHref(href);
     if(current.records.has(clean))return current.records.get(clean);
-    for(const record of current.records.values())if(hrefMatches(record.href,clean))return record;
+    for(const record of current.records.values())if(sectionHrefMatches(record.href,clean))return record;
     return null;
   }
 
   function objectUrl(record){
     if(!record?.blob)return"";
-    const key=cleanHref(record.href);
+    const key=cleanSectionHref(record.href);
     if(current.objectUrls.has(key))return current.objectUrls.get(key);
     const url=URL.createObjectURL(record.blob);
     current.objectUrls.set(key,url);
@@ -277,7 +269,7 @@ export function createVisualPageCacheExtension(){
       const src=image.getAttribute("src")||"";
       if(src&&!/^(?:data:|blob:|https?:|\/\/)/i.test(src)){
         sourcePath=resolvePath(dirName(item.path),src);
-        cover=hrefMatches(sourcePath,coverPath);
+        cover=sectionHrefMatches(sourcePath,coverPath);
         asset=await loadAsset(sourcePath);
         alt=image.getAttribute("alt")||"";
       }
@@ -290,7 +282,7 @@ export function createVisualPageCacheExtension(){
         const href=embedded.getAttribute("href")||embedded.getAttribute("xlink:href")||"";
         if(href&&!/^(?:data:|blob:|https?:|\/\/)/i.test(href)){
           sourcePath=resolvePath(dirName(item.path),href);
-          cover=hrefMatches(sourcePath,coverPath);
+          cover=sectionHrefMatches(sourcePath,coverPath);
           asset=await loadAsset(sourcePath);
         }
       }

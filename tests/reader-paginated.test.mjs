@@ -46,3 +46,22 @@ test('separate page-turn batches invalidate snapshots taken between them',async 
   await f.controller.turn(-1);
   assert.ok(renditionNavigationRevision(f.rendition)>captured);
 });
+
+test('the final encoded linear section completes before trailing auxiliary spine entries',async t=>{
+  const f=fixture(t),classes=new Set(['hidden']);
+  const endPage={
+    classList:{contains:name=>classes.has(name),add:name=>classes.add(name),remove:name=>classes.delete(name)},
+    querySelector:()=>null
+  };
+  document.getElementById=id=>id==='volumeEndPage'?endPage:null;
+  document.body={classList:{contains:name=>name==='reader-flow-paginated'}};
+  f.rendition.book={spine:{spineItems:[
+    {href:'Text/chapter1.xhtml',index:0},
+    {href:'Text/caf%C3%A9%20end.xhtml',index:1},
+    {href:'notes.xhtml',index:2,linear:'no'}
+  ]}};
+  f.rendition.location={end:{href:'OEBPS/Text/café end.xhtml#last',displayed:{page:3,total:3}}};
+  assert.equal(await f.controller.turn(1),true);
+  assert.deepEqual(f.calls,[]);
+  assert.equal(classes.has('active'),true);assert.equal(classes.has('hidden'),false);
+});

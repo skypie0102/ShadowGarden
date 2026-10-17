@@ -7,22 +7,11 @@ import {
 } from "./page-map-measurement.js";
 import {measureReaderOperation,recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderCache} from './cache-store.js';
+import {cleanSectionHref,sectionHrefMatches,linearSpineItems} from './sections.js';
 const PAGE_MAP_VERSION = 2;
 
 const clamp01 = value => Math.min(1, Math.max(0, Number(value) || 0));
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-function cleanHref(value) {
-  let href = String(value || "").split("#")[0].split("?")[0];
-  try { href = decodeURIComponent(href); } catch {}
-  return href.replace(/^\.\//, "").replace(/^\//, "");
-}
-
-function hrefMatches(a, b) {
-  const left = cleanHref(a), right = cleanHref(b);
-  if (!left || !right) return false;
-  return left === right || left.endsWith(`/${right}`) || right.endsWith(`/${left}`);
-}
 
 function hashText(input) {
   let hash = 0x811c9dc5;
@@ -41,12 +30,6 @@ const pageMapCache=createReaderCache({
 const cacheGet=key=>pageMapCache.get(key);
 const cachePut=value=>pageMapCache.put(value);
 
-function linearSpine(book) {
-  const raw = book?.spine?.spineItems || [];
-  const linear = raw.filter(item => item?.href && item.linear !== "no");
-  return linear.length ? linear : raw.filter(item => item?.href);
-}
-
 function fallbackSectionPage(section) {
   return [{
     sectionIndex: Number(section?.index),
@@ -60,7 +43,7 @@ function fallbackSectionPage(section) {
 }
 
 function prioritizedIndices(book, anchorCfi) {
-  const items = linearSpine(book);
+  const items = linearSpineItems(book);
   const allowed = new Set(items.map(item => Number(item.index)));
   let current = Number(items[0]?.index) || 0;
   if (anchorCfi) {
@@ -117,7 +100,7 @@ export function createPageMapController({
     /* Continuous removes the 48px bottom navigation row. The canonical map always
        describes Pages mode, so normalize that extra Continuous viewport height away. */
     const flowHeightAdjustment = document.body?.classList.contains("reader-flow-scrolled") ? 48 : 0;
-    const spine = linearSpine(book).map(item => `${item.index}:${cleanHref(item.href)}`).join("|");
+    const spine = linearSpineItems(book).map(item => `${item.index}:${cleanSectionHref(item.href)}`).join("|");
     const metadata = book?.packaging?.metadata || {};
     const publication = `${metadata.identifier || ""}|${metadata.modified || ""}|${metadata.title || ""}`;
     const data = {
@@ -454,7 +437,7 @@ export function createPageMapController({
 
   function firstPageForHref(href) {
     if (!activeMap?.pages?.length) return null;
-    return activeMap.pages.find(page => hrefMatches(page.href, href))?.page || null;
+    return activeMap.pages.find(page => sectionHrefMatches(page.href, href))?.page || null;
   }
 
   function hasCompleteMap() {

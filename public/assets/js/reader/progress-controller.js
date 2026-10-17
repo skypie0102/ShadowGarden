@@ -2,6 +2,7 @@ import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — Reader-facing progress adapter over the canonical R2 service. */
 import { beginRenditionNavigation,holdRenditionNavigation,navigateRendition } from "./navigation-state.js";
+import {linearSpineItems} from './sections.js';
 
 const clamp01=value=>Math.min(1,Math.max(0,Number(value)||0));
 const refinementWindow=10000;
@@ -79,7 +80,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
   }
   function approximateProgress(location){
     const book=getBook?.(),displayed=location?.start?.displayed,href=String(location?.start?.href||"").split("#")[0];
-    const raw=book?.spine?.spineItems||[],linear=raw.filter(item=>item?.href&&item.linear!=="no"),items=linear.length?linear:raw.filter(item=>item?.href);
+    const items=linearSpineItems(book);
     if(!items.length)return Number(location?.start?.percentage)||0;
     const index=items.findIndex(item=>{const itemHref=String(item.href||"").split("#")[0];return itemHref===href||itemHref.endsWith(href)||href.endsWith(itemHref)});
     if(index<0)return Number(location?.start?.percentage)||0;
@@ -112,7 +113,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     setProgressUI(percentage,state.currentPosition);onPositionChange?.(state.currentPosition);return state.currentPosition;
   }
   function spineTarget(percentage){
-    const book=getBook?.(),raw=book?.spine?.spineItems||[],linear=raw.filter(item=>item?.href&&item.linear!=="no"),items=linear.length?linear:raw.filter(item=>item?.href);
+    const items=linearSpineItems(getBook?.());
     if(!items.length)return"";const value=clamp01(percentage),index=value>=1?items.length-1:Math.min(items.length-1,Math.floor(value*items.length));return items[index]?.href||"";
   }
   async function performSeek(percentage,{rendition,book,pageMap,flow,operation}){

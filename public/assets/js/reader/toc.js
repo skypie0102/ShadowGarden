@@ -1,21 +1,10 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
+import {cleanSectionHref,sectionHrefMatches} from './sections.js';
 function childrenOf(item) {
   if (Array.isArray(item?.subitems)) return item.subitems;
   if (Array.isArray(item?.children)) return item.children;
   return [];
-}
-
-function cleanHref(value) {
-  let href = String(value || "").split("#")[0].split("?")[0];
-  try { href = decodeURIComponent(href); } catch {}
-  return href.replace(/^\.\//, "").replace(/^\//, "");
-}
-
-function hrefMatches(a, b) {
-  const left = cleanHref(a), right = cleanHref(b);
-  if (!left || !right) return false;
-  return left === right || left.endsWith(`/${right}`) || right.endsWith(`/${left}`);
 }
 
 function flatten(items, depth = 0, output = []) {
@@ -56,7 +45,7 @@ function spineIndexForHref(href, items) {
   if (!href) return null;
   for (let index = 0; index < items.length; index++) {
     const item = items[index];
-    if (!hrefMatches(href, item?.href || item?.url || "")) continue;
+    if (!sectionHrefMatches(href, item?.href || item?.url || "")) continue;
     const explicit = Number(item?.index);
     return Number.isFinite(explicit) ? explicit : index;
   }
@@ -465,14 +454,14 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   function bestEntry(entries) {
     let best = null;
     for (const entry of entries) {
-      if (!best || entry.depth > best.depth || cleanHref(entry.item?.href).length > cleanHref(best.item?.href).length) best = entry;
+      if (!best || entry.depth > best.depth || cleanSectionHref(entry.item?.href).length > cleanSectionHref(best.item?.href).length) best = entry;
     }
     return best;
   }
 
   function matchForLocation(location) {
     const href = location?.start?.href || location?.end?.href || "";
-    const exactEntries = flat.filter(entry => hrefMatches(href, entry.item?.href));
+    const exactEntries = flat.filter(entry => sectionHrefMatches(href, entry.item?.href));
     const exactMeaningful = bestEntry(exactEntries.filter(entry => !genericVisualLabel(entry.item)));
     if (exactMeaningful) return exactMeaningful.item;
 

@@ -19,7 +19,7 @@ validation separately from deployment.
 | --- | --- | --- |
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
-| M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Planned |
+| M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Local checks pass; browser CI pending |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Planned |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
@@ -143,6 +143,39 @@ The tested PR head is `ebd802e89c89c1c1215fc1ef246097b9a1980b7f`, tree
 `c5440eaa1bc6ae6a7c8c79187fc566676c5ea0eb` with that exact tree. A documentation-only
 follow-up publishes this result and the paired profile observations.
 
-M2 is complete. M3, consolidation of truly identical pure helpers while retaining
-intentional link/path differences, is next. No production rollout, catalog edit,
+M2 is complete. M3 follows below. No production rollout, catalog edit,
 migration or storage/configuration change is part of this maintenance increment.
+
+## M3 — shared section helpers
+
+`reader/sections.js` consolidates five equivalent href-normalization/matching
+implementations used by Continuous completion, paginated navigation, the visual
+cache, page maps and TOC. It also shares the linear-spine selection previously
+repeated in both navigation modes, page maps and the two progress adapters.
+Rendition consumers pass their book explicitly.
+
+Section identity still removes literal query/fragment suffixes before decoding
+once, tolerates malformed escapes and preserves case. Matching still requires a
+nonempty path and accepts equality or directory-boundary suffixes. Spine selection
+preserves publication order and section objects, with the existing href-bearing
+fallback when every entry is non-linear.
+
+Internal links and footnotes keep their relative-path, decoded-fragment and
+iframe-local marker contracts. Legacy progress href matching, TOC's full-spine
+navigation and mobile-pagination decisions remain with their existing owners.
+No navigation revision, source lease, cache/persistence format, layout or image
+behavior changes as part of this extraction.
+
+Focused tests cover encoded nested paths, query/fragment order, single decoding,
+malformed escapes, path boundaries, empty identities and both spine-selection
+branches. A paginated controller regression verifies completion on the final
+encoded linear section before trailing auxiliary entries. Local `npm run check`
+passes all **175 Node tests**, the asset audit, static build and binding-aware
+Functions package. Local Markdown links resolve.
+
+A direct comparison against pre-M3 `main`
+(`0671523c0c1bfe9491c7fae66691eec8baf6fa29`) gives identical normalization and
+matching results for 117 inputs across all five old implementations (68,445
+matching pairs). All six old spine selections agree on six book shapes, including
+empty and entirely non-linear spines. Browser integration results and the full
+five-profile CI matrix will be recorded before M3 is marked complete.
