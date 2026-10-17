@@ -20,7 +20,7 @@ validation separately from deployment.
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
-| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Planned |
+| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a local checks pass; browser CI pending |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
 ## M1 implementation
@@ -198,7 +198,48 @@ The tested PR head is `dd0a62dc03611f4e4de6f0f4d19a129fa8fd88a4`, tree
 `7d4a2986b6018fa43b4c0304f9bb9437383a5951` with that exact tree. A documentation-only
 follow-up records the final validation and merge.
 
-M3 is complete. M4, gradual consolidation of shared Continuous manager state,
-is next. Production remains the separately recorded v2.12.5 deployment; no
-production rollout, catalog edit, migration or storage/configuration change is
-part of this source-maintenance increment.
+M3 is complete. M4 follows below. Production remains the separately recorded
+v2.12.5 deployment; no production rollout, catalog edit, migration or
+storage/configuration change is part of this source-maintenance increment.
+
+## M4 — Continuous manager state ownership
+
+Keep this work incremental so that each state concern remains reviewable and
+independently verified.
+
+| Step | Boundary | Status |
+| --- | --- | --- |
+| M4a | Generation and destruction shared by core buffering, layout, image return and delayed scroll/media work. | Local checks pass; browser CI pending |
+| M4b | Buffer/trim task ownership and scheduling state. | Planned |
+| M4c | Input/scroll suppression and remembered layout state, one concern at a time. | Planned |
+
+### M4a implementation
+
+`reader/continuous-state.js` owns generation and destruction data in a private
+WeakMap. Continuous core initializes that data and owns navigation-generation
+advancement and destruction marking. Core buffering, layout transactions, image
+return, rendition scroll/trim guards and delayed compatibility-media work share
+its read accessors. The old `__sgGeneration` and `__sgDestroyed` properties have
+no remaining production or test consumers.
+
+Reads do not install a manager or create state. A generation stays undefined
+until core initialization; disposal marks it destroyed and advances the counter
+at each existing teardown boundary. The state is retained while its manager is
+reachable so late callbacks cannot observe a fresh lifetime. Reader scopes still
+own cancellation/resource release; the new module owns only these shared values.
+
+All five production consumers match pre-M4 `main`
+(`12f7e8f65bd00e08c63bca95c7c2d2cefaa18490`) after reversing the state-access and
+transition substitutions and normalizing JavaScript. This confirms unchanged
+consumer control flow and operation order. The three new regressions also pass
+against both the baseline and candidate: an old buffer cannot show its late view
+or clear a newer task, destroyed-manager settlement cannot publish late work,
+and a layout transaction cannot compensate after destroying its manager.
+Existing image-return/navigation regressions use the same state boundary.
+
+Buffer promises/generations, trim scheduling, user-input suppression, geometry,
+view/source lifetimes, render/hook order, cache/persistence formats and diagnostic
+classification retain their existing behavior. Local `npm run check` passes all
+**178 Node tests**, the asset audit, static build and binding-aware Functions
+package. The complete five-profile browser matrix is required before marking
+M4a complete.

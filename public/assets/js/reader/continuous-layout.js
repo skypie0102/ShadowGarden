@@ -3,12 +3,13 @@
    the reader can continue scrolling while that work is pending. */
 import {readerAbortError,readerInstanceScope} from './lifecycle.js';
 import {captureContinuousLayoutAnchor} from './rendition.js';
+import {continuousGeneration,isContinuousDestroyed} from './continuous-state.js';
 const transactions=new WeakSet();
 const wrappedViews=new WeakSet();
 const contentAnchors=new WeakMap();
 
 export function rememberContinuousLayout(manager){
-  if(!manager?.container||manager.__sgDestroyed||document.body.classList.contains('reader-image-focused')){
+  if(!manager?.container||isContinuousDestroyed(manager)||document.body.classList.contains('reader-image-focused')){
     contentAnchors.delete(manager);return;
   }
   const anchor=captureContinuousLayoutAnchor(manager);
@@ -17,7 +18,7 @@ export function rememberContinuousLayout(manager){
 
 function contentLayoutAnchor(manager){
   const saved=contentAnchors.get(manager);
-  if(!saved||saved.generation!==manager.__sgGeneration||!saved.node.isConnected||!saved.view.iframe?.isConnected||manager.settings?.axis!=='vertical')return null;
+  if(!saved||saved.generation!==continuousGeneration(manager)||!saved.node.isConnected||!saved.view.iframe?.isConnected||manager.settings?.axis!=='vertical')return null;
   const frame=saved.view.iframe.getBoundingClientRect(),viewport=manager.container.getBoundingClientRect();
   if(Math.abs(frame.width-saved.width)>1)return null;
   const scroll=Number(saved.node.ownerDocument?.defaultView?.scrollY)||0;
@@ -56,16 +57,16 @@ function visibleView(manager){
 }
 
 export function preserveContinuousLayout(manager,change){
-  if(!manager?.container||manager.__sgDestroyed||transactions.has(manager))return change();
+  if(!manager?.container||isContinuousDestroyed(manager)||transactions.has(manager))return change();
   transactions.add(manager);
-  let anchor=null;const generation=manager.__sgGeneration;
+  let anchor=null;const generation=continuousGeneration(manager);
   try{
     anchor=(!document.body.classList.contains('reader-image-focused')&&contentLayoutAnchor(manager))||visibleView(manager);
     return change();
   }
   finally{
     transactions.delete(manager);
-    if(anchor&&anchor.element.isConnected!==false&&!manager.__sgDestroyed&&generation===manager.__sgGeneration){
+    if(anchor&&anchor.element.isConnected!==false&&!isContinuousDestroyed(manager)&&generation===continuousGeneration(manager)){
       const rect=anchor.element.getBoundingClientRect();
       const top=anchor.node?.isConnected?anchor.frame.getBoundingClientRect().top+anchor.node.getBoundingClientRect().top:rect.top;
       const delta=manager.settings?.axis==='horizontal'?rect.left-anchor.left:top-anchor.top;

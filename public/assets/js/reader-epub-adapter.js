@@ -2,6 +2,7 @@ import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 import {preserveContinuousLayout} from './reader/continuous-layout.js';
 import {linearSpineItems} from './reader/sections.js';
+import {isContinuousDestroyed} from './reader/continuous-state.js';
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
@@ -288,7 +289,7 @@ export function createEpubCompatibilityExtension(){
       heightSyncTasks.set(manager,owner.timeout(()=>{
         heightSyncTasks.delete(manager);
         try{
-          if(manager.__sgDestroyed||!String(rendition.settings?.flow||manager.settings?.flow||'').startsWith('scrolled'))return;
+          if(isContinuousDestroyed(manager)||!String(rendition.settings?.flow||manager.settings?.flow||'').startsWith('scrolled'))return;
           const targets=(manager.views?.all?.()||[]).map(view=>({view,el:view.element,frame:view.iframe}));
           /* Idempotent truth-up: any drift between a section frame's frozen height and its
              live document extent is rewritten to the exact current value, so natural flow

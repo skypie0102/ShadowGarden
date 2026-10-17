@@ -35,6 +35,7 @@ without registering another application engine.
 | Book creation | Engine creation owns ordered adapters and rendition teardown through the book scope. |
 | Visual service | One service per engine; bootstrap/session/fitting/error classification and disposal use that same instance. `prepare`, `summary`, `has` and `applyToContents` preserve existing identities, cancellation and fallback behavior. |
 | Continuous settlement | Engine settlement checks manager generation/disposal while completing its current neighborhood. |
+| Continuous lifetime state | `reader/continuous-state.js` owns private generation/destruction data. Continuous core retains initialization/display/teardown transitions; layout, image return and delayed work only read it. |
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
 | Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
@@ -62,9 +63,12 @@ partial-startup cancellation handoff remain unchanged.
 | Paginated visuals | Fitting adapts expansion, document/frame geometry and manager display for one-page synthetic visuals, using the injected service. |
 | Compatibility layout | Late-media measurement uses view reframing and owned fallback deadlines; replace timers/polling only with equivalent readiness coverage. |
 
-Shared manager fields still carry generation/destruction state, buffer scheduling,
-scroll bookkeeping and the live block anchor. M4 will consolidate that state
-without changing which navigation/layout operations share ownership.
+M4a moves generation/destruction state from vendor-manager properties into
+`reader/continuous-state.js`. The original transition and observation points
+remain unchanged, including undefined generations before core installation and
+invalidation at both teardown boundaries. Reader scopes still own actual resource
+disposal. Buffer scheduling, scroll bookkeeping and live block anchors remain
+separate M4 follow-ups.
 
 ## Owned Continuous render order
 

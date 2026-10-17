@@ -1,5 +1,6 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {renditionRenderRevision,settleRenditionContent} from './epub-lifecycle.js';
+import {continuousGeneration,isContinuousDestroyed} from './continuous-state.js';
 /* Shadow Garden R4 — EPUB.js rendition lifecycle adapter. */
 import {beginRenditionNavigation,holdRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 
@@ -380,7 +381,7 @@ export function captureContinuousLayoutAnchor(manager){
     if(!node)return null;
     const block=node.getBoundingClientRect(),scroll=Number(doc.defaultView?.scrollY)||0;
     const distance=Math.max(0,block.top-y,y-block.bottom);
-    return{view,node,width:rect.width,localTop:block.top+scroll,height:block.height,distance,generation:manager.__sgGeneration};
+    return{view,node,width:rect.width,localTop:block.top+scroll,height:block.height,distance,generation:continuousGeneration(manager)};
   }catch{return null}
 }
 
@@ -492,7 +493,7 @@ export function stabilizeContinuousScrollLifecycle(rendition){
     if(suppressed())return;
     timer=setTimeout(()=>{
       timer=0;
-      if(manager.__sgDestroyed||suppressed())return;
+      if(isContinuousDestroyed(manager)||suppressed())return;
       const scrolled=manager.__sgContinuousScrolled||manager.scrolled;
       if(typeof scrolled==="function")scrolled.apply(manager,args);
     },30);
@@ -504,7 +505,7 @@ export function stabilizeContinuousScrollLifecycle(rendition){
   const currentTrim=typeof manager.trim==="function"?manager.trim:null;
   if(currentTrim){
     manager.trim=function(...args){
-      if(manager.__sgDestroyed||suppressed())return Promise.resolve();
+      if(isContinuousDestroyed(manager)||suppressed())return Promise.resolve();
       try{return currentTrim.apply(manager,args)}catch(error){return Promise.reject(error)}
     };
   }

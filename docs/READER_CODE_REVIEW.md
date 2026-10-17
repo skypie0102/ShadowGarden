@@ -55,3 +55,9 @@ M3 shares identical section href identity/matching and linear-spine selection in
 `reader/sections.js`. Relative links, notes, legacy progress href matching and
 mobile-pagination rules retain their existing behavior. The architecture records
 that boundary; maintenance tracks its checks and merge status.
+
+M4a centralizes Continuous generation/destruction state in a private WeakMap,
+with core-owned transitions and shared readers for buffering, layout, image
+return and delayed scroll/media work. Buffer/trim scheduling and input/layout
+state remain separate increments. The existing transition order and lifecycle
+scope ownership are preserved; maintenance records validation and publication.

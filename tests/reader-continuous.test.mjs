@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createContinuousController} from '../public/assets/js/reader/continuous.js';
 import {createContinuousCoreExtension} from '../public/assets/js/reader-continuous-core.js';
 import {stabilizeContinuousScrollLifecycle} from '../public/assets/js/reader/rendition.js';
+import {initializeContinuousState,advanceContinuousGeneration,destroyContinuousState} from '../public/assets/js/reader/continuous-state.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
@@ -60,7 +61,8 @@ test('completed same-target displays can settle new geometry instead of being su
   globalThis.document={getElementById:()=>null,body:{classList:{contains:()=>false}}};
   t.after(()=>oldDocument?globalThis.document=oldDocument:delete globalThis.document);
   let calls=0;
-  const manager={__sgCoreMethodsInstalled:true,__sgCoreScrollBound:true,__sgGeneration:1,container:{scrollTop:0,scrollLeft:0},settings:{},views:{all:()=>[]}};
+  const manager={__sgCoreMethodsInstalled:true,__sgCoreScrollBound:true,container:{scrollTop:0,scrollLeft:0},settings:{},views:{all:()=>[]}};
+  initializeContinuousState(manager);advanceContinuousGeneration(manager);
   const rendition={manager,display:async()=>{calls++},book:{spine:{spineItems:[]}}};
   const extension=createContinuousCoreExtension(),book=extension.attachBook({renderTo:()=>rendition});
   const patched=book.renderTo('viewer',{flow:'scrolled-doc'});
@@ -73,5 +75,5 @@ test('vendor boolean scroll bookkeeping cannot replace the owned scroll reporter
   const manager={scrolled:true,_scrolled(){},__sgContinuousScrolled(){calls++}};
   assert.equal(stabilizeContinuousScrollLifecycle({manager}),true);
   manager._scrolled();t.mock.timers.tick(31);assert.equal(calls,1);
-  manager.__sgDestroyed=true;manager._scrolled();t.mock.timers.tick(31);assert.equal(calls,1);
+  destroyContinuousState(manager);manager._scrolled();t.mock.timers.tick(31);assert.equal(calls,1);
 });

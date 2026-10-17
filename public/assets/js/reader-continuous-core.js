@@ -3,6 +3,13 @@ import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
 import {installContinuousLayout,rememberContinuousLayout} from './reader/continuous-layout.js';
 import {interruptRenditionNavigation} from './reader/navigation-state.js';
 import {sectionHrefMatches,linearSpineItems} from './reader/sections.js';
+import {
+  continuousGeneration,
+  isContinuousDestroyed,
+  initializeContinuousState,
+  advanceContinuousGeneration,
+  destroyContinuousState
+} from './reader/continuous-state.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
  * Keeps v1.4's single-owner Continuous architecture, but separates three concerns:
@@ -149,7 +156,7 @@ export function createContinuousCoreExtension(){
     try{
       const work=Promise.resolve(view.display(manager.request)).then(async shown=>{
         const live=shown||view;
-        if(scope.disposed||manager.__sgDestroyed||generation!==undefined&&generation!==manager.__sgGeneration)return false;
+        if(scope.disposed||isContinuousDestroyed(manager)||generation!==undefined&&generation!==continuousGeneration(manager))return false;
         live.stopExpanding=false;
         try{live.expand?.(true)}catch{}
         live.show?.();
@@ -157,20 +164,20 @@ export function createContinuousCoreExtension(){
         return true;
       });
       const result=await scope.wait(Promise.race([work,new Promise(resolve=>scope.timeout(()=>resolve(false),VIEW_TIMEOUT_MS))]));
-      if(result!==true&&!manager.__sgDestroyed&&generation===manager.__sgGeneration){
+      if(result!==true&&!isContinuousDestroyed(manager)&&generation===continuousGeneration(manager)){
         recordReaderDiagnostic('continuous.timeout');
       }
       return result===true;
     }catch(error){
-      if(error?.name!=='AbortError'&&!manager.__sgDestroyed&&(generation===undefined||generation===manager.__sgGeneration)){
+      if(error?.name!=='AbortError'&&!isContinuousDestroyed(manager)&&(generation===undefined||generation===continuousGeneration(manager))){
         recordReaderDiagnostic('continuous.failed');
       }
       return false;
     }finally{scope.dispose()}
   }
 
-  async function safeUpdate(manager,offset=0,generation=manager.__sgGeneration){
-    if(!manager?.container||!manager?.views||generation!==manager.__sgGeneration)return false;
+  async function safeUpdate(manager,offset=0,generation=continuousGeneration(manager)){
+    if(!manager?.container||!manager?.views||generation!==continuousGeneration(manager))return false;
     const bounds=manager.bounds?.();
     const views=loadedViews(manager);
     const jobs=[];
@@ -193,7 +200,7 @@ export function createContinuousCoreExtension(){
   }
 
   async function prependOne(manager,generation){
-    if(generation!==manager.__sgGeneration)return false;
+    if(generation!==continuousGeneration(manager))return false;
     const first=manager.views?.first?.(),section=first?.section?.prev?.();
     if(!section)return false;
     let view=null;
@@ -201,7 +208,7 @@ export function createContinuousCoreExtension(){
     return displayView(view,manager,generation);
   }
   async function appendOne(manager,generation){
-    if(generation!==manager.__sgGeneration)return false;
+    if(generation!==continuousGeneration(manager))return false;
     const last=manager.views?.last?.(),section=last?.section?.next?.();
     if(!section)return false;
     let view=null;
@@ -218,7 +225,7 @@ export function createContinuousCoreExtension(){
   function scheduleTrim(manager,rendition){
     clearTimeout(manager.__sgTrimTimer);
     manager.__sgTrimTimer=setTimeout(()=>{
-      if(manager.__sgDestroyed)return;
+      if(isContinuousDestroyed(manager))return;
       if(manager.__sgBufferPromise||Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
       const range=visibleRange(manager),views=range.views;
       if(range.first<0||views.length<=MAX_RETAINED_VIEWS)return;
@@ -236,7 +243,7 @@ export function createContinuousCoreExtension(){
   }
 
   async function ensureNeighborhood(manager,rendition,generation){
-    if(generation!==manager.__sgGeneration||manager.__sgDestroyed||!manager.container||!manager.views)return false;
+    if(generation!==continuousGeneration(manager)||isContinuousDestroyed(manager)||!manager.container||!manager.views)return false;
     syncScrollPosition(manager);
     let range=visibleRange(manager);
     if(range.first<0)return false;
@@ -244,23 +251,23 @@ export function createContinuousCoreExtension(){
 
     const before=Math.max(0,range.first);
     for(let count=before;count<BUFFER_EACH_SIDE;count+=1){
-      if(generation!==manager.__sgGeneration)return false;
+      if(generation!==continuousGeneration(manager))return false;
       if(!await prependOne(manager,generation))break;
       changed=true;
     }
-    if(generation!==manager.__sgGeneration)return false;
+    if(generation!==continuousGeneration(manager))return false;
 
     range=visibleRange(manager);
     const after=Math.max(0,range.views.length-1-range.last);
     for(let count=after;count<BUFFER_EACH_SIDE;count+=1){
-      if(generation!==manager.__sgGeneration)return false;
+      if(generation!==continuousGeneration(manager))return false;
       if(!await appendOne(manager,generation))break;
       changed=true;
     }
-    if(generation!==manager.__sgGeneration)return false;
+    if(generation!==continuousGeneration(manager))return false;
 
     await safeUpdate(manager,0,generation);
-    if(generation!==manager.__sgGeneration)return false;
+    if(generation!==continuousGeneration(manager))return false;
     manager.ignore=false;
     syncScrollPosition(manager);
     scheduleTrim(manager,rendition);
@@ -270,8 +277,8 @@ export function createContinuousCoreExtension(){
   }
 
   function scheduleBuffer(manager,rendition){
-    if(!manager?.container||!manager?.views||manager.__sgDestroyed)return Promise.resolve(false);
-    const generation=manager.__sgGeneration||0;
+    if(!manager?.container||!manager?.views||isContinuousDestroyed(manager))return Promise.resolve(false);
+    const generation=continuousGeneration(manager)||0;
     if(manager.__sgBufferPromise&&manager.__sgBufferGeneration===generation){
       manager.__sgBufferAgain=true;
       return manager.__sgBufferPromise;
@@ -282,11 +289,11 @@ export function createContinuousCoreExtension(){
       do{
         manager.__sgBufferAgain=false;
         changed=await ensureNeighborhood(manager,rendition,generation)||changed;
-      }while(manager.__sgBufferAgain&&generation===manager.__sgGeneration&&!manager.__sgDestroyed);
-      finish({views:loadedViews(manager).length},generation===manager.__sgGeneration&&!manager.__sgDestroyed?'continuous.buffered':'continuous.cancelled');
+      }while(manager.__sgBufferAgain&&generation===continuousGeneration(manager)&&!isContinuousDestroyed(manager));
+      finish({views:loadedViews(manager).length},generation===continuousGeneration(manager)&&!isContinuousDestroyed(manager)?'continuous.buffered':'continuous.cancelled');
       return changed;
     }).catch(error=>{
-      finish({},error?.name==='AbortError'||manager.__sgDestroyed||generation!==manager.__sgGeneration?'continuous.cancelled':'continuous.failed');
+      finish({},error?.name==='AbortError'||isContinuousDestroyed(manager)||generation!==continuousGeneration(manager)?'continuous.cancelled':'continuous.failed');
       return false;
     }).finally(()=>{
       if(manager.__sgBufferPromise===task){manager.__sgBufferPromise=null;manager.__sgBufferGeneration=-1}
@@ -334,8 +341,7 @@ export function createContinuousCoreExtension(){
     if(!manager||manager.__sgCoreMethodsInstalled)return Boolean(manager?.__sgCoreMethodsInstalled);
     manager.__sgCoreMethodsInstalled=true;
     readerInstanceScope(manager).link(readerInstanceScope(rendition));
-    manager.__sgDestroyed=false;
-    manager.__sgGeneration=0;
+    initializeContinuousState(manager);
     manager.__sgBufferGeneration=-1;
 
     manager.getScrollPosition=()=>getScrollPosition(manager);
@@ -354,7 +360,7 @@ export function createContinuousCoreExtension(){
       };
     }
     installContinuousLayout(manager);
-    manager.update=offset=>safeUpdate(manager,Number(offset)||0,manager.__sgGeneration);
+    manager.update=offset=>safeUpdate(manager,Number(offset)||0,continuousGeneration(manager));
     manager.check=()=>{
       scheduleBuffer(manager,rendition);
       return Promise.resolve(false);
@@ -368,13 +374,12 @@ export function createContinuousCoreExtension(){
     const baseDisplay=defaultManagerDisplay(manager);
     if(baseDisplay){
       manager.display=(section,displayTarget)=>{
-        const generation=(manager.__sgGeneration||0)+1;
-        manager.__sgGeneration=generation;
+        const generation=advanceContinuousGeneration(manager);
         manager.__sgBufferGeneration=-1;
         manager.__sgBufferPromise=null;
         clearTimeout(manager.__sgTrimTimer);
         return Promise.resolve(baseDisplay.call(manager,section,displayTarget)).then(result=>{
-          if(generation!==manager.__sgGeneration)return result;
+          if(generation!==continuousGeneration(manager))return result;
           manager.ignore=false;
           if(manager.container)syncScrollPosition(manager);
           readerInstanceScope(rendition).timeout(()=>scheduleBuffer(manager,rendition),0);
@@ -420,7 +425,7 @@ export function createContinuousCoreExtension(){
     manager.scrollDeltaHorz=0;
 
     const onScrolled=()=>{
-      if(manager.__sgDestroyed)return;
+      if(isContinuousDestroyed(manager))return;
       const position=syncScrollPosition(manager);
       try{manager.emit?.("scroll",position)}catch{}
       scheduleBuffer(manager,rendition);
@@ -464,14 +469,13 @@ export function createContinuousCoreExtension(){
     try{scope.hook(rendition.hooks?.content,contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
     try{scope.on(rendition,"rendered",()=>{
       try{rendition.getContents?.().forEach(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
-      safeUpdate(manager,0,manager.__sgGeneration).catch(()=>{});
+      safeUpdate(manager,0,continuousGeneration(manager)).catch(()=>{});
       scheduleBuffer(manager,rendition);
     })}catch{}
 
     const rawDestroy=typeof manager.destroy==="function"?manager.destroy.bind(manager):null;
     if(rawDestroy)manager.destroy=(...args)=>{
-      manager.__sgDestroyed=true;
-      manager.__sgGeneration=(manager.__sgGeneration||0)+1;
+      destroyContinuousState(manager);
       clearTimeout(manager.__sgTrimTimer);
       clearTimeout(manager.afterScrolled);
       clearTimeout(manager.scrollTimeout);
@@ -510,7 +514,7 @@ export function createContinuousCoreExtension(){
     const scope=readerInstanceScope(rendition);
     scope.add(()=>{
       const manager=rendition.manager;
-      if(manager){manager.__sgDestroyed=true;manager.__sgGeneration=(manager.__sgGeneration||0)+1;clearTimeout(manager.__sgTrimTimer);clearTimeout(manager.afterScrolled);clearTimeout(manager.scrollTimeout);manager._scrolled?.cancel?.()}
+      if(manager){destroyContinuousState(manager);clearTimeout(manager.__sgTrimTimer);clearTimeout(manager.afterScrolled);clearTimeout(manager.scrollTimeout);manager._scrolled?.cancel?.()}
       hidePagedEnd();manager?.__sgEndPage?.remove?.();
     });
     const continuous=isContinuous(options,rendition);
@@ -534,7 +538,7 @@ export function createContinuousCoreExtension(){
             if(manager?.container){
               manager.ignore=false;
               syncScrollPosition(manager);
-              safeUpdate(manager,0,manager.__sgGeneration).catch(()=>{});
+              safeUpdate(manager,0,continuousGeneration(manager)).catch(()=>{});
               scheduleBuffer(manager,rendition);
             }
             syncContinuousEnd(rendition);
@@ -587,13 +591,13 @@ export function createContinuousCoreExtension(){
 
   async function settleNavigation(rendition){
     const manager=rendition?.manager;
-    if(!manager?.container||manager.__sgDestroyed)return false;
-    const generation=manager.__sgGeneration;
+    if(!manager?.container||isContinuousDestroyed(manager))return false;
+    const generation=continuousGeneration(manager);
     await scheduleBuffer(manager,rendition);
-    if(manager.__sgDestroyed||generation!==manager.__sgGeneration)return false;
+    if(isContinuousDestroyed(manager)||generation!==continuousGeneration(manager))return false;
     await safeUpdate(manager,0,generation);
     await readerInstanceScope(manager).paint();
-    return !manager.__sgDestroyed&&generation===manager.__sgGeneration;
+    return !isContinuousDestroyed(manager)&&generation===continuousGeneration(manager);
   }
 
   return {name:"continuous-core",attachBook:patchBook,settleNavigation};
