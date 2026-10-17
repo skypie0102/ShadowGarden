@@ -18,7 +18,7 @@ validation separately from deployment.
 | Increment | Scope and completion check | Status |
 | --- | --- | --- |
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
-| M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Implemented; validation in progress |
+| M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Planned |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Planned |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
@@ -108,6 +108,41 @@ The controller falls from 729 to 486 lines; measurement is a cohesive 257-line
 module. These counts describe the split, not a complexity or speed claim.
 Exact source-block comparison and existing integration/profile checks validate
 that the extraction preserves behavior. Local `npm run check` passes all 167 Node tests, the asset audit and both builds.
-Paired long-prose, repeated-plate and unique-plate profiles and the full browser
-matrix remain in progress. Final validation/merge identities will be recorded
-here before marking M2 complete. Production remains v2.12.5.
+The paired profiles below and the complete five-profile browser matrix pass.
+Production remains the separately verified v2.12.5 deployment.
+
+### M2 paired publication profiles
+
+The three baseline/candidate profile pairs pass with identical canonical totals,
+normalization counts, source/view counters and retained views. Every cached
+reopening performs zero conversions. Raw observations and exact source identities
+are in [reader-measurement-profiles.json](reader-measurement-profiles.json).
+
+| Generated publication | Pages before / after | Conversions before / after | Map peak sources | Reader peak sources |
+| --- | ---: | ---: | ---: | ---: |
+| Long prose — 80 chapters | 1761 / 1761 | 1 / 1 | 1 / 1 | 10 / 10 |
+| Repeated plates — 40 chapters | 261 / 261 | 1 / 1 | 1 / 1 | 10 / 10 |
+| Unique plates — 40 chapters | 261 / 261 | 21 / 21 | 1 / 1 | 10 / 10 |
+
+These are single paired local samples for preservation checks. Timing differences
+are recorded without a speed claim; generated publications do not replace genuine
+provider/physical-phone acceptance.
+
+### M2 CI and merge
+
+[CI run 39029387678](https://github.com/skypie0102/ShadowGarden/actions/runs/39029387678)
+passes the asset audit, all **167 Node tests**, both builds and **277 browser
+cases** across five profiles on the first run, with eight existing platform skips.
+Desktop/mobile Chromium pass 57 cases each, Firefox and desktop WebKit pass 55
+each with two skips, and mobile WebKit passes 53 with four skips. No assertions,
+timeouts or compatibility rules were changed for this extraction.
+
+The tested PR head is `ebd802e89c89c1c1215fc1ef246097b9a1980b7f`, tree
+`e5f89a5cdb9b1c7ad6b73b4465733e4722ba8d27`.
+[PR #15](https://github.com/skypie0102/ShadowGarden/pull/15) merged as
+`c5440eaa1bc6ae6a7c8c79187fc566676c5ea0eb` with that exact tree. A documentation-only
+follow-up publishes this result and the paired profile observations.
+
+M2 is complete. M3, consolidation of truly identical pure helpers while retaining
+intentional link/path differences, is next. No production rollout, catalog edit,
+migration or storage/configuration change is part of this maintenance increment.

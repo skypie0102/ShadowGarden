@@ -1,0 +1,189 @@
+{
+  "baselineSource": "bd86f722fa17c0c563883ac9dc3c8ec9626cf2b6",
+  "candidateSource": "ebd802e89c89c1c1215fc1ef246097b9a1980b7f",
+  "method": "One paired local Chromium sample per generated publication using the production reader entry point and static preview with fixture network responses. Counts validate unchanged behavior; timings are observations without a speed claim.",
+  "checks": {
+    "identicalPageTotals": true,
+    "identicalConversions": true,
+    "identicalSourceViewCounts": true,
+    "cachedReopenConversions": 0
+  },
+  "baseline": [
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "warm": {
+        "startupMs": 516,
+        "conversions": 0
+      },
+      "startupMs": 1074,
+      "mapReadyMs": 8187,
+      "conversions": 1,
+      "visualReadyMs": 401.30000000004657,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 118,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 395,
+        "conversions": 0
+      },
+      "startupMs": 521,
+      "mapReadyMs": 4478,
+      "conversions": 1,
+      "visualReadyMs": 265.30000000004657,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 78,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 399,
+        "conversions": 0
+      },
+      "startupMs": 1530,
+      "mapReadyMs": 5474,
+      "conversions": 21,
+      "visualReadyMs": 854.4000000001397,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 78,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    }
+  ],
+  "candidate": [
+    {
+      "fixture": "long-prose",
+      "chapterCount": 80,
+      "paragraphCount": 48,
+      "warm": {
+        "startupMs": 460,
+        "conversions": 0
+      },
+      "startupMs": 1087,
+      "mapReadyMs": 8171,
+      "conversions": 1,
+      "visualReadyMs": 406.19999999995343,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 118,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 81,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 1761,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "repeated-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 406,
+        "conversions": 0
+      },
+      "startupMs": 515,
+      "mapReadyMs": 4448,
+      "conversions": 1,
+      "visualReadyMs": 269.10000000009313,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 78,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    },
+    {
+      "fixture": "unique-plates",
+      "chapterCount": 40,
+      "paragraphCount": 24,
+      "warm": {
+        "startupMs": 393,
+        "conversions": 0
+      },
+      "startupMs": 1533,
+      "mapReadyMs": 5492,
+      "conversions": 21,
+      "visualReadyMs": 907,
+      "books": [
+        {
+          "role": "reader",
+          "loads": 78,
+          "peakSources": 10,
+          "peakViews": 9
+        },
+        {
+          "role": "map",
+          "loads": 41,
+          "peakSources": 1,
+          "peakViews": 1
+        }
+      ],
+      "totalPages": 261,
+      "retainedViews": 5
+    }
+  ]
+}
