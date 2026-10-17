@@ -404,7 +404,7 @@ does not change catalog data, migrations, storage or configuration.
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
 | M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
-| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 search/TOC ownership in validation; bookmark and app callbacks follow separately |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); bookmark and app callbacks follow separately |
 
 ### M5a implementation
 
@@ -638,3 +638,29 @@ cases** pass, including the two new cases. A final four-case rerun confirms that
 active failures named `AbortError` still report while disposed failures do not.
 The complete five-profile CI matrix is required before merge. Production remains
 v2.12.5; this increment changes source diagnostics, not deployment or data.
+
+### M5c1 CI and merge
+
+[CI run 39074208919](https://github.com/skypie0102/ShadowGarden/actions/runs/39074208919)
+passes the audit, all **198 Node tests**, both builds and **312 browser cases**
+across five profiles on the first attempt. Desktop/mobile Chromium pass 64 cases
+each; Firefox and desktop WebKit pass 62 each with two skips; mobile WebKit passes
+60 with four skips. These are the same eight existing platform skips. The two
+new navigation diagnostic cases pass in every profile, adding ten browser cases.
+Existing assertions, explicit waits, timeouts and tolerances are unchanged.
+
+The tested PR head is `b068d1139acb6c8bf17bb435e4514dc4bf53324f`, tree
+`efe5e29462205b9967eb3a5dc92e41bd9580e54e`.
+[PR #22](https://github.com/skypie0102/ShadowGarden/pull/22) merged as
+`8ac6b0e315eca32319490c0fcabd8a3793295153` with that exact tree. A documentation-only
+follow-up records final validation and groups ownership guidance with the existing
+architecture diagnostics section. All 81 local Markdown file links resolve.
+
+M5c1 is complete; M5c remains in progress. Next, reproduce and cover bookmark
+lookup/navigation rejection after disposal, including its diagnostic and toast.
+Review app callbacks against their own scope, rendition and operation ownership
+before extending guards. Do not suppress active failures or actual cleanup errors.
+
+Production remains the separately recorded v2.12.5 deployment. This maintenance
+does not change catalog data, migrations, storage or configuration. The earlier
+scroll-stress cause remains open and its archived witness is unchanged.
