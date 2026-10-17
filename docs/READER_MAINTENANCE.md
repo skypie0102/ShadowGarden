@@ -19,7 +19,7 @@ validation separately from deployment.
 | --- | --- | --- |
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
-| M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Local checks pass; browser CI pending |
+| M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Planned |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
@@ -177,5 +177,28 @@ A direct comparison against pre-M3 `main`
 (`0671523c0c1bfe9491c7fae66691eec8baf6fa29`) gives identical normalization and
 matching results for 117 inputs across all five old implementations (68,445
 matching pairs). All six old spine selections agree on six book shapes, including
-empty and entirely non-linear spines. Browser integration results and the full
-five-profile CI matrix will be recorded before M3 is marked complete.
+empty and entirely non-linear spines. All **12 targeted desktop/mobile Chromium
+cases** pass for EPUB 2 encoded nested paths, TOC, notes, internal links, search,
+seeking, mode switches and reopening through the production reader entry point.
+That local run substitutes technical-publication network responses and serves
+static assets; the full CI run below also uses disposable Pages/D1 state.
+
+### M3 CI and merge
+
+[CI run 39032042519](https://github.com/skypie0102/ShadowGarden/actions/runs/39032042519)
+passes the audit, all **175 Node tests**, both builds and **277 browser cases**
+across five profiles on the first run. Desktop/mobile Chromium pass 57 cases each;
+Firefox and desktop WebKit pass 55 each with two skips; mobile WebKit passes 53
+with four skips. These are the same eight existing platform skips. No assertions,
+timeouts or compatibility rules were changed for this cleanup.
+
+The tested PR head is `dd0a62dc03611f4e4de6f0f4d19a129fa8fd88a4`, tree
+`c606a3b36aa31c86c06084b1b9ace226ed4740d5`.
+[PR #16](https://github.com/skypie0102/ShadowGarden/pull/16) merged as
+`7d4a2986b6018fa43b4c0304f9bb9437383a5951` with that exact tree. A documentation-only
+follow-up records the final validation and merge.
+
+M3 is complete. M4, gradual consolidation of shared Continuous manager state,
+is next. Production remains the separately recorded v2.12.5 deployment; no
+production rollout, catalog edit, migration or storage/configuration change is
+part of this source-maintenance increment.
