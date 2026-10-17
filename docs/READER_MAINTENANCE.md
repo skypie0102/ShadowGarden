@@ -795,3 +795,31 @@ records 68 transactions and zero such shrinks. Neither shows a reversal or
 geometry/document mismatch. These are harness validation, not causal resolution.
 All 204 Node tests pass, including a regression verifying that the summary
 retains the real historical sample 89 / -56 px witness.
+
+
+[PR #25](https://github.com/skypie0102/ShadowGarden/pull/25) merges after its first
+normal [CI run 39079730562](https://github.com/skypie0102/ShadowGarden/actions/runs/39079730562)
+passes 204 Node tests and 322 browser cases across five profiles, with eight
+existing skips. The paired [recorded run 39079730631](https://github.com/skypie0102/ShadowGarden/actions/runs/39079730631)
+passes 92 original-source and 96 current-source cases. Each includes the native
+case in its normal suite position plus 30 appended probes.
+
+Downloaded artifacts are verified against their published SHA256 digests;
+summaries are recomputed byte-for-byte from full reports. Their 62 recorded
+traces retain 11,473 passage samples, 1,932 complete anchor transactions and 925
+correlated scroll writes. Anchor identities, correction deltas and write
+arithmetic are consistent. No reversal, geometry disagreement or document
+mismatch recurs. Original source records 393 repeated 56 px shrinks; current
+source records none. All anchors are semantic blocks, leaving the view-anchor
+fallback path unexercised. This gap is the next controlled investigation target;
+it is not an identified cause.
+
+Provenance, per-trace summaries and integrity checks are permanent in
+[reader-scroll-recorded-ci.json](reader-scroll-recorded-ci.json). Tested head
+`fb9240e23e123a5d6468f483362e745892c76d9f`, tree
+`10d3bacf795818fe31bcb2d7f9666934a5f8a094`, merges as
+`d8de2c19de9bf08403bf73759b9cd11bd6714c90`. CI tested synthetic merge
+`83024dcfac6e32855baa738934921c8673d7476f`; its current-source provenance is retained
+alongside the original source identity. A documentation-only follow-up publishes
+these final results. The historical reversal remains open; no deployment or
+production data/configuration changes were made.

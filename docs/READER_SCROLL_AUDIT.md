@@ -218,3 +218,14 @@ on the original and current source in CI. It records the actual anchor choice,
 post-change correction and scroll writes in the native case's original suite
 position and in 30 later warm probes. Normal tests and production source retain
 their existing behavior; the dedicated jobs explicitly account for logging overhead.
+
+
+The first recorded CI comparison passes 92 original-source and 96 current-source
+cases. Its 62 recorded traces contain 11,473 passage samples and 1,932 complete
+anchor transactions, with no negative delta below -3 px. Original-source frame
+cycling recurs (393 shrinks of 56 px); current source has zero such events.
+All records select block anchors, leaving view-anchor fallback unexercised. The
+[per-source evidence](reader-scroll-recorded-ci.json) and
+[recording guide](READER_SCROLL_DIAGNOSTICS.md#first-recorded-ci-comparison)
+retain that limitation. These results confirm recording fidelity and the earlier
+height-cycle fix, not the cause or resolution of the original reversal.

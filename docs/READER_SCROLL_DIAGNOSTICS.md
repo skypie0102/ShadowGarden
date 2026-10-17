@@ -78,3 +78,34 @@ node scripts/summarize-reader-scroll-diagnostics.mjs \
 
 Read the [original-artifact investigation](READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up)
 for the recovered trace, corrected font geometry and previous reproduction limits.
+
+
+## First recorded CI comparison
+
+[Run 39079730631](https://github.com/skypie0102/ShadowGarden/actions/runs/39079730631)
+passes on both sources. Permanent summaries, provenance, artifact hashes and
+record-integrity checks are in [reader-scroll-recorded-ci.json](reader-scroll-recorded-ci.json).
+
+| Measurement | Original source | Current source |
+| --- | ---: | ---: |
+| Passing suite + probe cases | 92 | 96 |
+| Recorded native traces | 31 | 31 |
+| Passage samples | 6,406 | 5,067 |
+| Complete anchor transactions | 1,261 | 671 |
+| Correlated scroll writes | 615 | 310 |
+| Repeated 56 px shrink events | 393 | 0 |
+| Reversals below -3 px | 0 | 0 |
+| Saved-y/snapshot-top gaps above 0.01 px | 0 | 0 |
+| Node/frame document mismatches | 0 | 0 |
+
+Both artifacts match their published SHA256 digests. Recomputing summaries from
+full reports produces identical results. All chosen anchor sections and semantic
+block indices are valid; correction deltas agree with top minus expectedTop,
+and correlated scroll-write arithmetic agrees with those deltas. CI uses
+Liberation Serif fallback, reproducing the original 1159/1215 px height pair;
+current-source samples remain at 1215 px. This is not a performance comparison.
+
+Every recorded transaction uses a semantic block anchor. The view-anchor fallback
+is unexercised, making it a concrete gap for a controlled follow-up, not an
+established cause of the historical event. Recording is now available in CI;
+the original reversal remains open and this run does not justify a resolution claim.

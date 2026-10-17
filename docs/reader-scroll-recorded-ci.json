@@ -1,0 +1,512 @@
+{
+  "schemaVersion": 1,
+  "status": "Original reversal remains unresolved; no negative passage delta recurred in these recorded CI runs.",
+  "workflow": {
+    "runId": 39079730631,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39079730631",
+    "head": "fb9240e23e123a5d6468f483362e745892c76d9f",
+    "testedMergeRef": "83024dcfac6e32855baa738934921c8673d7476f"
+  },
+  "sources": {
+    "original": {
+      "artifactId": 12118990088,
+      "artifactSha256": "44cc52f415b3ba17a097a80588bb0b32d53a05b9735a508ab0be50db88694a6b",
+      "passedCases": 92,
+      "provenance": {
+        "harnessCommit": "83024dcfac6e32855baa738934921c8673d7476f",
+        "targetCommit": "81da5dd6e52766c5b37c84a9bce2ebfcff732019",
+        "layoutSha256": "264f0d04ee515e8d9ceb740d90e0ef88548e8d48097028c6ede58519515e7b83",
+        "targetSuiteBeforeInstrumentationSha256": "51ef983651814df14ed2c014a56c09dc337f080640b4490bffa3025681e3ffc2",
+        "nativeTestSha256": "01c1638413da6cdd34390b5b5ba11e996cd87b457f25ab8d88249ace11893a7e",
+        "repetitions": 30,
+        "browserProject": "mobile-chromium",
+        "nativeInput": {
+          "steps": 32,
+          "deltaY": -180,
+          "waitAfterEachMs": 12,
+          "finalWaitMs": 500,
+          "reversalThresholdPx": -3
+        },
+        "scope": "Native case in its original suite position and appended warm probes route an instrumented layout response. Other cases are unchanged. Logging can affect scheduling."
+      },
+      "environment": [
+        "v24.21.0",
+        "Version 1.63.0",
+        "LiberationSerif-Regular.ttf: \"Liberation Serif\" \"Regular\"",
+        "Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026"
+      ],
+      "summary": {
+        "traceCount": 31,
+        "recordedTraceCount": 31,
+        "sampleCount": 6406,
+        "anchorTransactions": 1261,
+        "scrollWrites": 615,
+        "shrink56Count": 393,
+        "ySnapshotGaps": 0,
+        "ownerDocumentMismatches": 0,
+        "reversals": [],
+        "perTrace": [
+          {
+            "title": "fast upward scrolling does not reverse when earlier chapters render",
+            "samples": 201,
+            "anchorTransactions": 39,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 0",
+            "samples": 209,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 1",
+            "samples": 211,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 2",
+            "samples": 206,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 3",
+            "samples": 209,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 4",
+            "samples": 208,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 5",
+            "samples": 206,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 6",
+            "samples": 204,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 7",
+            "samples": 203,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 8",
+            "samples": 203,
+            "anchorTransactions": 38,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 9",
+            "samples": 213,
+            "anchorTransactions": 43,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 10",
+            "samples": 204,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 11",
+            "samples": 207,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 12",
+            "samples": 207,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 13",
+            "samples": 209,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 14",
+            "samples": 202,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 15",
+            "samples": 206,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 16",
+            "samples": 214,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 17",
+            "samples": 210,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 18",
+            "samples": 198,
+            "anchorTransactions": 38,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 19",
+            "samples": 204,
+            "anchorTransactions": 36,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 20",
+            "samples": 212,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 21",
+            "samples": 210,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 22",
+            "samples": 202,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 23",
+            "samples": 201,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 24",
+            "samples": 210,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 25",
+            "samples": 206,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 26",
+            "samples": 210,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 27",
+            "samples": 205,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 28",
+            "samples": 216,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 29",
+            "samples": 200,
+            "anchorTransactions": 38,
+            "minimumDelta": 0
+          }
+        ]
+      },
+      "quality": {
+        "tracesWithCompleteTransactions": 31,
+        "anchorKinds": {
+          "block": 1261
+        },
+        "correlatedWritesWithConsistentDelta": 615,
+        "sampleFrameHeights": {
+          "1215": 934,
+          "1159": 5472
+        },
+        "allAnchorSectionsAndBlockIndicesValid": true,
+        "allCorrectionsEqualTopMinusExpectedTop": true
+      }
+    },
+    "current": {
+      "artifactId": 12118860932,
+      "artifactSha256": "dbbeb139d9c5d28950ed359909fb3c0b1dbe240817cc648b80d65f71cf0b5897",
+      "passedCases": 96,
+      "provenance": {
+        "harnessCommit": "83024dcfac6e32855baa738934921c8673d7476f",
+        "targetCommit": "83024dcfac6e32855baa738934921c8673d7476f",
+        "layoutSha256": "9d3b8c0a11fa06353b260ed625c6c37f29aaa8f9eb52f5aac33d3407f075bdc0",
+        "targetSuiteBeforeInstrumentationSha256": "394eedf036e3d801fe06d2b468cdc54f5ba0b44f7107639677fe93d15932d45a",
+        "nativeTestSha256": "01c1638413da6cdd34390b5b5ba11e996cd87b457f25ab8d88249ace11893a7e",
+        "repetitions": 30,
+        "browserProject": "mobile-chromium",
+        "nativeInput": {
+          "steps": 32,
+          "deltaY": -180,
+          "waitAfterEachMs": 12,
+          "finalWaitMs": 500,
+          "reversalThresholdPx": -3
+        },
+        "scope": "Native case in its original suite position and appended warm probes route an instrumented layout response. Other cases are unchanged. Logging can affect scheduling."
+      },
+      "environment": [
+        "v24.21.0",
+        "Version 1.63.0",
+        "LiberationSerif-Regular.ttf: \"Liberation Serif\" \"Regular\"",
+        "Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026"
+      ],
+      "summary": {
+        "traceCount": 31,
+        "recordedTraceCount": 31,
+        "sampleCount": 5067,
+        "anchorTransactions": 671,
+        "scrollWrites": 310,
+        "shrink56Count": 0,
+        "ySnapshotGaps": 0,
+        "ownerDocumentMismatches": 0,
+        "reversals": [],
+        "perTrace": [
+          {
+            "title": "fast upward scrolling does not reverse when earlier chapters render",
+            "samples": 165,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 0",
+            "samples": 161,
+            "anchorTransactions": 20,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 1",
+            "samples": 166,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 2",
+            "samples": 168,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 3",
+            "samples": 158,
+            "anchorTransactions": 20,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 4",
+            "samples": 159,
+            "anchorTransactions": 20,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 5",
+            "samples": 168,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 6",
+            "samples": 163,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 7",
+            "samples": 161,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 8",
+            "samples": 163,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 9",
+            "samples": 163,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 10",
+            "samples": 161,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 11",
+            "samples": 156,
+            "anchorTransactions": 20,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 12",
+            "samples": 158,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 13",
+            "samples": 161,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 14",
+            "samples": 164,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 15",
+            "samples": 162,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 16",
+            "samples": 161,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 17",
+            "samples": 160,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 18",
+            "samples": 163,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 19",
+            "samples": 162,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 20",
+            "samples": 165,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 21",
+            "samples": 164,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 22",
+            "samples": 165,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 23",
+            "samples": 157,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 24",
+            "samples": 183,
+            "anchorTransactions": 24,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 25",
+            "samples": 186,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 26",
+            "samples": 167,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 27",
+            "samples": 161,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 28",
+            "samples": 160,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 29",
+            "samples": 156,
+            "anchorTransactions": 19,
+            "minimumDelta": 0
+          }
+        ]
+      },
+      "quality": {
+        "tracesWithCompleteTransactions": 31,
+        "anchorKinds": {
+          "block": 671
+        },
+        "correlatedWritesWithConsistentDelta": 310,
+        "sampleFrameHeights": {
+          "1215": 5067
+        },
+        "allAnchorSectionsAndBlockIndicesValid": true,
+        "allCorrectionsEqualTopMinusExpectedTop": true
+      }
+    }
+  },
+  "verification": {
+    "artifactSha256Verified": true,
+    "summariesRecomputedFromFullReports": true,
+    "sameNativeProbeSourceForBothJobs": true
+  },
+  "limits": [
+    "Logging can affect scheduling and mask a rare race.",
+    "All recorded transactions chose semantic block anchors; view-anchor fallback was not exercised.",
+    "A passing run and removal of 56 px height cycling do not prove resolution of the original negative passage delta.",
+    "Scroll-write records retain requested values and the last existing getter result; no extra position read verifies post-write clamping."
+  ],
+  "publication": {
+    "pr": 25,
+    "testedHead": "fb9240e23e123a5d6468f483362e745892c76d9f",
+    "testedTree": "10d3bacf795818fe31bcb2d7f9666934a5f8a094",
+    "squashMerge": "d8de2c19de9bf08403bf73759b9cd11bd6714c90",
+    "normalCiRun": 39079730562,
+    "nodePassed": 204,
+    "browserPassed": 322,
+    "existingBrowserSkips": 8
+  }
+}
