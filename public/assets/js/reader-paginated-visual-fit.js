@@ -7,7 +7,7 @@ import {readerInstanceScope} from "./reader/lifecycle.js";
  * Paginated view for visual-only spine items: one viewport-wide iframe, one viewport-high
  * frame, centered contained image, and no intra-page CFI scrolling.
  */
-export function createPaginatedVisualFitExtension(){
+export function createPaginatedVisualFitExtension({visualPages}={}){
 
   const EDGE_INSET=18;
 
@@ -16,8 +16,7 @@ export function createPaginatedVisualFitExtension(){
     return !flow.startsWith("scrolled");
   }
 
-  function cache(){return window.__sgVisualPageCache}
-  function isVisualSection(section){return Boolean(section?.href&&cache()?.has?.(section.href))}
+  function isVisualSection(section){return Boolean(section?.href&&visualPages?.has?.(section.href))}
   function isVisualView(view){return isVisualSection(view?.section)}
   const positive=value=>Number.isFinite(Number(value))&&Number(value)>0?Number(value):0;
 
@@ -119,8 +118,7 @@ export function createPaginatedVisualFitExtension(){
 
   function setDocumentGeometry(view,width,height){
     const href=view?.section?.href||"";
-    const visualCache=cache();
-    try{visualCache?.applyToContents?.(view.contents,href,{width,height})}catch{}
+    try{visualPages?.applyToContents?.(view.contents,href,{width,height})}catch{}
 
     const doc=view?.contents?.document;
     const html=doc?.documentElement,body=doc?.body;

@@ -1,10 +1,9 @@
-# Configure a recovered Pages deployment
+# ShadowGarden deployment configuration
 
-The owner authorized production takeover on 2026-10-02. The original site is now
-running the reconstruction with its existing B2 bucket and encrypted secrets.
-Follow [PRODUCTION_TAKEOVER.md](PRODUCTION_TAKEOVER.md) for the current project,
-database, deployment command and verification status. The general setup guidance
-below also documents the earlier isolated-test plan.
+The existing site uses maintained source in `skypie0102/ShadowGarden`, its
+initialized D1 database and existing B2 bucket. [Production operations](PRODUCTION_TAKEOVER.md)
+identify those resources and guarded packaging/verification. This guide covers
+local or deliberately isolated new-environment configuration.
 
 ## Build configuration
 
@@ -14,44 +13,38 @@ below also documents the earlier isolated-test plan.
 - Output directory: `dist`.
 - Node: 24.
 - Functions directory: root `functions/`, automatically discovered by Pages.
-- Compatibility date: `2026-09-23`, newly selected; original date unknown.
+- Compatibility date: `2026-09-23`, pinned in `wrangler.jsonc`.
 - Do not upload only `dist/` through the dashboard: the Pages Functions must be
   compiled/deployed via Git integration or Wrangler Pages deployment.
 
-On the reconstruction and compatibility branches, the committed Wrangler file
-uses an all-zero D1 ID as a local placeholder, not a usable remote database.
-On `deploy/shadowgarden-test`, it instead targets the owner's new test database;
-follow [the test setup](TEST_DEPLOYMENT.md) for its initialization and resource
-boundaries. For a different deployment target, make a private copy
-as `wrangler.production.jsonc`, replace the Pages project name and database
-identifiers with the actual target values. D1 commands support `--config` for
-this private file. Pages dev/deploy do **not** support a custom config path in
-the pinned Wrangler version: use an isolated checkout with the reviewed values
-in its standard `wrangler.jsonc` when deploying manually.
-For Git-based Pages builds, deliberately update the committed non-secret config
-to the intended resource names/IDs before reconnecting the production branch.
-Do not apply this new schema to an unidentified original database.
+The committed `wrangler.jsonc` identifies the production Pages project, D1 and
+B2 bucket. Local development uses local D1 state. For a different remote target,
+use an isolated checkout with reviewed values in the standard `wrangler.jsonc`.
+The historical database name `shadowgarden-test` now identifies production;
+it is not a disposable test target.
+
+The pinned Pages dev/deploy CLI does not support an alternate config path; D1
+commands do. The automated harness creates a separate local project/database,
+ignoring developer secrets. `npm run check:functions` compiles the project config
+and checks actual release-bundle bindings.
 
 ## Database and secrets
 
-Create a new D1 database, bind it as `DB`, apply `migrations/`, and explicitly seed
-`recovery-info/empty-seed.sql` for a new library. Use `recovery-info/seed.sql`
-only when the recovered five-volume demo catalog is wanted. Seeding uses `INSERT OR IGNORE` and never overwrites an
-existing library. Local equivalents are in the README. For a configured remote
-target, use Wrangler D1 migration/execute commands with `--remote` and your
-production config after verifying the database name.
+For a genuinely new environment, bind an isolated database as `DB`, apply all
+migrations and initialize an empty library with `recovery-info/empty-seed.sql`.
+Use `recovery-info/seed.sql` only for optional demo metadata. Seeds use
+`INSERT OR IGNORE`. Production is already initialized and must not be reseeded
+during an upgrade. Local equivalents are in the README.
 
-Upgrades must apply `0002_media_purge.sql` before deploying the new Functions.
-It adds durable cleanup jobs, upload activity leases and retirement guards.
-The test harness applies both migrations to its disposable database.
+The schema includes `0002_media_purge.sql` for cleanup jobs, upload leases and
+retirement guards. Check pending migrations for the intended target when future
+changes add one. The browser harness applies every migration to its disposable
+local database.
 
-The owner supplied eight encrypted variable names on 2026-10-01. The backend
-now accepts those exact names; no rename or disclosure of their values is needed.
-This establishes name compatibility, not proof of valid credentials, permissions
-or original session compatibility. Keep the live project while testing a separate
-Pages project with its own D1 database and disposable B2 bucket/keys. Configure the
-test project's secrets separately; do not assume it inherits the live project's
-settings or that production and preview environments have identical settings.
+Keep the existing project's encrypted names and B2 bucket. Separate remote
+environments require deliberate provider/database configuration and do not
+inherit the live site's settings. Automated tests use fixtures; genuine provider
+checks are recorded separately.
 
 Set secrets through Cloudflare's secret controls, never Git:
 
@@ -81,17 +74,13 @@ HTTPS, credential-free URLs, standard ports and redirect refusal remain required
 API/download requests do not inherit the upload-host exception. See Backblaze's
 [native upload guide](https://www.backblaze.com/docs/cloud-storage-upload-files-with-the-native-api).
 
-The screenshot did not show `SESSION_SECRET`, `B2_BUCKET_ID`, `B2_BUCKET_NAME`
-or resource bindings. Verify those settings before deploying. This replacement
-requires a D1 binding named `DB`; it does not imply the original app used D1.
-The media signing secret length and B2 capabilities cannot be verified from an
-encrypted-name inventory. `SESSION_SECRET` must be independently generated;
-there is no fallback to the media or admin secret. New sessions must be issued
-by this backend, even if an existing bearer token is retained.
+The backend requires `DB` and an independent `SESSION_SECRET`. Encrypted names
+alone cannot establish value validity, media signing length or B2 permissions.
+Sessions must be issued by this backend even when a bearer token is retained.
 
-The earlier reconstruction names remain supported: `ADMIN_TOKEN` overrides
-`SG_ADMIN_TOKEN`, `BOOK_SIGNING_SECRET` overrides `SG_MEDIA_SIGNING_SECRET`,
-and `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` override their `SG_` versions.
+Canonical aliases remain supported: `ADMIN_TOKEN` overrides `SG_ADMIN_TOKEN`,
+`BOOK_SIGNING_SECRET` overrides `SG_MEDIA_SIGNING_SECRET`, and
+`TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` override their `SG_` versions.
 An explicitly configured canonical value wins even when empty or invalid, so
 avoid stale duplicate settings. For B2, each complete role-specific pair takes
 precedence. Only when neither member of that role's pair is present does it use
@@ -100,16 +89,16 @@ fail configuration checks; failed reads never retry with write credentials.
 
 Before switching traffic, review the standard `wrangler.jsonc` against the target
 project's settings. Pages treats that file as the configuration source of truth
-when deploying with it; the committed local database placeholder must be replaced
-with the intended test or production database. See Cloudflare's
+when deploying with it; compare project/database/bucket values with the intended
+environment before publishing. See Cloudflare's
 [Pages configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/)
 and [secrets and bindings](https://developers.cloudflare.com/pages/functions/bindings/).
 
 ## Optional legacy mapping import
 
 The owner confirmed that the five recovered book records were test data. Their
-EPUBs and mappings are not required to complete this reconstruction. New books
-can be uploaded normally, or a new library can start from the empty seed. The
+EPUBs and mappings are not required by the current application. Upload new books
+normally, or initialize a new isolated library with the empty seed. The
 following procedure is optional if preserving a known legacy identity is useful.
 
 Obtain an authorized B2 object inventory or original private catalog/export.
@@ -159,7 +148,7 @@ changes metadata only. Run recovery readiness to check media for both active
 entries and Trash, including recovered covers served by static hosting.
 
 Retain the old Cloudflare deployment and B2 objects while validating the new
-project. The current D1 catalog is authoritative for this reconstruction; other
+project. The current D1 catalog is authoritative for ShadowGarden; other
 consumers that directly read the original B2 catalog JSON will not see edits.
 Export D1 regularly alongside B2 inventory for an off-service backup. There is
 no automatic remote backup job. Trash cleanup runs only on an explicit purge or

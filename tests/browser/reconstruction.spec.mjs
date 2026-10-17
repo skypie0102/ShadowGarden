@@ -102,7 +102,10 @@ test('the reader reports missing recovered mappings without serving private byte
   await expect(page.locator('#readerLoading')).toContainText('Shadow Garden could not authorize this EPUB.');
   // Reproduce background preparation arriving after the terminal error. Its
   // progress messages must not replace the recovery advice or restore loading.
-  await page.evaluate(()=>window.__sgVisualPageCache.prepare('/media/shadow-garden/books/missing-visual-fixture.epub'));
+  await page.evaluate(async()=>{
+    const {getReaderEngine}=await import('/assets/js/reader/engine.js');
+    await getReaderEngine().visualPages.prepare('/media/shadow-garden/books/missing-visual-fixture.epub');
+  });
   await expect(page.locator('.reader-failure p')).toHaveText('The protected book link could not be prepared. Try again; if the problem continues, return to the series and reopen the volume.');
   await expect(page.locator('#bookTitle')).toHaveText('Unable to open volume');
   await capture(page,'missing-book-reader');

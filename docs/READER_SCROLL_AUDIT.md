@@ -1,5 +1,13 @@
 # Reader scroll-stability audit
 
+**Phone acceptance — 2026-10-17:** after v2.12.5 the owner reports no more jumping
+or dimming in ordinary Android/Soul use. This passes general phone acceptance;
+the separate first-open partial-cover cycle RDR-045 remains tracked in the
+[release record](READER_RELEASE.md). Current cleanup is in
+[maintenance](READER_MAINTENANCE.md). The dated investigation below retains its
+original reproductions and automated evidence.
+
+
 Opened 2026-10-17 after the owner confirmed that v2.12.4 resolves Soul Browser
 image dimming and reported intermittent jumps while scrolling quickly upward.
 The starting source is `8324e78dad81031a370e28ab26abd54a655e47d6`.

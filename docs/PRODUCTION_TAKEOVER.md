@@ -1,24 +1,22 @@
-# Existing production project
+# ShadowGarden production operations
 
-**Current production status (2026-10-16):** v2.12.2 is live as deployment
-`e8fe494a-87ce-4731-9aa9-0285f449137d`, source `d652774`, successfully
-deployed at 10:29 UTC (18:29 Manila). The v2.12.1 incident was recovered by
-restoring v2.12.0; the new binding-aware package preserves the original D1 data,
-bucket variables and all nine encrypted-setting names. Both current catalogs
-match the unchanged D1 revision 3. See the
-[incident report](incidents/2026-10-16-pages-bindings.md). Do not redeploy the
-withdrawn package or infer database health from an HTTP 200 catalog.
+**Last verified production release — 2026-10-17:** v2.12.5, deployment
+`0ceadeec-4e53-4e20-a841-83c72bde66a2`, source
+`8a7e07fc06fdcd38a3fafcaed1f0baff44584d75`, deployed at 04:24:41 UTC
+(12:24 Manila). PR #13 and CI run `39001700811` record 166 passing Node tests
+and 277 passing browser cases across five profiles, with eight platform skips.
+The release verifies served source, both version fields, actual/saved D1 and
+bucket settings, nine encrypted-setting names/types, catalog revision 3 and
+three retained snapshot identities/checksums.
 
-The v2.12.2 image-touch correction and release safeguards are merged on `main`
-at `d6527742a2cde9f878a7ae23547734d858d24521` through PR #10. Verification
-and the full five-profile browser matrix pass on the merged source. Both live
-catalogs match read-only D1 revision 3, and the guarded Worker retains the
-original database/bucket bindings. The owner explicitly approved publishing
-after automatic approval review initially blocked the request. Actual/saved
-deployment settings and served reader assets pass the release checks. Genuine
-authorized book opening, Keeper login and physical-mobile acceptance remain
-unverified. See the current release status in
-[READER_RELEASE.md](READER_RELEASE.md).
+Genuine Keeper login, the B2 object check and real EPUB opening passed during
+release verification. After v2.12.5 the owner confirmed ordinary Android/Soul use
+has no more jumping or dimming. The specific intermittent first-open partial-cover
+return RDR-045 remains tracked separately. See [release evidence](READER_RELEASE.md)
+and [ongoing source maintenance](READER_MAINTENANCE.md). A merge into `main` is
+recorded separately from a production deployment.
+
+## Existing resources
 
 The owner authorized replacing the original site on 2026-10-02 and reusing its
 existing B2 bucket. The five recovered EPUB entries were disposable tests. This
@@ -29,19 +27,24 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | Public URL | https://shadowgarden-bon.pages.dev/ |
 | Cloudflare Pages project name | `shadowgarden` |
 | Cloudflare account | `fa95f62f96a0ff3b92a45175d94a48b6` |
-| Rebuilt source branch | `skypie0102/ShadowGarden`, `main` |
+| Source branch | `skypie0102/ShadowGarden`, `main` |
 | Pages production branch | `main` |
 | D1 binding | `DB` |
 | Existing D1 database | `shadowgarden-test` |
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Previous production deployment | `9b148143-53a4-442a-b863-7ca4dbab09e2` |
+| Last verified rollback target | v2.12.4, `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,
 so automatic production and preview builds from that old repository are paused.
 Use Pages direct deployments to retain the existing hostname and secrets.
+
+## Historical integration checks
+
+These dated records retain earlier verification. Current status is above and in
+the release record.
 
 The first takeover deployment succeeded at 2026-10-02 08:31 UTC with commit
 `26bacb7` and deployment ID `e9d4306a-a4db-4aed-a4a9-d3b28458dc39`. The homepage,
@@ -121,7 +124,7 @@ Keep all eight original encrypted variables:
 - `SG_ADMIN_TOKEN`, `SG_MEDIA_SIGNING_SECRET`
 - `SG_TURNSTILE_SITE_KEY`, `SG_TURNSTILE_SECRET_KEY`
 
-The reconstructed backend also needs an independent encrypted `SESSION_SECRET`
+The backend also needs an independent encrypted `SESSION_SECRET`
 with at least 32 characters. Add it once; retain it on subsequent deployments.
 The existing SG aliases are supported. Secret values do not belong in Git.
 
@@ -139,16 +142,24 @@ database. Existing B2 files are retained; an empty catalog does not delete them.
 
 ## Deploy from Windows PowerShell
 
-From a checkout of the rebuilt repository:
+From the reviewed source checkout, after its complete CI matrix passes:
 
 ```powershell
 git fetch origin
 git switch main
 git pull --ff-only
 npm.cmd ci
-npm.cmd run build
+npm.cmd run check
 npx.cmd wrangler pages deploy dist --project-name shadowgarden --branch main
 ```
+
+`npm run check` builds assets and compiles the binding-aware release package.
+It validates actual D1/variable metadata. Do not publish a source-only Functions
+bundle or a package whose bindings differ from reviewed `wrangler.jsonc`.
+
+Capture the current catalog revision/document, snapshot IDs/checksums,
+actual/saved bindings and encrypted-setting names/types before deployment;
+compare them afterward. Keep secret values out of logs and Git.
 
 Use `--branch main` for both the canonical source checkout and this Pages
 project's production environment.
@@ -157,12 +168,15 @@ dashboard upload of `dist/` alone does not include those Functions.
 
 ## Check and roll back
 
-Check the public home page, `/data/version.json`, `/admin-access`, `/human-access`
-and both catalog URLs. Then sign into Keeper with the existing administrator
-token and test uploading and reading a disposable EPUB. B2 upload/delete
-permissions and real Turnstile verification require runtime checks.
+Verify canonical/saved configuration against the baseline, including `DB`, bucket
+variables and encrypted-setting metadata. Compare public catalogs with the exact
+expected database content and snapshot IDs/hashes; HTTP 200 alone is insufficient.
+Check version metadata, exact served reader hashes, both visible library footers,
+challenge configuration and denial of unauthenticated Keeper access. Record
+authenticated/provider checks separately; ordinary maintenance verification does
+not require catalog writes or media upload/deletion.
 
-The previous production deployment above is retained for rollback through
+The last verified rollback target above is retained through
 Cloudflare Pages' deployment menu or rollback API. Rolling back code does not
 roll back D1 or B2 writes made after the takeover. Export a Keeper backup before
 later catalog changes that you may need to undo.

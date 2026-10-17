@@ -1,4 +1,9 @@
-# Reader v2.12.5 — Continuous scroll stability
+# Reader releases
+
+**Current production baseline:** v2.12.5. Ongoing
+[maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.12.5 — Continuous scroll stability
 
 **Live:** deployment `0ceadeec-4e53-4e20-a841-83c72bde66a2` succeeded at
 2026-10-17 04:24:41 UTC (12:24 in Manila). [PR #13](https://github.com/skypie0102/ShadowGarden/pull/13)
@@ -81,10 +86,13 @@ do not repeat the earlier authenticated real-book acceptance.
 Rollback target: the correctly bound v2.12.4 deployment
 `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1`.
 
-RDR-046 is resolved by the owner's Soul confirmation. RDR-045's intermittent
-real-cover return remains open, independently of these generated-book checks.
-Acceptance of the new upward-scroll correction on the owner's phone is also
-still pending; emulation does not establish physical-device acceptance.
+**Phone acceptance — 2026-10-17:** after testing v2.12.5 on Android/Soul, the owner
+reported: “Tested the reader, works great so far, no more jumping and dimming.”
+Ordinary-use acceptance of the scrolling and brightness corrections has passed.
+RDR-045's earlier intermittent first-open partial-cover cycle remains specifically
+tracked; that exact reproduction was not independently repeated by the general
+phone report. See the [code review](READER_CODE_REVIEW.md) and
+[maintenance roadmap](READER_MAINTENANCE.md) for ongoing simplification.
 
 ---
 

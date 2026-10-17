@@ -11,8 +11,8 @@ import {urls} from "./domain/index.js";
 
 const invalidPackagePreparation=/central directory|is this a zip file|missing container\.xml|missing package document|corrupt|unexpected end|end of data/i;
 
-function visualPreparationFailure(){
-  const message=String(window.__sgVisualPageCache?.summary?.()?.error||"");
+function visualPreparationFailure(visualPages){
+  const message=String(visualPages?.summary?.()?.error||"");
   return invalidPackagePreparation.test(message)?new Error("Invalid EPUB archive"):null;
 }
 
@@ -38,10 +38,10 @@ export function createReaderRuntime(){
     try{
       const engine=initializeReaderEngine();
       scope.add(()=>engine.visualPages?.release?.());
-      session=await createAuthorizedBookSession({signal:scope.signal});
+      session=await createAuthorizedBookSession({visualPages:engine.visualPages,signal:scope.signal});
       if(!session)return null;
       scope.add(()=>session.dispose());
-      const preparationFailure=visualPreparationFailure();
+      const preparationFailure=visualPreparationFailure(engine.visualPages);
       if(preparationFailure)throw preparationFailure;
       interactions.stage("Opening the EPUB…","epub");
       const reader=await startReader(session,{signal:scope.signal});

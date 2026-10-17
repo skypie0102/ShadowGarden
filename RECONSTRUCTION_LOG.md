@@ -1,4 +1,9 @@
-# ShadowGarden reconstruction log
+# ShadowGarden recovery history
+
+Historical record of restoration and initial backend implementation. Current
+work is tracked in [project documentation](docs/README.md) and
+[reader maintenance](docs/READER_MAINTENANCE.md). Dated evidence and original
+hashes below remain for traceability.
 
 ## 2026-09-23 — evidence intake and project restoration
 

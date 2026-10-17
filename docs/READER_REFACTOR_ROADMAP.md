@@ -1,5 +1,12 @@
 # Reader refactor roadmap
 
+Current gradual cleanup is tracked in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
+This document retains the phased implementation/release history. The owner has
+confirmed ordinary Android/Soul use on v2.12.5 has no more jumping or dimming.
+RDR-045's specific intermittent first-open partial-cover cycle remains tracked
+separately from that general acceptance in [the release record](READER_RELEASE.md).
+
+
 Started 2026-10-15. Canonical branch: `main`. The navigation/position
 milestone is merged through [PR #3](https://github.com/skypie0102/ShadowGarden/pull/3).
 Phase 3 lifecycle ownership is verified and merged through

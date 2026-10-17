@@ -114,8 +114,8 @@ test.describe('production reader integration',()=>{
   }
 
   test('runs the complete adapter chain and prepares standalone artwork',async({page})=>{
-    const report=await page.evaluate(()=>({
-      visual:window.__sgVisualPageCache?.summary?.(),
+    const report=await page.evaluate(async()=>({
+      visual:(await import('/assets/js/reader/engine.js')).getReaderEngine().visualPages.summary(),
       settings:JSON.parse(localStorage.getItem('sg-reader-settings')),
       progress:JSON.parse(localStorage.getItem('sg-progress:'+new URLSearchParams(location.search).get('book')))
     }));

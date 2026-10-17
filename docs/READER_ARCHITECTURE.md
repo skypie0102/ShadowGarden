@@ -1,7 +1,9 @@
 # Reader integration and navigation ownership
 
-The phased work and remaining ownership changes are tracked in
-[READER_REFACTOR_ROADMAP.md](READER_REFACTOR_ROADMAP.md).
+Current cleanup is tracked in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
+The [vendor contract](READER_VENDOR_CONTRACT.md) records supported adaptation;
+[code review](READER_CODE_REVIEW.md) records the baseline. Original phased work
+remains in [the refactor history](READER_REFACTOR_ROADMAP.md).
 
 ## Startup and engine boundary
 
@@ -10,7 +12,7 @@ The phased work and remaining ownership changes are tracked in
 book, and starts the application. `reader/app.js` opens its publication through
 `getReaderEngine().createBook(sourcePath)`.
 
-The engine validates the recovered EPUB.js runtime shape before installing
+The engine validates the pinned EPUB.js runtime shape before installing
 extensions, installs the version-specific lifecycle compatibility once, and
 creates one extension collection per vendor runtime. Reinitialization reuses
 that engine and does not register another copy of its listeners.
@@ -48,7 +50,7 @@ touchmove, advances navigation ownership and cancels stale restoration or
 settlement. Height-only Continuous stage changes retain live frames; width
 changes continue through semantic recovery.
 The application has one creation API. Extensions still adapt rendition/manager
-methods where required by the recovered vendor runtime. Those patches remain
+methods where required by the pinned vendor runtime. Those patches remain
 inside the engine integration; replacing them without reproducing their
 browser/layout behavior is outside this first milestone.
 
@@ -65,8 +67,11 @@ New-view CFI positioning completes the owned render/content pipeline and its
 paint phase before one final paginated correction. A render revision distinguishes
 newly inserted views from already styled ones. Startup and application navigation
 share this boundary, with the same cancellation operation throughout.
-`window.__sgVisualPageCache` and the canonical page-map diagnostic remain legacy
-bridges; subsequent phases will replace global coupling where appropriate.
+The engine creates one visual-page service and supplies it to paginated fitting.
+Bootstrap passes that same instance to authorization/session preparation and
+preparation-error classification. Runtime and book scopes retain release
+ownership. No functional global cache export remains; visual manifest and
+canonical page-map globals are diagnostic snapshots, not production dependencies.
 
 ## Navigation and position ownership
 

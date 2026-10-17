@@ -1,4 +1,4 @@
-name: Reconstruction checks
+name: ShadowGarden checks
 on: [push, pull_request]
 permissions:
   contents: read

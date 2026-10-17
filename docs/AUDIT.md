@@ -1,4 +1,15 @@
-# Reconstruction audit — updated 2026-10-16 (Asia/Manila)
+# ShadowGarden project audit
+
+## Current status — 2026-10-17
+
+The verified production baseline is v2.12.5, with 166 Node tests and 277 passing
+browser cases across five profiles (eight platform skips). Genuine provider/book
+checks and the owner's successful ordinary-use Android/Soul acceptance are in
+[READER_RELEASE.md](READER_RELEASE.md). RDR-045's specific cover cycle remains
+tracked separately. Ongoing cleanup and fresh validation are in
+[READER_MAINTENANCE.md](READER_MAINTENANCE.md). Dated sections below preserve
+historical audit evidence and counts.
+
 
 ## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)
 
