@@ -1,5 +1,6 @@
 import {recordReaderDiagnostic} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
+import {preserveContinuousLayout} from './reader/continuous-layout.js';
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
@@ -7,6 +8,7 @@ export function createEpubCompatibilityExtension(){
 
   let currentBook=null,currentRendition=null,currentTarget=null,viewportTimer=0,pendingExternalHref="";
   const progressByCfi=new Map();
+  const heightSyncTasks=new WeakMap();
   const clamp01=value=>Math.min(1,Math.max(0,Number(value)||0));
 
   function viewerElement(target=currentTarget){
@@ -268,13 +270,14 @@ export function createEpubCompatibilityExtension(){
   function syncContinuousFrameHeights(contents,rendition=currentRendition){
     try{
       const doc=contents?.document,win=doc?.defaultView;
-      if(!win||!doc||!rendition||readerInstanceScope(rendition).disposed)return;
+      const manager=rendition?.manager;
+      if(!win||!doc||!manager||!String(rendition.settings?.flow||manager.settings?.flow||'').startsWith('scrolled')||readerInstanceScope(rendition).disposed)return;
       const scope=readerContentsScope(rendition,contents);
       if(scope.disposed)return;
       const doc0=doc;
       if(!win.__sgTallSyncBound){
         win.__sgTallSyncBound=true;
-        scope.add(()=>{delete win.__sgTallSyncBound;delete win.__sgTallSyncTimer});
+        scope.add(()=>{delete win.__sgTallSyncBound});
         /* media loads inside a rendered document are what grow it late; reconcile again */
         scope.listen(doc0,"load",event=>{
           const target=event.target;
@@ -285,21 +288,21 @@ export function createEpubCompatibilityExtension(){
            without spamming the reconciler once growth is exhausted. */
         [300,1200,2600,4200].forEach(delay=>scope.timeout(()=>{try{syncContinuousFrameHeights(contents,rendition)}catch{}},delay));
       }
-      scope.clearTimeout(win.__sgTallSyncTimer);
-      win.__sgTallSyncTimer=scope.timeout(()=>{
+      const owner=readerInstanceScope(manager);
+      owner.clearTimeout(heightSyncTasks.get(manager));
+      heightSyncTasks.set(manager,owner.timeout(()=>{
+        heightSyncTasks.delete(manager);
         try{
-          const views=[...(document.querySelectorAll(".epub-view")||[])];
-          const targets=views.length
-            ? views.map(el=>({el,frame:el.querySelector?.("iframe")}))
-            : [...((document.getElementById("viewer")||{}).children||[])].map(el=>({el,frame:el.matches?.("iframe")?el:el.querySelector?.("iframe")}));
+          if(manager.__sgDestroyed||!String(rendition.settings?.flow||manager.settings?.flow||'').startsWith('scrolled'))return;
+          const targets=(manager.views?.all?.()||[]).map(view=>({view,el:view.element,frame:view.iframe}));
           /* Idempotent truth-up: any drift between a section frame's frozen height and its
              live document extent is rewritten to the exact current value, so natural flow
              stacking always matches real content - late-growing tall artwork included.
              Stale inline `top`s (absolute-position era leftovers) would visually offset
              relative-flow sections and are cleared as well. */
-          for(const entry of targets){
+          preserveContinuousLayout(manager,()=>{for(const entry of targets){
             const entryDoc=entry.frame?.contentDocument;
-            if(!entry.frame||!entryDoc||!entryDoc.documentElement)continue;
+            if(!entry.view.displayed||!entry.view.contents||!entry.frame||!entryDoc||!entryDoc.documentElement)continue;
             const need=Math.max(
               entryDoc.documentElement.scrollHeight,
               entryDoc.body?entryDoc.body.scrollHeight:0
@@ -307,13 +310,12 @@ export function createEpubCompatibilityExtension(){
             if(!need)continue;
             const current=Math.round(entry.frame.getBoundingClientRect().height);
             if(Math.abs(need-current)>2){
-              entry.frame.style.height=`${need}px`;
-              if(entry.el!==entry.frame)entry.el.style.height=`${need}px`;
+              entry.view.reframe(entry.view._width||entry.frame.clientWidth,need);
             }
             if(entry.el.style.top)entry.el.style.top="";
-          }
+          }});
         }catch{}
-      },150);
+      },150));
     }catch{}
   }
 

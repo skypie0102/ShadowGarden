@@ -229,5 +229,7 @@ export function createReaderResumeController({
     return cleanup;
   }
 
-  return{dispose(){scope.dispose();cleanup?.();state.operation?.cancel();state.queued=false;state.anchor=null;state.scroll=null;state.live=null;state.snapshot=null},remember,capture,restore,wait,bind,isRestoring:()=>!scope.disposed&&Boolean(state.running)&&(!state.operation||state.operation.isCurrent())};
+  function rememberViewport(){state.live=null;return remember()}
+
+  return{dispose(){scope.dispose();cleanup?.();state.operation?.cancel();state.queued=false;state.anchor=null;state.scroll=null;state.live=null;state.snapshot=null},remember,rememberViewport,capture,restore,wait,bind,isRestoring:()=>!scope.disposed&&Boolean(state.running)&&(!state.operation||state.operation.isCurrent())};
 }

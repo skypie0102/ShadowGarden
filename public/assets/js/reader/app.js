@@ -347,7 +347,13 @@ async function initializeReader(session,scope){
       if(settingsController.get().flow!=="paginated"||imageFocusController.isFocused())return;
       if(event.key==="ArrowRight")turn(1);if(event.key==="ArrowLeft")turn(-1);
     });
+    let viewportWidth=Number(window.innerWidth)||0;
     const scheduleViewportRecovery=()=>{
+      const width=Number(window.innerWidth)||0,widthChanged=Math.abs(width-viewportWidth)>1;
+      viewportWidth=width;
+      if(state.renderedFlow==='scrolled-doc'&&!widthChanged&&!state.resizeTimer){
+        resumeController?.rememberViewport();return;
+      }
       if(!state.resizeTimer)void resumeController?.capture?.();
       scope.clearTimeout(state.resizeTimer);state.resizeTimer=scope.timeout(()=>{
         state.resizeTimer=0;
