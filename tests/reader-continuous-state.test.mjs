@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {createContinuousCoreExtension} from '../public/assets/js/reader-continuous-core.js';
 import {preserveContinuousLayout} from '../public/assets/js/reader/continuous-layout.js';
+import {pendingContinuousBuffer} from '../public/assets/js/reader/continuous-state.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
 
@@ -49,30 +50,38 @@ function fixture(t){
   t.after(async()=>{
     try{
       rendition.destroy();manager.destroy();first.gate.resolve(first.view);last.gate.resolve(last.view);
-      await Promise.allSettled([manager.__sgBufferPromise]);
+      await Promise.allSettled([pendingContinuousBuffer(manager)]);
     }finally{for(const reset of restore)reset()}
   });
-  return{manager,rendition,extension,first,last,events,shift:amount=>{top+=amount},destroyed:()=>destroyed};
+  function prepareTrim(){
+    loaded=Array.from({length:15},(_,index)=>({
+      displayed:true,section:{index,href:`chapter${index}.xhtml`},
+      element:{getBoundingClientRect:()=>({top:(index-7)*900,bottom:(index-6)*900,left:0,right:800})}
+    }));
+    manager.erase=view=>{events.push(`erase:${view.section.index}`);loaded=loaded.filter(item=>item!==view)};
+    events.length=0;
+  }
+  return{manager,rendition,extension,first,last,events,prepareTrim,shift:amount=>{top+=amount},destroyed:()=>destroyed};
 }
 
 test('a superseded buffer cannot show its late view or clear the newer buffer task',{timeout:5000},async t=>{
   const f=fixture(t);await f.first.entered.promise;
-  const old=f.manager.__sgBufferPromise,settling=f.extension.settleNavigation(f.rendition);
+  const old=pendingContinuousBuffer(f.manager),settling=f.extension.settleNavigation(f.rendition);
   await f.manager.display(f.last.section);
   t.mock.timers.tick(0);await f.last.entered.promise;
-  const latest=f.manager.__sgBufferPromise;
+  const latest=pendingContinuousBuffer(f.manager);
   assert.notEqual(latest,old);
   f.first.gate.resolve(f.first.view);
   assert.equal(await old,false);assert.equal(await settling,false);
   assert.deepEqual(f.events,[]);
-  assert.equal(f.manager.__sgBufferPromise,latest);
+  assert.equal(pendingContinuousBuffer(f.manager),latest);
   f.last.gate.resolve(f.last.view);await latest;
   assert.deepEqual(f.events,['expand:1','show:1']);
 });
 
 test('manager destruction invalidates pending neighborhood settlement and late view callbacks',{timeout:5000},async t=>{
   const f=fixture(t);await f.first.entered.promise;
-  const pending=f.manager.__sgBufferPromise,settling=f.extension.settleNavigation(f.rendition);
+  const pending=pendingContinuousBuffer(f.manager),settling=f.extension.settleNavigation(f.rendition);
   f.manager.destroy();f.first.gate.resolve(f.first.view);
   assert.equal(await pending,false);assert.equal(await settling,false);
   assert.equal(await f.extension.settleNavigation(f.rendition),false);
@@ -84,4 +93,34 @@ test('a layout transaction cannot compensate a manager destroyed by its own chan
   preserveContinuousLayout(f.manager,()=>{f.shift(150);f.manager.destroy()});
   assert.equal(f.manager.container.scrollTop,200);
   assert.equal(f.destroyed(),1);
+});
+
+test('repeated neighborhood requests reuse the current task and coalesce into one fresh pass',{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  const pending=pendingContinuousBuffer(f.manager);
+  f.manager.check();f.manager.check();f.manager.fill();
+  assert.equal(pendingContinuousBuffer(f.manager),pending);
+  f.first.gate.resolve(f.first.view);await pending;
+  assert.deepEqual(f.events,['expand:0','show:0','expand:0','show:0']);
+  assert.equal(pendingContinuousBuffer(f.manager),null);
+});
+
+test('rescheduling trim keeps the full idle deadline and the same retained neighborhood',{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  f.first.gate.resolve(f.first.view);await pendingContinuousBuffer(f.manager);
+  f.prepareTrim();f.manager.scheduleTrim();
+  t.mock.timers.tick(1000);f.manager.scheduleTrim();
+  t.mock.timers.tick(400);assert.deepEqual(f.events,[]);
+  t.mock.timers.tick(999);assert.deepEqual(f.events,[]);
+  t.mock.timers.tick(1);
+  assert.deepEqual(f.events,['erase:0','erase:1','erase:2','erase:14','erase:13','erase:12']);
+  assert.equal(f.manager.views.all().length,9);
+});
+
+for(const owner of ['manager','rendition'])test(`${owner} teardown prevents a pending trim from removing views`,{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  f.first.gate.resolve(f.first.view);await pendingContinuousBuffer(f.manager);
+  f.prepareTrim();f.manager.scheduleTrim();f[owner].destroy();
+  t.mock.timers.tick(5000);
+  assert.deepEqual(f.events,[]);assert.equal(f.manager.views.all().length,15);
 });

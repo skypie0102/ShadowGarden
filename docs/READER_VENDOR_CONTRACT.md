@@ -36,6 +36,7 @@ without registering another application engine.
 | Visual service | One service per engine; bootstrap/session/fitting/error classification and disposal use that same instance. `prepare`, `summary`, `has` and `applyToContents` preserve existing identities, cancellation and fallback behavior. |
 | Continuous settlement | Engine settlement checks manager generation/disposal while completing its current neighborhood. |
 | Continuous lifetime state | `reader/continuous-state.js` owns private generation/destruction data. Continuous core retains initialization/display/teardown transitions; layout, image return and delayed work only read it. |
+| Continuous buffer state | The same manager record groups the active buffer promise/generation, repeat requests and trim timer. Core owns mutations and scheduling; test waiters use a passive accessor to the exact current promise. |
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
 | Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
@@ -67,8 +68,10 @@ M4a moves generation/destruction state from vendor-manager properties into
 `reader/continuous-state.js`. The original transition and observation points
 remain unchanged, including undefined generations before core installation and
 invalidation at both teardown boundaries. Reader scopes still own actual resource
-disposal. Buffer scheduling, scroll bookkeeping and live block anchors remain
-separate M4 follow-ups.
+disposal. M4b moves buffer/trim bookkeeping into the same private manager record,
+retaining task-identity checks, repeat-request coalescing, deadlines and the core
+scheduling algorithm. Shared input suppression remains M4c work; live block
+anchors retain their existing layout owner.
 
 ## Owned Continuous render order
 

@@ -61,3 +61,10 @@ with core-owned transitions and shared readers for buffering, layout, image
 return and delayed scroll/media work. Buffer/trim scheduling and input/layout
 state remain separate increments. The existing transition order and lifecycle
 scope ownership are preserved; maintenance records validation and publication.
+
+M4b groups buffer promise/generation, repeat requests and trim timer in that
+private manager record. Core remains the only mutating consumer. Test waiters
+observe the exact pending promise through a passive accessor. The scheduling
+algorithm and operation order match the baseline; repeat-request, trim-deadline
+and teardown regressions preserve the prior behavior. Shared input suppression
+is the next state concern.

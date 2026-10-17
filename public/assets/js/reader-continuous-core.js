@@ -8,7 +8,8 @@ import {
   isContinuousDestroyed,
   initializeContinuousState,
   advanceContinuousGeneration,
-  destroyContinuousState
+  destroyContinuousState,
+  continuousBufferState
 } from './reader/continuous-state.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
@@ -223,10 +224,11 @@ export function createContinuousCoreExtension(){
   }
 
   function scheduleTrim(manager,rendition){
-    clearTimeout(manager.__sgTrimTimer);
-    manager.__sgTrimTimer=setTimeout(()=>{
+    const buffer=continuousBufferState(manager);
+    clearTimeout(buffer.trimTimer);
+    buffer.trimTimer=setTimeout(()=>{
       if(isContinuousDestroyed(manager))return;
-      if(manager.__sgBufferPromise||Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
+      if(buffer.promise||Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
       const range=visibleRange(manager),views=range.views;
       if(range.first<0||views.length<=MAX_RETAINED_VIEWS)return;
       const keepStart=Math.max(0,range.first-BUFFER_EACH_SIDE);
@@ -278,28 +280,29 @@ export function createContinuousCoreExtension(){
 
   function scheduleBuffer(manager,rendition){
     if(!manager?.container||!manager?.views||isContinuousDestroyed(manager))return Promise.resolve(false);
+    const buffer=continuousBufferState(manager);
     const generation=continuousGeneration(manager)||0;
-    if(manager.__sgBufferPromise&&manager.__sgBufferGeneration===generation){
-      manager.__sgBufferAgain=true;
-      return manager.__sgBufferPromise;
+    if(buffer.promise&&buffer.generation===generation){
+      buffer.again=true;
+      return buffer.promise;
     }
     const finish=measureReaderOperation('continuous.buffered');
     const task=Promise.resolve().then(async()=>{
       let changed=false;
       do{
-        manager.__sgBufferAgain=false;
+        buffer.again=false;
         changed=await ensureNeighborhood(manager,rendition,generation)||changed;
-      }while(manager.__sgBufferAgain&&generation===continuousGeneration(manager)&&!isContinuousDestroyed(manager));
+      }while(buffer.again&&generation===continuousGeneration(manager)&&!isContinuousDestroyed(manager));
       finish({views:loadedViews(manager).length},generation===continuousGeneration(manager)&&!isContinuousDestroyed(manager)?'continuous.buffered':'continuous.cancelled');
       return changed;
     }).catch(error=>{
       finish({},error?.name==='AbortError'||isContinuousDestroyed(manager)||generation!==continuousGeneration(manager)?'continuous.cancelled':'continuous.failed');
       return false;
     }).finally(()=>{
-      if(manager.__sgBufferPromise===task){manager.__sgBufferPromise=null;manager.__sgBufferGeneration=-1}
+      if(buffer.promise===task){buffer.promise=null;buffer.generation=-1}
     });
-    manager.__sgBufferPromise=task;
-    manager.__sgBufferGeneration=generation;
+    buffer.promise=task;
+    buffer.generation=generation;
     return task;
   }
 
@@ -342,7 +345,8 @@ export function createContinuousCoreExtension(){
     manager.__sgCoreMethodsInstalled=true;
     readerInstanceScope(manager).link(readerInstanceScope(rendition));
     initializeContinuousState(manager);
-    manager.__sgBufferGeneration=-1;
+    const buffer=continuousBufferState(manager);
+    buffer.generation=-1;
 
     manager.getScrollPosition=()=>getScrollPosition(manager);
     manager.syncScrollPosition=()=>syncScrollPosition(manager);
@@ -375,9 +379,9 @@ export function createContinuousCoreExtension(){
     if(baseDisplay){
       manager.display=(section,displayTarget)=>{
         const generation=advanceContinuousGeneration(manager);
-        manager.__sgBufferGeneration=-1;
-        manager.__sgBufferPromise=null;
-        clearTimeout(manager.__sgTrimTimer);
+        buffer.generation=-1;
+        buffer.promise=null;
+        clearTimeout(buffer.trimTimer);
         return Promise.resolve(baseDisplay.call(manager,section,displayTarget)).then(result=>{
           if(generation!==continuousGeneration(manager))return result;
           manager.ignore=false;
@@ -476,7 +480,7 @@ export function createContinuousCoreExtension(){
     const rawDestroy=typeof manager.destroy==="function"?manager.destroy.bind(manager):null;
     if(rawDestroy)manager.destroy=(...args)=>{
       destroyContinuousState(manager);
-      clearTimeout(manager.__sgTrimTimer);
+      clearTimeout(continuousBufferState(manager).trimTimer);
       clearTimeout(manager.afterScrolled);
       clearTimeout(manager.scrollTimeout);
       clearTimeout(rendition.__sgInstallTimer);
@@ -514,7 +518,7 @@ export function createContinuousCoreExtension(){
     const scope=readerInstanceScope(rendition);
     scope.add(()=>{
       const manager=rendition.manager;
-      if(manager){destroyContinuousState(manager);clearTimeout(manager.__sgTrimTimer);clearTimeout(manager.afterScrolled);clearTimeout(manager.scrollTimeout);manager._scrolled?.cancel?.()}
+      if(manager){destroyContinuousState(manager);clearTimeout(continuousBufferState(manager).trimTimer);clearTimeout(manager.afterScrolled);clearTimeout(manager.scrollTimeout);manager._scrolled?.cancel?.()}
       hidePagedEnd();manager?.__sgEndPage?.remove?.();
     });
     const continuous=isContinuous(options,rendition);

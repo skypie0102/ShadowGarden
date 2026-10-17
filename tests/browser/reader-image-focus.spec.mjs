@@ -4,9 +4,10 @@ import {fixtureHTML} from './reader-focus-fixture.mjs';
 
 async function settle(page){
   await page.evaluate(async()=>{
+    const {pendingContinuousBuffer}=await import('/assets/js/reader/continuous-state.js');
     const manager=window.focusFixture.rendition.manager;
     for(let i=0;i<3;i++){
-      await manager.__sgBufferPromise;
+      await pendingContinuousBuffer(manager);
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     }
   });
