@@ -32,6 +32,14 @@ Chromium (**16 checks**). Broader integration and the complete five-profile CI
 matrix are required before publication; their exact results will be recorded
 with the merged source and deployment identity.
 
+The broader local Chromium run subsequently passed all 92 reader checks, plus
+six strengthened scroll/location checks. Initial CI run 38999535380 passed
+verification and both Chromium profiles, but stopped in WebKit on the existing
+focus-drift return test and in Firefox on an uncaught disposal cancellation.
+The candidate was held. The follow-up preserves focus-owned drift and owns the
+entire render/display promise chain; pending-view coverage now tests both Section
+and iframe loading. Fresh complete CI is required for that source.
+
 Production remains correctly bound v2.12.4 while this candidate is verified.
 Read-only checks confirm unchanged D1 revision 3, timestamp
 `2026-10-03T11:52:50.670Z`, three retained snapshots, expected bucket settings

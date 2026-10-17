@@ -452,7 +452,9 @@ export function createContinuousCoreExtension(){
       const {top,left}=syncScrollPosition(manager);
       const suppressed=performance.now()<(Number(manager.__sgSuppressScrollUntil)||0);
       if(!suppressed){
-        if(Math.abs(top-(Number(manager.prevScrollTop)||0))>.5||Math.abs(left-(Number(manager.prevScrollLeft)||0))>.5)noteUserScroll(manager,rendition);
+        // Focus owns temporary browser-induced drift beneath its overlay.
+        // Real wheel/touch intent still interrupts through the input handlers.
+        if(!document.body.classList.contains('reader-image-focused')&&(Math.abs(top-(Number(manager.prevScrollTop)||0))>.5||Math.abs(left-(Number(manager.prevScrollLeft)||0))>.5))noteUserScroll(manager,rendition);
         if(!manager.ignore)manager._scrolled();
         else manager.ignore=false;
         manager.__sgLastUserScrollAt=Date.now();

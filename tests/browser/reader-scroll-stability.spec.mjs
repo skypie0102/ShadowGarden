@@ -217,24 +217,30 @@ test.describe('Continuous scroll stability',()=>{
     expect(result.index,'The final visible chapter needs its own preceding buffer').toBeGreaterThanOrEqual(4);
   });
 
-  test('a removed chapter cannot finish a late display or publish rendered work',async({page})=>{
-    const result=await page.evaluate(async()=>{
+  for(const stage of ['section','iframe'])test(`a removed chapter during ${stage} loading cannot publish late work`,async({page})=>{
+    const result=await page.evaluate(async stage=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
       const rendition=readerRuntime.current.state.rendition,manager=rendition.manager;
       const section=manager.views.first().section.prev(),render=section.render;
       let release;const gate=new Promise(resolve=>{release=resolve});
-      section.render=async function(...args){await gate;return render.apply(this,args)};
+      if(stage==='section')section.render=async function(...args){await gate;return render.apply(this,args)};
       const view=manager.prepend(section);let events=0;
+      if(stage==='iframe'){
+        const load=view.load;
+        view.load=function(...args){
+          const pending=load.apply(this,args);manager.erase(view,true);release();return pending;
+        };
+      }
       const rendered=(_section,item)=>{if(item===view)events++};rendition.on('rendered',rendered);
       const displaying=view.display(manager.request).then(()=> 'displayed',error=>error.name);
       await Promise.resolve();
-      manager.erase(view,true);
-      const status=await Promise.race([displaying,new Promise(resolve=>setTimeout(()=>resolve('pending'),100))]);
+      if(stage==='section')manager.erase(view,true);
+      const status=await Promise.race([displaying,new Promise(resolve=>setTimeout(()=>resolve('pending'),1000))]);
       release();
       await new Promise(resolve=>setTimeout(resolve,100));
       rendition.off('rendered',rendered);section.render=render;
       return{status,displayed:view.displayed,retainedFrame:Boolean(view.iframe),events};
-    });
+    },stage);
     expect(result).toEqual({status:'AbortError',displayed:false,retainedFrame:false,events:0});
   });
 });

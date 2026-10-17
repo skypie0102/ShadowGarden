@@ -57,7 +57,7 @@ export function ownContinuousViewLayout(manager,view){
   // EPUB.js destroy() does not tear down a view whose first render is still
   // pending. Keep its source lease until that vendor work settles, but close
   // its ownership boundary immediately and prevent late iframe loads/events.
-  const destroy=view.destroy,display=view.display,load=view.load,onLoad=view.onLoad,emit=view.emit;
+  const destroy=view.destroy,display=view.display,render=view.render,load=view.load,onLoad=view.onLoad,emit=view.emit;
   let rendering=null,cleaned=false,destroyArgs=[];
   const cleanup=()=>{
     if(cleaned)return;cleaned=true;
@@ -80,9 +80,17 @@ export function ownContinuousViewLayout(manager,view){
   if(typeof display==='function')view.display=function(...args){
     if(lifetime.disposed)return Promise.reject(readerAbortError());
     if(!rendering){
-      this.onDisplayed=lifetime.guard(this.onDisplayed);
-      rendering=Promise.resolve().then(()=>{
-        lifetime.signal.throwIfAborted();return display.apply(this,args);
+      rendering=Promise.resolve().then(async()=>{
+        lifetime.signal.throwIfAborted();
+        if(typeof render!=='function')return display.apply(this,args);
+        if(!this.displayed){
+          // Own the complete render/display promise chain, including rejection
+          // when a first iframe load is cancelled during teardown.
+          await render.apply(this,args);
+          lifetime.signal.throwIfAborted();
+          this.emit?.('displayed',this);this.onDisplayed?.(this);this.displayed=true;
+        }
+        return this;
       }).finally(()=>{rendering=null;if(lifetime.disposed)cleanup()});
     }
     return lifetime.wait(rendering);

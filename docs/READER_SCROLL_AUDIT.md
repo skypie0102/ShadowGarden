@@ -41,6 +41,15 @@ because prepending and trimming legitimately change it. Comparing unrelated
 block ordinals/offsets at paragraph boundaries also produced false reversals in
 an early test; the final regression compares actual surviving content geometry.
 
+The broader Chromium run passed 92 reader checks, plus six strengthened
+upward/trim, location-query and slow-load checks. The first five-profile CI run
+passed both Chromium profiles but exposed two candidate conflicts: WebKit's
+focus-owned drift was incorrectly classified as user movement, and Firefox
+reported an uncaught cancellation during teardown. The follow-up excludes
+focus-owned drift from passive movement detection (real input still cancels)
+and owns the complete render/display promise chain. Partial-view regression
+coverage now includes both pending Section rendering and pending iframe load.
+
 Baseline reproductions and complete integration/CI results are recorded in the
 release record as they finish. A passing emulated browser test does not replace
 Android / Soul acceptance. RDR-046 is resolved by the owner's explicit confirmation;
