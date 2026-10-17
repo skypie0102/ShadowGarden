@@ -21,7 +21,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a in validation; later increments planned |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b/M5c planned |
 
 ## M1 implementation
 
@@ -402,8 +402,8 @@ does not change catalog data, migrations, storage or configuration.
 
 | Step | Boundary | Status |
 | --- | --- | --- |
-| M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | In validation |
-| M5b | Document/name media deadlines and evaluate readiness or polling changes only against equivalent regression coverage. | Planned |
+| M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
+| M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Planned |
 | M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | Planned |
 
 ### M5a implementation
@@ -447,3 +447,54 @@ the new cases, real publication text search/navigation, encoded EPUB 2 paths,
 notes/progress reopening, damaged artwork, mode changes, repeated disposal and
 partial-startup recovery. The local runs serve static assets with technical
 publication/fixture responses; full CI also uses disposable Pages/D1 state.
+
+### M5a scroll-stress follow-up
+
+The initial [CI run 39049912277](https://github.com/skypie0102/ShadowGarden/actions/runs/39049912277)
+fails the existing mobile-Chromium fast-upward-scroll assertion. Its attached
+passage trace contains 163 samples and one -56 px reversal (sample 89) as the
+captured section changes from 17 to 18. The numeric trace and source identities
+are retained in [reader-scroll-stress-m5a.json](reader-scroll-stress-m5a.json).
+The failure occurs before the five new
+TOC tests run. Scroll/layout production modules and that regression are unchanged
+by M5a.
+
+Thirteen additional local mobile-Chromium repetitions pass on the candidate, and
+thirteen pass on pre-M5 `main`, with the original wheel inputs, waits and assertions.
+These static-fixture runs do not reproduce the CI reversal or establish its
+cause. The similar magnitude to the earlier overlapping-chapter observation in
+the [scroll audit](READER_SCROLL_AUDIT.md) is a lead, not proof of the same fault.
+M5b retains an open reproduction task for section-transition/reframe timing;
+an unchanged-source rerun does not establish a scroll fix. The
+original 3 px assertion threshold and all production timing rules remain intact.
+
+### M5a CI and merge
+
+The final [CI run 39049912277](https://github.com/skypie0102/ShadowGarden/actions/runs/39049912277)
+passes the audit, all **187 Node tests**, both builds and **302 browser cases**
+across five profiles. Desktop/mobile Chromium pass 62 cases each; Firefox and
+desktop WebKit pass 60 each with two skips; mobile WebKit passes 58 with four
+skips. These are the same eight existing platform skips. The five new TOC cases
+pass in every profile, adding 25 cases to the previous 277-case matrix.
+
+The single failed mobile-Chromium job described above passes on an unchanged-source
+rerun: all 62 cases, including the original fast-upward-scroll assertion. The
+other four browser profiles pass on their first attempt. The numeric trace,
+13 baseline/candidate local repetitions each and rerun identity remain archived;
+the cause is unconfirmed and the follow-up stays open. Existing assertions,
+timeouts, explicit waits and tolerances were unchanged.
+
+The tested PR head is `b7fd48451015090f145e487a0aaf3e250b17cd3c`, tree
+`1037646a98fdbd20d2ee83ac6dff30c9cd46a277`.
+[PR #20](https://github.com/skypie0102/ShadowGarden/pull/20) merged as
+`81da5dd6e52766c5b37c84a9bce2ebfcff732019` with that exact tree. A documentation-only
+follow-up records final validation, the archived stress evidence and next scope.
+Its local Markdown file links and numeric evidence also validate.
+
+M5a is complete; M5 remains in progress. M5b begins with names/documentation for
+the adapter's media fallback passes and reconciliation debounce, with the open
+scroll-stress reproduction tracked alongside readiness work. Replacing a timer or
+poll still requires equivalent regression coverage. M5c's diagnostic review follows.
+
+Production remains the separately recorded v2.12.5 deployment. This maintenance
+does not change catalog data, migrations, storage or configuration.
