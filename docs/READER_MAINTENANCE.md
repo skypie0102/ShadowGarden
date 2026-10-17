@@ -736,3 +736,23 @@ reversal remains causally unattributed because its witness lacks resize data;
 retain that distinction, the original witness and the unchanged stress assertion.
 Production remains the separately recorded v2.12.5 release; this source fix does
 not deploy or change catalog data, migrations, storage or configuration.
+
+
+### Original scroll artifact investigation
+
+Recovered the full failed M5a Playwright artifact and decoded its DOM snapshot
+references. The [scroll audit](READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up)
+records the exact 56 px frame transition and its limits. The artifact hash,
+selected snapshots, original passage samples and matched-font attempts are in
+[reader-scroll-original-investigation.json](reader-scroll-original-investigation.json).
+The offline decoder reproduces all seven selected snapshots. The README now
+explicitly separates the unresolved automated event from ordinary phone acceptance
+and the demonstrated sizing fix.
+
+Original Chromium/font geometry is reproduced with a private fontconfig. The
+original case passes 20 cold repetitions and its historical position after 40
+preceding tests in the original 62-case Pages/D1 suite. Thirty richer cold probes
+and 24 setup-phase variations also pass. These results do not prove resolution.
+The maintained test only adds already-computed geometry and document identity to
+its saved diagnostics; three focused current-source mobile runs and 203 Node
+tests pass. Reader source, release version and production data are unchanged.
