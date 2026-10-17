@@ -59,7 +59,8 @@ test.describe('Continuous scroll stability',()=>{
           const priorNode=connected?previous.node.getBoundingClientRect():null;
           const delta=priorFrame?priorFrame.top+priorNode.top-previous.y:null;
           state.samples.push({index:snapshot.index,block:snapshot.native?.blockIndex,top:snapshot.top,delta,
-            atMs:performance.now(),frameTop:frameRect.top,frameHeight:frameRect.height,
+            atMs:performance.now(),y,nodeTop:nodeRect.top,ownerMatches:node.ownerDocument===frame.contentDocument,
+            frameTop:frameRect.top,frameHeight:frameRect.height,
             prior:previous?{index:previous.index,block:previous.block,
               frameTopBefore:previous.frameTop,frameTopAfter:priorFrame?.top??null,
               nodeTopBefore:previous.nodeTop,nodeTopAfter:priorNode?.top??null,
