@@ -244,8 +244,8 @@ describe separate scheduling boundaries:
 | Continuous installation retry: 25 ms | Rendition scope retries only while the manager/container/views are unavailable. Successful binding or disposal stops it. This construction fallback is separate from media sizing. |
 
 Reconciliation reads only that manager's displayed views with live contents and
-documents. The existing extent calculation, two-pixel difference threshold,
-width fallback and stale-inline-top cleanup are unchanged. Retiring one contents
+documents. The shared intrinsic-height contract below supplies the extent; the
+two-pixel difference threshold, width fallback and stale-inline-top cleanup remain. Retiring one contents
 document cancels its listeners/fallbacks; a manager sweep already queued can still
 repair its remaining views. Manager disposal cancels its pending sweep, and a
 flow change prevents obsolete Continuous work from reframing paginated views.
@@ -260,6 +260,27 @@ timestamps and passive resize-event payloads. It reuses its existing geometry
 reads and retains the same input, waits, sampling predicate and assertion. That
 extra evidence supports the open section-transition investigation; naming media
 timings does not establish a fix for the earlier 56 px observation.
+
+## Continuous intrinsic height
+
+`reader/continuous-height.js` owns the height measurement for vertical, reflowable
+Continuous contents. The owned render path installs it before formatting and
+initial expansion. Both vendor `Contents.textHeight()` (including resize polling)
+and compatibility media reconciliation use that same measurement.
+
+The measurement includes the body's border box and scroll overflow, plus the
+original content Range for overflow beyond that box. Viewport-relative bottoms
+are translated to document coordinates. It includes trailing body space without
+using the iframe viewport as a minimum, so genuine media shrinkage still shrinks
+the frame. Pinned vendor Range-bottom alone omitted 56 px of trailing space in
+the mobile stress fixture; the old adapter's document scroll extent restored it,
+creating an unnecessary resize cycle. Body CSS is unchanged. Paginated,
+horizontal and fixed-layout contents retain their existing sizing path.
+
+All reframes still pass through synchronous Continuous layout ownership. Media
+fallback deadlines, the manager debounce, view lifetimes and input cancellation
+remain unchanged. The scroll audit distinguishes the reproduced sizing fault
+from the older trace, whose individual reversal lacked resize measurements.
 
 ## Lifecycle ownership
 

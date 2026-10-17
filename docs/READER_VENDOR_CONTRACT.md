@@ -113,3 +113,14 @@ For a vendor upgrade, inspect the actual bundle and every adapted method above
 before changing the startup guard. Compare visible passages as well as saved
 progress/promises. Record provider/physical-phone results and unresolved RDR-045
 separately from fixtures in the release record.
+
+## Continuous height measurement
+
+For vertical reflowable Continuous views, the owned render path installs a
+contents-local `textHeight()` measurement before initial formatting/expansion.
+It retains the pinned Range measurement for overflow and includes the body's
+natural box/scroll overflow in document coordinates. Compatibility reconciliation
+shares this measurement. Using document scroll height as the sole measurement
+would retain the iframe viewport floor and prevent genuine shrinkage; using the
+Range bottom alone omits trailing body space. Paginated/horizontal/fixed-layout
+contents keep vendor measurement. No bundled vendor file or timing value changes.

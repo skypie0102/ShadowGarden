@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "baseline": "80025883330a8a1a38a186980f117c48ed7ac673",
+  "profile": "mobile-chromium",
+  "publication": {
+    "factory": "createReaderEpub",
+    "chapterCount": 32,
+    "paragraphCount": 3
+  },
+  "candidateProductionSHA256": {
+    "public/assets/js/reader/continuous-height.js": "505aae8009f6d7dfcf0318d306b32a966862147ba9b4bc9d6482e02c4f639fae",
+    "public/assets/js/reader/continuous-layout.js": "9d3b8c0a11fa06353b260ed625c6c37f29aaa8f9eb52f5aac33d3407f075bdc0",
+    "public/assets/js/reader-epub-adapter.js": "0cb714c4b9b6187db51a75646d3e915cc6d9c9aeaf66bb7fdbd65093c1d22502"
+  },
+  "measurementPhases": {
+    "baseline": {
+      "vendor": [
+        {
+          "index": 17,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1311,
+          "intrinsic": 1367
+        }
+      ],
+      "media": [
+        {
+          "index": 17,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1367,
+          "intrinsic": 1367
+        }
+      ],
+      "repeated": [
+        {
+          "index": 17,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1311,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1311,
+          "intrinsic": 1367
+        }
+      ]
+    },
+    "candidate": {
+      "vendor": [
+        {
+          "index": 17,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1367,
+          "intrinsic": 1367
+        }
+      ],
+      "media": [
+        {
+          "index": 17,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1367,
+          "intrinsic": 1367
+        }
+      ],
+      "repeated": [
+        {
+          "index": 17,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 18,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 19,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 20,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 21,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 22,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 23,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 24,
+          "height": 1367,
+          "intrinsic": 1367
+        },
+        {
+          "index": 25,
+          "height": 1367,
+          "intrinsic": 1367
+        }
+      ]
+    }
+  },
+  "historicalReversal": {
+    "witness": "reader-scroll-stress-m5a.json",
+    "uniqueCauseEstablished": false
+  },
+  "baselineStressRepetitions": {
+    "ordinary": 20,
+    "fourWorkers": 40,
+    "cpuThrottledInstrumented": 10,
+    "failures": 0
+  }
+}

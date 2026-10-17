@@ -108,3 +108,35 @@ remain open.
   use only disposable generated publications for fault injection.
 - Record exact CI/source/deployment identities and the remaining physical-device
   acceptance after publication.
+
+## Follow-up — competing Continuous heights
+
+The M5a witness in [reader-scroll-stress-m5a.json](reader-scroll-stress-m5a.json)
+records one -56 px reversal at a section transition. The later investigation on
+`80025883330a8a1a38a186980f117c48ed7ac673` reproduces a deterministic sizing
+fault in the same generated publication: vendor expansion requests 1311 px while
+the body/document extent is 1367 px. Adapter reconciliation restores 1367 px;
+another vendor expansion removes those 56 px again without a content change.
+This repeated resizing is a real defect regardless of whether a particular
+transaction successfully compensates the visible passage.
+
+A new height-contract browser regression fails on that baseline by exactly
+56 px and passes with the shared intrinsic measurement. A real 120 px artwork
+shrink also exposed the disagreement: the old frame shrank only 64 px after
+reconciliation. The candidate shrinks by the actual content reduction and keeps
+the following passage within 2 px. Five Node cases cover agreement, idempotent
+installation, growth/shrinkage, iframe scroll offsets, overflow and unowned-layout
+fallback. The original native input, waits and 3 px reversal assertion remain.
+
+Twenty ordinary native-scroll repetitions, forty repetitions with four workers
+and ten instrumented repetitions with CPU throttling pass on the baseline.
+A synchronous sweep across section boundaries also does not reproduce its
+historical single reversal. The older trace lacks resize/transaction payloads,
+so it cannot uniquely establish that event's cause. The shared measurement fixes
+the demonstrated 56 px resize cycle; retain the historical witness and enriched
+native-scroll trace rather than treating these passing runs as proof of causality.
+
+Raw baseline/candidate height phases and production-source hashes are retained in
+[reader-height-contract.json](reader-height-contract.json). Validation and
+publication are recorded in [maintenance](READER_MAINTENANCE.md).
+This source fix is separate from physical-phone acceptance and deployment.

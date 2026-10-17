@@ -99,3 +99,12 @@ failures still report fixed messages, and source release remains unchanged.
 Failing-before regressions establish these specific reporting faults. Bookmark
 and app callback ownership remain separate M5c follow-up work; maintenance records
 validation and merge status.
+
+The scroll follow-up replaces competing Continuous height measurements with a
+contents-local intrinsic-height contract shared by vendor expansion/polling and
+adapter reconciliation. The unchanged fixture otherwise alternates 1311/1367 px.
+Failing-before browser cases cover this disagreement and incorrect reduction on
+real image shrinkage; Node coverage also checks growth, overflow and iframe
+scroll offsets. The old isolated reversal remains causally unattributed because
+its witness lacks resize data. The scroll audit distinguishes that evidence limit
+from the demonstrated sizing fix and records validation separately from rollout.

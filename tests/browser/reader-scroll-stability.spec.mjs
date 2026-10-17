@@ -125,6 +125,63 @@ test.describe('Continuous scroll stability',()=>{
     expect(Math.abs(shift),'Growth below the visible passage must not shift it').toBeLessThanOrEqual(2);
   });
 
+  test('unchanged chapter heights agree across vendor expansion and media reconciliation',async({page},testInfo)=>{
+    const measure=()=>page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager;
+      return manager.views.all().filter(view=>view.displayed).map(view=>({index:view.section.index,
+        height:view.iframe.getBoundingClientRect().height,
+        intrinsic:Math.round(view.contents.document.body.getBoundingClientRect().bottom+view.contents.window.scrollY)}));
+    });
+    const expand=()=>page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      for(const view of readerRuntime.current.state.rendition.manager.views.all())if(view.displayed)view.expand(true);
+    });
+    await expand();const vendor=await measure();
+    await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const view=readerRuntime.current.state.rendition.manager.views.all().find(view=>view.displayed);
+      view.contents.document.querySelector('img').dispatchEvent(new Event('load'));
+    });
+    await page.waitForTimeout(200);const media=await measure();
+    await expand();const repeated=await measure();
+    await testInfo.attach('continuous-height-contract',{body:JSON.stringify({vendor,media,repeated}),contentType:'application/json'});
+    for(const phase of [vendor,media,repeated]){
+      expect(phase.length).toBeGreaterThan(0);
+      for(const view of phase)expect(Math.abs(view.height-view.intrinsic),`Chapter ${view.index} must include its body extent`).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test('real artwork shrinkage reduces the frame and preserves the following passage',async({page})=>{
+    const before=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager;
+      const view=manager.views.all().find(view=>view.section.href==='chapter20.xhtml');
+      const node=view.contents.document.querySelector('#passage-20-after-0');
+      const image=view.contents.document.querySelector('#art-20');
+      const viewport=manager.container.getBoundingClientRect();
+      manager.container.scrollTop+=view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top-viewport.top-viewport.height*.3;
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      window.shrinkPassage={view,node,image};
+      return{top:view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top,
+        frame:view.iframe.getBoundingClientRect().height,image:image.getBoundingClientRect().height};
+    });
+    await page.evaluate(()=>{
+      const {view,image}=window.shrinkPassage;
+      image.style.setProperty('height',`${image.getBoundingClientRect().height-120}px`,'important');
+      view.expand(true);
+    });
+    await page.waitForTimeout(250);
+    const after=await page.evaluate(()=>{
+      const {view,node,image}=window.shrinkPassage;
+      return{top:view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top,
+        frame:view.iframe.getBoundingClientRect().height,image:image.getBoundingClientRect().height};
+    });
+    expect(before.image-after.image).toBeGreaterThanOrEqual(119);
+    expect(before.frame-after.frame).toBeGreaterThanOrEqual(119);
+    expect(Math.abs(after.top-before.top)).toBeLessThanOrEqual(2);
+  });
+
   test('late artwork growth above the passage within its own chapter preserves the passage',async({page})=>{
     const before=await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');

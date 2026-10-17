@@ -30,8 +30,9 @@ first-open cover-return case, RDR-045.
 
 Current development focuses on gradual reader simplification: explicit service
 and state ownership, shared helpers, cohesive search presentation and documented
-EPUB.js compatibility timing. The current diagnostic cleanup keeps cancelled search
-and disposed TOC navigation quiet while retaining active failure reports. See the
+EPUB.js compatibility timing. Continuous sizing now shares one intrinsic-height
+measurement across vendor expansion and media reconciliation. Cancelled search
+and disposed TOC navigation stay quiet while active failures remain visible. See the
 [code review](docs/READER_CODE_REVIEW.md) and
 [maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and
 next steps. Verified changes are merged into `main`; a merge and a production
