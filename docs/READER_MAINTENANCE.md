@@ -20,7 +20,7 @@ validation separately from deployment.
 | M1 — Explicit visual service and app readability | Inject the engine service into startup/session and paginated fitting; remove the functional global cache. Expand app wiring/callbacks without changing operation order. Document the vendor surface. Verify preparation, fitting, cancellation/retry, focus, mode changes and scrolling. | Merged through [PR #14](https://github.com/skypie0102/ShadowGarden/pull/14); verified below |
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
-| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | M4a merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18); M4c in validation |
+| M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
 | M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | Planned |
 
 ## M1 implementation
@@ -211,7 +211,7 @@ independently verified.
 | --- | --- | --- |
 | M4a | Generation and destruction shared by core buffering, layout, image return and delayed scroll/media work. | Merged through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17); verified below |
 | M4b | Buffer/trim task ownership and scheduling state. | Merged through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18); verified below |
-| M4c | Input/scroll suppression shared by core and rendition; retain layout anchors with their layout owner. | In validation |
+| M4c | Input/scroll suppression shared by core and rendition; retain layout anchors with their layout owner. | Merged through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
 
 ### M4a implementation
 
@@ -356,7 +356,7 @@ explicit-input cancellation followed by native continuation, recent-input trim
 deferral, idempotent wrapper installation with vendor-reporter fallback, and the
 shared image-return scroll/trim correction window. Browser instrumentation resets
 the deadline through its new state group; assertions and explicit waits remain
-unchanged. Validation and merge results will be recorded after the complete run.
+unchanged.
 
 After reversing only input-state bindings and normalizing JavaScript, both core
 and rendition match pre-M4c `main`
@@ -365,3 +365,35 @@ against both baseline and candidate. The baseline adapter maps only test access
 to the four old fields; it does not alter production source or assertions.
 Local `npm run check` passes all **187 Node tests**, the asset audit, static build
 and binding-aware Functions package. All 78 local Markdown file links resolve.
+
+All **30 targeted desktop/mobile Chromium cases** pass for focus/zoom/return,
+late chapter expansion, partial-cover return, mode switches/reopening, repeated
+disposal, render-hook cancellation, height-only viewport changes, slow prepends,
+section/iframe removal, native-scroll cancellation, scroll continuation and the
+vendor boolean reporter. This local run serves static assets with technical
+publication/fixture responses; full CI also uses disposable Pages/D1 state.
+
+### M4c CI and merge
+
+[CI run 39048269555](https://github.com/skypie0102/ShadowGarden/actions/runs/39048269555)
+passes the audit, all **187 Node tests**, both builds and **277 browser cases**
+across five profiles on the first run. Desktop/mobile Chromium pass 57 cases each;
+Firefox and desktop WebKit pass 55 each with two skips; mobile WebKit passes 53
+with four skips. These are the same eight existing platform skips. The original
+mobile-WebKit scroll-continuation assertion passes. Browser assertions, timeouts,
+explicit waits and paint counts were unchanged.
+
+The tested PR head is `4c3efc571e3645aa8f8a0f29ec0adf8e6c03c1b2`, tree
+`d93780d4da1b29d5f0c4afc4155decdd771bd9c3`.
+[PR #19](https://github.com/skypie0102/ShadowGarden/pull/19) merged as
+`6d4692471a85e4727714b9f29dd1a709a1059c3a` with that exact tree. A documentation-only
+follow-up records targeted/CI validation and completion of M4.
+
+M4 is complete. Shared lifetime, buffer/trim and input state now have explicit
+private groups; layout anchors retain their existing private owner, and required
+vendor geometry/bookkeeping stays on vendor objects. M5 is next, starting with
+TOC search presentation while preserving query cancellation and stale-result
+ownership. Timing/readiness changes remain separately reviewable work.
+
+Production remains the separately recorded v2.12.5 deployment. This maintenance
+does not change catalog data, migrations, storage or configuration.
