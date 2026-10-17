@@ -207,6 +207,21 @@ an older cached result that skipped these images is not reused. Progress and
 bookmark identities/formats are unchanged. The bounded cache store now removes
 old versions, expired records and excess publications/layouts.
 
+## Page-map measurement boundary
+
+`reader/page-map.js` owns map generation and cancellation revisions, cache keys
+and activation, section priority, fallback policy, indexing and progress/target
+lookup. `reader/page-map-measurement.js` owns the isolated EPUB.js iframe and
+runtime, media/font settling, section width/page/CFI measurement, source release
+and sandbox disposal. It exports the existing sandbox operations plus the same
+abortable-task helper used at the controller's cooperative generation yield.
+
+Generation records still receive the sandbox synchronously through `onCreate`,
+so teardown can dispose partial startup. The caller retains the bounded source
+set and releases it at the same point after section measurement/fallback; final
+disposal still belongs to the generation's cancellation/finally paths. Module
+extraction changes neither the pinned render lifecycle nor cache/progress formats.
+
 ## Parsed sources and rendering bounds
 
 The source DOM stored on a Book.spine Section and the rendered Contents document
