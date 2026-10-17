@@ -397,6 +397,23 @@
       "historicalFailureCaseOrdinal": 41,
       "historicalFailureCasePassed": true,
       "server": "Disposable local Pages/D1; original source tree; private fontconfig; loopback enumeration fallback only."
+    },
+    "originalSuiteThenWarmRichProbes": {
+      "suitePassed": 92,
+      "originalSuitePassed": 62,
+      "warmRichProbesPassed": 30,
+      "samples": 5829,
+      "negativeDeltasBelowMinus3": 0,
+      "ownerDocumentMismatches": 0,
+      "ySnapshotTopDisagreementsOver0_01px": 0,
+      "transactionEvents": {
+        "block": 1200,
+        "correction": 1200,
+        "end": 1200,
+        "scrollWrite": 591
+      },
+      "reproduced": false,
+      "anchorTransactions": 1200
     }
   },
   "limits": [

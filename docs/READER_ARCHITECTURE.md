@@ -280,7 +280,10 @@ horizontal and fixed-layout contents retain their existing sizing path.
 All reframes still pass through synchronous Continuous layout ownership. Media
 fallback deadlines, the manager debounce, view lifetimes and input cancellation
 remain unchanged. The scroll audit distinguishes the reproduced sizing fault
-from the older trace, whose individual reversal lacked resize measurements.
+from the older reversal. The recovered full artifact locates a frame shrink, but
+lacks the sampler intermediates and transaction anchor needed to explain its
+negative passage delta. Matched-font and warm-browser attempts are recorded in
+the [original-artifact follow-up](READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 
 ## Lifecycle ownership
 

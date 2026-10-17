@@ -204,3 +204,11 @@ identity check alongside its existing fields. It reuses the same geometry reads;
 input, timing, predicates and tolerances are unchanged. Three focused current-source
 mobile-Chromium runs pass, as do all 203 Node tests. This improves evidence on a
 future recurrence and does not change reader behavior.
+
+The full original-source run finishes with 92/92 passing: the original 62 cases
+followed by 30 rich probes in the warm browser. Those probes retain 5,829 passage
+samples and 1,200 anchor transactions, with no reversal below -3 px, node/frame
+document mismatch or disagreement above 0.01 px between saved `y` and snapshot
+top. The missing-measurement hypothesis is not reproduced either. Keep the
+original event open; this round establishes better reproduction fidelity and
+better evidence collection, not a confirmed root cause.

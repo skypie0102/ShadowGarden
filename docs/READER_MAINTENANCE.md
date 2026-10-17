@@ -756,3 +756,26 @@ and 24 setup-phase variations also pass. These results do not prove resolution.
 The maintained test only adds already-computed geometry and document identity to
 its saved diagnostics; three focused current-source mobile runs and 203 Node
 tests pass. Reader source, release version and production data are unchanged.
+
+
+The complete original-source run finishes with 92/92 passing: all 62 original
+cases plus 30 warm-browser rich probes. Their 5,829 samples and 1,200 anchor
+transactions show no reversal below -3 px, node/frame document mismatch or
+saved-y/snapshot-top discrepancy above 0.01 px. This does not identify the cause
+of the historical failure; it closes the known font/harness/warm-up gaps in the
+local reproduction attempts.
+
+[PR #24](https://github.com/skypie0102/ShadowGarden/pull/24) passes its first
+[CI run 39078286263](https://github.com/skypie0102/ShadowGarden/actions/runs/39078286263):
+203 Node tests, asset/dependency/route checks, static build and binding-aware
+Functions packaging, plus 322 browser cases across five profiles. Desktop and
+mobile Chromium each pass 66; Firefox and desktop WebKit each pass 64 with two
+existing skips; mobile WebKit passes 62 with four existing skips. The native
+scroll input, waits, predicate and tolerances remain unchanged.
+
+Tested head `e05554f611b923b066954aa63c6173d9205180c9`, tree
+`6842b9bead55b68410935f1780d80804e0acc270`, merges as
+`403565664675512a9e0d50a4bb8b74609f623b65`. A documentation-only follow-up records
+these final results and updates the architecture/review evidence limits. The
+original reversal remains open. No reader behavior, deployment, catalog data,
+storage, migrations or configuration changes are part of this investigation.

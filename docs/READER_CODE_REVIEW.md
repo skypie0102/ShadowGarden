@@ -105,6 +105,8 @@ contents-local intrinsic-height contract shared by vendor expansion/polling and
 adapter reconciliation. The unchanged fixture otherwise alternates 1311/1367 px.
 Failing-before browser cases cover this disagreement and incorrect reduction on
 real image shrinkage; Node coverage also checks growth, overflow and iframe
-scroll offsets. The old isolated reversal remains causally unattributed because
-its witness lacks resize data. The scroll audit distinguishes that evidence limit
-from the demonstrated sizing fix and records validation separately from rollout.
+scroll offsets. The old isolated reversal remains causally unattributed. Its
+recovered full artifact locates a frame shrink but does not recover the sampler
+intermediates or chosen transaction anchor. The scroll audit records matched-font
+and warm-browser attempts, preserves that evidence limit and separates the
+demonstrated sizing fix from rollout.
