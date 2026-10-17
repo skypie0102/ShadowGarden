@@ -22,6 +22,7 @@ does not establish physical-phone acceptance or prove that no other bug exists.
 | Buffer request coalescing | Requests received while loading can describe a newer neighborhood. | Retain a trailing request and re-evaluate after the pending pass. A slow-prepend regression checks buffer coverage after movement without another gesture. This guards a static scheduling gap; the original stale-anchor fault can mask it in the baseline test. |
 | Idle trimming / view lifetime | Vendor view removal skips destruction if its first display has not finished. | Demonstrated with a delayed Section render: removal leaves an iframe reference and an unsettled display promise. Cancel view-owned callers immediately, block late loads/events, retain source leases until vendor work settles, and clean up partial frames. Idle trimming also waits for active buffering. |
 | Late iframe sizing | Adapter height writes bypass the view's `_height`, `prevBounds` and resize ownership, and scan the entire page. | Reconcile only this manager's displayed views through `view.reframe()` inside one synchronous transaction; coalesce manager-owned timers. Existing late-media/focus-return coverage remains required. |
+| Media growth inside the visible chapter | Preserving a chapter wrapper alone cannot preserve a paragraph when an image above it changes height. | Demonstrated with a real 320 px image-height increase (the test verifies that growth occurred). Remember document-local block geometry, derive its expected position from the current frame/scroll, and compensate once after reframe. A block no longer at the tracking line cannot override newer scrolling into the image. |
 | Location reporting | Vendor Continuous `currentLocation()` calls `updateLayout()` before querying location. | Query `scrolledLocation()` directly for the supported nonpaginated Continuous manager. Check formatting calls as well as DOM mutations; an idempotent style write alone is insufficient evidence. |
 | Window resize / browser chrome | Height-only stage resize clears/reopens live chapters; app recovery also replays a snapshot. | Demonstrated on v2.12.4: a 100 px height-only viewport change disconnects the original chapter. Keep live frames when width is unchanged, refresh stage metrics, and remember the new height without starting semantic recovery. Width/orientation recovery retains its existing path. |
 | User input versus delayed work | Only explicit navigation previously invalidated ownership. | Demonstrated with both wheel input and scroll continuation while access renewal waits. Native movement now invalidates older work. Track owned scroll writes synchronously so buffer compensation is not mistaken for user movement; cover wheel, touch, keyboard, scrollbar and inertia paths. |
@@ -49,6 +50,21 @@ reported an uncaught cancellation during teardown. The follow-up excludes
 focus-owned drift from passive movement detection (real input still cancels)
 and owns the complete render/display promise chain. Partial-view regression
 coverage now includes both pending Section rendering and pending iframe load.
+
+The first follow-up still exposed Firefox's vendor render rejection during a
+background first-load cancellation. The final candidate owns the pinned
+IframeView render sequence under the view lifetime rather than injecting an
+abort into its detached rejection helper. Its previously failing Firefox
+partial-startup teardown now passes locally. The late-artwork correction also
+passes locally in both Chromium and Firefox, including newer movement before
+the next scroll event can refresh the paragraph anchor.
+
+Mobile WebKit's Playwright adapter explicitly rejects mouse.wheel and exposes
+no native touch-drag API. Only its two wheel-dependent cases are skipped; its
+scroll-continuation, resize, late-layout, slow-load and removal cases remain
+enabled. Desktop WebKit, Firefox and both Chromium profiles retain native wheel
+coverage. The generated-book navigation setup allows 30 seconds to finish
+buffering rather than interpreting a five-second setup timeout as a resize fault.
 
 Baseline reproductions and complete integration/CI results are recorded in the
 release record as they finish. A passing emulated browser test does not replace

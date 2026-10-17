@@ -172,6 +172,7 @@ project and no production credentials or catalog writes.
 | RDR-050 | Wheel/touch/keyboard movement and inertia do not invalidate older resume or deferred navigation work. | Candidate advances navigation ownership for native intent/movement while recognizing synchronous programmatic writes. Wheel and continuing-scroll access-delay regressions fail on v2.12.4 and pass after correction. |
 | RDR-051 | Vendor removal skips destruction of a view whose first render is pending, leaving iframe references and unresolved work. | Candidate owns partial displays through removal and source settlement. The delayed-section regression fails before the fix and verifies cancellation, no late event and no retained iframe afterward. |
 | RDR-052 | Adapter height writes bypass view resize bookkeeping; location queries reformat live views; pending buffer requests have no trailing pass. | Candidate uses manager-local owned reframe transactions, a read-only location path and trailing buffer coverage. See the scroll audit for evidence and which changes are prevention measures. |
+| RDR-053 | Artwork growing above the passage within its current chapter moves that passage even when the chapter wrapper is stable. | The 320 px growth regression fails before correction. Preserve document-local block geometry at the current scroll position, and reject an old block anchor after newer movement into the illustration. The two-part case passes in Chromium and Firefox. |
 
 ## Phase 3 findings
 

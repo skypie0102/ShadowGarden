@@ -1,6 +1,6 @@
 import {recordReaderDiagnostic,measureReaderOperation} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
-import {installContinuousLayout} from './reader/continuous-layout.js';
+import {installContinuousLayout,rememberContinuousLayout} from './reader/continuous-layout.js';
 import {interruptRenditionNavigation} from './reader/navigation-state.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
@@ -465,6 +465,7 @@ export function createContinuousCoreExtension(){
       manager.scrollDeltaHorz+=(Math.abs(left-(Number(manager.prevScrollLeft)||0))||0);
       manager.prevScrollTop=top;
       manager.prevScrollLeft=left;
+      rememberContinuousLayout(manager);
       clearTimeout(manager.scrollTimeout);
       manager.scrollTimeout=setTimeout(()=>{manager.scrollDeltaVert=0;manager.scrollDeltaHorz=0},150);
       manager.didScroll=false;

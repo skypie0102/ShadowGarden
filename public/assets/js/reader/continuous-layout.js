@@ -2,8 +2,35 @@
    Never retain a screen coordinate across a chapter load or an animation frame:
    the reader can continue scrolling while that work is pending. */
 import {readerAbortError,readerInstanceScope} from './lifecycle.js';
+import {captureContinuousLayoutAnchor} from './rendition.js';
 const transactions=new WeakSet();
 const wrappedViews=new WeakSet();
+const contentAnchors=new WeakMap();
+
+export function rememberContinuousLayout(manager){
+  if(!manager?.container||manager.__sgDestroyed||document.body.classList.contains('reader-image-focused')){
+    contentAnchors.delete(manager);return;
+  }
+  const anchor=captureContinuousLayoutAnchor(manager);
+  if(anchor)contentAnchors.set(manager,anchor);else contentAnchors.delete(manager);
+}
+
+function contentLayoutAnchor(manager){
+  const saved=contentAnchors.get(manager);
+  if(!saved||saved.generation!==manager.__sgGeneration||!saved.node.isConnected||!saved.view.iframe?.isConnected||manager.settings?.axis!=='vertical')return null;
+  const frame=saved.view.iframe.getBoundingClientRect(),viewport=manager.container.getBoundingClientRect();
+  if(Math.abs(frame.width-saved.width)>1)return null;
+  const scroll=Number(saved.node.ownerDocument?.defaultView?.scrollY)||0;
+  // Only preserve a block that would still be visible at the *current* parent
+  // scroll position without its document's layout change. New user movement
+  // is never reversed, and prepend compensation cannot be counted twice.
+  const expectedTop=frame.top+saved.localTop-scroll;
+  if(expectedTop+saved.height<=viewport.top||expectedTop>=viewport.bottom)return null;
+  const trackingLine=viewport.top+viewport.height*.3;
+  const distance=Math.max(0,expectedTop-trackingLine,trackingLine-expectedTop-saved.height);
+  if(distance>saved.distance+1)return null;
+  return{element:saved.view.element,frame:saved.view.iframe,node:saved.node,top:expectedTop,left:0};
+}
 
 function visibleView(manager){
   const viewport=manager.settings?.fullsize
@@ -30,14 +57,18 @@ function visibleView(manager){
 
 export function preserveContinuousLayout(manager,change){
   if(!manager?.container||manager.__sgDestroyed||transactions.has(manager))return change();
-  const anchor=visibleView(manager),generation=manager.__sgGeneration;
   transactions.add(manager);
-  try{return change()}
+  let anchor=null;const generation=manager.__sgGeneration;
+  try{
+    anchor=(!document.body.classList.contains('reader-image-focused')&&contentLayoutAnchor(manager))||visibleView(manager);
+    return change();
+  }
   finally{
     transactions.delete(manager);
     if(anchor&&anchor.element.isConnected!==false&&!manager.__sgDestroyed&&generation===manager.__sgGeneration){
       const rect=anchor.element.getBoundingClientRect();
-      const delta=manager.settings?.axis==='horizontal'?rect.left-anchor.left:rect.top-anchor.top;
+      const top=anchor.node?.isConnected?anchor.frame.getBoundingClientRect().top+anchor.node.getBoundingClientRect().top:rect.top;
+      const delta=manager.settings?.axis==='horizontal'?rect.left-anchor.left:top-anchor.top;
       if(Number.isFinite(delta)&&Math.abs(delta)>=.5){
         manager.ignore=true;
         if(manager.settings?.fullsize){
@@ -48,7 +79,31 @@ export function preserveContinuousLayout(manager,change){
     }
     const position=manager.syncScrollPosition?.();
     if(position){manager.prevScrollTop=position.top;manager.prevScrollLeft=position.left}
+    rememberContinuousLayout(manager);
   }
+}
+
+// The pinned EPUB.js IframeView render path, kept in one observed promise.
+// Retain Section rendering until it settles; a cancelled view must not unload
+// source DOM that its serialization hooks are still using.
+async function renderContinuousView(view,lifetime,request){
+  try{
+    view.create();view.size();
+    view.sectionRender ||= view.section.render(request);
+    const source=await view.sectionRender;
+    lifetime.signal.throwIfAborted();
+    await view.load(source);
+    lifetime.signal.throwIfAborted();
+    const writingMode=view.contents.writingMode(),vertical=writingMode.startsWith('vertical');
+    const axis=view.settings.flow==='scrolled'?(vertical?'horizontal':'vertical'):(vertical?'vertical':'horizontal');
+    if(vertical&&view.settings.flow==='paginated')view.layout.delta=view.layout.height;
+    view.setAxis(axis);view.emit('axis',axis);
+    view.setWritingMode(writingMode);view.emit('writingMode',writingMode);
+    view.layout.format(view.contents,view.section,view.axis);
+    view.addListeners();view.expand();
+    if(view.settings.forceRight)view.element.style.marginLeft=`${view.width()}px`;
+    view.emit('rendered',view.section);
+  }catch(error){if(!lifetime.disposed)view.emit?.('loaderror',error);throw error}
 }
 
 export function ownContinuousViewLayout(manager,view){
@@ -86,7 +141,7 @@ export function ownContinuousViewLayout(manager,view){
         if(!this.displayed){
           // Own the complete render/display promise chain, including rejection
           // when a first iframe load is cancelled during teardown.
-          await render.apply(this,args);
+          await renderContinuousView(this,lifetime,args[0]);
           lifetime.signal.throwIfAborted();
           this.emit?.('displayed',this);this.onDisplayed?.(this);this.displayed=true;
         }

@@ -9,7 +9,7 @@ test.describe('Continuous scroll stability',()=>{
     await page.goto(readerURL);await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
     await page.locator('#tocToggle').focus();await page.locator('#tocToggle').click();
     await page.locator('#tocPanel .toc-entry-link[data-href="chapter20.xhtml"]').click();
-    await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true');
+    await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true',{timeout:30000});
     await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
       const {getReaderEngine}=await import('/assets/js/reader/engine.js');
@@ -19,6 +19,7 @@ test.describe('Continuous scroll stability',()=>{
   test.afterEach(async({page})=>expect(page.__scrollErrors).toEqual([]));
 
   test('fast upward scrolling does not reverse when earlier chapters render',async({page},testInfo)=>{
+    test.skip(testInfo.project.name==='mobile-webkit','Playwright does not support native wheel or touch scrolling in mobile WebKit.');
     await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
       const {captureContinuousScrollPosition}=await import('/assets/js/reader/rendition.js');
@@ -96,6 +97,46 @@ test.describe('Continuous scroll stability',()=>{
     expect(Math.abs(shift),'Growth below the visible passage must not shift it').toBeLessThanOrEqual(2);
   });
 
+  test('late artwork growth above the passage within its own chapter preserves the passage',async({page})=>{
+    const before=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager;
+      const view=manager.views.all().find(view=>view.section.href==='chapter20.xhtml');
+      const node=view.contents.document.querySelector('#passage-20-after-0');
+      const viewport=manager.container.getBoundingClientRect();
+      manager.container.scrollTop+=view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top-viewport.top-viewport.height*.3;
+      window.lateArtworkPassage={view,node};
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      return view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top;
+    });
+    await page.evaluate(()=>{
+      const {view}=window.lateArtworkPassage;
+      const image=view.contents.document.querySelector('#art-20');
+      const height=image.getBoundingClientRect().height;
+      image.style.setProperty('height',`${height+320}px`,'important');
+      image.style.setProperty('max-height','none','important');view.expand(true);
+      window.lateArtworkPassage.growth=image.getBoundingClientRect().height-height;
+    });
+    await page.waitForTimeout(250);
+    const after=await page.evaluate(()=>{const {view,node}=window.lateArtworkPassage;return view.iframe.getBoundingClientRect().top+node.getBoundingClientRect().top});
+    expect(await page.evaluate(()=>window.lateArtworkPassage.growth)).toBeGreaterThanOrEqual(319);
+    expect(Math.abs(after-before),'Late media layout inside the visible chapter must not displace the passage').toBeLessThanOrEqual(2);
+    const moved=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const manager=readerRuntime.current.state.rendition.manager,{view}=window.lateArtworkPassage;
+      // Move into the illustration and resize it before another scroll event
+      // can refresh the old paragraph anchor. The latest movement still wins.
+      manager.container.scrollTop-=240;
+      const image=view.contents.document.querySelector('#art-20');
+      const top=view.iframe.getBoundingClientRect().top+image.getBoundingClientRect().top;
+      image.style.setProperty('height',`${image.getBoundingClientRect().height+320}px`,'important');view.expand(true);
+      return top;
+    });
+    await page.waitForTimeout(250);
+    const current=await page.evaluate(()=>{const {view}=window.lateArtworkPassage;return view.iframe.getBoundingClientRect().top+view.contents.document.querySelector('#art-20').getBoundingClientRect().top});
+    expect(Math.abs(current-moved),'A previous paragraph anchor must not undo newer movement into the illustration').toBeLessThanOrEqual(2);
+  });
+
   test('height-only viewport changes retain the live Continuous passage',async({page})=>{
     const before=await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
@@ -111,7 +152,8 @@ test.describe('Continuous scroll stability',()=>{
     expect(Math.abs(after.top-before)).toBeLessThanOrEqual(2);
   });
 
-  test('native scrolling wins over a suspended-position restore waiting for access',async({page})=>{
+  test('native scrolling wins over a suspended-position restore waiting for access',async({page},testInfo)=>{
+    test.skip(testInfo.project.name==='mobile-webkit','Playwright does not support native wheel or touch scrolling in mobile WebKit; the continuing-scroll case covers native offset events.');
     await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
       const reader=readerRuntime.current,manager=reader.state.rendition.manager;

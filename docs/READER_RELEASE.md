@@ -40,6 +40,17 @@ The candidate was held. The follow-up preserves focus-owned drift and owns the
 entire render/display promise chain; pending-view coverage now tests both Section
 and iframe loading. Fresh complete CI is required for that source.
 
+Further audit reproduced a separate 320 px jump when artwork grows above the
+passage within its current chapter. The final candidate remembers document-local
+block geometry and compensates its layout change at the current scroll position,
+without replaying an old screen coordinate. It also checks that the old block
+still belongs at the tracking line, so newer movement into the image wins.
+Chromium and Firefox pass that two-part regression. The pinned IframeView render
+sequence is now owned directly, and Firefox's previously failing partial-startup
+teardown passes locally. Fresh final CI is pending. Mobile WebKit skips only the
+two wheel cases unsupported by its Playwright adapter, alongside the six existing
+Chromium-only dark-mode skips across the matrix.
+
 Production remains correctly bound v2.12.4 while this candidate is verified.
 Read-only checks confirm unchanged D1 revision 3, timestamp
 `2026-10-03T11:52:50.670Z`, three retained snapshots, expected bucket settings
