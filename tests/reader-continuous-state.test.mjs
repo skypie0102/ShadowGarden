@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {createContinuousCoreExtension} from '../public/assets/js/reader-continuous-core.js';
 import {preserveContinuousLayout} from '../public/assets/js/reader/continuous-layout.js';
-import {pendingContinuousBuffer} from '../public/assets/js/reader/continuous-state.js';
+import {pendingContinuousBuffer,continuousInputState} from '../public/assets/js/reader/continuous-state.js';
+import {beginRenditionNavigation} from '../public/assets/js/reader/navigation-state.js';
+import {stabilizeContinuousScrollLifecycle} from '../public/assets/js/reader/rendition.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
 
@@ -123,4 +125,45 @@ for(const owner of ['manager','rendition'])test(`${owner} teardown prevents a pe
   f.prepareTrim();f.manager.scheduleTrim();f[owner].destroy();
   t.mock.timers.tick(5000);
   assert.deepEqual(f.events,[]);assert.equal(f.manager.views.all().length,15);
+});
+
+test('continued native movement interrupts stale navigation at the restoration deadline',{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  let now=1000;t.mock.method(performance,'now',()=>now);
+  continuousInputState(f.manager).suppressScrollUntil=now+320;
+  const operation=beginRenditionNavigation(f.rendition);
+  now=1319;f.manager.container.scrollTop+=40;f.manager.onScroll();
+  assert.equal(operation.isCurrent(),true);
+  now=1320;f.manager.container.scrollTop+=40;f.manager.onScroll();
+  assert.equal(operation.isCurrent(),false);
+});
+
+test('explicit input clears suppression and native continuation keeps the owned reporter',{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  t.mock.method(performance,'now',()=>1000);
+  continuousInputState(f.manager).suppressScrollUntil=1320;
+  const old=beginRenditionNavigation(f.rendition);
+  const wheel=new Event('wheel');Object.defineProperty(wheel,'deltaY',{value:20});
+  f.manager.container.dispatchEvent(wheel);
+  assert.equal(old.isCurrent(),false);
+  const latest=beginRenditionNavigation(f.rendition);
+  assert.equal(stabilizeContinuousScrollLifecycle(f.rendition),true);
+  let reports=0;f.manager.on('scroll',()=>{reports++});f.manager.scrolled=true;
+  f.manager.container.scrollTop+=40;f.manager.onScroll();
+  assert.equal(latest.isCurrent(),false);
+  t.mock.timers.tick(29);assert.equal(reports,0);
+  t.mock.timers.tick(1);assert.equal(reports,1);
+});
+
+test('recent user input defers trimming until the rescheduled idle deadline',{timeout:5000},async t=>{
+  const f=fixture(t);await f.first.entered.promise;
+  f.first.gate.resolve(f.first.view);await pendingContinuousBuffer(f.manager);
+  let now=5000;t.mock.method(Date,'now',()=>now);
+  f.prepareTrim();f.manager.scheduleTrim();t.mock.timers.tick(1100);
+  now=6100;const wheel=new Event('wheel');Object.defineProperty(wheel,'deltaY',{value:20});
+  f.manager.container.dispatchEvent(wheel);
+  now=6400;t.mock.timers.tick(300);assert.deepEqual(f.events,[]);
+  now=7800;t.mock.timers.tick(1400);
+  assert.deepEqual(f.events,['erase:0','erase:1','erase:2','erase:14','erase:13','erase:12']);
+  assert.equal(f.manager.views.all().length,9);
 });

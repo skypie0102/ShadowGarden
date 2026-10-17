@@ -318,9 +318,10 @@ test.describe('production reader integration',()=>{
   test('Continuous scroll reporting survives the vendor boolean scroll flag',async({page})=>{
     const reports=await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const {continuousInputState}=await import('/assets/js/reader/continuous-state.js');
       const manager=readerRuntime.current.state.rendition.manager;let reports=0;
       const listener=()=>reports++;manager.on('scroll',listener);
-      manager.scrolled=true;manager.__sgSuppressScrollUntil=0;manager._scrolled();
+      manager.scrolled=true;continuousInputState(manager).suppressScrollUntil=0;manager._scrolled();
       await new Promise(resolve=>setTimeout(resolve,100));manager.off('scroll',listener);
       return reports;
     });
