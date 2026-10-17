@@ -204,6 +204,31 @@ browser refuses history replacement. Fragment text targets use a collapsed
 text-node CFI, avoiding a vendor code path that interprets character offsets as
 element child indexes.
 
+## Contents and book-search presentation
+
+`reader/toc.js` owns chapter-tree rendering, label filtering, location matching,
+page numbers, active/current chapter controls and the search toolbar. Its
+application-facing methods and navigation callbacks remain unchanged.
+`reader/toc-book-search.js` owns the book-text result section, status messages,
+query debounce, stale-query guards and replaceable result listeners. The text
+engine in `reader/book-search.js` retains source leases, matching, section scans,
+query/result bounds and engine cancellation.
+
+The TOC supplies its root and current UI scopes to the presentation boundary.
+Queries retain the 180 ms debounce and engine-provided minimum length (three by
+default). Replacing a query releases old result listeners, clears pending timing
+and invalidates prior progress/results even if a provider completes after
+cancellation. Re-rendering first disposes the old UI scope, then resets the search
+boundary with the replacement scope. `cancelSearch()` stops pending work without
+clearing already displayed results; disposal invalidates work before closing the
+root scope. Result navigation still awaits the shared app owner and closes drawers
+only while the TOC remains live.
+
+Contents labels keep accent/case folding; book queries keep whitespace collapsing
+with case and accents intact. DOM classes, IDs, accessible status messages,
+chapter-label fallbacks and text-only excerpts remain the same. This boundary
+does not add a vendor patch or change publication/source lifetime.
+
 ## Lifecycle ownership
 
 `reader/lifecycle.js` defines the common scope. A scope owns removable DOM and
