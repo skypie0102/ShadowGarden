@@ -95,7 +95,7 @@ function installResumeRenewal(session,access,scope){
   scope.listen(window,"pageshow",()=>{void renew()});
 }
 
-export async function createAuthorizedBookSession({access=window.ShadowGardenBookAccess,signal}={}){
+export async function createAuthorizedBookSession({access=window.ShadowGardenBookAccess,visualPages,signal}={}){
   const scope=createReaderScope();
   if(signal?.aborted)scope.dispose();else scope.listen(signal,"abort",()=>scope.dispose(),{once:true});
   try{
@@ -129,7 +129,7 @@ export async function createAuthorizedBookSession({access=window.ShadowGardenBoo
 
   installResumeRenewal(session,access,scope);
   if(context.restartRequested)await scope.wait(resetReadAgain(session));
-  try{await scope.wait(window.__sgVisualPageCache?.prepare?.(publicBookId||context.requested||sourcePath))}
+  try{await scope.wait(visualPages?.prepare?.(publicBookId||context.requested||sourcePath))}
   catch(error){if(scope.disposed)throw error;recordReaderDiagnostic('visual.handoffFailed')}
 
   return session;

@@ -1,5 +1,12 @@
 # ShadowGarden isolated test setup
 
+Historical test-project setup. The database named `shadowgarden-test` now serves
+production; it is not a disposable test target. Use current
+[production operations](PRODUCTION_TAKEOVER.md) and
+[configuration](DEPLOYMENT.md) guidance. The automated harness creates its own
+local isolated database.
+
+
 **Historical setup:** on 2026-10-02 the owner chose to reuse the existing
 production site and B2 bucket. Follow
 [PRODUCTION_TAKEOVER.md](PRODUCTION_TAKEOVER.md) for the current deployment.

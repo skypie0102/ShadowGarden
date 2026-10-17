@@ -94,6 +94,34 @@ function sessionFixture(t){
   return{window,document,access:{initial:Promise.resolve({sourcePath:'/media/shadow-garden/books/test.epub'})}};
 }
 
+test('visual preparation uses the injected service and cancels with authorization ownership',async t=>{
+  const f=sessionFixture(t),pending=deferred(),controller=new AbortController();
+  Object.defineProperty(f.window,'__sgVisualPageCache',{
+    get(){throw Error('An authorized session must not read the legacy global cache');}
+  });
+  const prepared=[];
+  const opening=createAuthorizedBookSession({
+    access:f.access,
+    signal:controller.signal,
+    visualPages:{prepare(reference){prepared.push(reference);return pending.promise;}}
+  });
+  await tick();
+  assert.deepEqual(prepared,['/media/shadow-garden/books/test.epub']);
+  controller.abort();
+  await assert.rejects(opening,{name:'AbortError'});
+  pending.resolve({visualPages:1});
+  await tick();
+  assert.equal(getEventListeners(f.window,'pageshow').length,0);
+
+  const session=await createAuthorizedBookSession({
+    access:f.access,
+    visualPages:{prepare(reference){prepared.push(reference);return{visualPages:1};}}
+  });
+  assert.equal(prepared.length,2);
+  assert.equal(session.sourcePath,prepared[1]);
+  session.dispose();
+});
+
 test('each authorized session owns renewal; replacing it does not renew the old book',async t=>{
   const f=sessionFixture(t);let firstCalls=0,secondCalls=0;
   const first=await createAuthorizedBookSession({access:{...f.access,resolve:()=>{firstCalls++;return{expires:1}}}});

@@ -31,20 +31,24 @@ export function initializeReaderEngine(epub=globalThis.ePub){
   if(!installEpubLifecyclePatch(epub)){
     throw new Error('EPUB.js lifecycle integration could not initialize');
   }
-  // Order preserves the recovered behavior while making each installation
+  // Order preserves the established behavior while making each installation
   // explicit. Opening a book calls the original vendor factory exactly once.
   const extensions=[
     createEpubCompatibilityExtension(),
     createFootnotesExtension(),
-    createInternalLinksExtension(),
-    createVisualPageCacheExtension(),
-    createPaginatedVisualFitExtension(),
-    createContinuousCoreExtension()
+    createInternalLinksExtension()
   ];
+  const visualCache=createVisualPageCacheExtension();
+  const visualPages=visualCache.visualPages;
+  extensions.push(
+    visualCache,
+    createPaginatedVisualFitExtension({visualPages}),
+    createContinuousCoreExtension()
+  );
   const engine=Object.freeze({
     runtimeVersion:String(epub.VERSION),
     extensions:Object.freeze(extensions.map(extension=>extension.name)),
-    visualPages:extensions.find(extension=>extension.visualPages)?.visualPages,
+    visualPages,
     settleNavigation:rendition=>extensions.find(extension=>extension.settleNavigation)?.settleNavigation(rendition),
     createBook(...args){
       let book=epub(...args);

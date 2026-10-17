@@ -565,7 +565,5 @@ export function createVisualPageCacheExtension(){
     release,
     revoke:revokeUrls
   };
-  window.__sgVisualPageCache=api;
-
   return {name:"visual-cache",attachBook:patchBook,visualPages:api};
 }

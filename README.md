@@ -1,28 +1,43 @@
-# ShadowGarden — reconstructed source
+# ShadowGarden
 
-Repository: https://github.com/skypie0102/ShadowGarden
+ShadowGarden is a web library with a mobile-friendly EPUB reader and Keeper,
+its catalog administration interface. It runs on Cloudflare Pages and Pages
+Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
-Reader work follows the [phased refactor roadmap](docs/READER_REFACTOR_ROADMAP.md).
-Verified milestones are merged into `main`. Its Wrangler configuration
-references existing production resources. Automated
-browser tests create an isolated local project/database. Use the
-[production guide](docs/PRODUCTION_TAKEOVER.md) for the existing site and the
-[test guide](docs/TEST_DEPLOYMENT.md) for a separately configured test project.
+[Open ShadowGarden](https://shadowgarden-bon.pages.dev/) ·
+[Documentation](docs/README.md) ·
+[Maintenance roadmap](docs/READER_MAINTENANCE.md)
 
-This repository reconstructs the 2.11.0 Cloudflare Pages deployment from the
-supplied recovery archives. The recovered browser app is retained, with a new
-backend derived from its request/response contracts. It is **not the original
-lost repository or Git history**.
+## Features
 
-148 deployed files were recovered. `npm run audit` reports the current
-byte-identical files and documented changes. The archive contains one
-cataloged series, five opaque book IDs and ten cover images. The owner confirmed that the five EPUBs were disposable test data; their absence
-is not a reconstruction blocker. Original server source and production credentials
-were not in the archive. The backend is a documented replacement.
+- Main and age-gated libraries with series, volumes, covers and reading status.
+- Paginated and Continuous reading, chapter navigation, book search, bookmarks,
+  saved progress, themes and layout preferences.
+- Image focus with zoom and return-position preservation, plus standalone
+  cover/illustration preparation and bounded local caches.
+- Protected book access through Turnstile sessions and object-specific tickets.
+- Keeper catalog editing, uploads, translations, banners and taxonomy tools.
+- Checksummed catalog snapshots, Trash, guarded recovery and retryable media
+  cleanup that protects retained references.
+
+## Project status
+
+The latest verified production release is **v2.12.5**. Android / Soul Browser
+acceptance confirms that the reported image dimming and upward-scroll jumps are
+resolved in ordinary use. The [release record](docs/READER_RELEASE.md) separates
+that device result from automated checks and the remaining intermittent
+first-open cover-return case, RDR-045.
+
+Current development focuses on gradual reader simplification: explicit service
+boundaries, readable orchestration and documented EPUB.js compatibility
+contracts. See the [code review](docs/READER_CODE_REVIEW.md) and
+[maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and
+next steps. Verified changes are merged into `main`; a merge and a production
+deployment are recorded separately.
 
 ## Local development
 
-Use Node.js 24 (minimum 22.16).
+Use Node.js 24; the minimum supported version is 22.16.
 
 ```sh
 npm ci
@@ -31,109 +46,84 @@ npm run seed:empty
 npm run dev
 ```
 
-Use `npm run seed:local` instead to initialize the recovered demo catalog. Both
-seeds preserve any existing library. Open the URL printed by Wrangler. The recovered public catalog and covers work
-without B2 credentials. Keeper unlock and protected book access intentionally
-return configuration errors until configured; there is no development bypass.
-Copy `.env.example` to `.dev.vars` and fill it with your own credentials when
-testing those flows. For an end-to-end local unlock, use a dedicated development
-Turnstile widget with an allowed development hostname; keep hostname and action
-validation enabled. The automated tests mock the provider response, without
-adding a bypass to the application.
+Open the local URL printed by Wrangler. These commands use local D1 state.
+`npm run seed:local` optionally loads the demo catalog; both seed commands
+preserve an existing library. Demo metadata does not include protected EPUBs.
+
+Copy `.env.example` to `.dev.vars` and configure your own development credentials
+for Keeper, Turnstile and B2. A dedicated development Turnstile widget must allow
+the development hostname. Protected flows require their normal configuration;
+provider responses are mocked only by the isolated test harness.
+
+The committed `wrangler.jsonc` identifies the existing production resources.
+Use the [production guide](docs/PRODUCTION_TAKEOVER.md) for that site and
+[deployment guide](docs/DEPLOYMENT.md) for configuration. The automated browser
+harness creates its own disposable Pages project and database.
+
+## Validation
 
 ```sh
 npm run check
-npm audit
-```
-
-`check` validates recovered assets, literal dependencies and route coverage;
-runs the SQLite-backed contract/security tests; builds `dist/`; and compiles
-the Pages Functions with Wrangler. It does not access production services.
-
-For desktop and mobile Chromium checks against real local Pages/D1:
-
-```sh
-npx playwright install --with-deps chromium
+npx playwright install --with-deps chromium firefox webkit
 npm run test:browser
 ```
 
-The browser harness creates and removes a disposable project/database beneath
-`.wrangler/`, with public fixture credentials. It never uses `.dev.vars`, the
-developer database, or remote resources. It checks public navigation, the adult
-gate, missing-book errors, admin edits/conflicts, trash restore/purge, cleanup continuation, damaged
-snapshots and recovery of a damaged live catalog. Fault injection is restricted
-to that disposable fixture database; the application has no test bypass. Admin
-tests seed a signed test session. Production-entry reader tests run the actual
-startup and complete integration stack with original generated EPUBs and mocked
-ticket/media network responses. Lifecycle cases also close/reopen the full reader,
-account for owned resources, cancel pending startup/completion work, retry EPUB
-failures and distinguish BFCache suspension from departure. Live Turnstile and B2 remain separate integration
-checks. GitHub Actions runs both test suites and retains
-the browser report for seven days. Reports also include successful-page captures
-of the public screens, Keeper editor and recovery states for desktop/mobile review.
+`check` audits asset provenance, dependencies and routes, runs the Node contract
+and reader tests, builds `dist/`, and compiles a Pages Functions package while
+checking its actual D1 and variable bindings. It does not access production.
 
-Reader rendering cases also bound source-document retention across long-book
-navigation, verify repeated-asset normalization and cached reopening, prune
-obsolete/damaged cache records, and recover from a failed page-map sandbox.
-For repeatable long/illustrated-book profiles without timing-based CI thresholds:
+The browser suite runs the production reader entry point with generated EPUBs
+and isolated Pages/D1 state across desktop/mobile Chromium, Firefox and
+desktop/mobile WebKit. It covers navigation, scrolling, focus return, late
+layout changes, settings, caching, cancellation and resource cleanup, alongside
+catalog and Keeper flows. Live Turnstile/B2 and physical-device acceptance are
+recorded separately. GitHub Actions retains browser reports for seven days.
+
+For repeatable long/illustrated-book profiles:
 
 ```sh
 npm run profile:reader -- --repeat-each=3
 ```
 
-The profile attaches JSON with startup/map timing, conversion counts and observed
-source/view peaks. It uses the same isolated server and original generated EPUBs.
-The [reader performance report](docs/READER_PERFORMANCE.md) records the measured
-before/after results, cache limits and remaining release-verification scope.
+The [performance report](docs/READER_PERFORMANCE.md) records measured results,
+cache budgets and measurement limits.
 
-## Layout
+## Code layout
 
-| Path | Purpose |
+| Path | Responsibility |
 | --- | --- |
-| `public/` | Recovered static deployment, plus routing/header rules |
-| `functions/` | All 15 routes from the recovered route inventory |
-| `server/` | New backend, auth, B2 access, catalog transactions and EPUB checks |
-| `migrations/` | New D1 schema, explicitly not the original database schema |
-| `recovery-info/` | Recovery reports, hashes and idempotent public catalog seed |
-| `scripts/` | Build, audit and private mapping migration generator |
-| `tests/` | SQLite/client contract tests and isolated Pages/D1 browser checks |
-| `docs/` | API contracts, deployment setup and audit results |
+| `public/` | Library and Keeper UI, reader modules, pinned vendor assets and static routing/header rules |
+| `public/assets/js/reader/` | Reader engine, application/controllers, navigation, layout, lifecycle and cache services |
+| `functions/` | Pages route handlers |
+| `server/` | Authorization, catalog transactions, B2 access, EPUB validation and cleanup |
+| `migrations/` | Versioned D1 schema migrations |
+| `scripts/` | Build, asset audit, binding-aware release packaging and local test harness |
+| `tests/` | Node contract/reader tests and isolated browser integration tests |
+| `docs/` | Architecture, maintenance, API, deployment and release records |
+| `recovery-info/` | Historical provenance, original file hashes, demo seeds and route inventory |
 
-## Backend behavior
+## Data and operations
 
-Public catalogs come from D1 after initialization; otherwise the recovered
-public snapshot is used. B2 stores private EPUBs and newly uploaded covers.
-Recovered cover images remain available as static assets. This D1 design is
-a reconstruction choice, not evidence of an original D1 binding. Catalog
-changes are **not mirrored back into the original B2 catalog JSON objects**.
+D1 is authoritative for the live catalog. Missing database bindings or an
+uninitialized catalog fail explicitly; archived demo catalogs are never used
+as a substitute. Private EPUBs and uploaded covers live in B2. Bundled cover
+assets remain available as static files. Catalog edits are not mirrored to
+legacy B2 catalog JSON objects.
 
-Keeper requests require a bearer token and a revocable, signed session created
-after server-side Turnstile validation. Readers receive a 12-hour human session
-and 15-minute, object-specific book tickets. Private objects never fall back to
-public static hosting. Catalog writes use revision checks and create checksummed
-snapshots, except explicit permanent Trash purge. Snapshots must pass checksum and structural validation before restore.
-Keeper history stays accessible when the live catalog is damaged; restoring a
-valid snapshot preserves the damaged record in an exact safety copy. Book
-replacements use fresh object keys and retain old bytes.
+Keeper uses a bearer token and revocable signed session after Turnstile
+verification. Reader access uses a human session and short-lived book tickets.
+Catalog writes require revision checks; snapshots must pass checksum and
+structural validation before restoration. Book replacement uses fresh object
+keys, and cleanup protects live metadata, retained snapshots and active uploads.
 
-Catalog editing, translations, banners, upload, backups, restore, taxonomy,
-cover optimization, object checks and basic cooldown telemetry are reconstructed.
-Trash purge now removes selected metadata and queues bounded, retryable B2
-cleanup. Live references, all retained snapshots, active uploads and bundled
-covers are protected. Recovery restores a selected validated snapshot with a
-revision/checksum guard and an exact safety backup. These are explicit replacement
-contracts; original tripwire scoring and retention policies remain unknown.
+[API contracts](docs/API_CONTRACTS.md) describe these behaviors.
+[Production operations](docs/PRODUCTION_TAKEOVER.md) describe release checks and
+rollback. Keep credential values and private exports outside Git.
 
-Apply **all D1 migrations, including `0002_media_purge.sql`, before upgrading**.
-Media cleanup requires B2 `listFiles` and `deleteFiles` capabilities in addition
-to the existing read/write access. Keeper shows failed or protected cleanup jobs
-without claiming their files were deleted.
+## Project history
 
-The owner's existing `SG_*` security names and separate `B2_READ_*` / `B2_WRITE_*`
-credential pairs are supported. Keep those names; the replacement also needs an
-independent `SESSION_SECRET`, explicit B2 bucket identifiers and the new `DB`
-binding. The deployment guide explains precedence, permissions and test setup.
-
-See [RECONSTRUCTION_LOG.md](RECONSTRUCTION_LOG.md),
-[the API contracts](docs/API_CONTRACTS.md), [deployment steps](docs/DEPLOYMENT.md),
-and [the audit](docs/AUDIT.md) before reconnecting a production Pages project.
+The project was restored from an archived deployment and has since gained a
+maintained backend and a refactored reader. Original asset hashes and recovery
+records remain in [the historical log](RECONSTRUCTION_LOG.md) and
+`recovery-info/` for traceability. The documentation index identifies historical
+reports and current operational guidance.

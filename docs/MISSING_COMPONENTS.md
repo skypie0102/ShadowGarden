@@ -1,4 +1,11 @@
-# Recovery boundary
+# Initial recovery boundary — historical record
+
+This table preserves the initial archive assessment. The production database is
+already initialized and genuine provider/book acceptance has since passed.
+Current operational guidance is in the [documentation index](README.md); this
+historical table is not a provisioning checklist.
+
+## Original boundary
 
 | Component | Status | What completes recovery |
 | --- | --- | --- |

@@ -146,7 +146,9 @@ test.describe('production reader lifecycle',()=>{
   test('disposing during publication startup cancels late preparation and allows reopening',async({page})=>{
     await dispose(page);await released(page);
     await page.evaluate(async url=>{
-      const {readerRuntime}=await import(url),visual=window.__sgVisualPageCache,prepare=visual.prepare;
+      const {readerRuntime}=await import(url);
+      const {getReaderEngine}=await import('/assets/js/reader/engine.js');
+      const visual=getReaderEngine().visualPages,prepare=visual.prepare;
       let release,entered;
       const waiting=new Promise(resolve=>{entered=resolve});
       visual.prepare=()=>{entered();return new Promise(resolve=>{release=resolve})};

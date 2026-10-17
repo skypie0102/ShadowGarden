@@ -1,23 +1,21 @@
-# API reconstruction contracts
+# ShadowGarden API contracts
 
-Prepared correction after the 2026-10-16 incident: public catalog reads require
-the configured D1 database and initialized live record. Missing bindings return
+These are the maintained backend contracts. Public catalog reads require the
+configured D1 database and initialized live record. Missing bindings return
 503 `database_not_configured`; a missing live row returns 503
-`database_not_seeded`. The backend must not substitute the recovered catalog
-and resurrect deleted entries. This correction is prepared in source; production
-was restored to v2.12.0 without deploying it during incident recovery.
+`database_not_seeded`. Archived demo data is never substituted for missing live
+state. This behavior is deployed in the verified v2.12.5 production baseline.
 
-Implementations are inferred from the recovered client or explicitly designed as
-replacement contracts. Purge and recovery mutations use the replacement policies below. The only server evidence in the archive
-is `recovery-info/FUNCTION_ROUTES.md`, a transcription of the deployment routing
-manifest. Actual worker code and the raw manifest were not supplied.
+The original route inventory is in `recovery-info/FUNCTION_ROUTES.md`.
+Historical evidence describes initial implementation choices; the contracts
+below describe current behavior.
 
 All handlers enforce their methods and return JSON errors with `ok: false`,
 `code`, and `error`. Admin routes require both a bearer token and an unexpired,
 revocable Keeper session. Writes reject cross-origin requests. No secrets are
 returned in error payloads. Success payloads include `revision` when applicable.
 
-| Route | Methods | Evidence and reconstructed behavior |
+| Route | Methods | Client and current behavior |
 | --- | --- | --- |
 | `/admin-access` | GET, POST, DELETE | `admin/auth-session.js`: challenge `{siteKey,action}`; POST `{adminToken,turnstileToken}`; DELETE revokes cookie/session |
 | `/human-access` | GET, POST | `book-access.js`: POST `{token}`; Siteverify action/hostname validation; 12-hour human cookie |
@@ -42,12 +40,12 @@ The last two use the explicit replacement retention policy below.
 
 ## Snapshot validation and damaged-catalog recovery
 
-The replacement storage schema requires main/adult series lists, a private book
+The catalog storage schema requires main/adult series lists, a private book
 map and a trash list. Series and volumes need valid identities, titles and volume
 numbers; active identities and mapped EPUB keys must be unique. Media coordinates
 and embedded trash records are checked before writes or snapshot restoration.
 Missing private mappings remain valid metadata and block object-complete readiness.
-This is a reconstruction contract, not evidence of the original database schema.
+The versioned D1 migrations define this storage contract.
 
 Maintenance returns `catalog.readable` and snapshot entries with `restorable`,
 `integrity: {status,detail}`, and `counts` (null for damaged snapshots). A bad
@@ -83,7 +81,7 @@ The history panel displays the newest 200 entries. Readiness counts the entire
 retained history in the same query that loads its newest three candidates; its
 totals do not inherit the panel's display limit or load older document payloads.
 
-## Reconstructed security policy
+## Security policy
 
 - HMAC-SHA256 cookies and tickets; independent session/book secrets, minimum 32
   characters. Cookies are Secure, HttpOnly and SameSite=Strict.
@@ -93,11 +91,11 @@ totals do not inherit the panel's display limit or load older document payloads.
   hostname. Client-only verification is never accepted.
 - Fixed windows: 5 admin attempts / 10 minutes; 20 human checks / 10 minutes;
   120 ticket requests / 10 minutes. These limits count attempts, including
-  successes; the exact original tripwire policy is missing.
+  successes.
 - HMAC-derived client IDs, not raw IPs, are stored. Events retain 30 days; the
   admin UI presents the newest 50. Rate limits are shared across worker instances.
 - Book tickets expire after 15 minutes. The per-object cookie supports the
-  recovered reader's fetch interceptor, which intentionally discards the URL
+  reader's fetch interceptor, which intentionally discards the URL
   signature and fetches the authorized pathname. Downloads retain the signature.
 - Retired catalog entries cannot be downloaded even with an old valid ticket.
 - D1 revision-guarded writes plus snapshots protect overlapping edits. `If-Match`
