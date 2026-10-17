@@ -366,6 +366,24 @@ function nativeContinuousGeometryStable(manager,viewport,view,viewRect,native){
    same view and semantic block geometry survive unchanged, exact scrollTop is safe and more
    faithful than a browser-dependent CFI round-trip. Persistent Reader progress is still
    owned elsewhere. */
+// A live layout anchor needs document-local geometry, not a persistent CFI or
+// an old screen coordinate. Parent scrolling does not change these offsets.
+export function captureContinuousLayoutAnchor(manager){
+  try{
+    const viewport=continuousViewport(manager),anchor=viewport&&findContinuousAnchorView(manager,viewport);
+    const view=anchor?.view,frame=viewFrame(view),doc=viewDocument(view);
+    if(!view?.displayed||!frame||!doc)return null;
+    const rect=frame.getBoundingClientRect();
+    const x=Math.max(0,Math.min(rect.width-1,anchor.point.x-rect.left));
+    const y=Math.max(0,Math.min(rect.height-1,anchor.point.y-rect.top));
+    const node=doc.elementFromPoint?.(x,y)?.closest?.(continuousBlockSelector)||semanticBlockAtPoint(doc,x,y);
+    if(!node)return null;
+    const block=node.getBoundingClientRect(),scroll=Number(doc.defaultView?.scrollY)||0;
+    const distance=Math.max(0,block.top-y,y-block.bottom);
+    return{view,node,width:rect.width,localTop:block.top+scroll,height:block.height,distance,generation:manager.__sgGeneration};
+  }catch{return null}
+}
+
 export function captureContinuousScrollPosition(rendition){
   const manager=rendition?.manager;
   const viewport=continuousViewport(manager);

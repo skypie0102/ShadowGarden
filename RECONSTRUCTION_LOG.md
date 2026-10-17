@@ -944,3 +944,34 @@ RDR-046 stays open for the owner's physical Soul confirmation. RDR-045 remains
 open independently; no further position code changed in this release. The
 rollback target is correctly bound v2.12.3 deployment
 edba47e6-43a9-4c5f-abf5-73092d671957.
+
+## 2026-10-17 — Continuous scroll stability audit and v2.12.5 candidate
+
+The owner confirmed that Android / Soul image dimming is solved on v2.12.4,
+closing RDR-046, and reported jumping during fast upward scrolling. Work continues
+on `audit/continuous-scroll-stability` from `8324e78`. The detailed inventory and
+reproductions are in `docs/READER_SCROLL_AUDIT.md`.
+
+Native upward input on the starting source repeatedly moves the visible passage
+backward by 855 px. Independent tests reproduce below-viewport prepend resize
+compensation, live-view replacement on a 100 px height-only viewport change,
+stale resume after wheel or continuing scroll input, nine layout reformats per
+location query, and an unresolved display/retained iframe after a pending view
+is removed. A slow-load case returns the reader from chapter 16 to chapter 18.
+The first synchronous-layout candidate also revealed a 56 px error from choosing
+the edge chapter rather than the chapter at the reading tracking line.
+
+The candidate uses synchronous live layout compensation, recognizes native
+movement as newer navigation intent, retains live Continuous frames on height
+changes, owns partial-view cancellation/cleanup, reconciles local frame heights
+through the view API, and retains trailing buffer requests while deferring trim.
+All 166 Node tests, the asset audit, static build and binding-aware Functions
+package pass. The first eight new cases pass on desktop/mobile Chromium; full
+reader integration and five-profile CI are still required before publication.
+
+The existing production deployment is unchanged. Read-only checks still report
+D1 revision 3, timestamp 2026-10-03T11:52:50.670Z and three snapshots; the project
+retains the expected database, bucket settings and all nine secret-setting
+names/types. No catalog, B2 object or credential mutation is part of this work.
+RDR-045 real-cover acceptance and physical-phone acceptance of the new scroll
+correction remain open.

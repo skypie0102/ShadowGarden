@@ -26,6 +26,27 @@ this order, preserving the original installation order:
 6. Continuous buffering and manager behavior.
 
 Feature modules export extension constructors; none replaces `window.ePub`.
+
+Continuous structural changes use `reader/continuous-layout.js`. Insertion,
+removal and iframe reframing preserve the live chapter at the reading tracking
+line in the same synchronous transaction. They never replay a coordinate saved
+before an asynchronous chapter load. That boundary also owns partial-view
+display cancellation and cleanup. The compatibility adapter uses each view's
+reframe method so wrapper dimensions and EPUB.js resize bookkeeping agree.
+
+Late changes inside a visible chapter preserve a live block's document-local
+offset. The transaction derives its expected screen position from the current
+frame and scroll, and uses it only while that block still belongs at the reading
+line. This separates image/font layout changes from newer native movement and
+avoids counting both an internal growth and wrapper resize twice. Continuous
+views run the pinned vendor render sequence under their own observed promise;
+source serialization completes before its final lease is released.
+
+Known programmatic scroll writes update the manager's position bookkeeping
+immediately. Later native movement, including touch inertia without a fresh
+touchmove, advances navigation ownership and cancels stale restoration or
+settlement. Height-only Continuous stage changes retain live frames; width
+changes continue through semantic recovery.
 The application has one creation API. Extensions still adapt rendition/manager
 methods where required by the recovered vendor runtime. Those patches remain
 inside the engine integration; replacing them without reproducing their

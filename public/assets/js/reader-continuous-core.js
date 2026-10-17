@@ -1,5 +1,7 @@
 import {recordReaderDiagnostic,measureReaderOperation} from './reader/diagnostics.js';
 import {readerInstanceScope,readerContentsScope} from "./reader/lifecycle.js";
+import {installContinuousLayout,rememberContinuousLayout} from './reader/continuous-layout.js';
+import {interruptRenditionNavigation} from './reader/navigation-state.js';
 /* Shadow Garden v1.4.1 — Continuous render/location lifecycle fix.
  *
  * Keeps v1.4's single-owner Continuous architecture, but separates three concerns:
@@ -155,7 +157,7 @@ export function createContinuousCoreExtension(){
 
   async function displayView(view,manager,generation){
     if(!view)return false;
-    const scope=readerInstanceScope(manager).child();
+    const scope=readerInstanceScope(view).child();
     if(scope.disposed)return false;
     try{
       const work=Promise.resolve(view.display(manager.request)).then(async shown=>{
@@ -203,26 +205,6 @@ export function createContinuousCoreExtension(){
     return jobs.length>0;
   }
 
-  function preserveAnchor(range){
-    const view=range.views[range.first];
-    const top=view?.element?.getBoundingClientRect?.().top;
-    return Number.isFinite(top)?{view,top}:null;
-  }
-  async function restoreAnchor(manager,anchor,generation){
-    if(generation!==manager.__sgGeneration||!anchor?.view?.element||!manager.container)return;
-    await readerInstanceScope(manager).paint();
-    if(generation!==manager.__sgGeneration)return;
-    const top=anchor.view.element.getBoundingClientRect?.().top;
-    if(!Number.isFinite(top))return;
-    const delta=top-anchor.top;
-    if(Math.abs(delta)>1){
-      manager.__sgSuppressScrollUntil=performance.now()+100;
-      manager.container.scrollTop=(Number(manager.container.scrollTop)||0)+delta;
-    }
-    manager.ignore=false;
-    syncScrollPosition(manager);
-  }
-
   async function prependOne(manager,generation){
     if(generation!==manager.__sgGeneration)return false;
     const first=manager.views?.first?.(),section=first?.section?.prev?.();
@@ -250,7 +232,7 @@ export function createContinuousCoreExtension(){
     clearTimeout(manager.__sgTrimTimer);
     manager.__sgTrimTimer=setTimeout(()=>{
       if(manager.__sgDestroyed)return;
-      if(Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
+      if(manager.__sgBufferPromise||Date.now()-(Number(manager.__sgLastUserScrollAt)||0)<650){scheduleTrim(manager,rendition);return}
       const range=visibleRange(manager),views=range.views;
       if(range.first<0||views.length<=MAX_RETAINED_VIEWS)return;
       const keepStart=Math.max(0,range.first-BUFFER_EACH_SIDE);
@@ -271,7 +253,6 @@ export function createContinuousCoreExtension(){
     syncScrollPosition(manager);
     let range=visibleRange(manager);
     if(range.first<0)return false;
-    const anchor=preserveAnchor(range);
     let changed=false;
 
     const before=Math.max(0,range.first);
@@ -280,7 +261,6 @@ export function createContinuousCoreExtension(){
       if(!await prependOne(manager,generation))break;
       changed=true;
     }
-    if(changed)await restoreAnchor(manager,anchor,generation);
     if(generation!==manager.__sgGeneration)return false;
 
     range=visibleRange(manager);
@@ -305,9 +285,17 @@ export function createContinuousCoreExtension(){
   function scheduleBuffer(manager,rendition){
     if(!manager?.container||!manager?.views||manager.__sgDestroyed)return Promise.resolve(false);
     const generation=manager.__sgGeneration||0;
-    if(manager.__sgBufferPromise&&manager.__sgBufferGeneration===generation)return manager.__sgBufferPromise;
+    if(manager.__sgBufferPromise&&manager.__sgBufferGeneration===generation){
+      manager.__sgBufferAgain=true;
+      return manager.__sgBufferPromise;
+    }
     const finish=measureReaderOperation('continuous.buffered');
-    const task=ensureNeighborhood(manager,rendition,generation).then(changed=>{
+    const task=Promise.resolve().then(async()=>{
+      let changed=false;
+      do{
+        manager.__sgBufferAgain=false;
+        changed=await ensureNeighborhood(manager,rendition,generation)||changed;
+      }while(manager.__sgBufferAgain&&generation===manager.__sgGeneration&&!manager.__sgDestroyed);
       finish({views:loadedViews(manager).length},generation===manager.__sgGeneration&&!manager.__sgDestroyed?'continuous.buffered':'continuous.cancelled');
       return changed;
     }).catch(error=>{
@@ -321,6 +309,12 @@ export function createContinuousCoreExtension(){
     return task;
   }
 
+  function noteUserScroll(manager,rendition){
+    interruptRenditionNavigation(rendition);
+    manager.ignore=false;manager.__sgSuppressScrollUntil=0;
+    manager.__sgLastUserScrollAt=Date.now();
+  }
+
   function wireBoundaryContents(contents,manager,rendition){
     const doc=contents?.document;
     if(!doc||readerInstanceScope(rendition).disposed||doc.documentElement?.dataset.sgContinuousCoreBoundary==="1")return;
@@ -329,7 +323,7 @@ export function createContinuousCoreExtension(){
     doc.documentElement.dataset.sgContinuousCoreBoundary="1";
     doc.documentElement.style.setProperty("overflow-anchor","none","important");
     doc.body?.style?.setProperty("overflow-anchor","none","important");
-    const request=()=>{scheduleBuffer(manager,rendition)};
+    const request=()=>{noteUserScroll(manager,rendition);scheduleBuffer(manager,rendition)};
     scope.listen(doc,"wheel",event=>{if(Math.abs(Number(event.deltaY)||0)>1)request()},{passive:true});
     let startY=null;
     scope.listen(doc,"touchstart",event=>{
@@ -341,6 +335,11 @@ export function createContinuousCoreExtension(){
       if(Number.isFinite(y)&&Math.abs(y-startY)>18)request();
     },{passive:true});
     scope.listen(doc,"touchend",()=>{startY=null},{passive:true});
+    scope.listen(doc,"touchcancel",()=>{startY=null},{passive:true});
+    scope.listen(doc,'keydown',event=>{
+      if(event.ctrlKey||event.metaKey||event.altKey||event.target?.closest?.('input,textarea,select,[contenteditable]'))return;
+      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key))request();
+    },{passive:true});
   }
 
   function patchManagerMethods(rendition){
@@ -354,6 +353,20 @@ export function createContinuousCoreExtension(){
 
     manager.getScrollPosition=()=>getScrollPosition(manager);
     manager.syncScrollPosition=()=>syncScrollPosition(manager);
+    // Remember owned writes synchronously. A later scroll event at a different
+    // position is new movement (including kinetic touch scrolling), even when
+    // it arrives without another wheel/touchmove event.
+    for(const name of ['scrollTo','scrollBy']){
+      const move=manager[name];
+      if(typeof move==='function')manager[name]=function(...args){
+        try{return move.apply(this,args)}
+        finally{
+          const position=syncScrollPosition(this);
+          this.prevScrollTop=position.top;this.prevScrollLeft=position.left;
+        }
+      };
+    }
+    installContinuousLayout(manager);
     manager.update=offset=>safeUpdate(manager,Number(offset)||0,manager.__sgGeneration);
     manager.check=()=>{
       scheduleBuffer(manager,rendition);
@@ -391,6 +404,24 @@ export function createContinuousCoreExtension(){
     patchManagerMethods(rendition);
     manager.__sgCoreScrollBound=true;
     const scroller=scrollerFor(manager);
+    // Native anchoring and owned compensation must not both adjust the same
+    // inserted/resized chapter. EPUB iframe roots are disabled separately.
+    manager.container.style?.setProperty('overflow-anchor','none','important');
+    const scope=readerInstanceScope(rendition);
+    scope.listen(manager.container,'wheel',event=>{
+      if(Math.abs(Number(event.deltaY)||0)>1)noteUserScroll(manager,rendition);
+    },{passive:true});
+    let parentTouchY=null;
+    scope.listen(manager.container,'touchstart',event=>{parentTouchY=event.touches?.length===1?event.touches[0].clientY:null},{passive:true});
+    scope.listen(manager.container,'touchmove',event=>{
+      if(parentTouchY!==null&&Math.abs((Number(event.touches?.[0]?.clientY)||0)-parentTouchY)>18)noteUserScroll(manager,rendition);
+    },{passive:true});
+    scope.listen(manager.container,'touchend',()=>{parentTouchY=null},{passive:true});
+    scope.listen(manager.container,'touchcancel',()=>{parentTouchY=null},{passive:true});
+    scope.listen(manager.container,'keydown',event=>{
+      if(event.ctrlKey||event.metaKey||event.altKey||event.target?.closest?.('input,textarea,select,[contenteditable]'))return;
+      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key))noteUserScroll(manager,rendition);
+    },{passive:true});
 
     try{manager._scrolled?.cancel?.()}catch{}
     try{if(manager._onScroll)scroller?.removeEventListener?.("scroll",manager._onScroll)}catch{}
@@ -421,6 +452,9 @@ export function createContinuousCoreExtension(){
       const {top,left}=syncScrollPosition(manager);
       const suppressed=performance.now()<(Number(manager.__sgSuppressScrollUntil)||0);
       if(!suppressed){
+        // Focus owns temporary browser-induced drift beneath its overlay.
+        // Real wheel/touch intent still interrupts through the input handlers.
+        if(!document.body.classList.contains('reader-image-focused')&&(Math.abs(top-(Number(manager.prevScrollTop)||0))>.5||Math.abs(left-(Number(manager.prevScrollLeft)||0))>.5))noteUserScroll(manager,rendition);
         if(!manager.ignore)manager._scrolled();
         else manager.ignore=false;
         manager.__sgLastUserScrollAt=Date.now();
@@ -431,6 +465,7 @@ export function createContinuousCoreExtension(){
       manager.scrollDeltaHorz+=(Math.abs(left-(Number(manager.prevScrollLeft)||0))||0);
       manager.prevScrollTop=top;
       manager.prevScrollLeft=left;
+      rememberContinuousLayout(manager);
       clearTimeout(manager.scrollTimeout);
       manager.scrollTimeout=setTimeout(()=>{manager.scrollDeltaVert=0;manager.scrollDeltaHorz=0},150);
       manager.didScroll=false;
@@ -439,7 +474,6 @@ export function createContinuousCoreExtension(){
     try{scroller?.addEventListener?.("scroll",manager._onScroll,{passive:true})}catch{}
 
     try{rendition.getContents?.().forEach(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
-    const scope=readerInstanceScope(rendition);
     try{scope.hook(rendition.hooks?.content,contents=>wireBoundaryContents(contents,manager,rendition))}catch{}
     try{scope.on(rendition,"rendered",()=>{
       try{rendition.getContents?.().forEach(contents=>wireBoundaryContents(contents,manager,rendition))}catch{}

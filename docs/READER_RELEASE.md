@@ -1,3 +1,70 @@
+# Reader v2.12.5 — Continuous scroll stability
+
+**Prepared; not yet published.** The owner confirmed that v2.12.4 solved Android /
+Soul image dimming, then reported intermittent jumping during fast upward
+scrolling. The audit starts from `8324e78dad81031a370e28ab26abd54a655e47d6`.
+See [READER_SCROLL_AUDIT.md](READER_SCROLL_AUDIT.md) for the complete inventory,
+reproductions and distinctions between demonstrated faults and prevention work.
+
+The release removes stale asynchronous prepend restoration, replaces unconditional
+vendor resize compensation with synchronous reading-line layout transactions,
+and keeps live Continuous chapters through height-only viewport changes. New
+native movement cancels older resume/settlement, including scroll continuation
+without a new wheel/touch event. Owned programmatic moves keep their bookkeeping
+so those compensations do not cancel deliberate navigation.
+
+Partially rendered views now own their display wait, iframe callbacks and final
+cleanup; removal cannot leave an uncancellable display or a late rendered event.
+The adapter reconciles manager-local frame heights through the view API, and
+location queries no longer reformat every buffered view. Buffer requests retain
+a trailing pass, and idle trimming waits for buffering to finish.
+
+The starting v2.12.4 source fails the generated-publication upward-scroll case
+with repeated 855 px backward movements. Separate regressions reproduce the
+below-viewport resize shift, disconnected chapter after a height-only resize,
+stale resume after wheel/continuing scrolling, and removed-view display leak.
+The initial layout candidate also exposed a distinct 56 px edge-chapter anchor
+error, corrected by following the same tracking line as reading-position capture.
+
+The candidate passes the asset audit, all **166 Node tests**, static build and
+binding-aware Functions package. All eight new cases pass on desktop and mobile
+Chromium (**16 checks**). Broader integration and the complete five-profile CI
+matrix are required before publication; their exact results will be recorded
+with the merged source and deployment identity.
+
+The broader local Chromium run subsequently passed all 92 reader checks, plus
+six strengthened scroll/location checks. Initial CI run 38999535380 passed
+verification and both Chromium profiles, but stopped in WebKit on the existing
+focus-drift return test and in Firefox on an uncaught disposal cancellation.
+The candidate was held. The follow-up preserves focus-owned drift and owns the
+entire render/display promise chain; pending-view coverage now tests both Section
+and iframe loading. Fresh complete CI is required for that source.
+
+Further audit reproduced a separate 320 px jump when artwork grows above the
+passage within its current chapter. The final candidate remembers document-local
+block geometry and compensates its layout change at the current scroll position,
+without replaying an old screen coordinate. It also checks that the old block
+still belongs at the tracking line, so newer movement into the image wins.
+Chromium and Firefox pass that two-part regression. The pinned IframeView render
+sequence is now owned directly, and Firefox's previously failing partial-startup
+teardown passes locally. Fresh final CI is pending. Mobile WebKit skips only the
+two wheel cases unsupported by its Playwright adapter, alongside the six existing
+Chromium-only dark-mode skips across the matrix.
+
+Production remains correctly bound v2.12.4 while this candidate is verified.
+Read-only checks confirm unchanged D1 revision 3, timestamp
+`2026-10-03T11:52:50.670Z`, three retained snapshots, expected bucket settings
+and all nine encrypted-setting names/types. Publication must retain that
+configuration and exact public-catalog identity. Rollback target:
+`f1bf6889-4e7d-4af6-b3d2-bedb6b517da1`.
+
+RDR-046 is resolved by the owner's Soul confirmation. RDR-045's intermittent
+real-cover return remains open, independently of these generated-book checks.
+Acceptance of the new upward-scroll correction on the owner's phone is also
+still pending; emulation does not establish physical-device acceptance.
+
+---
+
 # Reader v2.12.4 — focused-image filter correction
 
 **Live:** deployment `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1` succeeded at
@@ -53,8 +120,8 @@ The public version endpoint identifies v2.12.4, `main`, and the merged source
 above. The served reader requests `reader-image-focus.css?v=2.12.4`, and all five
 checked reader asset hashes match source, including the new filter reset. Both
 challenge endpoints are configured; unauthenticated Keeper access returns 401.
-RDR-046 remains open until the owner verifies the new release on Soul; the
-separate intermittent real-cover return RDR-045 also remains open.
+The owner subsequently confirmed "dimming solved" on 2026-10-17, resolving
+RDR-046. The separate intermittent real-cover return RDR-045 remains open.
 
 Rollback target: the correctly bound v2.12.3 deployment
 `edba47e6-43a9-4c5f-abf5-73092d671957`.

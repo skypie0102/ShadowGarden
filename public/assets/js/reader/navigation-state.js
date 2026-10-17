@@ -36,6 +36,14 @@ export function beginRenditionNavigation(rendition,{kind="explicit"}={}){
 
 export function cancelRenditionNavigation(rendition){operations.get(rendition)?.current?.cancel()}
 
+// Native scrolling is newer positional intent too. It must invalidate an old
+// resume/resize snapshot even when no explicit navigation is currently running.
+export function interruptRenditionNavigation(rendition){
+  if(!rendition||disposed.has(rendition))return;
+  const state=navigationState(rendition);
+  if(state.current)state.current.cancel();else state.revision++;
+}
+
 export function disposeRenditionNavigation(rendition){
   if(!rendition)return;
   disposed.add(rendition);cancelRenditionNavigation(rendition);navigators.delete(rendition);
