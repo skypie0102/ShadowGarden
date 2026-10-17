@@ -166,13 +166,37 @@ test.describe('Continuous scroll stability',()=>{
     });
     await expect.poll(()=>page.evaluate(()=>typeof window.releaseScrollRenewal)).toBe('function');
     const box=await page.locator('#viewer').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/3);
-    await page.mouse.wheel(0,-180);await page.waitForTimeout(100);
-    const moved=await page.evaluate(()=>window.resumeScrollView.element.getBoundingClientRect().top);
+    await page.mouse.wheel(0,-180);
+    const moved=await page.evaluate(async()=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const {getReaderEngine}=await import('/assets/js/reader/engine.js');
+      const {captureContinuousScrollPosition}=await import('/assets/js/reader/rendition.js');
+      const rendition=readerRuntime.current.state.rendition,manager=rendition.manager;
+      await getReaderEngine().settleNavigation(rendition);
+      let previous=manager.container.scrollTop,quiet=0;
+      // WebKit may still animate native wheel input after 100 ms. Compare a
+      // settled visible block, not a wrapper top while that input is in flight.
+      for(let frame=0;frame<120&&quiet<5;frame++){
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+        const top=manager.container.scrollTop;quiet=Math.abs(top-previous)<.25?quiet+1:0;previous=top;
+      }
+      if(quiet<5)throw Error('Native scrolling did not settle');
+      const snapshot=captureContinuousScrollPosition(rendition);
+      const view=manager.views.all().find(view=>view.section.index===snapshot?.index);
+      if(!snapshot?.contentNode||!view)throw Error('No visible passage after native scrolling');
+      window.resumeScrollPassage={node:snapshot.contentNode,frame:view.iframe};
+      return view.iframe.getBoundingClientRect().top+snapshot.contentNode.getBoundingClientRect().top;
+    });
     await page.evaluate(()=>window.releaseScrollRenewal());
     await expect.poll(()=>page.evaluate(()=>window.scrollResumeResult)).not.toBeNull();
     expect(await page.evaluate(()=>window.scrollResumeResult)).toBe(false);
     await page.waitForTimeout(150);
-    expect(Math.abs(await page.evaluate(()=>window.resumeScrollView.element.getBoundingClientRect().top)-moved)).toBeLessThanOrEqual(2);
+    const current=await page.evaluate(()=>{
+      const {node,frame}=window.resumeScrollPassage;
+      if(!node.isConnected||!frame.isConnected)throw Error('The visible passage was replaced');
+      return frame.getBoundingClientRect().top+node.getBoundingClientRect().top;
+    });
+    expect(Math.abs(current-moved)).toBeLessThanOrEqual(2);
   });
 
   test('reporting a Continuous location leaves publication layout untouched',async({page})=>{

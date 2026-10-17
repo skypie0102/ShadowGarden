@@ -66,6 +66,14 @@ enabled. Desktop WebKit, Firefox and both Chromium profiles retain native wheel
 coverage. The generated-book navigation setup allows 30 seconds to finish
 buffering rather than interpreting a five-second setup timeout as a resize fault.
 
+The final product source passed both Chromium profiles, Firefox and mobile
+WebKit in run 39001079221. Desktop WebKit cancelled the stale resume correctly
+but missed a new wrapper-position assertion by 3 px after a fixed 100 ms wait.
+That regression now waits for native scroll offsets to be quiet for five paints
+and compares the actual visible block; its two-pixel tolerance is unchanged.
+This is a test-measurement correction, with no reader source change. The local
+three-profile integration run passed 142 cases with two expected dark-mode skips.
+
 Baseline reproductions and complete integration/CI results are recorded in the
 release record as they finish. A passing emulated browser test does not replace
 Android / Soul acceptance. RDR-046 is resolved by the owner's explicit confirmation;
