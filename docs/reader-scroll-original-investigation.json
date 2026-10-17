@@ -1,0 +1,437 @@
+{
+  "status": "Original reversal remains causally unresolved. The separate intrinsic-height fix is merged; these observations do not prove that it resolves the original event.",
+  "source": {
+    "repository": "skypie0102/ShadowGarden",
+    "run": 39049912277,
+    "job": 117446282103,
+    "artifact": 12106852745,
+    "artifactSha256": "25f2f230c07659b541b6197e210b4de448592885debe730ba7464c4a2720d03d",
+    "testedHead": "b7fd48451015090f145e487a0aaf3e250b17cd3c",
+    "sourceTree": "1037646a98fdbd20d2ee83ac6dff30c9cd46a277",
+    "browser": "Chromium 153.0.8010.12",
+    "playwright": "1.63.0",
+    "viewport": {
+      "width": 412,
+      "height": 839,
+      "deviceScaleFactor": 2.625
+    },
+    "iframeWidth": 390
+  },
+  "observations": [
+    "Archived passage attachment matches docs/reader-scroll-stress-m5a.json trace.",
+    "Between 139812.394 and 139830.971 ms, section 17 iframe shrinks from 1215 to 1159 px while its top stays -912 and container scrollTop stays 5716. Section 18 moves from top 303 to 247.",
+    "Section 17 is Chapter 16; its final footnote is the previously tracked block. Decoded child DOM before/after is identical.",
+    "Adjacent screencast images show the Chapter 16 footnote at the same painted position while Chapter 17 heading moves upward. Screencast timing cannot rule out an unpainted transient.",
+    "The original passage sampler did not retain its intermediate y/node/frame measurements or transaction callbacks. DOM snapshots and screenshots are not a synchronized replacement for those missing measurements."
+  ],
+  "environmentCorrection": {
+    "earlierLocalFallback": "Nimbus Roman",
+    "matchedFallback": "Liberation Serif 1.07.4",
+    "matchedGeometry": {
+      "bodyBottom": 1214.53125,
+      "textBottom": 1158.53125,
+      "footnoteTop": 1132.9375,
+      "footnoteHeight": 25.59375
+    },
+    "scope": "Private FONTCONFIG_FILE for diagnostic browser processes only; no product or system font change."
+  },
+  "snapshotInterval": [
+    {
+      "timeMs": 139802.163,
+      "call": "call@4029",
+      "phase": "after",
+      "scrollTop": 4737.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -4737,
+            "right": 0,
+            "bottom": -4737
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -1092,
+            "right": 390,
+            "bottom": 123
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 123,
+            "right": 390,
+            "bottom": 1282
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1282,
+            "right": 390,
+            "bottom": 2441
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139812.394,
+      "call": "call@4031",
+      "phase": "before",
+      "scrollTop": 5716.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5716,
+            "right": 390,
+            "bottom": -4557
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -912,
+            "right": 390,
+            "bottom": 303
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 303,
+            "right": 390,
+            "bottom": 1462
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1462,
+            "right": 390,
+            "bottom": 2621
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139830.971,
+      "call": "call@4031",
+      "phase": "after",
+      "scrollTop": 5716.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5716,
+            "right": 390,
+            "bottom": -4557
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -912,
+            "right": 390,
+            "bottom": 247
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 247,
+            "right": 390,
+            "bottom": 1406
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1406,
+            "right": 390,
+            "bottom": 2621
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139835.136,
+      "call": "call@4033",
+      "phase": "action",
+      "scrollTop": 5716.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5716,
+            "right": 390,
+            "bottom": -4557
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -912,
+            "right": 390,
+            "bottom": 247
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 247,
+            "right": 390,
+            "bottom": 1406
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1406,
+            "right": 390,
+            "bottom": 2621
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139860.117,
+      "call": "call@4033",
+      "phase": "after",
+      "scrollTop": 5716.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5716,
+            "right": 390,
+            "bottom": -4557
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -912,
+            "right": 390,
+            "bottom": 247
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 247,
+            "right": 390,
+            "bottom": 1406
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1406,
+            "right": 390,
+            "bottom": 2621
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139864.29,
+      "call": "call@4035",
+      "phase": "before",
+      "scrollTop": 5716.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5716,
+            "right": 390,
+            "bottom": -4557
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -912,
+            "right": 390,
+            "bottom": 247
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 247,
+            "right": 390,
+            "bottom": 1406
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1406,
+            "right": 390,
+            "bottom": 2621
+          }
+        }
+      ]
+    },
+    {
+      "timeMs": 139879.836,
+      "call": "call@4035",
+      "phase": "after",
+      "scrollTop": 5536.0,
+      "views": [
+        {
+          "index": 13,
+          "bounds": {
+            "left": 0,
+            "top": -5536,
+            "right": 390,
+            "bottom": -4377
+          }
+        },
+        {
+          "index": 17,
+          "bounds": {
+            "left": 0,
+            "top": -732,
+            "right": 390,
+            "bottom": 427
+          }
+        },
+        {
+          "index": 18,
+          "bounds": {
+            "left": 0,
+            "top": 427,
+            "right": 390,
+            "bottom": 1586
+          }
+        },
+        {
+          "index": 19,
+          "bounds": {
+            "left": 0,
+            "top": 1586,
+            "right": 390,
+            "bottom": 2801
+          }
+        }
+      ]
+    }
+  ],
+  "diagnosticRuns": {
+    "originalCaseMatchedFontCold": {
+      "passed": 20,
+      "reproduced": false
+    },
+    "richProbeMatchedFontCold": {
+      "passed": 30,
+      "reproduced": false,
+      "samples": 7649,
+      "negativeDeltasBelowMinus3": 0,
+      "ownerDocumentMismatches": 0,
+      "ySnapshotTopDisagreementsOver0_01px": 0
+    },
+    "richProbeMatchedFontSetupPhaseSweep": {
+      "passed": 24,
+      "setupDelaysMs": [
+        0,
+        8,
+        16,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80,
+        96,
+        112,
+        128,
+        160,
+        192,
+        224,
+        256,
+        320,
+        384,
+        448,
+        512,
+        640,
+        768,
+        896,
+        1024
+      ],
+      "reproduced": false,
+      "samples": 4714,
+      "negativeDeltasBelowMinus3": 0,
+      "ownerDocumentMismatches": 0,
+      "ySnapshotTopDisagreementsOver0_01px": 0
+    },
+    "originalFullMobileSuiteMatchedFont": {
+      "passed": 62,
+      "historicalFailureCaseOrdinal": 41,
+      "historicalFailureCasePassed": true,
+      "server": "Disposable local Pages/D1; original source tree; private fontconfig; loopback enumeration fallback only."
+    }
+  },
+  "limits": [
+    "Passing repetitions do not establish resolution.",
+    "The rich probe adds logging callbacks and can affect scheduling.",
+    "The historical event must not be relabeled a sampler false positive without stronger evidence."
+  ],
+  "passageSamples": [
+    {
+      "sample": 87,
+      "index": 18,
+      "block": 1,
+      "top": 257.0625,
+      "delta": 0
+    },
+    {
+      "sample": 88,
+      "index": 17,
+      "block": 9,
+      "top": 220.9375,
+      "delta": 180
+    },
+    {
+      "sample": 89,
+      "index": 18,
+      "block": 0,
+      "top": 308.4375,
+      "delta": -56
+    },
+    {
+      "sample": 90,
+      "index": 18,
+      "block": 0,
+      "top": 308.4375,
+      "delta": 0
+    }
+  ]
+}

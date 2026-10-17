@@ -148,3 +148,59 @@ pass without the repeated 56 px changes seen in the baseline traces (239 shrink
 events across twenty ordinary runs; none across ten candidate runs). The numeric
 evidence retains per-run counters and matching production-source hashes. This
 establishes the sizing fix; it does not add missing causal data to the old trace.
+
+
+## Original failure artifact follow-up
+
+The full artifact from run `39049912277`, mobile-Chromium job `117446282103`,
+was recovered and decoded rather than relying only on the saved passage samples.
+Its provenance, selected frame snapshots and reproduction limits are retained in
+[reader-scroll-original-investigation.json](reader-scroll-original-investigation.json).
+The archived passage attachment agrees with the original M5a witness.
+
+The snapshots locate a 1215 → 1159 px shrink of section 17 (Chapter 16) between
+139812.394 and 139830.971 ms. Its iframe top remains -912 px and container
+scrollTop remains 5716; section 18 moves upward by 56 px. The Chapter 16 child
+DOM is unchanged across that interval. Adjacent screencast images show its final
+footnote at the same painted position while the following chapter heading moves
+upward. These are separate observations from the sampler's -56 px result:
+screenshots cannot exclude an unpainted transient, and snapshots do not recover
+the sampler's missing intermediate geometry or the transaction's chosen anchor.
+There is not enough evidence to call the original report a false positive.
+
+Earlier local stress runs used Nimbus Roman for Times New Roman fallback and
+produced 1311/1367 px text/body measurements. A private fontconfig using
+Liberation Serif reproduces the original browser's 1159/1215 px measurements,
+including the final footnote's exact local top, 1132.9375 px. Chromium also matches
+153.0.8010.12. No product CSS or system font configuration changed.
+
+With that geometry, 20 repetitions of the original native case and 30 repetitions
+with transaction/scroll-write diagnostics pass. Another 24 diagnostic runs sweep
+setup timing from 0 to 1024 ms and pass. The input remains 32 native -180 px wheel
+steps, 12 ms waits and the existing 3 px reversal threshold. Passing runs do not
+prove resolution. The diagnostic callbacks can themselves affect scheduling.
+
+The original full mobile suite also passes all 62 cases, including the historical
+failure at case 41. Unlike
+`repeat-each`, which starts fresh workers, that suite warms a shared browser with
+40 earlier cases before that case. Its server uses disposable local
+Pages/D1 state. A test-process loopback fallback handles the container's broken
+network-interface enumeration; it does not touch production resources.
+
+To inspect the same interval after extracting the failed artifact's `trace.zip`:
+
+```sh
+python3 scripts/inspect-reader-scroll-trace.py /path/to/trace.zip \
+  --start-ms 139790 --end-ms 139881
+```
+
+The offline decoder reads Playwright's snapshot references and emits the original
+timestamps, container scrollTop and iframe bounds. Its output for the seven
+selected snapshots was checked against the archived interval. It performs no
+browser actions and makes no causal classification.
+
+The maintained native test now saves `y`, `nodeTop` and the node/frame document
+identity check alongside its existing fields. It reuses the same geometry reads;
+input, timing, predicates and tolerances are unchanged. Three focused current-source
+mobile-Chromium runs pass, as do all 203 Node tests. This improves evidence on a
+future recurrence and does not change reader behavior.
