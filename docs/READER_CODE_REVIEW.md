@@ -82,3 +82,13 @@ keep their bodies; root/UI scopes, stale-query guards, the 180 ms debounce,
 accessible status and navigation behavior are preserved. Maintenance tracks
 validation and publication. Media timing/readiness and diagnostic classification
 remain later M5 increments.
+
+M5b names the existing media recheck sequence and manager reconciliation debounce.
+Seven scheduling regressions cover late sizing without another load, shared
+request bursts, contents-realm SVG targets, retirement, disposal and flow changes;
+they pass against both the previous and named-constant source. The existing
+installation retry and fallback policy are retained because equivalent readiness
+coverage for a replacement has not been established. The native scroll trace now
+includes frame changes and resize payloads without changing its assertion or
+adding geometry reads. The earlier 56 px observation remains unconfirmed and
+tracked; M5c's diagnostic classification review is still separate work.

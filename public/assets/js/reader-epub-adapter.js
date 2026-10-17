@@ -6,6 +6,12 @@ import {isContinuousDestroyed} from './reader/continuous-state.js';
 /* Shadow Garden EPUB.js compatibility adapter.
  * Keeps third-party layout/navigation quirks outside the reader state engine.
  */
+// One-shot checks after a contents document is first bound. Load events alone
+// miss media decoded before binding and SVG sizing that settles asynchronously.
+const MEDIA_HEIGHT_RECHECK_DELAYS_MS=[300,1200,2600,4200];
+// All contents in one manager share this trailing reconciliation window.
+const FRAME_HEIGHT_SYNC_DEBOUNCE_MS=150;
+
 export function createEpubCompatibilityExtension(){
 
   let currentBook=null,currentRendition=null,currentTarget=null,viewportTimer=0,pendingExternalHref="";
@@ -282,7 +288,7 @@ export function createEpubCompatibilityExtension(){
         /* media may already be decoded before these hooks attach, and engines differ in
            when async svg sizing settles; guaranteed staggered passes cover both cases
            without spamming the reconciler once growth is exhausted. */
-        [300,1200,2600,4200].forEach(delay=>scope.timeout(()=>{try{syncContinuousFrameHeights(contents,rendition)}catch{}},delay));
+        MEDIA_HEIGHT_RECHECK_DELAYS_MS.forEach(delay=>scope.timeout(()=>{try{syncContinuousFrameHeights(contents,rendition)}catch{}},delay));
       }
       const owner=readerInstanceScope(manager);
       owner.clearTimeout(heightSyncTasks.get(manager));
@@ -311,7 +317,7 @@ export function createEpubCompatibilityExtension(){
             if(entry.el.style.top)entry.el.style.top="";
           }});
         }catch{}
-      },150));
+      },FRAME_HEIGHT_SYNC_DEBOUNCE_MS));
     }catch{}
   }
 

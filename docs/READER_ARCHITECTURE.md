@@ -229,6 +229,38 @@ with case and accents intact. DOM classes, IDs, accessible status messages,
 chapter-label fallbacks and text-only excerpts remain the same. This boundary
 does not add a vendor patch or change publication/source lifetime.
 
+## Compatibility media timing
+
+`reader-epub-adapter.js` reconciles late Continuous media through the existing
+owned layout transaction and each view's `reframe()` method. Its named timings
+describe separate scheduling boundaries:
+
+| Trigger or timing | Owner and behavior |
+| --- | --- |
+| `rendered`, next task (0 ms) | Rendition scope normalizes/binds available contents, or reads current contents when the event has no view. Disposal cancels that deferred work. |
+| Captured image/SVG `load` | Contents scope requests another height reconciliation. SVG targets are checked against the contents document's realm. |
+| `MEDIA_HEIGHT_RECHECK_DELAYS_MS`: 300, 1200, 2600, 4200 ms | Four one-shot fallback requests after a contents document is first bound. They cover sizing that settles without another observed load event; they are released when that contents scope closes. |
+| `FRAME_HEIGHT_SYNC_DEBOUNCE_MS`: 150 ms | Manager scope replaces its pending sweep on every request, sharing one trailing deadline across all its contents. With no intervening requests, the four fallback sweeps occur at 450, 1350, 2750 and 4350 ms. |
+| Continuous installation retry: 25 ms | Rendition scope retries only while the manager/container/views are unavailable. Successful binding or disposal stops it. This construction fallback is separate from media sizing. |
+
+Reconciliation reads only that manager's displayed views with live contents and
+documents. The existing extent calculation, two-pixel difference threshold,
+width fallback and stale-inline-top cleanup are unchanged. Retiring one contents
+document cancels its listeners/fallbacks; a manager sweep already queued can still
+repair its remaining views. Manager disposal cancels its pending sweep, and a
+flow change prevents obsolete Continuous work from reframing paginated views.
+
+The fallback sequence and installation retry remain in place. This increment
+establishes no single readiness event equivalent to all those paths, and changes
+no delay or polling policy. Seven scheduling regressions pass against both the
+previous and named-constant source through the public compatibility extension.
+
+The native upward-scroll test now records frame/previous-block dimensions,
+timestamps and passive resize-event payloads. It reuses its existing geometry
+reads and retains the same input, waits, sampling predicate and assertion. That
+extra evidence supports the open section-transition investigation; naming media
+timings does not establish a fix for the earlier 56 px observation.
+
 ## Lifecycle ownership
 
 `reader/lifecycle.js` defines the common scope. A scope owns removable DOM and
