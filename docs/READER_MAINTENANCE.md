@@ -779,3 +779,19 @@ Tested head `e05554f611b923b066954aa63c6173d9205180c9`, tree
 these final results and updates the architecture/review evidence limits. The
 original reversal remains open. No reader behavior, deployment, catalog data,
 storage, migrations or configuration changes are part of this investigation.
+
+### Original reversal: recorded CI comparison
+
+Added an opt-in [scroll recording harness](READER_SCROLL_DIAGNOSTICS.md) and a
+separate CI workflow comparing original M5a source with current source. The native
+case keeps its original suite position and gains correlated anchor/correction/
+scroll-write evidence; 30 probes follow the normal suite in the same browser.
+The normal five-profile suite is unchanged. No production source is edited.
+
+Local matched-font checks pass three recorded native cases on each source: the
+suite-position case and two appended probes. The original source records 125
+complete anchor transactions and 42 repeated 56 px shrinks; current source
+records 68 transactions and zero such shrinks. Neither shows a reversal or
+geometry/document mismatch. These are harness validation, not causal resolution.
+All 204 Node tests pass, including a regression verifying that the summary
+retains the real historical sample 89 / -56 px witness.
