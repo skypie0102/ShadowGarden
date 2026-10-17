@@ -24,8 +24,26 @@ test.describe('Continuous scroll stability',()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
       const {captureContinuousScrollPosition}=await import('/assets/js/reader/rendition.js');
       const manager=readerRuntime.current.state.rendition.manager;
-      const state={active:true,samples:[],first:manager.views.first().section.index};
+      const state={active:true,samples:[],resizes:[],first:manager.views.first().section.index};
       window.scrollStability=state;
+      // Observe resize payloads without adding layout reads to those callbacks.
+      const watched=new Set(),listeners=[];
+      const watch=view=>{
+        if(!view||watched.has(view))return;
+        watched.add(view);
+        const resized=size=>{if(state.active)state.resizes.push({atMs:performance.now(),index:view.section.index,
+          width:size?.width,height:size?.height,displayed:view.displayed})};
+        view.on('resized',resized);listeners.push([view,resized]);
+      };
+      manager.views.all().forEach(watch);
+      const create=manager.createView;
+      const tracedCreate=function(...args){const view=create.apply(this,args);watch(view);return view};
+      manager.createView=tracedCreate;
+      Object.defineProperty(state,'stop',{value:()=>{
+        state.active=false;
+        if(manager.createView===tracedCreate)manager.createView=create;
+        for(const [view,resized] of listeners)view.off('resized',resized);
+      }});
       let previous=null;
       const sample=()=>{
         if(!state.active)return;
@@ -33,11 +51,21 @@ test.describe('Continuous scroll stability',()=>{
         const view=manager.views.all().find(view=>view.section.index===snapshot?.index);
         const node=snapshot?.contentNode,frame=view?.iframe;
         if(snapshot&&node&&frame){
-          const y=frame.getBoundingClientRect().top+node.getBoundingClientRect().top;
-          const delta=previous?.node.isConnected&&previous.frame.isConnected
-            ?previous.frame.getBoundingClientRect().top+previous.node.getBoundingClientRect().top-previous.y:null;
-          state.samples.push({index:snapshot.index,block:snapshot.native?.blockIndex,top:snapshot.top,delta});
-          previous={node,frame,y};
+          // Reuse the original sampler's geometry reads for the extra evidence.
+          const frameRect=frame.getBoundingClientRect(),nodeRect=node.getBoundingClientRect();
+          const y=frameRect.top+nodeRect.top;
+          const connected=previous?.node.isConnected&&previous.frame.isConnected;
+          const priorFrame=connected?previous.frame.getBoundingClientRect():null;
+          const priorNode=connected?previous.node.getBoundingClientRect():null;
+          const delta=priorFrame?priorFrame.top+priorNode.top-previous.y:null;
+          state.samples.push({index:snapshot.index,block:snapshot.native?.blockIndex,top:snapshot.top,delta,
+            atMs:performance.now(),frameTop:frameRect.top,frameHeight:frameRect.height,
+            prior:previous?{index:previous.index,block:previous.block,
+              frameTopBefore:previous.frameTop,frameTopAfter:priorFrame?.top??null,
+              nodeTopBefore:previous.nodeTop,nodeTopAfter:priorNode?.top??null,
+              frameHeightBefore:previous.frameHeight,frameHeightAfter:priorFrame?.height??null}:null});
+          previous={node,frame,y,index:snapshot.index,block:snapshot.native?.blockIndex,
+            frameTop:frameRect.top,frameHeight:frameRect.height,nodeTop:nodeRect.top};
         }
         requestAnimationFrame(sample);
       };
@@ -55,7 +83,7 @@ test.describe('Continuous scroll stability',()=>{
     await page.waitForTimeout(500);
     const result=await page.evaluate(async()=>{
       const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
-      const state=window.scrollStability;state.active=false;
+      const state=window.scrollStability;state.stop();
       return{...state,last:readerRuntime.current.state.rendition.manager.views.first().section.index};
     });
     expect(result.last).toBeLessThan(result.first);

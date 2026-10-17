@@ -64,7 +64,7 @@ partial-startup cancellation handoff remain unchanged.
 | Continuous structure | `createView`, `prepend`, `append`, `erase`, `clear` and view `reframe` use live synchronous layout ownership at the reading line. |
 | Location/resize | Nonpaginated location reporting reads `scrolledLocation` without reformatting buffered views. Height-only resize retains live chapters; width changes retain semantic recovery. |
 | Paginated visuals | Fitting adapts expansion, document/frame geometry and manager display for one-page synthetic visuals, using the injected service. |
-| Compatibility layout | Late-media measurement uses view reframing and owned fallback deadlines; replace timers/polling only with equivalent readiness coverage. |
+| Compatibility layout | Late-media measurement uses owned view reframing. `MEDIA_HEIGHT_RECHECK_DELAYS_MS` retains four contents-owned fallback requests; `FRAME_HEIGHT_SYNC_DEBOUNCE_MS` retains the manager's shared trailing sweep. Replace timers/polling only with equivalent readiness coverage. |
 
 M4a moves generation/destruction state from vendor-manager properties into
 `reader/continuous-state.js`. The original transition and observation points
@@ -78,6 +78,13 @@ and 650 ms recent-input trim gate. Explicit input clears suppression and native
 continuation invalidates older navigation at the same points. The defensive
 wrapper keeps its callable vendor fallback before core installs a reporter and
 remains idempotent. Live block anchors retain their existing layout owner.
+
+The media fallback requests remain 300/1200/2600/4200 ms after first binding,
+with a 150 ms manager debounce. Captured image/SVG loads and deferred rendered
+work retain their existing ownership and guards. The separate 25 ms manager
+installation retry also remains unchanged. The architecture records this timing
+inventory; no equivalent replacement signal or additional vendor override is
+introduced by naming the deadlines.
 
 ## Owned Continuous render order
 

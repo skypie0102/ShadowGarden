@@ -21,7 +21,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b/M5c planned |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup in validation, M5c planned |
 
 ## M1 implementation
 
@@ -403,7 +403,7 @@ does not change catalog data, migrations, storage or configuration.
 | Step | Boundary | Status |
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
-| M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Planned |
+| M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup in validation; scroll-stress cause remains open |
 | M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | Planned |
 
 ### M5a implementation
@@ -498,3 +498,71 @@ poll still requires equivalent regression coverage. M5c's diagnostic review foll
 
 Production remains the separately recorded v2.12.5 deployment. This maintenance
 does not change catalog data, migrations, storage or configuration.
+
+### M5b implementation and readiness assessment
+
+`reader-epub-adapter.js` names its four one-shot requests as
+`MEDIA_HEIGHT_RECHECK_DELAYS_MS` and the shared trailing reconciliation window as
+`FRAME_HEIGHT_SYNC_DEBOUNCE_MS`. Their values remain 300/1200/2600/4200 ms and
+150 ms. With no intervening requests, the four resulting sweeps occur at
+450/1350/2750/4350 ms. All contents in a manager still share its pending sweep;
+contents retirement cancels that document's fallback/listeners without cancelling
+a queued manager sweep for remaining live views.
+
+Deferred rendered work, captured image/SVG load handling, manager-view filtering,
+the two-pixel height threshold, width fallback, stale-inline-top cleanup and
+owned synchronous layout transaction are unchanged. After reversing only the
+constant declarations/names and normalizing JavaScript, the complete adapter
+matches pre-M5b `main` (`cb027d6575c08e98909bd8c0225fdbbc916e66fd`).
+
+Seven new Node regressions run through the public compatibility extension and
+existing resource scopes. They verify late sizing without another observed load,
+shared request coalescing across contents, undisplayed-view exclusion, SVG loads
+from the contents realm, idempotent reconciliation, contents retirement, manager
+disposal, flow changes and cancellation before rendered work binds media hooks.
+All seven pass against baseline and candidate with identical tests and no adapters.
+Local `npm run check` passes all **194 Node tests**, the asset audit, static build
+and binding-aware Functions package.
+
+No readiness replacement or polling removal is justified by this increment.
+Captured loads do not cover the tested no-new-load sizing path. The existing
+25 ms installation retry addresses a manager/container/views that is not yet
+available, and stops after binding or rendition disposal. It remains separate
+from media sizing. Keep these fallbacks until a demonstrated replacement covers
+the same lifecycle and late-layout cases.
+
+### M5b scroll-stress evidence
+
+The [M5a numeric witness](reader-scroll-stress-m5a.json) remains unchanged, with
+its single -56 px reversal and unconfirmed cause. The existing native upward
+regression now records timestamps, current and prior frame geometry, prior block
+positions and passive `resized` payloads, including whether a view was displayed.
+Its existing geometry reads are reused; resize listeners add no layout reads.
+Creation/listener instrumentation is test-only and removed when capture stops.
+The original 32 wheel events, -180 px input, 12 ms waits, 500 ms final wait,
+surviving-block predicate, 3 px reversal threshold and trim assertions remain.
+This is additional investigation evidence, not a claimed scroll correction.
+
+Three mobile-Chromium stress repetitions pass against pre-M5b `main`, and three
+pass against the candidate, using the enriched observer and original assertions.
+The candidate reports confirm that the new evidence is populated:
+
+| Candidate repetition | Passage samples | Resize payloads | Reversals below -3 px |
+| --- | ---: | ---: | ---: |
+| 1 | 196 | 48 | 0 |
+| 2 | 228 | 58 | 0 |
+| 3 | 209 | 52 | 0 |
+
+These are local static-fixture observations, not performance measurements or a
+reproduction of the original CI failure. The observer adds test work even while
+reusing existing geometry reads. The cause remains unconfirmed; retain the
+original witness and use the additional fields if the reversal recurs.
+
+All **36 targeted desktop/mobile Chromium cases** pass for native scrolling and
+trim, delayed prepends, late growth above/below the passage, image focus/return,
+partial-cover return, mode switches/reopening, height-only viewport changes,
+native/continued-scroll cancellation, mutation-free location reporting, pending
+section/iframe removal and repeated/racing disposal. The local run serves static
+assets with technical publication/fixture responses. The original native input,
+waits and stress/trim assertion blocks match pre-M5b byte for byte; all 81 local
+Markdown file links resolve. Full CI also uses disposable Pages/D1 state.
