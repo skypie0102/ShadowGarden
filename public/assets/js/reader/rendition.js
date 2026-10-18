@@ -371,17 +371,31 @@ function nativeContinuousGeometryStable(manager,viewport,view,viewRect,native){
 // an old screen coordinate. Parent scrolling does not change these offsets.
 export function captureContinuousLayoutAnchor(manager){
   try{
-    const viewport=continuousViewport(manager),anchor=viewport&&findContinuousAnchorView(manager,viewport);
-    const view=anchor?.view,frame=viewFrame(view),doc=viewDocument(view);
-    if(!view?.displayed||!frame||!doc)return null;
-    const rect=frame.getBoundingClientRect();
-    const x=Math.max(0,Math.min(rect.width-1,anchor.point.x-rect.left));
-    const y=Math.max(0,Math.min(rect.height-1,anchor.point.y-rect.top));
-    const node=doc.elementFromPoint?.(x,y)?.closest?.(continuousBlockSelector)||semanticBlockAtPoint(doc,x,y);
-    if(!node)return null;
-    const block=node.getBoundingClientRect(),scroll=Number(doc.defaultView?.scrollY)||0;
-    const distance=Math.max(0,block.top-y,y-block.bottom);
-    return{view,node,width:rect.width,localTop:block.top+scroll,height:block.height,distance,generation:continuousGeneration(manager)};
+    const viewport=continuousViewport(manager),preferred=viewport&&findContinuousAnchorView(manager,viewport);
+    if(!preferred)return null;
+    const point=preferred.point;
+    let best=null;
+    // The tracking line can fall in trailing/leading chapter padding. Compare
+    // actual visible blocks across that gap before switching to the next view.
+    // A block containing the line remains the fast path.
+    for(const view of [preferred.view,...continuousViews(manager).filter(view=>view!==preferred.view)]){
+      const frame=viewFrame(view),doc=viewDocument(view);
+      if(!view?.displayed||!frame||!doc)continue;
+      const rect=frame.getBoundingClientRect();
+      if(rect.bottom<=viewport.top||rect.top>=viewport.bottom||rect.height<=0||rect.width<=0)continue;
+      const localY=point.y-rect.top;
+      const x=Math.max(0,Math.min(rect.width-1,point.x-rect.left));
+      const y=Math.max(0,Math.min(rect.height-1,localY));
+      const node=doc.elementFromPoint?.(x,y)?.closest?.(continuousBlockSelector)||semanticBlockAtPoint(doc,x,y);
+      if(!node)continue;
+      const block=node.getBoundingClientRect(),scroll=Number(doc.defaultView?.scrollY)||0;
+      if(rect.top+block.bottom<=viewport.top||rect.top+block.top>=viewport.bottom)continue;
+      const distance=Math.max(0,block.top-localY,localY-block.bottom);
+      if(!best||distance<best.distance)best={view,node,width:rect.width,localTop:block.top+scroll,
+        height:block.height,distance,generation:continuousGeneration(manager)};
+      if(distance===0)return best;
+    }
+    return best;
   }catch{return null}
 }
 

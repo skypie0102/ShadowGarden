@@ -34,7 +34,8 @@ See the [original-trace follow-up](docs/READER_SCROLL_AUDIT.md#original-failure-
 Current development focuses on gradual reader simplification: explicit service
 and state ownership, shared helpers, cohesive search presentation and documented
 EPUB.js compatibility timing. Continuous sizing now shares one intrinsic-height
-measurement across vendor expansion and media reconciliation. Cancelled search
+measurement across vendor expansion and media reconciliation. Layout anchors
+also compare nearby visible blocks across chapter padding. Cancelled search
 and disposed TOC navigation stay quiet while active failures remain visible. See the
 [code review](docs/READER_CODE_REVIEW.md) and
 [maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and

@@ -1,0 +1,137 @@
+{
+  "status": "Demonstrated chapter-boundary anchor switch is fixed in the candidate; causality of the historical M5a event remains unconfirmed.",
+  "baselineCommit": "78a9c129dec901bbe84eeec6be4515fbc4579771",
+  "publication": "Generated createReaderEpub({chapterCount:32,paragraphCount:3}); chapter20.xhtml",
+  "scenario": "Remove and restore 40 px trailing body padding and 16 px final-paragraph margin; normal contents expansion sizes each phase. No forced iframe sizing in the boundary regression.",
+  "baselineRenditionSha256": "5060d1a4785e0799c9cd5b9447c4c34ea8d2886958aa0335057036d09baf9f14",
+  "candidateRenditionSha256": "71744be81bb040f6f61b94a8a56ede4376a27fbaf2010c00d9e0494891a58c3c",
+  "before": {
+    "before": 222.5,
+    "shrunk": 222.5,
+    "after": 166.5,
+    "height": 1367,
+    "shrunkHeight": 1311,
+    "restoredHeight": 1367,
+    "section": 21,
+    "transactions": [
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 1,
+        "atMs": 1926.5
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 1,
+        "atMs": 1926.8000000000466
+      },
+      {
+        "type": "end",
+        "id": 1,
+        "atMs": 1927.1000000000931
+      },
+      {
+        "anchorIndex": 22,
+        "anchorKind": "block",
+        "anchorNode": "target-21",
+        "anchorBlockIndex": 0,
+        "expectedTop": 309.4375,
+        "generation": 3,
+        "type": "begin",
+        "id": 2,
+        "atMs": 1927.1000000000931
+      },
+      {
+        "top": 365.4375,
+        "delta": 56,
+        "type": "correction",
+        "id": 2,
+        "atMs": 1927.3000000000466
+      },
+      {
+        "type": "scrollWrite",
+        "atMs": 1927.3000000000466,
+        "transaction": 2,
+        "lastRead": 6531,
+        "to": 6587
+      },
+      {
+        "type": "end",
+        "id": 2,
+        "atMs": 1927.4000000000233
+      }
+    ]
+  },
+  "after": {
+    "before": 222.5,
+    "shrunk": 222.5,
+    "after": 222.5,
+    "height": 1367,
+    "shrunkHeight": 1311,
+    "restoredHeight": 1367,
+    "section": 21,
+    "transactions": [
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 1,
+        "atMs": 1815.3000000000466
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 1,
+        "atMs": 1815.6000000000931
+      },
+      {
+        "type": "end",
+        "id": 1,
+        "atMs": 1815.9000000000233
+      },
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 2,
+        "atMs": 1816
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 2,
+        "atMs": 1816.2000000000698
+      },
+      {
+        "type": "end",
+        "id": 2,
+        "atMs": 1816.6000000000931
+      }
+    ]
+  },
+  "validation": {
+    "localNodePassed": 204,
+    "localMobileScrollFocusAndFallbackPassed": 18
+  },
+  "limits": [
+    "This controlled content-height cycle reproduces a -56 px movement and records its cause. It does not prove that the original archived event followed this sequence.",
+    "The original native wheel test and its input, waits and tolerances are unchanged."
+  ]
+}
