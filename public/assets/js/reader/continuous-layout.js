@@ -61,7 +61,13 @@ export function preserveContinuousLayout(manager,change){
   if(!manager?.container||isContinuousDestroyed(manager)||transactions.has(manager))return change();
   transactions.add(manager);
   let anchor=null;const generation=continuousGeneration(manager);
+  let pendingTop=0,pendingLeft=0;
   try{
+    const before=manager.syncScrollPosition?.();
+    // Structural compensation must not consume movement whose native scroll
+    // event is still pending. Advance the observed baseline only by our changes.
+    pendingTop=before&&Number.isFinite(manager.prevScrollTop)?before.top-manager.prevScrollTop:0;
+    pendingLeft=before&&Number.isFinite(manager.prevScrollLeft)?before.left-manager.prevScrollLeft:0;
     anchor=(!document.body.classList.contains('reader-image-focused')&&contentLayoutAnchor(manager))||visibleView(manager);
     return change();
   }
@@ -80,7 +86,11 @@ export function preserveContinuousLayout(manager,change){
       }
     }
     const position=manager.syncScrollPosition?.();
-    if(position){manager.prevScrollTop=position.top;manager.prevScrollLeft=position.left}
+    if(position){
+      const live=!isContinuousDestroyed(manager)&&generation===continuousGeneration(manager);
+      manager.prevScrollTop=position.top-(live?pendingTop:0);
+      manager.prevScrollLeft=position.left-(live?pendingLeft:0);
+    }
     rememberContinuousLayout(manager);
   }
 }

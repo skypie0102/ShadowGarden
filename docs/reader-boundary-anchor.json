@@ -1,0 +1,197 @@
+{
+  "status": "Demonstrated chapter-boundary anchor switch is fixed in the candidate; causality of the historical M5a event remains unconfirmed.",
+  "baselineCommit": "78a9c129dec901bbe84eeec6be4515fbc4579771",
+  "publication": "Generated createReaderEpub({chapterCount:32,paragraphCount:3}); chapter20.xhtml",
+  "scenario": "Remove and restore 40 px trailing body padding and 16 px final-paragraph margin; normal contents expansion sizes each phase. No forced iframe sizing in the boundary regression.",
+  "baselineRenditionSha256": "5060d1a4785e0799c9cd5b9447c4c34ea8d2886958aa0335057036d09baf9f14",
+  "candidateRenditionSha256": "71744be81bb040f6f61b94a8a56ede4376a27fbaf2010c00d9e0494891a58c3c",
+  "before": {
+    "before": 222.5,
+    "shrunk": 222.5,
+    "after": 166.5,
+    "height": 1367,
+    "shrunkHeight": 1311,
+    "restoredHeight": 1367,
+    "section": 21,
+    "transactions": [
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 1,
+        "atMs": 1897.5
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 1,
+        "atMs": 1897.5999999999767
+      },
+      {
+        "type": "end",
+        "id": 1,
+        "atMs": 1898
+      },
+      {
+        "anchorIndex": 22,
+        "anchorKind": "block",
+        "anchorNode": "target-21",
+        "anchorBlockIndex": 0,
+        "expectedTop": 309.4375,
+        "generation": 3,
+        "type": "begin",
+        "id": 2,
+        "atMs": 1898.0999999999767
+      },
+      {
+        "top": 365.4375,
+        "delta": 56,
+        "type": "correction",
+        "id": 2,
+        "atMs": 1898.1999999999534
+      },
+      {
+        "type": "scrollWrite",
+        "atMs": 1898.2999999999302,
+        "transaction": 2,
+        "lastRead": 6531,
+        "to": 6587
+      },
+      {
+        "type": "end",
+        "id": 2,
+        "atMs": 1898.5
+      }
+    ],
+    "settled": {
+      "connected": true,
+      "top": 166.5
+    }
+  },
+  "after": {
+    "before": 222.5,
+    "shrunk": 222.5,
+    "after": 222.5,
+    "height": 1367,
+    "shrunkHeight": 1311,
+    "restoredHeight": 1367,
+    "section": 21,
+    "transactions": [
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 1,
+        "atMs": 1815.3000000000466
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 1,
+        "atMs": 1815.6000000000931
+      },
+      {
+        "type": "end",
+        "id": 1,
+        "atMs": 1815.9000000000233
+      },
+      {
+        "anchorIndex": 21,
+        "anchorKind": "block",
+        "anchorNode": null,
+        "anchorBlockIndex": 9,
+        "expectedTop": 222.5,
+        "generation": 3,
+        "type": "begin",
+        "id": 2,
+        "atMs": 1816
+      },
+      {
+        "top": 222.5,
+        "delta": 0,
+        "type": "correction",
+        "id": 2,
+        "atMs": 1816.2000000000698
+      },
+      {
+        "type": "end",
+        "id": 2,
+        "atMs": 1816.6000000000931
+      }
+    ]
+  },
+  "validation": {
+    "localNodePassed": 204,
+    "localMobileScrollFocusAndFallbackPassed": 19,
+    "baselineDisplacementSurvives350ms": true,
+    "pendingMovementControlsPassed": 3,
+    "finalFallbackBoundaryAndMovementControlsPassed": 6
+  },
+  "limits": [
+    "This controlled content-height cycle reproduces a -56 px movement and records its cause. It does not prove that the original archived event followed this sequence.",
+    "The original native wheel test and its input, waits and tolerances are unchanged."
+  ],
+  "pendingMovement": {
+    "scenario": "While renewal is pending, move native scrollTop by 180 px and run a layout transaction before the scroll event; exercise no change and earlier-frame \u00b156 px compensation.",
+    "baselineLayoutSha256": "9d3b8c0a11fa06353b260ed625c6c37f29aaa8f9eb52f5aac33d3407f075bdc0",
+    "candidateLayoutSha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587",
+    "before": {
+      "previous": 5468,
+      "suppressionRemaining": -1899.0999999998603,
+      "written": 5648,
+      "afterLayoutPrevious": 5648,
+      "result": true
+    },
+    "after": [
+      {
+        "change": 0,
+        "previous": 5468,
+        "suppressionRemaining": -1825.0999999998603,
+        "written": 5648,
+        "afterLayoutPrevious": 5468,
+        "result": false
+      },
+      {
+        "change": -56,
+        "previous": 5468,
+        "suppressionRemaining": -1844.1999999999534,
+        "written": 5648,
+        "afterLayoutPrevious": 5412,
+        "result": false
+      },
+      {
+        "change": 56,
+        "previous": 5468,
+        "suppressionRemaining": -1845.5,
+        "written": 5648,
+        "afterLayoutPrevious": 5524,
+        "result": false
+      }
+    ],
+    "firstCiObservation": {
+      "run": 39094304894,
+      "job": 117577476257,
+      "artifact": 12124326745,
+      "artifactSha256": "8c0899e7b17caa44d18de987f1ed452100593f55d3d49bfc6c9d7083ef75b2d1",
+      "nativeOffsets": [
+        4240,
+        4420,
+        4240
+      ],
+      "initialResult": true,
+      "expectedResult": false,
+      "unchangedRerunPassed": true,
+      "limit": "The deterministic control proves offset consumption; the original Firefox trace does not uniquely identify its internal ordering."
+    }
+  }
+}

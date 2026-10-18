@@ -823,3 +823,43 @@ Provenance, per-trace summaries and integrity checks are permanent in
 alongside the original source identity. A documentation-only follow-up publishes
 these final results. The historical reversal remains open; no deployment or
 production data/configuration changes were made.
+
+
+### RDR-054: controlled fallback and chapter-boundary investigation
+
+The two pending-upward-scroll controls exercise real view-anchor fallback and
+pass for earlier-view height changes of -56 and +56 px. Boundary coverage then
+exposes a distinct deterministic -56 px movement on current source `78a9c12`:
+removing/restoring trailing body padding and paragraph margin changes the actual
+content height. After shrink, the remembered anchor switches from the nearby
+footnote to a farther heading in the next chapter. Restoration preserves that
+heading and pulls the footnote upward. The failing-before browser regression
+uses normal contents expansion, rather than forcing an inconsistent frame size.
+
+The candidate chooses the closest visible semantic block across chapter padding;
+a block containing the tracking line still returns immediately. The demonstrated
+footnote stays at 222.5 px through both phases instead of ending at 166.5 px.
+The original native-scroll test and its input, waits and thresholds are unchanged.
+Local validation passes 204 Node tests, 18 mobile scroll/focus/fallback cases and
+three final settled fallback/boundary cases. Before/after traces and source hashes
+are in [reader-boundary-anchor.json](reader-boundary-anchor.json). Full CI is pending.
+
+This fixes a demonstrated boundary mechanism; it does not prove that the older
+M5a witness followed the same sequence. No deployment or production data changes
+are included.
+
+
+The first full matrix (`39094304894`) exposes an intermittent failure in the
+existing Firefox momentum-cancels-resume case. The failed artifact is retained
+in the evidence record; the trace shows real +180 px movement followed by stale
+restoration. An unchanged Firefox rerun passes, so it is not treated as a unique
+causal trace. A focused control independently reproduces RDR-055: layout sync
+consumes a pending native delta before the scroll event. The candidate retains
+that delta while accounting for structural compensation, discarding it only on
+lifetime replacement. Three controls (0, -56 and +56 px structural change) now
+cancel resume correctly. The original stress/cancellation cases are unchanged.
+
+Local validation passes 204 Node tests, 19 mobile scroll/focus/ownership cases,
+and six final fallback/boundary/pending-movement controls. The boundary baseline
+also retains its -56 px displacement after a 350 ms rendering wait. The updated
+candidate requests a fresh full matrix and recorded comparison before merge.

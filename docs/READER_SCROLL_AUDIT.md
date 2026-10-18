@@ -229,3 +229,57 @@ All records select block anchors, leaving view-anchor fallback unexercised. The
 [recording guide](READER_SCROLL_DIAGNOSTICS.md#first-recorded-ci-comparison)
 retain that limitation. These results confirm recording fidelity and the earlier
 height-cycle fix, not the cause or resolution of the original reversal.
+
+
+## RDR-054 — chapter-padding anchor switch
+
+Controlled tests now exercise the previously unrecorded view fallback through a
+pending upward scroll: the saved block becomes stale before its scroll handler
+runs, and an earlier chapter changes height by ±56 px. Both cases keep the
+tracked passage stable. No anchor selector is replaced to force that path.
+
+A separate boundary test reproduces a deterministic backward movement in current
+source `78a9c129dec901bbe84eeec6be4515fbc4579771`. The tracking line is just below
+the final footnote and inside the chapter's trailing padding. Removing 40 px of
+body padding and 16 px of paragraph margin shrinks the frame by 56 px through
+normal contents expansion. The footnote stays at 222.5 px. The new chapter
+wrapper now contains the tracking line, so the next remembered anchor switches
+to its heading at 309.4375 px, even though the preceding footnote is closer.
+Restoring the padding/margin grows the frame; preserving that heading writes
+scrollTop +56 and pulls the preceding footnote up to 166.5 px.
+
+The candidate compares actual visible semantic blocks across a chapter gap,
+keeping a block that contains the tracking line as the fast path. Layout anchor
+selection now retains the nearby footnote through both content-height changes.
+The same regression remains at 222.5 px after shrink and restoration. Persistent
+progress/CFI view selection is unchanged. Full before/after transaction records
+and source hashes are in [reader-boundary-anchor.json](reader-boundary-anchor.json).
+
+This establishes a specific anchor-switch defect and a failing-before regression.
+It does not uniquely attribute the older M5a witness to this sequence: that
+artifact's missing sampler/transaction intermediates remain missing. Retain the
+historical witness and its unresolved causal status. Production remains v2.12.5
+until a separate deployment.
+
+
+## RDR-055 — layout synchronization consumes pending movement
+
+The first PR #26 Firefox job fails the existing momentum-cancels-resume test:
+the trace shows scrollTop 4240 → 4420 while renewal waits, then 4240 after the
+stale resume is accepted. An unchanged rerun passes. That trace does not retain
+the internal previous-offset writes, so its exact ordering cannot be asserted.
+
+A deterministic control independently reproduces a bookkeeping defect. Native
+scrollTop moves 5468 → 5648 before its scroll event; a synchronous layout
+transaction then sets `prevScrollTop` to 5648. The event sees zero movement,
+and pending resume incorrectly returns true. The control records suppression
+already expired, separating the fault from intentional restoration suppression.
+
+Layout transactions now retain the unhandled delta present at entry. Their final
+observed baseline advances only by the transaction's own offset change. The
+native scroll event can still see the user's 180 px movement and cancel resume.
+Controls cover a no-op transaction and earlier-view ±56 px compensation; all
+return false after correction. Navigation generation changes discard the old
+pending delta. Existing native-wheel tests, timing and tolerances are unchanged.
+Before/after values are retained with the boundary evidence in
+[reader-boundary-anchor.json](reader-boundary-anchor.json).

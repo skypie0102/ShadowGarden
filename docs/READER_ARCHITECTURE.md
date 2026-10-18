@@ -285,6 +285,20 @@ lacks the sampler intermediates and transaction anchor needed to explain its
 negative passage delta. Matched-font and warm-browser attempts are recorded in
 the [original-artifact follow-up](READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 
+At a chapter boundary, layout ownership compares the nearest visible semantic
+blocks when the tracking line falls in blank padding. The preceding chapter's
+footnote can be closer than the following chapter's first heading even after
+its wrapper ends above the line. A block containing the line remains the fast
+path. This prevents an anchor switch during trailing-padding shrink/restoration;
+persistent progress and CFI capture keep their existing view selection.
+
+Structural layout also preserves any native movement not yet observed by its
+scroll event. At transaction entry, retain actual offset minus the previous
+observed offset; at exit, subtract that pending delta from the final offset when
+updating the baseline. Only structural changes advance it. This prevents layout
+synchronization from swallowing momentum that must cancel a pending resume.
+Generation replacement discards movement from the old lifetime.
+
 ## Lifecycle ownership
 
 `reader/lifecycle.js` defines the common scope. A scope owns removable DOM and
