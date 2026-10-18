@@ -63,7 +63,10 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
           const target=canonical?await pageMap.targetForPosition(bookmark,{includeFraction:true}):bookmark.cfi;
           if(scope.disposed)return;
           await navigate?.(target||bookmark.cfi);if(!scope.disposed)closeDrawers?.();
-        }catch(error){recordReaderDiagnostic('navigation.bookmarkFailed');toast?.("Could not open bookmark")}
+        }catch(error){
+          if(scope.disposed)return;
+          recordReaderDiagnostic('navigation.bookmarkFailed');toast?.("Could not open bookmark");
+        }
       });
       const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.setAttribute("aria-label",`Delete bookmark ${index+1}`);
       rows.listen(remove,"click",()=>{

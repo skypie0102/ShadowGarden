@@ -433,11 +433,12 @@ sanitized diagnostic export.
 
 Book-text search records a rejected section load only while its run ID remains
 current. Cancelling, superseding or disposing a query retires that ownership but
-still releases its source lease. TOC chapter/result navigation reports a rejected
-move only while the root controller scope is live. Active failures remain
-reportable regardless of error name; cleanup failures remain actionable even
-while a scope is being disposed. Bookmark and application callback review follows
-separately in the maintenance roadmap.
+still releases its source lease. TOC chapter/result navigation and bookmark
+lookup/navigation report a rejection only while their root controller scope is
+live. Bookmark failure toasts follow the same lifetime check; a list refresh does
+not retire a live bookmark intent. Active failures remain reportable regardless
+of error name; cleanup failures remain actionable even while a scope is being
+disposed. Application callback review follows separately in the maintenance roadmap.
 
 ## Verification boundaries
 

@@ -10,8 +10,10 @@ the owner manually checked fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6 and reports both work correctly. The requested device
 acceptance gate is complete.
 
-**Next maintenance:** resume M5c with bookmark lookup/navigation rejection after
-disposal, including diagnostic and toast ownership, then review app callbacks.
+**Current maintenance:** M5c2 covers bookmark lookup/navigation rejection after
+disposal, including diagnostic and toast ownership; implementation and local
+regressions are complete below, with the full CI matrix required before merge.
+Next, review app callbacks against their scope, rendition and operation ownership.
 Keep active failures visible and retain the accepted scrolling/focus regressions.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
@@ -418,7 +420,7 @@ does not change catalog data, migrations, storage or configuration.
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
 | M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
-| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); bookmark and app callbacks follow separately |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); M5c2 bookmark lifetime checks implemented below; app callbacks follow separately |
 
 ### M5a implementation
 
@@ -911,3 +913,47 @@ A documentation-only follow-up records these results and closes RDR-054/055 in
 the source roadmap. The historical M5a event remains causally unattributed.
 No deployment, production data, storage, migration or configuration change is
 performed by this work.
+
+
+## M5c2 — bookmark diagnostic and toast lifetime
+
+Reviewed on 2026-10-18 from `main` source
+`b4363495827da4625e0931997156f39ad30e0eee`, after v2.12.6 phone acceptance.
+
+The bookmark click handler already refused late successful lookups and drawer
+closing after controller disposal. Its shared catch still recorded
+`navigation.bookmarkFailed` and invoked the failure toast when either canonical
+page lookup or navigation rejected after disposal. The catch now uses the same
+root controller lifetime before both effects. It does not classify by error name
+or cancel a live request merely because bookmark rows refresh.
+
+Seven Node cases exercise the actual controller: lookup and navigation failures
+after disposal; active failures named `AbortError`; successful lookup after
+disposal; a live lookup spanning row refresh and awaited navigation; and saved-CFI
+fallback whose navigation settles after disposal. On the unchanged baseline, the
+two post-disposal rejection cases fail because the diagnostic count increases;
+the other five pass. All seven pass with the guard. The tests also check toast/
+drawer effects and that bookmark storage is not rewritten.
+
+Two browser cases exercise the real controller and DOM buttons, each reporting
+an active `AbortError` before rejecting an obsolete request after disposal.
+They check fixed diagnostic counts, visible failure text, empty disposed UI,
+no late drawer close, and no raw error detail in diagnostics. Existing browser
+cases, waits, tolerances, input and scroll/focus assertions are unchanged.
+
+The local Node suite passes **211 tests**, and the static build passes. Local
+Windows dependency installation exits with npm's "Exit handler never called"
+error; the audit also exposes its pre-existing Windows relative-path separator
+mismatch. No audit thresholds or dependency pins are changed. The normal Linux
+CI must pass the complete audit, binding-aware Functions packaging and all five
+browser profiles before merge.
+
+The app callback review is the next separate increment. In particular, reproduce
+late page-map refresh rejection, startup TOC-load rejection and flow-recovery
+rejection against their actual scope/rendition/operation owners before changing
+their diagnostics or UI. Active provider failures and real cleanup errors must
+remain visible.
+
+Production remains the accepted **v2.12.6** deployment. This increment changes
+source only; it does not deploy, edit catalogs, run migrations, write B2 objects
+or change credentials.
