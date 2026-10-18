@@ -1,28 +1,24 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-18:** v2.12.8, deployment
-`9493cc7c-1b23-4bfd-b55d-19109e638d98`, clean `main` source
-`7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba`, deployed at 14:00:14 UTC
-(22:00 Manila). [CI run 39124003245](https://github.com/skypie0102/ShadowGarden/actions/runs/39124003245)
-passes 211 Node tests, audits, both builds and 387 browser cases across five
-profiles, with eight existing platform skips.
+**Last verified production release — 2026-10-18:** v2.13.0, deployment
+`749d732f-c40c-4782-9074-fff9c4eaf8be`, clean `main` source
+`5389ebebcfa31e5f8a00c5a69b77e6e2c79b4620`, deployed at 21:16:49 UTC.
+The [website release record](WEBSITE_RELEASE.md) and
+[evidence](website-release-2.13.0.json) identify the tested tree, all 217 Node
+tests and 407 browser cases (eight existing platform skips), live midnight dialog,
+main footer, fourteen matching assets and unchanged catalog/snapshot identities.
 
-Nine served reader/entry/footer/CSS assets match source; live version metadata
-identifies v2.12.8. Actual/saved D1, bucket and compatibility settings and all nine
-encrypted-setting names/types match the refreshed baseline. Catalog revision 8,
-the exact document and all eight retained snapshot identities/checksums match
-before and after deployment. Both live catalogs match D1 exactly. Raw EPUB
-access is denied without its ticket; the missing-cover B2 probe returns 404.
+Actual and saved D1/bucket/compatibility settings and all nine encrypted-setting
+names/types match the refreshed baseline. Revision 8, the exact catalog document
+and all eight snapshot IDs/checksums are unchanged. Both public catalogs match
+D1 exactly; unauthenticated Keeper access and raw EPUB access remain denied.
+The live human and Keeper challenges return site keys, and the missing-cover B2
+read returns `media_not_found`. No data, migration, storage or credential changes
+were needed. Physical-device reset and authenticated real-book opening are not
+claimed as live checks; the production browser verified the actual gate appearance.
 
-An isolated Chromium browser verifies both rendered library footers. On
-2026-10-18 at 23:20 Manila, the owner manually checked Keeper in v2.12.8 and
-reports it works correctly. The authenticated real-book opening check remains
-pending; the isolated browser reached its Garden Pass/Turnstile gate.
-Their earlier results, the owner's v2.12.6 Android/Soul acceptance and historical
-trace limits remain in the [release record](READER_RELEASE.md). Current
-[machine-readable evidence](reader-release-2.12.8.json) distinguishes these scopes.
-The documented M1–M5 maintenance is deployed. No catalog, storage, migration or
-credential changes were needed.
+The owner's Android/Soul scroll/focus acceptance remains the v2.12.6 result, and
+their Keeper acceptance remains v2.12.8. See the [reader release record](READER_RELEASE.md).
 
 ## Existing resources
 
@@ -42,7 +38,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.12.7, `288e4790-003b-46ef-bb0a-d1bb37377413` |
+| Last verified rollback target | v2.12.8, `9493cc7c-1b23-4bfd-b55d-19109e638d98` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,

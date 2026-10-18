@@ -1,0 +1,155 @@
+{
+  "release": "2.13.0",
+  "source": "5389ebebcfa31e5f8a00c5a69b77e6e2c79b4620",
+  "tree": "575ad40fe897e970778158e009b1718173622f3e",
+  "pullRequest": 29,
+  "deployment": "749d732f-c40c-4782-9074-fff9c4eaf8be",
+  "url": "https://shadowgarden-bon.pages.dev/",
+  "deployedAt": "2026-10-18T21:16:49.768597Z",
+  "ci": {
+    "run": 39166281683,
+    "prRun": 39166283165,
+    "testedCommit": "9de5744cc13494bd6777e19c5deb35dfb6818b3b",
+    "testedTree": "575ad40fe897e970778158e009b1718173622f3e",
+    "mergedTreeMatches": true,
+    "attempt": 1,
+    "nodeTests": 217,
+    "browserPassed": 407,
+    "browserSkipped": 8,
+    "profiles": {
+      "desktop-chromium": 83,
+      "mobile-chromium": 83,
+      "desktop-firefox": 81,
+      "desktop-webkit": 81,
+      "mobile-webkit": 79
+    }
+  },
+  "production": {
+    "revision": 8,
+    "snapshots": 8,
+    "exactDocumentAndSnapshotsUnchanged": true,
+    "documentHash": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "catalogs": [
+      {
+        "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+        "series": 1,
+        "volumes": 1
+      }
+    ],
+    "actualAndSavedBindingsMatch": true,
+    "encryptedSettingCount": 9
+  },
+  "ui": {
+    "browser": "Cloud Chromium via CUA",
+    "mainGardenPass": "Midnight palette visually verified on real book-opening route",
+    "mainGardenPassComputed": {
+      "background": "linear-gradient(155deg, rgba(24, 20, 32, 0.98), rgba(9, 8, 13, 0.99))",
+      "accent": "rgb(154, 134, 211)"
+    },
+    "mainFooter": "v2.13.0 \u00b7 5389ebe",
+    "mainVolumeCount": 1,
+    "physicalAndroidSoulReset": "Not newly manually tested; mobile Chromium and WebKit regressions pass",
+    "authenticatedBookOpening": "Not performed; stopped at rendered human-verification widget",
+    "keeperSignIn": "Not repeated; fixture authentication and Keeper workflows pass CI"
+  },
+  "http": {
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.13.0",
+      "releaseVersion": "2.13.0",
+      "commit": "5389ebebcfa31e5f8a00c5a69b77e6e2c79b4620",
+      "shortCommit": "5389ebe",
+      "branch": "main",
+      "builtAt": "2026-10-18T21:15:30.874Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "index.html",
+        "sha256": "acc0e42e5abdf4ec914a9fd6dfc5975c35f72aa55611d78f9d959de889e29278"
+      },
+      {
+        "path": "nsfw.html",
+        "sha256": "5f91fa043eb30a4165abc8a3c742f11ee2f9aed746aacf08ab43c16d93a57a17"
+      },
+      {
+        "path": "reader.html",
+        "sha256": "631565ffce4182009279670d67c11f7624cea3472f21d4325b95776bc7f4c92f"
+      },
+      {
+        "path": "series.html",
+        "sha256": "85b08af43e4a65fd3cbf120302570a1e6f812f61350c4ff0edd2ec2c887aacc6"
+      },
+      {
+        "path": "assets/js/book-access.js",
+        "sha256": "29c75d0433f321f8cbbde6594ca8dbbe0a68e05d1ff3f797f5c9d207cff06cf8"
+      },
+      {
+        "path": "assets/js/public/garden-pass.js",
+        "sha256": "42597bec1fa1c7494b8c5244e3b83f92c8ecdfd6aa0d248f552159fd69740265"
+      },
+      {
+        "path": "assets/css/garden-pass.css",
+        "sha256": "663e72678ac62cc26023cc987a79e94741b606829ba5166d6c237d9afd52bfec"
+      },
+      {
+        "path": "assets/js/reader/settings.js",
+        "sha256": "f2edb0fcbab4ddbb020edead9d075816d8de542dbf620d2da0a869b1b092e805"
+      },
+      {
+        "path": "assets/js/reader/book-session.js",
+        "sha256": "e1390fe1235797c149682bda0be1a94467b0fadd84e88fc0172ea45d7f347a3d"
+      },
+      {
+        "path": "assets/js/site-flavor.js",
+        "sha256": "1d53ab2fa9577b1a9cdd5262ae240e216e8480711d6cfc1a8531c4fc7f1cb668"
+      },
+      {
+        "path": "assets/js/reader/app.js",
+        "sha256": "ba0eb840294e5f35cdbdbbcc6f9a8faf53277d2c62b5d5bb942e7c439a58cd19"
+      },
+      {
+        "path": "assets/js/reader-continuous-core.js",
+        "sha256": "43941067a1c473028c6d08892556f4f3187f449cadbcc77c3c33e2ba46ab1262"
+      },
+      {
+        "path": "assets/css/reader-image-focus.css",
+        "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b"
+      },
+      {
+        "path": "assets/js/library-footer-version.js",
+        "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70"
+      }
+    ],
+    "catalogs": [
+      {
+        "scope": "catalog",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "scope": "adult-catalog",
+        "series": 1,
+        "volumes": 1
+      }
+    ],
+    "checks": {
+      "/human-access": {
+        "status": 200,
+        "siteKeyPresent": true
+      },
+      "/admin-access": {
+        "status": 200,
+        "siteKeyPresent": true
+      },
+      "unauthenticatedKeeper": 401,
+      "rawEpubWithoutTicket": 403,
+      "B2MissingCover": 404
+    }
+  }
+}

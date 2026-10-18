@@ -1,6 +1,8 @@
 # ShadowGarden documentation
 
-The latest verified production baseline is v2.12.8, deployed on 2026-10-18.
+The latest verified production baseline is v2.13.0, deployed on 2026-10-18.
+The [website release record](WEBSITE_RELEASE.md) covers the reset/theme fixes and
+first website refactor increment. The completed reader baseline below is v2.12.8.
 Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.8.json)
 identify the exact source, automated results and live checks. On 2026-10-18
 the owner manually verified fast upward scrolling and image-focus return on

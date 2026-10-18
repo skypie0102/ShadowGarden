@@ -55,5 +55,8 @@ sanitizing missing/invalid flow and reset, while respecting saved choices.
 Continuous is the mobile default; desktop uses Pages. Existing rendering and
 scroll algorithms are unchanged.
 
-Validation and deployment results are recorded after checks finish. W2–W6 remain
-planned; this record does not claim the entire website refactor is complete.
+W1 is deployed as v2.13.0 from `5389ebe` on 2026-10-18. All 217 Node tests
+and 407 browser cases pass across five profiles (eight existing platform skips).
+The live midnight dialog, main footer, fourteen source hashes, unchanged D1
+document/snapshots and actual/saved bindings are verified. See the
+[website release record](WEBSITE_RELEASE.md). W2–W6 remain planned.

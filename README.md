@@ -6,7 +6,8 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 [Open ShadowGarden](https://shadowgarden-bon.pages.dev/) ·
 [Documentation](docs/README.md) ·
-[Maintenance roadmap](docs/READER_MAINTENANCE.md)
+[Website refactor](docs/WEBSITE_REFACTOR_ROADMAP.md) ·
+[Reader maintenance](docs/READER_MAINTENANCE.md)
 
 ## Features
 
@@ -22,7 +23,15 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.12.8**, deployed on 2026-10-18.
+The latest verified production release is **v2.13.0**, deployed on 2026-10-18.
+Mobile settings reset to Continuous; desktop settings reset to Pages. Main Garden
+Pass uses the midnight theme. Its dialog and stylesheet now have explicit owners
+separate from ticket policy. All 217 Node tests and 407 browser cases pass across
+five profiles. Live dialog, footer, served assets, unchanged catalog/snapshots and
+production bindings are verified. See the [website release record](docs/WEBSITE_RELEASE.md)
+and [website refactor roadmap](docs/WEBSITE_REFACTOR_ROADMAP.md).
+
+The completed reader baseline is **v2.12.8**, deployed on 2026-10-18.
 It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
 chapter-boundary/pending-resume jump fixes (RDR-054/055). Bookmark lookup and
 navigation failures now stay quiet after reader disposal. App startup, map refresh,
