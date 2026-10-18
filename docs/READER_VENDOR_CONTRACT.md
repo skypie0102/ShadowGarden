@@ -124,3 +124,13 @@ shares this measurement. Using document scroll height as the sole measurement
 would retain the iframe viewport floor and prevent genuine shrinkage; using the
 Range bottom alone omits trailing body space. Paginated/horizontal/fixed-layout
 contents keep vendor measurement. No bundled vendor file or timing value changes.
+
+
+RDR-054/055 preserve the same structural owner and timing inventory. A tracking
+line in chapter padding now selects the nearest actual visible block across the
+gap. A layout transaction retains any unhandled native movement when advancing
+`prevScrollTop`/`prevScrollLeft`: only its own offset changes are accounted for,
+so a later scroll event can still invalidate pending resume/navigation. A new
+generation discards movement from the old lifetime. Explicit owned movement APIs
+and restoration suppression retain their existing ownership boundaries. Six
+fallback/boundary/pending-movement controls pass across all five profiles.

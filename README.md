@@ -27,8 +27,9 @@ acceptance confirms that the reported image dimming and upward-scroll jumps are
 resolved in ordinary use. The [release record](docs/READER_RELEASE.md) separates
 that device result from automated checks and the remaining intermittent
 first-open cover-return case, RDR-045.
-The separate single 56 px reversal in an earlier automated stress run remains
-under investigation; the merged sizing fix does not yet establish its resolution.
+Merged source also fixes reproduced chapter-boundary and pending-resume jumps
+(RDR-054/055); rollout is tracked separately. The historical single 56 px stress
+event has not been uniquely attributed.
 See the [original-trace follow-up](docs/READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 
 Current development focuses on gradual reader simplification: explicit service

@@ -1,7 +1,18 @@
 {
-  "status": "Demonstrated chapter-boundary anchor switch is fixed in the candidate; causality of the historical M5a event remains unconfirmed.",
+  "status": "RDR-054 and RDR-055 fixed in merged source. Historical M5a causality remains unconfirmed.",
   "baselineCommit": "78a9c129dec901bbe84eeec6be4515fbc4579771",
-  "publication": "Generated createReaderEpub({chapterCount:32,paragraphCount:3}); chapter20.xhtml",
+  "publication": {
+    "pr": 26,
+    "head": "f7b2c5c4a2b3935430651b0ded9b46c7e9f5b949",
+    "tree": "034d1beafd0a15164455f661fc89a8aa09c03e53",
+    "merge": "dfd59f2a0977a8d19da05c627dad41ef19952156",
+    "normalCiRun": 39095222115,
+    "recordedCiRun": 39095222146,
+    "nodePassed": 204,
+    "browserPassed": 352,
+    "existingBrowserSkips": 8,
+    "sixControlsPassInAllFiveProfiles": true
+  },
   "scenario": "Remove and restore 40 px trailing body padding and 16 px final-paragraph margin; normal contents expansion sizes each phase. No forced iframe sizing in the boundary regression.",
   "baselineRenditionSha256": "5060d1a4785e0799c9cd5b9447c4c34ea8d2886958aa0335057036d09baf9f14",
   "candidateRenditionSha256": "71744be81bb040f6f61b94a8a56ede4376a27fbaf2010c00d9e0494891a58c3c",
@@ -139,7 +150,8 @@
   },
   "limits": [
     "This controlled content-height cycle reproduces a -56 px movement and records its cause. It does not prove that the original archived event followed this sequence.",
-    "The original native wheel test and its input, waits and tolerances are unchanged."
+    "The original native wheel test and its input, waits and tolerances are unchanged.",
+    "Original-source stress comparison includes earlier merged changes; it does not isolate RDR-054/055. Focused failing-before controls on the more recent baseline isolate these mechanisms."
   ],
   "pendingMovement": {
     "scenario": "While renewal is pending, move native scrollTop by 180 px and run a layout transaction before the scroll event; exercise no change and earlier-frame \u00b156 px compensation.",
@@ -192,6 +204,771 @@
       "expectedResult": false,
       "unchangedRerunPassed": true,
       "limit": "The deterministic control proves offset consumption; the original Firefox trace does not uniquely identify its internal ordering."
+    }
+  },
+  "ci": {
+    "current": {
+      "artifact": 12124885181,
+      "artifactSha256": "02e6667cceda7d6ffecd7ef043a2b0dc960dd0e8b6dd1ce4a0cdf223e568b429",
+      "passedCases": 102,
+      "provenance": {
+        "harnessCommit": "6fdfc8d999282148b62842c6fd024c7307c8150d",
+        "targetCommit": "6fdfc8d999282148b62842c6fd024c7307c8150d",
+        "layoutSha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587",
+        "targetSuiteBeforeInstrumentationSha256": "394eedf036e3d801fe06d2b468cdc54f5ba0b44f7107639677fe93d15932d45a",
+        "nativeTestSha256": "01c1638413da6cdd34390b5b5ba11e996cd87b457f25ab8d88249ace11893a7e",
+        "repetitions": 30,
+        "browserProject": "mobile-chromium",
+        "nativeInput": {
+          "steps": 32,
+          "deltaY": -180,
+          "waitAfterEachMs": 12,
+          "finalWaitMs": 500,
+          "reversalThresholdPx": -3
+        },
+        "scope": "Native case in its original suite position and appended warm probes route an instrumented layout response. Other cases are unchanged. Logging can affect scheduling."
+      },
+      "summary": {
+        "traceCount": 31,
+        "recordedTraceCount": 31,
+        "sampleCount": 5180,
+        "anchorTransactions": 699,
+        "scrollWrites": 310,
+        "shrink56Count": 0,
+        "ySnapshotGaps": 0,
+        "ownerDocumentMismatches": 0,
+        "reversals": [],
+        "perTrace": [
+          {
+            "title": "fast upward scrolling does not reverse when earlier chapters render",
+            "samples": 162,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 0",
+            "samples": 178,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 1",
+            "samples": 169,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 2",
+            "samples": 169,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 3",
+            "samples": 171,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 4",
+            "samples": 168,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 5",
+            "samples": 171,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 6",
+            "samples": 170,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 7",
+            "samples": 167,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 8",
+            "samples": 168,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 9",
+            "samples": 168,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 10",
+            "samples": 174,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 11",
+            "samples": 164,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 12",
+            "samples": 167,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 13",
+            "samples": 167,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 14",
+            "samples": 170,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 15",
+            "samples": 168,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 16",
+            "samples": 169,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 17",
+            "samples": 165,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 18",
+            "samples": 162,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 19",
+            "samples": 160,
+            "anchorTransactions": 20,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 20",
+            "samples": 167,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 21",
+            "samples": 167,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 22",
+            "samples": 164,
+            "anchorTransactions": 21,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 23",
+            "samples": 164,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 24",
+            "samples": 169,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 25",
+            "samples": 170,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 26",
+            "samples": 164,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 27",
+            "samples": 164,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 28",
+            "samples": 161,
+            "anchorTransactions": 22,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 29",
+            "samples": 163,
+            "anchorTransactions": 23,
+            "minimumDelta": 0
+          }
+        ]
+      },
+      "environment": [
+        "v24.21.0",
+        "Version 1.63.0",
+        "LiberationSerif-Regular.ttf: \"Liberation Serif\" \"Regular\"",
+        "Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026"
+      ],
+      "verification": {
+        "artifactDigestVerified": true,
+        "summaryRecomputedFromFullReport": true,
+        "tracesWithCompleteTransactions": 31,
+        "anchorKinds": {
+          "block": 699
+        },
+        "correlatedWritesWithMatchingDelta": 310
+      },
+      "controlledCases": [
+        {
+          "name": "view-anchor-fallback",
+          "data": {
+            "change": -56,
+            "result": {
+              "before": 262,
+              "after": 262,
+              "index": 21,
+              "previousHeight": 1215,
+              "height": 1159,
+              "transactions": [
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1961.6000000000058,
+                  "transaction": null,
+                  "lastRead": 5460,
+                  "to": 5060
+                },
+                {
+                  "anchorIndex": 21,
+                  "anchorKind": "view",
+                  "anchorNode": null,
+                  "anchorBlockIndex": null,
+                  "expectedTop": -200,
+                  "generation": 3,
+                  "type": "begin",
+                  "id": 1,
+                  "atMs": 1961.7999999999884
+                },
+                {
+                  "top": -256,
+                  "delta": -56,
+                  "type": "correction",
+                  "id": 1,
+                  "atMs": 1962.2000000000116
+                },
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1962.2000000000116,
+                  "transaction": 1,
+                  "lastRead": 5060,
+                  "to": 5004
+                },
+                {
+                  "type": "end",
+                  "id": 1,
+                  "atMs": 1962.3999999999942
+                }
+              ]
+            },
+            "settled": {
+              "connected": true,
+              "before": 262,
+              "after": 262,
+              "transactions": [
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1961.6000000000058,
+                  "transaction": null,
+                  "lastRead": 5460,
+                  "to": 5060
+                },
+                {
+                  "anchorIndex": 21,
+                  "anchorKind": "view",
+                  "anchorNode": null,
+                  "anchorBlockIndex": null,
+                  "expectedTop": -200,
+                  "generation": 3,
+                  "type": "begin",
+                  "id": 1,
+                  "atMs": 1961.7999999999884
+                },
+                {
+                  "top": -256,
+                  "delta": -56,
+                  "type": "correction",
+                  "id": 1,
+                  "atMs": 1962.2000000000116
+                },
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1962.2000000000116,
+                  "transaction": 1,
+                  "lastRead": 5060,
+                  "to": 5004
+                },
+                {
+                  "type": "end",
+                  "id": 1,
+                  "atMs": 1962.3999999999942
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "view-anchor-fallback",
+          "data": {
+            "change": 56,
+            "result": {
+              "before": 262,
+              "after": 262,
+              "index": 21,
+              "previousHeight": 1215,
+              "height": 1271,
+              "transactions": [
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1937.2999999999884,
+                  "transaction": null,
+                  "lastRead": 5460,
+                  "to": 5060
+                },
+                {
+                  "anchorIndex": 21,
+                  "anchorKind": "view",
+                  "anchorNode": null,
+                  "anchorBlockIndex": null,
+                  "expectedTop": -200,
+                  "generation": 3,
+                  "type": "begin",
+                  "id": 1,
+                  "atMs": 1937.5
+                },
+                {
+                  "top": -144,
+                  "delta": 56,
+                  "type": "correction",
+                  "id": 1,
+                  "atMs": 1937.7999999999884
+                },
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1937.7999999999884,
+                  "transaction": 1,
+                  "lastRead": 5060,
+                  "to": 5116
+                },
+                {
+                  "type": "end",
+                  "id": 1,
+                  "atMs": 1938.0999999999767
+                }
+              ]
+            },
+            "settled": {
+              "connected": true,
+              "before": 262,
+              "after": 262,
+              "transactions": [
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1937.2999999999884,
+                  "transaction": null,
+                  "lastRead": 5460,
+                  "to": 5060
+                },
+                {
+                  "anchorIndex": 21,
+                  "anchorKind": "view",
+                  "anchorNode": null,
+                  "anchorBlockIndex": null,
+                  "expectedTop": -200,
+                  "generation": 3,
+                  "type": "begin",
+                  "id": 1,
+                  "atMs": 1937.5
+                },
+                {
+                  "top": -144,
+                  "delta": 56,
+                  "type": "correction",
+                  "id": 1,
+                  "atMs": 1937.7999999999884
+                },
+                {
+                  "type": "scrollWrite",
+                  "atMs": 1937.7999999999884,
+                  "transaction": 1,
+                  "lastRead": 5060,
+                  "to": 5116
+                },
+                {
+                  "type": "end",
+                  "id": 1,
+                  "atMs": 1938.0999999999767
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "boundary-resize-cycle",
+          "data": {
+            "before": 221.9375,
+            "shrunk": 221.9375,
+            "after": 221.9375,
+            "height": 1215,
+            "shrunkHeight": 1159,
+            "restoredHeight": 1215,
+            "section": 21,
+            "transactions": [
+              {
+                "anchorIndex": 21,
+                "anchorKind": "block",
+                "anchorNode": null,
+                "anchorBlockIndex": 9,
+                "expectedTop": 221.9375,
+                "generation": 3,
+                "type": "begin",
+                "id": 1,
+                "atMs": 2051.2000000000116
+              },
+              {
+                "top": 221.9375,
+                "delta": 0,
+                "type": "correction",
+                "id": 1,
+                "atMs": 2051.5
+              },
+              {
+                "type": "end",
+                "id": 1,
+                "atMs": 2051.8000000000175
+              },
+              {
+                "anchorIndex": 21,
+                "anchorKind": "block",
+                "anchorNode": null,
+                "anchorBlockIndex": 9,
+                "expectedTop": 221.9375,
+                "generation": 3,
+                "type": "begin",
+                "id": 2,
+                "atMs": 2051.8000000000175
+              },
+              {
+                "top": 221.9375,
+                "delta": 0,
+                "type": "correction",
+                "id": 2,
+                "atMs": 2052
+              },
+              {
+                "type": "end",
+                "id": 2,
+                "atMs": 2052.2000000000116
+              }
+            ],
+            "settled": {
+              "connected": true,
+              "top": 221.9375
+            }
+          }
+        },
+        {
+          "name": "pending-layout-scroll",
+          "data": {
+            "change": 0,
+            "previous": 4860,
+            "suppressionRemaining": -1980.2000000000116,
+            "written": 5040,
+            "afterLayoutPrevious": 4860,
+            "result": false
+          }
+        },
+        {
+          "name": "pending-layout-scroll",
+          "data": {
+            "change": -56,
+            "previous": 4860,
+            "suppressionRemaining": -2001.5,
+            "written": 5040,
+            "afterLayoutPrevious": 4804,
+            "result": false
+          }
+        },
+        {
+          "name": "pending-layout-scroll",
+          "data": {
+            "change": 56,
+            "previous": 4860,
+            "suppressionRemaining": -1974.8000000000175,
+            "written": 5040,
+            "afterLayoutPrevious": 4916,
+            "result": false
+          }
+        }
+      ]
+    },
+    "original": {
+      "artifact": 12124745940,
+      "artifactSha256": "c6ffcb6caedc50c9697d1a75a5a30482070d112f274e988966979ae4e6bd76ec",
+      "passedCases": 92,
+      "provenance": {
+        "harnessCommit": "6fdfc8d999282148b62842c6fd024c7307c8150d",
+        "targetCommit": "81da5dd6e52766c5b37c84a9bce2ebfcff732019",
+        "layoutSha256": "264f0d04ee515e8d9ceb740d90e0ef88548e8d48097028c6ede58519515e7b83",
+        "targetSuiteBeforeInstrumentationSha256": "51ef983651814df14ed2c014a56c09dc337f080640b4490bffa3025681e3ffc2",
+        "nativeTestSha256": "01c1638413da6cdd34390b5b5ba11e996cd87b457f25ab8d88249ace11893a7e",
+        "repetitions": 30,
+        "browserProject": "mobile-chromium",
+        "nativeInput": {
+          "steps": 32,
+          "deltaY": -180,
+          "waitAfterEachMs": 12,
+          "finalWaitMs": 500,
+          "reversalThresholdPx": -3
+        },
+        "scope": "Native case in its original suite position and appended warm probes route an instrumented layout response. Other cases are unchanged. Logging can affect scheduling."
+      },
+      "summary": {
+        "traceCount": 31,
+        "recordedTraceCount": 31,
+        "sampleCount": 6541,
+        "anchorTransactions": 1291,
+        "scrollWrites": 624,
+        "shrink56Count": 414,
+        "ySnapshotGaps": 0,
+        "ownerDocumentMismatches": 0,
+        "reversals": [],
+        "perTrace": [
+          {
+            "title": "fast upward scrolling does not reverse when earlier chapters render",
+            "samples": 208,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 0",
+            "samples": 206,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 1",
+            "samples": 212,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 2",
+            "samples": 209,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 3",
+            "samples": 210,
+            "anchorTransactions": 43,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 4",
+            "samples": 210,
+            "anchorTransactions": 43,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 5",
+            "samples": 215,
+            "anchorTransactions": 45,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 6",
+            "samples": 217,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 7",
+            "samples": 206,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 8",
+            "samples": 217,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 9",
+            "samples": 209,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 10",
+            "samples": 205,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 11",
+            "samples": 206,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 12",
+            "samples": 204,
+            "anchorTransactions": 40,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 13",
+            "samples": 210,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 14",
+            "samples": 217,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 15",
+            "samples": 218,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 16",
+            "samples": 210,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 17",
+            "samples": 213,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 18",
+            "samples": 219,
+            "anchorTransactions": 39,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 19",
+            "samples": 210,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 20",
+            "samples": 205,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 21",
+            "samples": 216,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 22",
+            "samples": 208,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 23",
+            "samples": 212,
+            "anchorTransactions": 42,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 24",
+            "samples": 208,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 25",
+            "samples": 210,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 26",
+            "samples": 211,
+            "anchorTransactions": 39,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 27",
+            "samples": 218,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 28",
+            "samples": 213,
+            "anchorTransactions": 44,
+            "minimumDelta": 0
+          },
+          {
+            "title": "diagnostic upward repetition 29",
+            "samples": 209,
+            "anchorTransactions": 41,
+            "minimumDelta": 0
+          }
+        ]
+      },
+      "environment": [
+        "v24.21.0",
+        "Version 1.63.0",
+        "LiberationSerif-Regular.ttf: \"Liberation Serif\" \"Regular\"",
+        "Linux 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026"
+      ],
+      "verification": {
+        "artifactDigestVerified": true,
+        "summaryRecomputedFromFullReport": true,
+        "tracesWithCompleteTransactions": 31,
+        "anchorKinds": {
+          "block": 1291
+        },
+        "correlatedWritesWithMatchingDelta": 624
+      }
     }
   }
 }

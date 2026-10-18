@@ -258,8 +258,8 @@ and source hashes are in [reader-boundary-anchor.json](reader-boundary-anchor.js
 This establishes a specific anchor-switch defect and a failing-before regression.
 It does not uniquely attribute the older M5a witness to this sequence: that
 artifact's missing sampler/transaction intermediates remain missing. Retain the
-historical witness and its unresolved causal status. Production remains v2.12.5
-until a separate deployment.
+historical witness and its unresolved causal status. The latest separately recorded deployment is v2.12.5; this source change does
+not perform a rollout.
 
 
 ## RDR-055 — layout synchronization consumes pending movement
@@ -283,3 +283,14 @@ return false after correction. Navigation generation changes discard the old
 pending delta. Existing native-wheel tests, timing and tolerances are unchanged.
 Before/after values are retained with the boundary evidence in
 [reader-boundary-anchor.json](reader-boundary-anchor.json).
+
+
+RDR-054 and RDR-055 are merged through [PR #26](https://github.com/skypie0102/ShadowGarden/pull/26).
+Updated-head CI passes 204 Node tests and 352 browser cases across five profiles,
+with eight existing skips. Recorded CI passes 92 original-source and 102 current
+cases. Verified current evidence keeps the same footnote at 221.9375 px through
+shrink, restoration and rendering, and cancels resume in all three pending-movement
+controls. The two controlled view-fallback cases also pass. Native stress traces
+contain no reversal; that result alone is not used to claim historical causality.
+The [permanent evidence](reader-boundary-anchor.json) includes artifact hashes,
+source identities, full controlled results and recomputed native summaries.

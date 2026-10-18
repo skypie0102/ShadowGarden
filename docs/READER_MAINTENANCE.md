@@ -863,3 +863,37 @@ Local validation passes 204 Node tests, 19 mobile scroll/focus/ownership cases,
 and six final fallback/boundary/pending-movement controls. The boundary baseline
 also retains its -56 px displacement after a 350 ms rendering wait. The updated
 candidate requests a fresh full matrix and recorded comparison before merge.
+
+
+### RDR-054/055 validation and publication
+
+Updated head `f7b2c5c4a2b3935430651b0ded9b46c7e9f5b949`, tree
+`034d1beafd0a15164455f661fc89a8aa09c03e53`, passes its first complete
+[CI run 39095222115](https://github.com/skypie0102/ShadowGarden/actions/runs/39095222115):
+204 Node tests, provenance/dependency/route audits, static build and binding-aware
+Functions packaging; 352 browser cases across five profiles with eight existing
+skips. Both Chromium profiles pass 72, Firefox and desktop WebKit pass 70 with two
+skips each, mobile WebKit passes 68 with four skips. All six new controls pass
+in every profile. The unchanged original cancellation case also passes on Firefox.
+
+The [recorded comparison 39095222146](https://github.com/skypie0102/ShadowGarden/actions/runs/39095222146)
+passes 92 original-source and 102 current-source cases. Both artifact SHA256
+values are verified and summaries reproduce byte-for-byte from full reports.
+Current CI keeps the footnote at 221.9375 px across all phases and after rendering;
+three pending-movement controls preserve the 180 px user delta while accounting
+for 0/±56 px structural changes, and all cancel resume. Current native stress
+records 31 traces / 5,180 samples / 699 complete anchor transactions with zero
+reversal, geometry disagreement or document mismatch. Original-source records
+31 traces / 6,541 samples / 1,291 transactions and 414 repeated 56 px shrinks,
+without a reversal. Its source predates other fixes; the focused failing-before
+controls, rather than that broad comparison, establish RDR-054/055 causality.
+
+[PR #26](https://github.com/skypie0102/ShadowGarden/pull/26) merges as
+`dfd59f2a0977a8d19da05c627dad41ef19952156` with the tested tree. Permanent
+[boundary and movement evidence](reader-boundary-anchor.json) retains local
+failing-before records, the initial Firefox failure and unchanged retry, final
+source hashes, artifact identities, controlled CI results and per-trace summaries.
+A documentation-only follow-up records these results and closes RDR-054/055 in
+the source roadmap. The historical M5a event remains causally unattributed.
+No deployment, production data, storage, migration or configuration change is
+performed by this work.

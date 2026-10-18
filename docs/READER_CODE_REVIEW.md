@@ -110,3 +110,12 @@ recovered full artifact locates a frame shrink but does not recover the sampler
 intermediates or chosen transaction anchor. The scroll audit records matched-font
 and warm-browser attempts, preserves that evidence limit and separates the
 demonstrated sizing fix from rollout.
+
+
+RDR-054/055 refine that synchronous ownership with failing-before regressions.
+Layout anchors compare actual visible blocks across blank chapter padding, and
+structural bookkeeping retains native movement awaiting its scroll event.
+The demonstrated 56 px boundary jump and lost pending-resume cancellation are
+fixed in merged source; six controls pass across five browser profiles. The
+historical M5a event remains causally unattributed. The audit retains exact
+before/after records and separates source validation from deployment.
