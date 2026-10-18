@@ -23,19 +23,19 @@
         "generation": 3,
         "type": "begin",
         "id": 1,
-        "atMs": 1926.5
+        "atMs": 1897.5
       },
       {
         "top": 222.5,
         "delta": 0,
         "type": "correction",
         "id": 1,
-        "atMs": 1926.8000000000466
+        "atMs": 1897.5999999999767
       },
       {
         "type": "end",
         "id": 1,
-        "atMs": 1927.1000000000931
+        "atMs": 1898
       },
       {
         "anchorIndex": 22,
@@ -46,18 +46,18 @@
         "generation": 3,
         "type": "begin",
         "id": 2,
-        "atMs": 1927.1000000000931
+        "atMs": 1898.0999999999767
       },
       {
         "top": 365.4375,
         "delta": 56,
         "type": "correction",
         "id": 2,
-        "atMs": 1927.3000000000466
+        "atMs": 1898.1999999999534
       },
       {
         "type": "scrollWrite",
-        "atMs": 1927.3000000000466,
+        "atMs": 1898.2999999999302,
         "transaction": 2,
         "lastRead": 6531,
         "to": 6587
@@ -65,9 +65,13 @@
       {
         "type": "end",
         "id": 2,
-        "atMs": 1927.4000000000233
+        "atMs": 1898.5
       }
-    ]
+    ],
+    "settled": {
+      "connected": true,
+      "top": 166.5
+    }
   },
   "after": {
     "before": 222.5,
@@ -128,10 +132,66 @@
   },
   "validation": {
     "localNodePassed": 204,
-    "localMobileScrollFocusAndFallbackPassed": 18
+    "localMobileScrollFocusAndFallbackPassed": 19,
+    "baselineDisplacementSurvives350ms": true,
+    "pendingMovementControlsPassed": 3,
+    "finalFallbackBoundaryAndMovementControlsPassed": 6
   },
   "limits": [
     "This controlled content-height cycle reproduces a -56 px movement and records its cause. It does not prove that the original archived event followed this sequence.",
     "The original native wheel test and its input, waits and tolerances are unchanged."
-  ]
+  ],
+  "pendingMovement": {
+    "scenario": "While renewal is pending, move native scrollTop by 180 px and run a layout transaction before the scroll event; exercise no change and earlier-frame \u00b156 px compensation.",
+    "baselineLayoutSha256": "9d3b8c0a11fa06353b260ed625c6c37f29aaa8f9eb52f5aac33d3407f075bdc0",
+    "candidateLayoutSha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587",
+    "before": {
+      "previous": 5468,
+      "suppressionRemaining": -1899.0999999998603,
+      "written": 5648,
+      "afterLayoutPrevious": 5648,
+      "result": true
+    },
+    "after": [
+      {
+        "change": 0,
+        "previous": 5468,
+        "suppressionRemaining": -1825.0999999998603,
+        "written": 5648,
+        "afterLayoutPrevious": 5468,
+        "result": false
+      },
+      {
+        "change": -56,
+        "previous": 5468,
+        "suppressionRemaining": -1844.1999999999534,
+        "written": 5648,
+        "afterLayoutPrevious": 5412,
+        "result": false
+      },
+      {
+        "change": 56,
+        "previous": 5468,
+        "suppressionRemaining": -1845.5,
+        "written": 5648,
+        "afterLayoutPrevious": 5524,
+        "result": false
+      }
+    ],
+    "firstCiObservation": {
+      "run": 39094304894,
+      "job": 117577476257,
+      "artifact": 12124326745,
+      "artifactSha256": "8c0899e7b17caa44d18de987f1ed452100593f55d3d49bfc6c9d7083ef75b2d1",
+      "nativeOffsets": [
+        4240,
+        4420,
+        4240
+      ],
+      "initialResult": true,
+      "expectedResult": false,
+      "unchangedRerunPassed": true,
+      "limit": "The deterministic control proves offset consumption; the original Firefox trace does not uniquely identify its internal ordering."
+    }
+  }
 }

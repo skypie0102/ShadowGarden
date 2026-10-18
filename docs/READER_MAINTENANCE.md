@@ -847,3 +847,19 @@ are in [reader-boundary-anchor.json](reader-boundary-anchor.json). Full CI is pe
 This fixes a demonstrated boundary mechanism; it does not prove that the older
 M5a witness followed the same sequence. No deployment or production data changes
 are included.
+
+
+The first full matrix (`39094304894`) exposes an intermittent failure in the
+existing Firefox momentum-cancels-resume case. The failed artifact is retained
+in the evidence record; the trace shows real +180 px movement followed by stale
+restoration. An unchanged Firefox rerun passes, so it is not treated as a unique
+causal trace. A focused control independently reproduces RDR-055: layout sync
+consumes a pending native delta before the scroll event. The candidate retains
+that delta while accounting for structural compensation, discarding it only on
+lifetime replacement. Three controls (0, -56 and +56 px structural change) now
+cancel resume correctly. The original stress/cancellation cases are unchanged.
+
+Local validation passes 204 Node tests, 19 mobile scroll/focus/ownership cases,
+and six final fallback/boundary/pending-movement controls. The boundary baseline
+also retains its -56 px displacement after a 350 ms rendering wait. The updated
+candidate requests a fresh full matrix and recorded comparison before merge.

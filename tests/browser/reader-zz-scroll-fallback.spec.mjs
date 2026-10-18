@@ -106,4 +106,36 @@ test.describe('Continuous view-anchor fallback',()=>{
     expect(Math.abs(result.after-result.before)).toBeLessThanOrEqual(2);
   });
 
+  for(const change of [0,-56,56])test(`layout synchronization ${change}px cannot consume movement before its scroll event`,async({page},testInfo)=>{
+    await page.evaluate(async change=>{
+      const {readerRuntime}=await import('/assets/js/reader-bootstrap.js?v=2.11.0');
+      const {preserveContinuousLayout}=await import('/assets/js/reader/continuous-layout.js');
+      const {continuousInputState}=await import('/assets/js/reader/continuous-state.js');
+      const reader=readerRuntime.current,manager=reader.state.rendition.manager;
+      await reader.resume.capture({semantic:false});
+      reader.session.renewAccess=()=>new Promise(resolve=>{window.releaseLayoutRenewal=resolve});
+      window.layoutResumeResult=null;
+      void reader.resume.restore().then(result=>{window.layoutResumeResult=result});
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+      window.pendingLayoutScroll={change,previous:manager.prevScrollTop,
+        suppressionRemaining:(continuousInputState(manager).suppressScrollUntil||0)-performance.now()};
+      manager.container.scrollTop+=180;
+      window.pendingLayoutScroll.written=manager.container.scrollTop;
+      const target=manager.views.all().find(view=>view.section.href==='chapter20.xhtml');
+      const earlier=manager.views.all().find(view=>view.displayed&&view.section.index<target.section.index);
+      if(!earlier)throw new Error('Expected a rendered preceding chapter');
+      const height=earlier.element.getBoundingClientRect().height;
+      preserveContinuousLayout(manager,()=>{if(change)earlier.reframe(earlier.width(),height+change)});
+      window.pendingLayoutScroll.afterLayoutPrevious=manager.prevScrollTop;
+    },change);
+    await expect.poll(()=>page.evaluate(()=>typeof window.releaseLayoutRenewal)).toBe('function');
+    await page.waitForTimeout(80);
+    await page.evaluate(()=>window.releaseLayoutRenewal());
+    try{await expect.poll(()=>page.evaluate(()=>window.layoutResumeResult)).toBe(false)}
+    finally{
+      const evidence=await page.evaluate(()=>({...window.pendingLayoutScroll,result:window.layoutResumeResult}));
+      await testInfo.attach('pending-layout-scroll',{body:JSON.stringify(evidence),contentType:'application/json'});
+    }
+  });
+
 });

@@ -260,3 +260,26 @@ It does not uniquely attribute the older M5a witness to this sequence: that
 artifact's missing sampler/transaction intermediates remain missing. Retain the
 historical witness and its unresolved causal status. Production remains v2.12.5
 until a separate deployment.
+
+
+## RDR-055 — layout synchronization consumes pending movement
+
+The first PR #26 Firefox job fails the existing momentum-cancels-resume test:
+the trace shows scrollTop 4240 → 4420 while renewal waits, then 4240 after the
+stale resume is accepted. An unchanged rerun passes. That trace does not retain
+the internal previous-offset writes, so its exact ordering cannot be asserted.
+
+A deterministic control independently reproduces a bookkeeping defect. Native
+scrollTop moves 5468 → 5648 before its scroll event; a synchronous layout
+transaction then sets `prevScrollTop` to 5648. The event sees zero movement,
+and pending resume incorrectly returns true. The control records suppression
+already expired, separating the fault from intentional restoration suppression.
+
+Layout transactions now retain the unhandled delta present at entry. Their final
+observed baseline advances only by the transaction's own offset change. The
+native scroll event can still see the user's 180 px movement and cancel resume.
+Controls cover a no-op transaction and earlier-view ±56 px compensation; all
+return false after correction. Navigation generation changes discard the old
+pending delta. Existing native-wheel tests, timing and tolerances are unchanged.
+Before/after values are retained with the boundary evidence in
+[reader-boundary-anchor.json](reader-boundary-anchor.json).

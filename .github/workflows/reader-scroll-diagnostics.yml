@@ -9,6 +9,7 @@ on:
       - 'tests/browser/scroll-diagnostics.mjs'
       - 'tests/browser/reader-zz-scroll-fallback.spec.mjs'
       - 'public/assets/js/reader/rendition.js'
+      - 'public/assets/js/reader/continuous-layout.js'
 permissions:
   contents: read
 jobs:
