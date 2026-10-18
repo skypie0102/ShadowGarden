@@ -79,3 +79,18 @@ test('Keeper preflight, queue removal and retry use explicit state events',async
   await expect(page.locator('#filePickerTitle')).toHaveText('Choose EPUBs from this device');
   expect(errors).toEqual([]);
 });
+
+test('the shared verification loader retries a failed script without leaving a dead widget',async({page})=>{
+  let loads=0;
+  await page.route('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',route=>{
+    loads++;
+    return loads===1?route.abort('failed'):route.fulfill({contentType:'application/javascript',body:'window.turnstile={render:()=>"retry-widget",remove:()=>{},reset:()=>{}};'});
+  });
+  await page.goto('/series?id=fixture');
+  expect(await page.evaluate(()=>window.ShadowGardenBookAccess.ensureHumanAccess({siteKey:'fixture-key'}).catch(error=>error.message))).toContain('could not be loaded');
+  await page.evaluate(()=>{window.retriedGate=window.ShadowGardenBookAccess.ensureHumanAccess({siteKey:'fixture-key'}).catch(error=>error.message)});
+  const gate=page.getByRole('dialog',{name:'Pass the Garden Gate'});await expect(gate).toBeVisible();
+  await gate.getByRole('button',{name:'Cancel'}).click();
+  expect(await page.evaluate(()=>window.retriedGate)).toBe('Human verification was cancelled.');
+  expect(loads).toBe(2);
+});

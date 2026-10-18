@@ -12,7 +12,7 @@ book identities, storage formats or backend authorization/data operations.
 | Series page | `series.js`, `series-renderers.js` | Context, series composition and markup; shared volume actions remain in `public/volume-actions.js` |
 | Public access | `book-access.js` | Ticket/cache/retry policy, native verification transport, identity migration and downloads |
 | Garden Pass | `public/garden-pass.js`, `garden-pass.css` | Dialog, status/focus/widget lifetime and midnight/rose presentation |
-| Verification script | `public/turnstile.js` | One cached explicit-widget loader for Keeper and Garden Pass |
+| Verification script | `public/turnstile.js` | One cached explicit-widget loader for Keeper and Garden Pass; failed script elements/listeners are removed so retry can start cleanly |
 | Public themes | `site-theme.css` | Midnight main and rose adult palette/context rules, previously mixed into navigation |
 | Navigation | `nav.js`, `nav.css` | Navigation interaction and layout; no site palette ownership |
 | Keeper root/client | `admin/core.js`, `admin/app.js` | Shared client, state, workflow composition, UI helpers and semantic events |
