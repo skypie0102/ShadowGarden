@@ -1,7 +1,7 @@
 # ShadowGarden documentation
 
-The latest verified production baseline is v2.12.7, deployed on 2026-10-18.
-Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.7.json)
+The latest verified production baseline is v2.12.8, deployed on 2026-10-18.
+Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.8.json)
 identify the exact source, automated results and live checks. On 2026-10-18
 the owner manually verified fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6; both requested device checks pass.

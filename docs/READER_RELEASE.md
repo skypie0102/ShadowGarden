@@ -1,7 +1,63 @@
 # Reader releases
 
-**Current production baseline:** v2.12.7. Ongoing
+**Current production baseline:** v2.12.8. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.12.8 — app callback lifetime
+
+**Live:** deployment `9493cc7c-1b23-4bfd-b55d-19109e638d98` succeeded on
+2026-10-18 at 14:00:14 UTC (22:00 in Manila), from clean `main` source
+`7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba`, tree
+`a9004d17650aefc5d7828920640495a40f2d5445`.
+[Verification evidence](reader-release-2.12.8.json) records identities and limits.
+
+[PR #28](https://github.com/skypie0102/ShadowGarden/pull/28) applies the reader
+scope to four reproduced late failure callbacks: startup TOC loading, page-map
+refresh, startup correction of page-only saved progress and flow recovery.
+Disposed recovery cannot bring back its error screen. Active provider failures,
+including `AbortError`, retain the same diagnostics, fallbacks and recovery UI.
+The [maintenance record](READER_MAINTENANCE.md) retains the failing-before controls.
+Navigation order, persistence, accepted scrolling and image-focus CSS are unchanged.
+
+The exact release commit passes the audit, **211 Node tests**, static build,
+binding-aware Functions package and **387 browser cases** in
+[CI run 39124003245](https://github.com/skypie0102/ShadowGarden/actions/runs/39124003245)
+on its first attempt. Both Chromium profiles pass 79 cases; Firefox and desktop
+WebKit pass 77 each with two existing skips; mobile WebKit passes 75 with four
+existing skips. All five new app cases pass in every profile.
+
+All 292 tracked files match the release Git blobs. The pinned Wrangler package
+compiles with the binding guard. Only the app module and generated version
+payload differ among 160 static assets. Two changed assets were staged before
+the pause; all 160 were revalidated before publishing, with no additional upload.
+Actual and saved D1, B2 bucket, compatibility settings and all nine encrypted
+setting names/types match the refreshed baseline.
+
+The resumed release captures the current revision-8 catalog after the pause:
+timestamp `2026-10-18T13:54:43.265Z`, exact document hash and all eight snapshot
+identities/checksums match before and after deployment. Both public catalogs
+match that D1 content, with one series/one volume in each library. Read-only
+verification queries report zero rows written and `changed_db: false`.
+
+Live metadata identifies `v2.12.8 · 7d3dbed` on `main`. All nine checked
+reader/entry/footer/CSS asset hashes match source. Both challenge endpoints
+provide site keys; unauthenticated Keeper access returns 401, a known raw EPUB
+returns 403 without its ticket, and the missing B2 cover probe returns the expected
+`media_not_found` 404.
+
+The live browser surface is unavailable. Rendered footer inspection, credentialed
+Keeper sign-in and authorized real-book reopening were not repeated. Both library
+HTML version targets and their shared loader match the tested source, and the
+live version payload is correct. The owner's v2.12.6 Android/Soul acceptance and
+earlier genuine authorization checks retain their documented scopes. No
+migration, seed, catalog edit, B2 object write or credential change occurred.
+
+The documented M1–M5 reader maintenance increments are now deployed. Retained
+media retry/fallback policy and the causally unattributed historical stress trace
+keep their existing limits; this release makes no broader bug-free claim.
+
+Rollback target: verified v2.12.7 deployment
+`288e4790-003b-46ef-bb0a-d1bb37377413`.
 
 ## Reader v2.12.7 — bookmark failure lifetime
 

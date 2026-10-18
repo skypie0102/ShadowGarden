@@ -22,11 +22,12 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.12.7**, deployed on 2026-10-18.
+The latest verified production release is **v2.12.8**, deployed on 2026-10-18.
 It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
 chapter-boundary/pending-resume jump fixes (RDR-054/055). Bookmark lookup and
-navigation failures now stay quiet after reader disposal. All 211 Node tests and
-362 browser cases pass across five profiles. Live source, version metadata,
+navigation failures now stay quiet after reader disposal. App startup, map refresh,
+saved-page correction and flow recovery follow the same lifetime. All 211 Node tests and
+387 browser cases pass across five profiles. Live source, version metadata,
 catalog identity and production bindings are verified. Rendered footer inspection
 and credentialed real-book opening were not repeated for this release because
 the live browser surface was unavailable.
@@ -38,7 +39,7 @@ of this device result.
 The historical single 56 px stress event has not been uniquely attributed.
 See the [original-trace follow-up](docs/READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 
-Current development focuses on gradual reader simplification: explicit service
+The completed M1–M5 maintenance covers reader simplification: explicit service
 and state ownership, shared helpers, cohesive search presentation and documented
 EPUB.js compatibility timing. Continuous sizing now shares one intrinsic-height
 measurement across vendor expansion and media reconciliation. Layout anchors
@@ -47,7 +48,7 @@ bookkeeping retains native movement awaiting its scroll event. Cancelled search
 and disposed TOC/bookmark navigation stay quiet while active failures remain visible.
 The merged app callback checks also suppress obsolete TOC/map/startup/recovery
 failures; 211 Node tests and 387 browser cases pass across five profiles. These
-app changes are verified source for the next release. See the
+app changes are deployed in v2.12.8. See the
 [code review](docs/READER_CODE_REVIEW.md) and
 [maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and
 next steps. Verified changes are merged into `main`; a merge and a production

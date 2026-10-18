@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "release": "2.12.8",
+  "checkedAt": "2026-10-18T14:01:15.467Z",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "shadowgarden-bon.pages.dev",
+    "deploymentId": "9493cc7c-1b23-4bfd-b55d-19109e638d98",
+    "deployedAt": "2026-10-18T14:00:14.410252Z",
+    "source": "7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba",
+    "tree": "a9004d17650aefc5d7828920640495a40f2d5445",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39124003245,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39124003245",
+    "attempt": 1,
+    "conclusion": "success",
+    "nodePassed": 211,
+    "browserPassed": 387,
+    "platformSkips": 8,
+    "profiles": [
+      {
+        "name": "mobile-chromium",
+        "jobId": 117665286760,
+        "passed": 79,
+        "skipped": 0
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 117665286834,
+        "passed": 75,
+        "skipped": 4
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 117665286849,
+        "passed": 77,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 117665286944,
+        "passed": 77,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 117665286963,
+        "passed": 79,
+        "skipped": 0
+      }
+    ]
+  },
+  "package": {
+    "trackedFilesMatched": 292,
+    "bindingGuardPassed": true,
+    "configHash": "a4d0b6363e423f5ca564471a8992e4f91023cf8faa0ca025e4016f517d62c9bd",
+    "assetsUploaded": 2,
+    "assetsReused": 158,
+    "assetsRevalidatedAfterResume": 160,
+    "additionalUploadsAfterResume": 0,
+    "changedStaticPaths": [
+      "assets/js/reader/app.js",
+      "data/version.json"
+    ]
+  },
+  "configuration": {
+    "saved": {
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "env_vars": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "actual": {
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "env_vars": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "matchesFreshBaseline": true
+  },
+  "database": {
+    "revision": 8,
+    "updatedAt": "2026-10-18T13:54:43.265Z",
+    "snapshots": [
+      {
+        "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
+        "created_at": "2026-10-18T13:54:43.265Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      }
+    ],
+    "exactPrePostMatch": true,
+    "baselineRefreshedAfterPause": true,
+    "readOnlyQueries": [
+      {
+        "phase": "before",
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      {
+        "phase": "before",
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      {
+        "phase": "after",
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      {
+        "phase": "after",
+        "rowsWritten": 0,
+        "changedDb": false
+      }
+    ],
+    "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2"
+  },
+  "version": {
+    "name": "Shadow Garden",
+    "version": "2.12.8",
+    "releaseVersion": "2.12.8",
+    "commit": "7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba",
+    "shortCommit": "7d3dbed",
+    "branch": "main",
+    "builtAt": "2026-10-18T11:38:03.737Z",
+    "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+  },
+  "catalogs": [
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+      "series": 1,
+      "volumes": 1
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "human challenge",
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    {
+      "name": "Keeper challenge",
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    {
+      "name": "unauthenticated Keeper",
+      "status": 401,
+      "siteKeyPresent": false,
+      "code": "unauthorized"
+    },
+    {
+      "name": "known raw EPUB",
+      "status": 403,
+      "siteKeyPresent": false
+    },
+    {
+      "name": "missing B2 cover",
+      "status": 404,
+      "siteKeyPresent": false,
+      "code": "media_not_found"
+    }
+  ],
+  "assets": [
+    {
+      "path": "assets/js/reader/app.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "ba0eb840294e5f35cdbdbbcc6f9a8faf53277d2c62b5d5bb942e7c439a58cd19"
+    },
+    {
+      "path": "assets/js/reader/bookmarks-controller.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "9b0be0785ee2bdaaf16cd576c7dd39393be787c17ab1b45c15c375f2b433cfec"
+    },
+    {
+      "path": "assets/js/reader/continuous-layout.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587"
+    },
+    {
+      "path": "assets/js/reader-continuous-core.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "43941067a1c473028c6d08892556f4f3187f449cadbcc77c3c33e2ba46ab1262"
+    },
+    {
+      "path": "assets/css/reader-image-focus.css",
+      "status": 200,
+      "matches": true,
+      "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b"
+    },
+    {
+      "path": "assets/js/library-footer-version.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70"
+    },
+    {
+      "path": "reader.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "e01ff252df2396c6141e7c666403a2c399f6148efd4faac954362c8b5488c96f"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "acc0e42e5abdf4ec914a9fd6dfc5975c35f72aa55611d78f9d959de889e29278"
+    },
+    {
+      "path": "nsfw.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "5f91fa043eb30a4165abc8a3c742f11ee2f9aed746aacf08ab43c16d93a57a17"
+    }
+  ],
+  "browser": {
+    "available": false,
+    "renderedFootersInspected": false,
+    "keeperSignInRepeated": false,
+    "authorizedRealBookReopened": false,
+    "footerMarkupAndLoaderSourceMatched": true
+  },
+  "limits": [
+    "Live browser surface unavailable; no new painted-UI or credentialed acceptance claimed.",
+    "Owner Android/Soul manual acceptance applies to v2.12.6 and remains recorded there.",
+    "Fresh revision-8/eight-snapshot baseline captured after the pause and preserved exactly.",
+    "No migration, seed, catalog edit, B2 object write or credential change."
+  ],
+  "rollback": {
+    "release": "2.12.7",
+    "deploymentId": "288e4790-003b-46ef-bb0a-d1bb37377413"
+  }
+}

@@ -1,12 +1,11 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-18:** v2.12.7 publishes M5c2 bookmark diagnostic/
-toast lifetime checks as source `3c0ec3b`. Exact-source CI passes 211 Node tests
-and 362 browser cases. Served assets, bindings and exact catalog/snapshot baseline
-checks pass; live browser-only checks were unavailable. See the
-[release record](READER_RELEASE.md) for evidence and verification boundaries.
-App callback diagnostics are the current source increment. Dated notes below retain
-their original deployment state.
+**Latest deployment — 2026-10-18:** v2.12.8 publishes the M5c3 app callback
+lifetime checks as source `7d3dbed`. Exact-source CI passes 211 Node tests and
+387 browser cases. Served assets, bindings and the refreshed revision-8 catalog/
+eight-snapshot baseline checks pass. Live browser-only checks remain unavailable;
+see the [release record](READER_RELEASE.md). The documented M1–M5 maintenance
+increments are deployed. Dated notes below retain their original state.
 
 **Production update — 2026-10-18:** v2.12.6 publishes the merged cleanup,
 intrinsic sizing and RDR-054/055 fixes through clean source `a5c5347`.
@@ -23,7 +22,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-remains v2.12.7; M5c3 is a separately verified source increment.
+is v2.12.8; M5c3 and the documented M1–M5 maintenance are deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
@@ -1062,3 +1061,22 @@ this diagnostic cleanup does not claim to resolve them. The owner's v2.12.6
 Android/Soul acceptance remains complete. Production remains v2.12.7; M5c3 is
 merged source for a subsequent release, with no remote data, storage, migration
 or configuration changes.
+
+
+## Maintenance rollout complete — 2026-10-18
+
+The [v2.12.8 release](READER_RELEASE.md) deploys M5c3 with the exact verified
+source `7d3dbed`. Release CI passes 211 Node tests and 387 browser cases across
+five profiles on its first attempt; eight existing platform skips are unchanged.
+The current revision-8 catalog, exact document and eight snapshot identities/
+checksums are preserved, with production bindings and all checked assets verified.
+The [release evidence](reader-release-2.12.8.json) records the refreshed baseline.
+
+M1–M5 are complete for their documented scope and deployed. The accepted
+Android/Soul scrolling/focus behavior remains covered by its existing acceptance
+and automated regressions. Retained media installation retry/fallback behavior
+and the historical stress trace's causal limits remain documented. Future reader
+changes should begin with a concrete reproduction or a separately scoped review.
+Live rendered footers, Keeper sign-in and real-book reopening were not repeated
+because the browser surface was unavailable. No remote catalog, media, migration
+or credential changes were made by this release.

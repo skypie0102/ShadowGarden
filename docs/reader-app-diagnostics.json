@@ -124,8 +124,12 @@
     }
   },
   "production": {
-    "version": "2.12.7",
-    "thisIncrementDeployed": false
+    "version": "2.12.8",
+    "thisIncrementDeployed": true,
+    "deploymentId": "9493cc7c-1b23-4bfd-b55d-19109e638d98",
+    "source": "7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba",
+    "verifiedAt": "2026-10-18T14:01:15.467Z",
+    "releaseEvidence": "reader-release-2.12.8.json"
   },
   "merge": {
     "pullRequest": 28,

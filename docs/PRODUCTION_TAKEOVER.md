@@ -1,26 +1,26 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-18:** v2.12.7, deployment
-`288e4790-003b-46ef-bb0a-d1bb37377413`, clean `main` source
-`3c0ec3b3711051e298b9682dd1421b4985e7207a`, deployed at 11:03:12 UTC
-(19:03 Manila). [CI run 39100645437](https://github.com/skypie0102/ShadowGarden/actions/runs/39100645437)
-passes 211 Node tests, audits, both builds and 362 browser cases across five
+**Last verified production release — 2026-10-18:** v2.12.8, deployment
+`9493cc7c-1b23-4bfd-b55d-19109e638d98`, clean `main` source
+`7d3dbed875d3d327f6f3ee8fdd32523eddc7f8ba`, deployed at 14:00:14 UTC
+(22:00 Manila). [CI run 39124003245](https://github.com/skypie0102/ShadowGarden/actions/runs/39124003245)
+passes 211 Node tests, audits, both builds and 387 browser cases across five
 profiles, with eight existing platform skips.
 
 Nine served reader/entry/footer/CSS assets match source; live version metadata
-identifies v2.12.7. Actual/saved D1, bucket and compatibility settings and all nine
-encrypted-setting names/types match the fresh baseline. Catalog revision 7,
-the exact document and all seven retained snapshot identities/checksums match
+identifies v2.12.8. Actual/saved D1, bucket and compatibility settings and all nine
+encrypted-setting names/types match the refreshed baseline. Catalog revision 8,
+the exact document and all eight retained snapshot identities/checksums match
 before and after deployment. Both live catalogs match D1 exactly. Raw EPUB
 access is denied without its ticket; the missing-cover B2 probe returns 404.
 
-The live browser surface was unavailable, so rendered footer inspection,
+The live browser surface is unavailable, so rendered footer inspection,
 credentialed Keeper sign-in and authorized real-book reopening were not repeated.
 Their earlier results, the owner's v2.12.6 Android/Soul acceptance and historical
-trace limits remain in the [release record](READER_RELEASE.md). The current
-[machine-readable evidence](reader-release-2.12.7.json) distinguishes these scopes.
-No catalog, storage, migration or credential changes were needed. Continue
-[app callback maintenance](READER_MAINTENANCE.md) separately from deployment.
+trace limits remain in the [release record](READER_RELEASE.md). Current
+[machine-readable evidence](reader-release-2.12.8.json) distinguishes these scopes.
+The documented M1–M5 maintenance is deployed. No catalog, storage, migration or
+credential changes were needed.
 
 ## Existing resources
 
@@ -40,7 +40,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.12.6, `7e9cb704-e2bb-4e42-955e-384bb2b4bbe2` |
+| Last verified rollback target | v2.12.7, `288e4790-003b-46ef-bb0a-d1bb37377413` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,
