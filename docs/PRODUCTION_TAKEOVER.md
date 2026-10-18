@@ -14,10 +14,10 @@ the exact document and all eight retained snapshot identities/checksums match
 before and after deployment. Both live catalogs match D1 exactly. Raw EPUB
 access is denied without its ticket; the missing-cover B2 probe returns 404.
 
-An isolated Chromium browser verifies both rendered library footers. Keeper’s
-login form is reached; its token is absent in that fresh session. Real-book
-opening reaches the Garden Pass/Turnstile gate. Credentialed Keeper sign-in and
-authorized real-book opening remain unverified for this release.
+An isolated Chromium browser verifies both rendered library footers. On
+2026-10-18 at 23:20 Manila, the owner manually checked Keeper in v2.12.8 and
+reports it works correctly. The authenticated real-book opening check remains
+pending; the isolated browser reached its Garden Pass/Turnstile gate.
 Their earlier results, the owner's v2.12.6 Android/Soul acceptance and historical
 trace limits remain in the [release record](READER_RELEASE.md). Current
 [machine-readable evidence](reader-release-2.12.8.json) distinguishes these scopes.

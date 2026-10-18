@@ -378,10 +378,11 @@
         "reason": "Garden Pass Turnstile challenge requires verification in this fresh session."
       },
       "mainPageErrors": 0
-    }
+    },
+    "keeperOwnerManualCheckPassed": true
   },
   "limits": [
-    "Built-in browser unavailable at deployment; later isolated Chromium verification confirms both painted library footers. Keeper token and Garden Pass/Turnstile gates leave authenticated checks pending.",
+    "Built-in browser unavailable at deployment; isolated Chromium later verified both painted library footers. Owner subsequently verified Keeper manually in v2.12.8. Authorized real-book reopening remains pending.",
     "Owner Android/Soul manual acceptance applies to v2.12.6 and remains recorded there.",
     "Fresh revision-8/eight-snapshot baseline captured after the pause and preserved exactly.",
     "No migration, seed, catalog edit, B2 object write or credential change."
@@ -389,5 +390,14 @@
   "rollback": {
     "release": "2.12.7",
     "deploymentId": "288e4790-003b-46ef-bb0a-d1bb37377413"
+  },
+  "ownerAcceptance": {
+    "Keeper": {
+      "status": "passed",
+      "source": "owner manual check",
+      "reportedAt": "2026-10-18T23:20:20+08:00",
+      "release": "2.12.8",
+      "report": "I manually checked the Keeper. It's fine."
+    }
   }
 }

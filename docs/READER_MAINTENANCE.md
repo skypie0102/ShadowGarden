@@ -4,8 +4,9 @@
 lifetime checks as source `7d3dbed`. Exact-source CI passes 211 Node tests and
 387 browser cases. Served assets, bindings and the refreshed revision-8 catalog/
 eight-snapshot baseline checks pass. Both painted library footers are subsequently
-verified in isolated Chromium; authenticated checks remain gated in that fresh
-session. See the [release record](READER_RELEASE.md). The documented M1–M5 maintenance
+verified in isolated Chromium. The owner also manually checked Keeper in
+v2.12.8 and reports it works correctly. Authenticated real-book opening remains
+the outstanding check. See the [release record](READER_RELEASE.md). The documented M1–M5 maintenance
 increments are deployed. Dated notes below retain their original state.
 
 **Production update — 2026-10-18:** v2.12.6 publishes the merged cleanup,
@@ -1079,6 +1080,6 @@ and automated regressions. Retained media installation retry/fallback behavior
 and the historical stress trace's causal limits remain documented. Future reader
 changes should begin with a concrete reproduction or a separately scoped review.
 Both rendered library footers are subsequently verified in isolated Chromium.
-Keeper sign-in and real-book opening remain pending normal authentication in
-that fresh browser session. No remote catalog, media, migration
+The owner subsequently checked Keeper manually in v2.12.8 and reports it works
+correctly. Authenticated real-book opening remains pending. No remote catalog, media, migration
 or credential changes were made by this release.

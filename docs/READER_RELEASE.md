@@ -70,11 +70,21 @@ the painted-footer check that was unavailable through the built-in browser.
 Keeper's live login form is reached, but this fresh browser session has no Keeper
 token. Following an actual library book link reaches the Garden Pass/Turnstile
 gate. No challenge is bypassed, no credential is submitted, and no authorized
-EPUB opening is claimed. Credentialed Keeper sign-in and real-book opening remain
-pending their normal authentication gates.
+EPUB opening is claimed. At that point, credentialed Keeper sign-in and real-book
+opening remained pending their normal authentication gates.
 [Browser evidence](reader-release-2.12.8.json) records the exact visible footer
 labels, browser method and remaining limits. No application or server setting
 changes accompany this verification.
+
+### Owner Keeper acceptance — 2026-10-18
+
+At 23:20 Manila, the owner reports: “I manually checked the Keeper. It's fine.”
+This records Keeper acceptance for the current v2.12.8 deployment. The isolated
+browser's earlier fresh-session result remains historical evidence; an automated
+credentialed Keeper sign-in was not repeated. Authenticated opening of a real
+EPUB remains the outstanding release check. The
+[machine-readable release record](reader-release-2.12.8.json) retains this owner
+report separately from automated and browser verification.
 
 ## Reader v2.12.7 — bookmark failure lifetime
 

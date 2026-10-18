@@ -29,8 +29,9 @@ navigation failures now stay quiet after reader disposal. App startup, map refre
 saved-page correction and flow recovery follow the same lifetime. All 211 Node tests and
 387 browser cases pass across five profiles. Live source, version metadata,
 catalog identity and production bindings are verified. Both rendered library
-footers are verified in isolated Chromium. Keeper sign-in and real-book opening
-remain pending the fresh session’s token and Turnstile gates.
+footers are verified in isolated Chromium. The owner manually checked Keeper
+in v2.12.8 and reports it works correctly. Authenticated real-book opening remains
+the outstanding release check.
 On 2026-10-18 the owner manually verified fast upward scrolling and image-focus
 return on Android / Soul Browser in v2.12.6; both work correctly. The requested
 phone acceptance checks pass. The [release record](docs/READER_RELEASE.md)
