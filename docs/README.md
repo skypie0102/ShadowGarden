@@ -1,7 +1,10 @@
 # ShadowGarden documentation
 
-The latest verified production baseline is v2.12.5. Its release record identifies
-the source, deployment, automated evidence and Android/Soul phone acceptance.
+The latest verified production baseline is v2.12.6, deployed on 2026-10-18.
+Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.6.json)
+identify the exact source, automated results and live checks. The owner's
+ordinary-use Android/Soul acceptance applies to v2.12.5; v2.12.6 phone acceptance
+remains pending.
 
 | Document | Use it for |
 | --- | --- |

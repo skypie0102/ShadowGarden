@@ -22,14 +22,15 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.12.5**. Android / Soul Browser
-acceptance confirms that the reported image dimming and upward-scroll jumps are
-resolved in ordinary use. The [release record](docs/READER_RELEASE.md) separates
-that device result from automated checks and the remaining intermittent
-first-open cover-return case, RDR-045.
-Merged source also fixes reproduced chapter-boundary and pending-resume jumps
-(RDR-054/055); rollout is tracked separately. The historical single 56 px stress
-event has not been uniquely attributed.
+The latest verified production release is **v2.12.6**, deployed on 2026-10-18.
+It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
+chapter-boundary/pending-resume jump fixes (RDR-054/055). All 204 Node tests and
+352 browser cases pass across five profiles. Live assets, both library footers,
+catalog identity, production bindings and authorized real-book opening are verified.
+Android / Soul Browser ordinary-use acceptance applies to v2.12.5; the latest
+release still needs its own phone check. The [release record](docs/READER_RELEASE.md)
+keeps that distinction and the intermittent first-open cover-return case, RDR-045.
+The historical single 56 px stress event has not been uniquely attributed.
 See the [original-trace follow-up](docs/READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 
 Current development focuses on gradual reader simplification: explicit service

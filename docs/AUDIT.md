@@ -1,14 +1,17 @@
 # ShadowGarden project audit
 
-## Current status — 2026-10-17
+## Current status — 2026-10-18
 
-The verified production baseline is v2.12.5, with 166 Node tests and 277 passing
-browser cases across five profiles (eight platform skips). Genuine provider/book
-checks and the owner's successful ordinary-use Android/Soul acceptance are in
-[READER_RELEASE.md](READER_RELEASE.md). RDR-045's specific cover cycle remains
-tracked separately. Ongoing cleanup and fresh validation are in
-[READER_MAINTENANCE.md](READER_MAINTENANCE.md). Dated sections below preserve
-historical audit evidence and counts.
+The verified production baseline is v2.12.6, source `a5c5347`, with 204 Node
+tests and 352 passing browser cases across five profiles (eight existing platform
+skips). Live source hashes, bindings, catalog/snapshot identity, both library
+footers and genuine authorized book reopening pass the
+[release verification](READER_RELEASE.md). The owner's successful ordinary-use
+Android/Soul report applies to v2.12.5; phone acceptance of v2.12.6 remains pending.
+RDR-045's specific cover cycle and the causally unattributed historical M5a stress
+event remain tracked separately from the demonstrated fixes. Current cleanup
+and validation are in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
+Dated sections below preserve historical audit evidence and counts.
 
 
 ## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)

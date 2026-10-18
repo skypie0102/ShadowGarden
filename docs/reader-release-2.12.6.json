@@ -1,0 +1,510 @@
+{
+  "schemaVersion": 1,
+  "release": "2.12.6",
+  "checkedAt": "2026-10-18T04:41:34.638Z",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "shadowgarden-bon.pages.dev",
+    "deploymentId": "7e9cb704-e2bb-4e42-955e-384bb2b4bbe2",
+    "deployedAt": "2026-10-18T04:23:05.42297Z",
+    "source": "a5c5347e9204e2362eec704a6e9e2e14b2fb2c07",
+    "tree": "f8fcc70e8578073ce77c5019e209c49fa6d1e69b",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39096737028,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39096737028",
+    "attempt": 1,
+    "conclusion": "success",
+    "node": {
+      "passed": 204,
+      "failed": 0
+    },
+    "browser": {
+      "passed": 352,
+      "skipped": 8,
+      "profiles": [
+        {
+          "name": "desktop-chromium",
+          "passed": 72,
+          "skipped": 0
+        },
+        {
+          "name": "mobile-chromium",
+          "passed": 72,
+          "skipped": 0
+        },
+        {
+          "name": "desktop-firefox",
+          "passed": 70,
+          "skipped": 2
+        },
+        {
+          "name": "desktop-webkit",
+          "passed": 70,
+          "skipped": 2
+        },
+        {
+          "name": "mobile-webkit",
+          "passed": 68,
+          "skipped": 4
+        }
+      ]
+    }
+  },
+  "configuration": {
+    "saved": {
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "bucket": {
+        "id": "ddac6e4567151ba5a20f0011",
+        "name": "shadow-garden-books-01"
+      },
+      "secrets": [
+        {
+          "name": "B2_READ_APPLICATION_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_READ_KEY_ID",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_WRITE_APPLICATION_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_WRITE_KEY_ID",
+          "type": "secret_text"
+        },
+        {
+          "name": "SESSION_SECRET",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_ADMIN_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_MEDIA_SIGNING_SECRET",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_TURNSTILE_SECRET_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_TURNSTILE_SITE_KEY",
+          "type": "secret_text"
+        }
+      ]
+    },
+    "actual": {
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "bucket": {
+        "id": "ddac6e4567151ba5a20f0011",
+        "name": "shadow-garden-books-01"
+      },
+      "secrets": [
+        {
+          "name": "B2_READ_APPLICATION_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_READ_KEY_ID",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_WRITE_APPLICATION_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "B2_WRITE_KEY_ID",
+          "type": "secret_text"
+        },
+        {
+          "name": "SESSION_SECRET",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_ADMIN_TOKEN",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_MEDIA_SIGNING_SECRET",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_TURNSTILE_SECRET_KEY",
+          "type": "secret_text"
+        },
+        {
+          "name": "SG_TURNSTILE_SITE_KEY",
+          "type": "secret_text"
+        }
+      ]
+    },
+    "match": true
+  },
+  "database": {
+    "revision": 7,
+    "updatedAt": "2026-10-17T04:40:11.572Z",
+    "documentSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
+    "snapshots": [
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      }
+    ],
+    "readOnlyQueries": [
+      {
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      {
+        "rowsWritten": 0,
+        "changedDb": false
+      }
+    ],
+    "priorTurnPostDeploymentBaselineComparison": "Matched before conversation interruption; current verification rereads revision, document and retained snapshot metadata."
+  },
+  "catalogs": [
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "c764c44e7b54faf122efa014692dd87af518e9692c1237286ff33e3e3bc0a522",
+      "series": 0,
+      "volumes": 0
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "d9f63d42958ca585fef003c788362571c6ecf14316d1784c362eb66882bdf1c7",
+      "series": 1,
+      "volumes": 1
+    }
+  ],
+  "protection": [
+    {
+      "label": "known raw EPUB",
+      "status": 403
+    },
+    {
+      "label": "missing B2 cover",
+      "status": 404
+    }
+  ],
+  "challenges": {
+    "humanAccess": {
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    "adminAccess": {
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    "unauthenticatedKeeperStatus": 401
+  },
+  "browser": {
+    "mainFooter": "v2.12.6 · a5c5347",
+    "adultFooter": "v2.12.6 · a5c5347",
+    "realBookOpened": true,
+    "authorization": "retained genuine public session; no interception",
+    "pageMap": 385,
+    "readerWarningsOrErrorsCaptured": 0,
+    "keeperCredentialedSignInRepeated": false,
+    "phoneAcceptanceOfThisRelease": false
+  },
+  "assets": [
+    {
+      "path": "assets/js/reader-bootstrap.js",
+      "status": 200,
+      "bytes": 3465,
+      "expectedBlob": "f29f747a10a1036cbd99d0b33f0aaaec06ebd2eb",
+      "actualBlob": "f29f747a10a1036cbd99d0b33f0aaaec06ebd2eb",
+      "sha256": "e76a66037f95811bc6194d6415caae9e4fbc1885ff029a11e3cd7d22fc301b28",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader-continuous-core.js",
+      "status": 200,
+      "bytes": 27388,
+      "expectedBlob": "45664dd2dc6bbf1edb3faf8f3e38635d2e3b0192",
+      "actualBlob": "45664dd2dc6bbf1edb3faf8f3e38635d2e3b0192",
+      "sha256": "43941067a1c473028c6d08892556f4f3187f449cadbcc77c3c33e2ba46ab1262",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader-epub-adapter.js",
+      "status": 200,
+      "bytes": 16750,
+      "expectedBlob": "6aa2b397e8bc8df3aac300fbd922ad847f8022ce",
+      "actualBlob": "6aa2b397e8bc8df3aac300fbd922ad847f8022ce",
+      "sha256": "0cb714c4b9b6187db51a75646d3e915cc6d9c9aeaf66bb7fdbd65093c1d22502",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader-paginated-visual-fit.js",
+      "status": 200,
+      "bytes": 10919,
+      "expectedBlob": "a55423540f7ed9aad7150bc90e06568b09ae196c",
+      "actualBlob": "a55423540f7ed9aad7150bc90e06568b09ae196c",
+      "sha256": "de9bdca80d079345c14a4a1906669720516277cfc25bc598dd5a3f54ea4124c6",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader-visual-cache.js",
+      "status": 200,
+      "bytes": 27850,
+      "expectedBlob": "0486bfee3bda9ff287d3163fcaa431e2761b8d2a",
+      "actualBlob": "0486bfee3bda9ff287d3163fcaa431e2761b8d2a",
+      "sha256": "635c7d564c87b4ab88a4d82068cac1dd77aa898f3c601e19160125298aa76c32",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/app.js",
+      "status": 200,
+      "bytes": 33440,
+      "expectedBlob": "b5f26e1742ce59b54dc229d884187f92712fb27e",
+      "actualBlob": "b5f26e1742ce59b54dc229d884187f92712fb27e",
+      "sha256": "2e07cb961f5b621452faf372520d21ab4171511659e0eb8b2170b046c8833d2d",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/book-search.js",
+      "status": 200,
+      "bytes": 5157,
+      "expectedBlob": "b5be55860fe4d5fc4d603735298a636449e057c6",
+      "actualBlob": "b5be55860fe4d5fc4d603735298a636449e057c6",
+      "sha256": "f472e4b650b31558ea4002a25b4f1a682a6d4bc5a25a686e9304e2ef9dfc8239",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/book-session.js",
+      "status": 200,
+      "bytes": 6434,
+      "expectedBlob": "6be9edab852ee294b17d9d4d38ff5096ee979146",
+      "actualBlob": "6be9edab852ee294b17d9d4d38ff5096ee979146",
+      "sha256": "e7e990a755b624bf3833468866d0f59d113bda8c616e3f06d355baefee77e71e",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/continuous-height.js",
+      "status": 200,
+      "bytes": 1428,
+      "expectedBlob": "a82c49a3668a608e41e5844f99d94e676c4b3219",
+      "actualBlob": "a82c49a3668a608e41e5844f99d94e676c4b3219",
+      "sha256": "505aae8009f6d7dfcf0318d306b32a966862147ba9b4bc9d6482e02c4f639fae",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/continuous-layout.js",
+      "status": 200,
+      "bytes": 11263,
+      "expectedBlob": "54eb185dcd3ebc076b6c15cfb5165b05501784bc",
+      "actualBlob": "54eb185dcd3ebc076b6c15cfb5165b05501784bc",
+      "sha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/continuous-state.js",
+      "status": 200,
+      "bytes": 2066,
+      "expectedBlob": "f588793137b8d8c13170f2c0c55a8d628e3419ff",
+      "actualBlob": "f588793137b8d8c13170f2c0c55a8d628e3419ff",
+      "sha256": "4d9f02abae3aa989db104e9d169762c84a6325b734b022d7a46a83bab25324d2",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/engine.js",
+      "status": 200,
+      "bytes": 3446,
+      "expectedBlob": "4a9060c84302706d4ef551eb0907c25d92c968a4",
+      "actualBlob": "4a9060c84302706d4ef551eb0907c25d92c968a4",
+      "sha256": "54c65c6e9fd34469f24accce88332cb81a7578f3ba0f6ea4b9ee88f1ee59bdd5",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/image-focus.js",
+      "status": 200,
+      "bytes": 22165,
+      "expectedBlob": "879a4133160a290a8699c9881b9ecd80763db6d6",
+      "actualBlob": "879a4133160a290a8699c9881b9ecd80763db6d6",
+      "sha256": "191023cf587aacb807a2f8d9af0cf3916560e3efe541e7d69b4c723de2baa0c9",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/page-map-measurement.js",
+      "status": 200,
+      "bytes": 9882,
+      "expectedBlob": "b8a1fc5affe4bb04a4fe20b782dc007debe5bcc9",
+      "actualBlob": "b8a1fc5affe4bb04a4fe20b782dc007debe5bcc9",
+      "sha256": "292686cc16c3fe5fa420e09c74a328f088989454ab4dc5fcaa310a77fdfad659",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/page-map.js",
+      "status": 200,
+      "bytes": 17933,
+      "expectedBlob": "53cee01cb5f2128dc7966172eade5703855f7100",
+      "actualBlob": "53cee01cb5f2128dc7966172eade5703855f7100",
+      "sha256": "1b34ccdb10d106700583a8b45f1e4e5e3c323f2c1f8b40c2f5d985ea6fa39bb1",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/paginated.js",
+      "status": 200,
+      "bytes": 5205,
+      "expectedBlob": "e7c85db28c564bf3cf08e1a65885fc3f643e045e",
+      "actualBlob": "e7c85db28c564bf3cf08e1a65885fc3f643e045e",
+      "sha256": "d8ec6e13d8ce8a0859974b9afd4d111a6c7767160837d534132d03032c9c8799",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/progress-controller.js",
+      "status": 200,
+      "bytes": 12219,
+      "expectedBlob": "77a7e5ac4e50c446008acb6f1a2bbb247f72748b",
+      "actualBlob": "77a7e5ac4e50c446008acb6f1a2bbb247f72748b",
+      "sha256": "e65ce6b4599b22656011ff2b91b2318f654564a03d2dc04761537dfbf58699ef",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/rendition.js",
+      "status": 200,
+      "bytes": 29355,
+      "expectedBlob": "ba37123522209984c43936860b548cf27c8f2a96",
+      "actualBlob": "ba37123522209984c43936860b548cf27c8f2a96",
+      "sha256": "71744be81bb040f6f61b94a8a56ede4376a27fbaf2010c00d9e0494891a58c3c",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/sections.js",
+      "status": 200,
+      "bytes": 987,
+      "expectedBlob": "afb48b6791bda4a5bf204d845cd6f68ac0efc56e",
+      "actualBlob": "afb48b6791bda4a5bf204d845cd6f68ac0efc56e",
+      "sha256": "c844033aebbed87800a6c6d755fb49fb569aa4316aaf03a561cb520c33194df7",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/toc-book-search.js",
+      "status": 200,
+      "bytes": 5207,
+      "expectedBlob": "6ae1f039e59e6900b20ce5b7b511a4115e87cd6d",
+      "actualBlob": "6ae1f039e59e6900b20ce5b7b511a4115e87cd6d",
+      "sha256": "2e5cd407c6d760b8d50cb810bbb763e581d8e481fae34332dc06a70c24b2aca2",
+      "match": true
+    },
+    {
+      "path": "assets/js/reader/toc.js",
+      "status": 200,
+      "bytes": 16965,
+      "expectedBlob": "0703702945e0e3936be319c1e03b6795a6ef565a",
+      "actualBlob": "0703702945e0e3936be319c1e03b6795a6ef565a",
+      "sha256": "5a48ff86c31f7c9f786ce212975e424756a1c25ddc3d7655fa1c071c03658905",
+      "match": true
+    },
+    {
+      "path": "assets/css/reader-image-focus.css",
+      "status": 200,
+      "bytes": 3363,
+      "expectedBlob": "41c88354143288cc90e1f547440cce556f76d66e",
+      "actualBlob": "41c88354143288cc90e1f547440cce556f76d66e",
+      "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b",
+      "match": true
+    },
+    {
+      "path": "assets/js/library-footer-version.js",
+      "status": 200,
+      "bytes": 1042,
+      "expectedBlob": "208e6fc3e383b3f0dc6590f7542f2898548b16de",
+      "actualBlob": "208e6fc3e383b3f0dc6590f7542f2898548b16de",
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "match": true
+    },
+    {
+      "path": "reader.html",
+      "status": 200,
+      "bytes": 11797,
+      "expectedBlob": "52d7be701dac2b08daa2c4aa315df50213a36b26",
+      "actualBlob": "52d7be701dac2b08daa2c4aa315df50213a36b26",
+      "sha256": "e01ff252df2396c6141e7c666403a2c399f6148efd4faac954362c8b5488c96f",
+      "match": true
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 9500,
+      "expectedBlob": "b97075c5619235d94037a9fa1b559560a802bd36",
+      "actualBlob": "b97075c5619235d94037a9fa1b559560a802bd36",
+      "sha256": "acc0e42e5abdf4ec914a9fd6dfc5975c35f72aa55611d78f9d959de889e29278",
+      "match": true
+    },
+    {
+      "path": "nsfw.html",
+      "status": 200,
+      "bytes": 10299,
+      "expectedBlob": "eda0ebf2e5931b4d3e66fed7ad6acc338dab9686",
+      "actualBlob": "eda0ebf2e5931b4d3e66fed7ad6acc338dab9686",
+      "sha256": "5f91fa043eb30a4165abc8a3c742f11ee2f9aed746aacf08ab43c16d93a57a17",
+      "match": true
+    }
+  ],
+  "limits": [
+    "Owner ordinary-use Android/Soul acceptance applies to v2.12.5; v2.12.6 phone acceptance remains pending.",
+    "RDR-045 intermittent first-open partial-cover return was not repeated.",
+    "Historical M5a single reversal remains causally unattributed; reproduced intrinsic sizing and RDR-054/055 mechanisms are fixed.",
+    "Book reopening can use its existing local cache; it does not alone prove a fresh EPUB download.",
+    "No migration, seed, catalog edit, B2 object write, upload test or credential change."
+  ],
+  "rollback": {
+    "release": "2.12.5",
+    "deploymentId": "0ceadeec-4e53-4e20-a841-83c72bde66a2"
+  }
+}

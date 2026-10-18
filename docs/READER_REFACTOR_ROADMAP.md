@@ -1,6 +1,9 @@
 # Reader refactor roadmap
 
 Current gradual cleanup is tracked in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
+The current production release is v2.12.6 (`a5c5347`), deployed on 2026-10-18;
+its [release record](READER_RELEASE.md) contains exact CI/live verification and
+remaining acceptance limits. Dated implementation notes below retain their history.
 This document retains the phased implementation/release history. The owner has
 confirmed ordinary Android/Soul use on v2.12.5 has no more jumping or dimming.
 RDR-045's specific intermittent first-open partial-cover cycle remains tracked

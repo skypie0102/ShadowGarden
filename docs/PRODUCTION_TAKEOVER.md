@@ -1,20 +1,26 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-17:** v2.12.5, deployment
-`0ceadeec-4e53-4e20-a841-83c72bde66a2`, source
-`8a7e07fc06fdcd38a3fafcaed1f0baff44584d75`, deployed at 04:24:41 UTC
-(12:24 Manila). PR #13 and CI run `39001700811` record 166 passing Node tests
-and 277 passing browser cases across five profiles, with eight platform skips.
-The release verifies served source, both version fields, actual/saved D1 and
-bucket settings, nine encrypted-setting names/types, catalog revision 3 and
-three retained snapshot identities/checksums.
+**Last verified production release — 2026-10-18:** v2.12.6, deployment
+`7e9cb704-e2bb-4e42-955e-384bb2b4bbe2`, clean `main` source
+`a5c5347e9204e2362eec704a6e9e2e14b2fb2c07`, deployed at 04:23:05 UTC
+(12:23 Manila). [CI run 39096737028](https://github.com/skypie0102/ShadowGarden/actions/runs/39096737028)
+passes 204 Node tests, audits, both builds and 352 browser cases across five
+profiles, with eight existing platform skips.
 
-Genuine Keeper login, the B2 object check and real EPUB opening passed during
-release verification. After v2.12.5 the owner confirmed ordinary Android/Soul use
-has no more jumping or dimming. The specific intermittent first-open partial-cover
-return RDR-045 remains tracked separately. See [release evidence](READER_RELEASE.md)
-and [ongoing source maintenance](READER_MAINTENANCE.md). A merge into `main` is
-recorded separately from a production deployment.
+The release verifies all 26 checked public file hashes, version metadata, both
+visible library footers, actual/saved D1 and bucket settings, nine encrypted
+setting names/types, catalog revision 7 and seven retained snapshot identities/
+checksums. Both live catalogs match D1 exactly. The real authorized EPUB reopens;
+the known raw EPUB is denied without a ticket, and the missing-cover B2 probe
+returns the expected 404. No catalog, storage or credential changes were needed.
+
+[Release evidence](READER_RELEASE.md) and [machine-readable checks](reader-release-2.12.6.json)
+record exact identities and limits. Credentialed Keeper sign-in was not repeated;
+the earlier genuine sign-in remains historical evidence. Ordinary Android/Soul
+acceptance applies to v2.12.5. Phone acceptance of v2.12.6 and the specific
+intermittent first-open cover-return case RDR-045 remain separate. The historical
+single scroll-stress reversal has not been uniquely attributed. See
+[ongoing source maintenance](READER_MAINTENANCE.md).
 
 ## Existing resources
 
@@ -34,7 +40,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.12.4, `f1bf6889-4e7d-4af6-b3d2-bedb6b517da1` |
+| Last verified rollback target | v2.12.5, `0ceadeec-4e53-4e20-a841-83c72bde66a2` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,

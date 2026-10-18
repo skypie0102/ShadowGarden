@@ -1,7 +1,75 @@
 # Reader releases
 
-**Current production baseline:** v2.12.5. Ongoing
+**Current production baseline:** v2.12.6. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.12.6 — maintenance and scroll follow-up
+
+**Live:** deployment `7e9cb704-e2bb-4e42-955e-384bb2b4bbe2` succeeded on
+2026-10-18 at 04:23:05 UTC (12:23 in Manila), from clean `main` source
+`a5c5347e9204e2362eec704a6e9e2e14b2fb2c07`. Its source tree is
+`f8fcc70e8578073ce77c5019e209c49fa6d1e69b`.
+[Verification evidence](reader-release-2.12.6.json) retains the deployed file
+hashes, configuration metadata, catalog identities and check boundaries.
+
+This release publishes maintenance increments M1–M4, M5a/M5b and M5c1, the shared
+Continuous intrinsic-height correction, and [PR #26](https://github.com/skypie0102/ShadowGarden/pull/26)'s
+chapter-boundary anchor and pending-native-movement fixes (RDR-054/055). The
+[maintenance record](READER_MAINTENANCE.md) explains each increment and its
+failing-before evidence. The accepted Soul image-focus CSS remains at v2.12.4;
+its served bytes match source.
+
+The exact release commit passes the audit, all **204 Node tests**, static build,
+binding-aware Functions packaging and **352 browser cases** in
+[CI run 39096737028](https://github.com/skypie0102/ShadowGarden/actions/runs/39096737028).
+All six jobs succeed on their first attempt; eight existing platform skips remain.
+
+| Profile | Passed | Skipped |
+| --- | ---: | ---: |
+| Desktop Chromium | 72 | 0 |
+| Mobile Chromium | 72 | 0 |
+| Firefox | 70 | 2 |
+| Desktop WebKit | 70 | 2 |
+| Mobile WebKit | 68 | 4 |
+
+Read-only production verification confirms the following:
+
+- Version metadata identifies v2.12.6, `main` and `a5c5347`; both visible
+  library footers show `v2.12.6 · a5c5347`.
+- All **26 checked public files** match the release's Git blob hashes exactly:
+  21 changed reader JavaScript files, the accepted image-focus stylesheet, the
+  footer loader and all three reader/main/adult HTML entry points.
+- Actual deployment and saved project settings retain D1
+  `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86`, the original B2 bucket name/ID,
+  compatibility settings and all nine encrypted-setting names/types.
+- D1 remains at revision **7**, timestamp `2026-10-17T04:40:11.572Z`, with
+  all seven retained snapshot identities/checksums. The queries report zero
+  rows written and `changed_db: false`. This follows the matching baseline
+  comparison completed immediately after deployment.
+- Both live `/media/shadow-garden/data/*catalog.json` responses exactly match
+  sanitized D1 content: main has zero series/volumes; adult has one series/volume.
+  Static `/data/*catalog.json` files are placeholders, not the live catalog APIs.
+- Both challenge endpoints provide configured site keys. Unauthenticated Keeper
+  access returns 401; the known raw EPUB without its ticket returns 403. A
+  nonexistent B2 cover returns the expected 404 rather than a storage error.
+- The real, unintercepted EPUB opens through retained public authorization and
+  displays its existing saved location with a 385-page map under that browser's
+  current settings. The reader tab reports no captured warnings or errors.
+
+This verification does not repeat credentialed Keeper sign-in, B2 upload/write
+tests, or the specific intermittent first-open partial-cover cycle. An authorized
+book may reuse its existing local cache; reopening alone does not prove a fresh
+EPUB download. No migration, seed, catalog edit, B2 object write or credential
+change is part of the release.
+
+**Acceptance still distinct:** the owner's ordinary Android/Soul acceptance
+belongs to v2.12.5. Recheck v2.12.6 on that phone for fast upward scrolling,
+chapter boundaries and focus return. RDR-045 remains specifically tracked, and
+the historical M5a single reversal remains causally unattributed; the demonstrated
+sizing, boundary and stale-resume defects are fixed.
+
+Rollback target: the correctly bound v2.12.5 deployment
+`0ceadeec-4e53-4e20-a841-83c72bde66a2`.
 
 ## Reader v2.12.5 — Continuous scroll stability
 

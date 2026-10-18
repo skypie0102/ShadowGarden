@@ -1,5 +1,13 @@
 # Reader maintenance roadmap
 
+**Production update — 2026-10-18:** v2.12.6 publishes the merged cleanup,
+intrinsic sizing and RDR-054/055 fixes through clean source `a5c5347`.
+The exact release passes 204 Node tests and 352 browser cases; live files,
+bindings, catalog identity, both footer labels and authorized real-book opening
+are verified in the [release record](READER_RELEASE.md). Historical increment
+notes below retain the deployment state at their original dates. Phone acceptance
+of this release remains pending; the earlier ordinary-use report is v2.12.5.
+
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
 [code review](READER_CODE_REVIEW.md) supplies the baseline findings.
