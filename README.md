@@ -28,9 +28,9 @@ chapter-boundary/pending-resume jump fixes (RDR-054/055). Bookmark lookup and
 navigation failures now stay quiet after reader disposal. App startup, map refresh,
 saved-page correction and flow recovery follow the same lifetime. All 211 Node tests and
 387 browser cases pass across five profiles. Live source, version metadata,
-catalog identity and production bindings are verified. Rendered footer inspection
-and credentialed real-book opening were not repeated for this release because
-the live browser surface was unavailable.
+catalog identity and production bindings are verified. Both rendered library
+footers are verified in isolated Chromium. Keeper sign-in and real-book opening
+remain pending the fresh session’s token and Turnstile gates.
 On 2026-10-18 the owner manually verified fast upward scrolling and image-focus
 return on Android / Soul Browser in v2.12.6; both work correctly. The requested
 phone acceptance checks pass. The [release record](docs/READER_RELEASE.md)

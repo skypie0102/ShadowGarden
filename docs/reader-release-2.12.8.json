@@ -346,14 +346,42 @@
     }
   ],
   "browser": {
-    "available": false,
-    "renderedFootersInspected": false,
+    "available": true,
+    "renderedFootersInspected": true,
     "keeperSignInRepeated": false,
     "authorizedRealBookReopened": false,
-    "footerMarkupAndLoaderSourceMatched": true
+    "footerMarkupAndLoaderSourceMatched": true,
+    "builtInBrowserAvailable": false,
+    "method": "Isolated Playwright Chromium 153.0.8010.12 (build 1243), fresh browser session",
+    "followUp": {
+      "checkedAt": "2026-10-18T14:45:08.523Z",
+      "method": "Isolated Playwright Chromium 153.0.8010.12 (build 1243), fresh browser session",
+      "production": "https://shadowgarden-bon.pages.dev",
+      "main": {
+        "title": "Shadow Garden — Library",
+        "footer": "Shadow Garden · v2.12.8 · 7d3dbed\nTorrent Downloads · Reading data stays in this browser",
+        "visible": true
+      },
+      "adult": {
+        "title": "Shadow Garden — Adult Library",
+        "footer": "Shadow Garden · v2.12.8 · 7d3dbed · Adult Section\n18+ Content warning",
+        "visible": true
+      },
+      "Keeper": {
+        "loginFormReached": true,
+        "authenticated": false,
+        "reason": "Fresh session has no Keeper token."
+      },
+      "reader": {
+        "realBookLinkFollowed": true,
+        "authorizedBookOpened": false,
+        "reason": "Garden Pass Turnstile challenge requires verification in this fresh session."
+      },
+      "mainPageErrors": 0
+    }
   },
   "limits": [
-    "Live browser surface unavailable; no new painted-UI or credentialed acceptance claimed.",
+    "Built-in browser unavailable at deployment; later isolated Chromium verification confirms both painted library footers. Keeper token and Garden Pass/Turnstile gates leave authenticated checks pending.",
     "Owner Android/Soul manual acceptance applies to v2.12.6 and remains recorded there.",
     "Fresh revision-8/eight-snapshot baseline captured after the pause and preserved exactly.",
     "No migration, seed, catalog edit, B2 object write or credential change."

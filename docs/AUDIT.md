@@ -5,9 +5,10 @@
 The verified production baseline is v2.12.8, source `7d3dbed`, with 211 Node tests
 and 387 passing browser cases across five profiles (eight existing platform skips).
 Served source, version metadata, production bindings and exact pre/post catalog/
-snapshot identity pass [release verification](READER_RELEASE.md). Live painted UI,
-credentialed Keeper sign-in and real-book opening were not repeated because the
-browser surface was unavailable. Earlier acceptance remains recorded separately:
+snapshot identity pass [release verification](READER_RELEASE.md). Isolated Chromium
+subsequently verifies both painted library footers. Keeper sign-in and real-book
+opening remain pending the fresh session’s token and Garden Pass/Turnstile gates.
+Earlier acceptance remains recorded separately:
 the owner manually passed fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6. The documented M1–M5 cleanup, including app callback
 lifetime checks, is deployed; [the roadmap](READER_MAINTENANCE.md) records scope

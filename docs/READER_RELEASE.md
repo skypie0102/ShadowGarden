@@ -45,7 +45,7 @@ provide site keys; unauthenticated Keeper access returns 401, a known raw EPUB
 returns 403 without its ticket, and the missing B2 cover probe returns the expected
 `media_not_found` 404.
 
-The live browser surface is unavailable. Rendered footer inspection, credentialed
+The built-in browser was unavailable at deployment. Rendered footer inspection, credentialed
 Keeper sign-in and authorized real-book reopening were not repeated. Both library
 HTML version targets and their shared loader match the tested source, and the
 live version payload is correct. The owner's v2.12.6 Android/Soul acceptance and
@@ -58,6 +58,23 @@ keep their existing limits; this release makes no broader bug-free claim.
 
 Rollback target: verified v2.12.7 deployment
 `288e4790-003b-46ef-bb0a-d1bb37377413`.
+
+### Post-release browser verification — 2026-10-18
+
+At 22:45 Manila, an isolated Chromium test browser loads the live site normally.
+Both rendered library footers visibly show `v2.12.8 · 7d3dbed`; the adult footer
+also retains its Adult Section label. The main library loads its real catalog
+and cover, and has no uncaught page errors during this check. This completes
+the painted-footer check that was unavailable through the built-in browser.
+
+Keeper's live login form is reached, but this fresh browser session has no Keeper
+token. Following an actual library book link reaches the Garden Pass/Turnstile
+gate. No challenge is bypassed, no credential is submitted, and no authorized
+EPUB opening is claimed. Credentialed Keeper sign-in and real-book opening remain
+pending their normal authentication gates.
+[Browser evidence](reader-release-2.12.8.json) records the exact visible footer
+labels, browser method and remaining limits. No application or server setting
+changes accompany this verification.
 
 ## Reader v2.12.7 — bookmark failure lifetime
 
