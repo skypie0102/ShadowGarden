@@ -449,6 +449,12 @@ errors, including `AbortError`, retain the same fallback and recovery behavior.
 
 ## Verification boundaries
 
+- M5c3 app callback lifetime checks pass all 211 Node tests and 387 browser
+  cases across five profiles in [PR CI run 39122888870](https://github.com/skypie0102/ShadowGarden/actions/runs/39122888870),
+  with eight existing platform skips. [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28)
+  merges the exact tested tree. Source validation is separate from production
+  v2.12.7; the app checks await a later release.
+
 - The first milestone passes all 79 Node tests, 30 desktop/mobile Chromium
   browser cases, recovered-asset audit, static build and Functions compilation
   in clean [CI run 38743863205](https://github.com/skypie0102/ShadowGarden/actions/runs/38743863205).

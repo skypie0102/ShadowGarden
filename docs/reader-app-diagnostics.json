@@ -75,11 +75,62 @@
     "boundary": "Local checks do not substitute for Pages/D1 CI or live credentialed production checks."
   },
   "ci": {
-    "status": "required before merge",
-    "profiles": 5
+    "status": "success",
+    "runId": 39122888870,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39122888870",
+    "attempt": 1,
+    "head": "f99c7037000b34e00dde41340771862354971352",
+    "tree": "1cab0bd063e40b70ec3d0c8686411abdf139086b",
+    "nodeTestsPassed": 211,
+    "browserCasesPassed": 387,
+    "browserCasesSkipped": 8,
+    "newAppCasesPassed": 25,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "passed": 79,
+        "skipped": 0,
+        "jobId": 117661978110
+      },
+      {
+        "name": "mobile-chromium",
+        "passed": 79,
+        "skipped": 0,
+        "jobId": 117661978482
+      },
+      {
+        "name": "desktop-firefox",
+        "passed": 77,
+        "skipped": 2,
+        "jobId": 117661978087
+      },
+      {
+        "name": "desktop-webkit",
+        "passed": 77,
+        "skipped": 2,
+        "jobId": 117661978105
+      },
+      {
+        "name": "mobile-webkit",
+        "passed": 75,
+        "skipped": 4,
+        "jobId": 117661978148
+      }
+    ],
+    "independentBranchRun": {
+      "runId": 39122886325,
+      "status": "success",
+      "attempt": 1
+    }
   },
   "production": {
     "version": "2.12.7",
     "thisIncrementDeployed": false
+  },
+  "merge": {
+    "pullRequest": 28,
+    "sha": "d03ea00a817f497f03861da4594a60b264ce1fb5",
+    "tree": "1cab0bd063e40b70ec3d0c8686411abdf139086b",
+    "exactTestedTree": true
   }
 }

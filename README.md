@@ -44,7 +44,10 @@ EPUB.js compatibility timing. Continuous sizing now shares one intrinsic-height
 measurement across vendor expansion and media reconciliation. Layout anchors
 also compare nearby visible blocks across chapter padding, and structural
 bookkeeping retains native movement awaiting its scroll event. Cancelled search
-and disposed TOC/bookmark navigation stay quiet while active failures remain visible. See the
+and disposed TOC/bookmark navigation stay quiet while active failures remain visible.
+The merged app callback checks also suppress obsolete TOC/map/startup/recovery
+failures; 211 Node tests and 387 browser cases pass across five profiles. These
+app changes are verified source for the next release. See the
 [code review](docs/READER_CODE_REVIEW.md) and
 [maintenance roadmap](docs/READER_MAINTENANCE.md) for completed increments and
 next steps. Verified changes are merged into `main`; a merge and a production

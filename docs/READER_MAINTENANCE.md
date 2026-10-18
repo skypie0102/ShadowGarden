@@ -18,12 +18,12 @@ the owner manually checked fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6 and reports both work correctly. The requested device
 acceptance gate is complete.
 
-**Current maintenance:** M5c3 adds reader lifetime checks to reproduced late app
-callbacks: startup TOC loading, page-map refresh, saved-page startup correction
-and flow recovery. Failing-before and active-error controls are documented below.
-The complete five-profile matrix must pass before merge. M5c2 bookmark checks
-are merged and deployed in v2.12.7. Keep active failures visible and retain the
-accepted scrolling/focus regressions.
+**Current maintenance:** M5c3 app callback lifetime checks are verified and
+merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
+All 211 Node tests and 387 browser cases pass across five profiles. M5c's
+search/TOC, bookmark and app callback review is complete for these documented
+boundaries. Active failures and cleanup diagnostics remain visible. Production
+remains v2.12.7; M5c3 is a separately verified source increment.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
@@ -46,7 +46,7 @@ validation separately from deployment.
 | M2 — Page-map measurement boundary | Extract sandbox measurement/disposal while retaining map generation/cache and lookup contracts. Verify sandbox failure, source bounds, encoded paths, long books and cache reuse. | Merged through [PR #15](https://github.com/skypie0102/ShadowGarden/pull/15); verified below |
 | M3 — Shared pure helpers | Consolidate identical href/spine helpers while preserving fragment, encoded-path and iframe-local differences. Verify links, notes, TOC and page/final-section navigation. | Merged through [PR #16](https://github.com/skypie0102/ShadowGarden/pull/16); verified below |
 | M4 — Vendor state ownership | Consolidate shared Continuous manager state one concern at a time. Verify partial renders, buffer/trim races, late media, resize and native input. | Complete: M4a through [PR #17](https://github.com/skypie0102/ShadowGarden/pull/17), M4b through [PR #18](https://github.com/skypie0102/ShadowGarden/pull/18), M4c through [PR #19](https://github.com/skypie0102/ShadowGarden/pull/19); verified below |
-| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21), M5c diagnostic cleanup in progress |
+| M5 — Presentation and timing | Separate cohesive TOC search presentation; name media deadlines and replace polling only with equivalent readiness coverage. Keep expected quiet teardown distinct from actionable diagnostics. | M5a merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); M5b timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21), M5c diagnostic cleanup merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28) |
 
 ## M1 implementation
 
@@ -429,7 +429,7 @@ does not change catalog data, migrations, storage or configuration.
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
 | M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
-| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); M5c2 bookmark lifetime checks merged through [PR #27](https://github.com/skypie0102/ShadowGarden/pull/27); app callbacks follow separately |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); M5c2 bookmark lifetime checks merged through [PR #27](https://github.com/skypie0102/ShadowGarden/pull/27); M5c3 app callback checks merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28); documented diagnostic review complete |
 
 ### M5a implementation
 
@@ -1007,9 +1007,10 @@ page-map and rendition paths. Controlled rejection is substituted only at
 provider boundaries; the saved-page case pauses the real correction paint.
 The TOC test waits for vendor package readiness before disposing, and recovery
 keeps the normal attach-before-display queue order. This isolates reporting
-lifetime from unrelated vendor startup teardown. Four cases first establish
-that an active `AbortError` is reported, then cancel or reject obsolete work;
-the fifth keeps both active flow failure and failed recovery visible. Recovery
+lifetime from unrelated vendor startup teardown. Three paired cases first establish that an active `AbortError` is reported,
+then cancel or reject obsolete work. A fourth case disposes a recovery after a
+live switch failure; the fifth keeps both active flow failure and failed recovery
+visible for `AbortError`. Recovery
 also checks that disposed UI stays hidden and a new reader can open normally.
 Diagnostics retain no raw error details.
 
@@ -1033,3 +1034,31 @@ The guarded candidate passes all 14 focused browser cases (ten app cases and
 four existing bookmark cases) on both Chromium profiles. The [machine-readable
 record](reader-app-diagnostics.json) retains exact source/test hashes and the
 failing-before comparison. Full five-profile CI follows before merge.
+
+
+### M5c3 CI and merge
+
+[PR CI run 39122888870](https://github.com/skypie0102/ShadowGarden/actions/runs/39122888870)
+passes the full audit, all **211 Node tests**, static build and binding-aware
+Functions package, plus **387 browser cases** across five profiles on its first
+attempt. Both Chromium profiles pass 79; Firefox and desktop WebKit pass 77 each
+with two existing skips; mobile WebKit passes 75 with four existing skips.
+All five new app cases pass in every profile. The same eight platform skips,
+existing tests, input, waits, tolerances and zero-retry policy are retained.
+The independent [branch run 39122886325](https://github.com/skypie0102/ShadowGarden/actions/runs/39122886325)
+also passes on its first attempt.
+
+Tested head `f99c7037000b34e00dde41340771862354971352` and the PR merge checkout
+share tree `1cab0bd063e40b70ec3d0c8686411abdf139086b`.
+[PR #28](https://github.com/skypie0102/ShadowGarden/pull/28) merges as
+`d03ea00a817f497f03861da4594a60b264ce1fb5` with that exact tested tree.
+A documentation-only follow-up records validation and completion status.
+
+M5c is complete for its documented search/TOC, bookmark and app callback
+boundaries. Active provider errors and real cleanup failures remain actionable.
+The retained media-installation retry/fallback policy and causally unattributed
+historical M5a stress event keep their existing evidence and follow-up limits;
+this diagnostic cleanup does not claim to resolve them. The owner's v2.12.6
+Android/Soul acceptance remains complete. Production remains v2.12.7; M5c3 is
+merged source for a subsequent release, with no remote data, storage, migration
+or configuration changes.
