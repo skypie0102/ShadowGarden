@@ -13,7 +13,7 @@
     function render(data){
       catalogReadable=data?.catalog?.readable!==false;const createButton=$("#createCatalogBackup");if(createButton){createButton.disabled=creating||!catalogReadable;createButton.title=catalogReadable?"":"Restore a valid snapshot before creating another backup."}
       backups=arr(data?.backups);if($("#backupCount"))$("#backupCount").textContent=String(backups.length);
-      if(!backups.length){list.innerHTML='<div class="maintenance-empty">No catalog backups yet.</div>';return}
+      if(!backups.length){list.innerHTML='<div class="maintenance-empty">No catalog snapshots have been preserved yet.</div>';return}
       list.innerHTML=backups.map(item=>{
         const isRestoring=restoring.has(item.id),isRemoving=removing.has(item.id),busy=isRestoring||isRemoving,damaged=item.restorable===false;
         const metadata=damaged?`<span class="maintenance-bad">Damaged snapshot · ${safe(item.integrity?.detail||"Cannot restore this snapshot.")}</span>`:`<span class="backup-meta"><i>${safe(item.counts?.mainSeries??0)} main</i><i>${safe(item.counts?.adultSeries??0)} 18+</i><i>${safe(item.counts?.volumes??0)} volumes</i></span>`;
@@ -27,12 +27,12 @@
     }
     async function restore(id){
       if(!id||restoring.has(id)||removing.has(id))return;const backup=backups.find(item=>item.id===id);if(!backup||backup.restorable===false)return;
-      if(!confirm(`Restore the catalog snapshot from ${fmtDate(backup.createdAt)}?\n\nA safety backup of the current catalogs will be created first. EPUB and cover files in B2 are not changed.`))return;
+      if(!confirm(`Restore the Garden to the catalog snapshot from ${fmtDate(backup.createdAt)}?\n\nA fresh safety snapshot of the current catalogs will be preserved first. EPUB and cover files in the private vault will not change.`))return;
       restoring.add(id);const button=actionButton("data-restore-backup",id);if(button){button.disabled=true;button.textContent="Restoring…"}const removeButton=actionButton("data-delete-backup",id);if(removeButton)removeButton.disabled=true;
       try{const result=await maintenance("restore-backup",{id});restoring.delete(id);render(result);keeper.state.management=null;keeper.events.dispatchEvent(new CustomEvent("history:changed",{detail:{data:result}}));keeper.events.dispatchEvent(new Event("library:invalidate"));keeper.ui.toast("Catalog snapshot restored.")}catch(error){alert(error.message)}finally{restoring.delete(id);const next=actionButton("data-restore-backup",id);if(next){next.disabled=backups.find(item=>item.id===id)?.restorable===false;next.textContent=next.disabled?"Cannot restore":"Restore"}const nextRemove=actionButton("data-delete-backup",id);if(nextRemove)nextRemove.disabled=false}
     }
     async function remove(id){
-      if(!id||removing.has(id)||restoring.has(id)||!confirm("Delete this catalog backup permanently?\n\nThis removes only the selected backup snapshot. Current catalogs and EPUB/cover files are not changed."))return;
+      if(!id||removing.has(id)||restoring.has(id)||!confirm("Uproot this catalog snapshot permanently?\n\nOnly this preserved snapshot will be removed. The living catalogs and all EPUB/cover files remain untouched."))return;
       removing.add(id);const button=actionButton("data-delete-backup",id);if(button){button.disabled=true;button.setAttribute("aria-busy","true")}const restoreButton=actionButton("data-restore-backup",id);if(restoreButton)restoreButton.disabled=true;
       try{await client.request("/admin-api/backup",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({action:"delete",id})});removing.delete(id);await load();keeper.events.dispatchEvent(new Event("history:changed"))}catch(error){alert(error.message)}finally{removing.delete(id);const next=actionButton("data-delete-backup",id);if(next){next.disabled=false;next.removeAttribute("aria-busy")}const nextRestore=actionButton("data-restore-backup",id);if(nextRestore)nextRestore.disabled=backups.find(item=>item.id===id)?.restorable===false}
     }

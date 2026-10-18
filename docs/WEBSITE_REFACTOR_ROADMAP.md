@@ -60,3 +60,23 @@ and 407 browser cases pass across five profiles (eight existing platform skips).
 The live midnight dialog, main footer, fourteen source hashes, unchanged D1
 document/snapshots and actual/saved bindings are verified. See the
 [website release record](WEBSITE_RELEASE.md). W2–W6 remain planned.
+
+## W2–W6 implementation
+
+The current website sweep moves live copy and confirmations directly into their
+owners, retires `site-flavor.js`, separates themes from navigation and verification
+CSS from session code, shares widget loading, and extracts Library URL state.
+The three filter controls already present in both Library shells no longer have
+fallback DOM-injection implementations.
+
+Keeper preflight has its own local inspection service. Upload state and render
+notifications replace model-inference DOM observers; the obsolete polling
+completion shim is retired. Upload buttons are no longer cloned, and file
+selection no longer suppresses nonexistent legacy listeners. Terminal status is
+published after transaction completion and its final queue render. Existing
+registered Keeper workflows/client, incremental catalog rendering, reader layout
+and motion behavior are retained.
+
+The [architecture guide](WEBSITE_ARCHITECTURE.md) documents these final boundaries
+and event contracts. This is a frontend ownership refactor, not a framework
+migration or visual redesign. Full verification and release acceptance are pending.

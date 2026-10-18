@@ -12,36 +12,15 @@
   const model=await import("/assets/js/library-model.js?v=2.11.0");
   const renderers=await import("/assets/js/library-renderers.js?v=2.11.0");
   const {installVolumeActionController}=await import("/assets/js/public/volume-actions.js?v=2.11.0");
+  const locationState=await import("./public/library-location.js");
   const readingStatus=domain.readingState;
   installVolumeActionController(document);
 
   const esc=domain.format.escapeHtml;
   const dependencies={...domain,readingState:readingStatus};
 
-  function mountReadingStatusFilter(){
-    if($("#readingStatusChips"))return;
-    const anchor=$("#volumeCountSelect")?.closest(".filter-group")||$("#sortSelect")?.closest(".filter-group");
-    if(!anchor)return;
-    const group=document.createElement("div");
-    group.className="filter-group filter-tags";
-    group.innerHTML='<span class="filter-sub-label">Reading status</span><div id="readingStatusChips" class="genre-chips reading-status-chips"><button type="button" data-reading-status="finished">✓ Finished</button><button type="button" data-reading-status="unfinished">Unfinished</button></div>';
-    anchor.after(group);
-  }
-
-  function mountTranslatorFilter(){
-    if($("#translatorSelect"))return;
-    const anchor=$("#authorSelect")?.closest(".filter-group");if(!anchor)return;
-    const group=document.createElement("div");group.className="filter-group";group.innerHTML='<label for="translatorSelect">Fan translator</label><select id="translatorSelect"><option value="">Any translator</option></select>';anchor.after(group);
-  }
-
-  function mountGenreFilter(){
-    if($("#genreSelect"))return;const anchor=$("#translatorSelect")?.closest(".filter-group")||$("#authorSelect")?.closest(".filter-group");if(!anchor)return;
-    const group=document.createElement("div");group.className="filter-group";group.innerHTML='<label for="genreSelect">Genre</label><select id="genreSelect"><option value="">Any genre</option></select>';anchor.after(group);
-  }
-
   function collectFilters(){
     const options=model.contextualFilterOptions(state.items,state,{pinnedIds:domain.preferences.pinnedIds(),seriesFinished:readingStatus.seriesFinished});
-    mountTranslatorFilter();mountGenreFilter();
     $("#authorSelect").innerHTML='<option value="">Any author</option>'+options.authors.map(author=>{const count=options.authorCounts.get(author)||0;return `<option value="${esc(author)}" ${!count&&state.author!==author?"disabled":""}>${esc(author)} (${count})</option>`}).join("");
     $("#translatorSelect").innerHTML='<option value="">Any translator</option>'+options.translators.map(translator=>{const count=options.translatorCounts.get(translator)||0;return `<option value="${esc(translator)}" ${!count&&state.translator!==translator?"disabled":""}>${esc(translator)} (${count})</option>`}).join("");
     $("#genreSelect").innerHTML='<option value="">Any genre</option>'+options.genres.map(genre=>{const count=options.genreCounts.get(genre)||0;return `<option value="${esc(genre)}" ${!count&&state.genre!==genre?"disabled":""}>${esc(genre)} (${count})</option>`}).join("");
@@ -49,47 +28,19 @@
     if($("#volumeCountSelect")){const labels={"1":"Single volume","2-5":"2–5 volumes","6-10":"6–10 volumes","11+":"11+ volumes"};$("#volumeCountSelect").innerHTML=`<option value="">Any size</option>`+[...model.VALID_VOLUME_RANGES].filter(Boolean).map(value=>{const count=options.volumeCounts.get(value)||0;return `<option value="${value}" ${!count&&state.volumeRange!==value?"disabled":""}>${labels[value]} (${count})</option>`}).join("")}
     $("#tagSelect").innerHTML='<option value="">Add a tag…</option>'+options.tags.map(tag=>{const count=options.tagCounts.get(tag)||0;return `<option value="${esc(tag)}" ${!count&&!state.tags.has(tag)?"disabled":""}>${esc(tag)} (${count})</option>`}).join("");
     $("#genreChips").innerHTML=options.popularTags.map(tag=>`<button type="button" data-tag="${esc(tag)}">${esc(tag)}</button>`).join("");
-    mountReadingStatusFilter();
   }
 
   function readUrl(){
-    const params=new URLSearchParams(location.search);
-    state.query=params.get("q")||"";
-    state.author=params.get("author")||"";
-    state.translator=params.get("translator")||"";
-    state.genre=params.get("genre")||"";
-    state.tags=new Set(params.getAll("tag").filter(Boolean));
-    state.year=params.get("year")||"";
-    state.volumeRange=params.get("vols")||"";
-    state.readingStatus=model.VALID_READING_STATUSES.has(params.get("reading"))?params.get("reading"):"";
-    state.sort=model.VALID_SORTS.has(params.get("sort"))?params.get("sort"):domain.preferences.librarySort(scope);
-    state.pinnedOnly=params.get("pinned")==="1";
-    const view=params.get("view");
-    if(view==="grid"||view==="compact")state.view=view;else state.view=domain.preferences.libraryView(scope);
+    Object.assign(state,locationState.readLibraryLocation(location.href,{
+      sort:domain.preferences.librarySort(scope),view:domain.preferences.libraryView(scope)
+    }));
   }
-
   function writeUrl(mode="replace"){
-    const url=new URL(location.href),params=url.searchParams;
-    ["q","author","translator","genre","tag","year","vols","reading","sort","pinned","view"].forEach(key=>params.delete(key));
-    if(state.query.trim())params.set("q",state.query.trim());
-    if(state.author)params.set("author",state.author);
-    if(state.translator)params.set("translator",state.translator);
-    if(state.genre)params.set("genre",state.genre);
-    [...state.tags].sort((a,b)=>a.localeCompare(b)).forEach(tag=>params.append("tag",tag));
-    if(state.year)params.set("year",state.year);
-    if(state.volumeRange)params.set("vols",state.volumeRange);
-    if(state.readingStatus)params.set("reading",state.readingStatus);
-    if(state.sort!=="recent")params.set("sort",state.sort);
-    if(state.pinnedOnly)params.set("pinned","1");
-    params.set("view",state.view);
-    const next=`${url.pathname}${params.toString()?`?${params}`:""}${url.hash}`,current=`${location.pathname}${location.search}${location.hash}`;
-    if(next===current)return;
+    const next=locationState.writeLibraryLocation(location.href,state);
+    if(next===`${location.pathname}${location.search}${location.hash}`)return;
     history[mode==="push"?"pushState":"replaceState"]({sgLibrary:true},"",next);
   }
-
-  function hasActiveResultFilter(){
-    return Boolean(state.query.trim()||state.author||state.translator||state.genre||state.tags.size||state.year||state.volumeRange||state.readingStatus||state.pinnedOnly);
-  }
+  const hasActiveResultFilter=()=>locationState.activeLibraryFilterCount(state)>0;
 
   function syncResultFocus(){
     $("#recentSection")?.classList.toggle("results-focus",hasActiveResultFilter());
@@ -103,9 +54,7 @@
     return `<button type="button" data-remove-tag="${esc(tag)}" title="Remove ${esc(tag)}"><span class="active-filter-pill-label">${esc(tag)}</span><span class="active-filter-remove" aria-hidden="true">×</span></button>`;
   }
 
-  function activeFilterCount(){
-    return Number(Boolean(state.query.trim()))+Number(Boolean(state.author))+Number(Boolean(state.translator))+Number(Boolean(state.genre))+Number(Boolean(state.year))+Number(Boolean(state.volumeRange))+Number(Boolean(state.readingStatus))+Number(Boolean(state.pinnedOnly))+state.tags.size;
-  }
+  const activeFilterCount=()=>locationState.activeLibraryFilterCount(state);
 
   function renderActiveFilters(){
     const container=$("#activeTags");
@@ -193,7 +142,7 @@
     const grid=$("#catalogGrid");
     if(grid){grid.classList.add("is-updating");grid.innerHTML="";grid.classList.toggle("compact",state.view==="compact");requestAnimationFrame(()=>grid.classList.remove("is-updating"))}
     $("#emptyState")?.classList.toggle("hidden",state.filtered.length>0);
-    if($("#emptyMessage"))$("#emptyMessage").textContent=state.items.length?"No series match these filters.":"No seeds have taken root in the Garden yet.";
+    if($("#emptyMessage"))$("#emptyMessage").textContent=state.items.length?"No shelf answers the current path.":"No seeds have taken root in the Garden yet.";
     syncControls();renderEmptyActions();
     const target=Math.max(batchSize(),previousCount);
     do{appendBatch()}while(state.renderedCount<Math.min(target,state.filtered.length));
@@ -298,7 +247,6 @@
   try{
     state.view=domain.preferences.libraryView(scope);
     setupAdultGate();
-    mountTranslatorFilter();
     bindControls();
     readUrl();
     if(!window.ShadowGardenData)throw new Error("Catalog data source is unavailable");

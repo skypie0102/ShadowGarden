@@ -43,7 +43,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
     rows.dispose();rows=scope.child();
     const bookmarks=list();panel.replaceChildren();
     if(!bookmarks.length){
-      const empty=document.createElement("p");empty.className="bookmark-empty";empty.textContent="No bookmarks yet.";panel.appendChild(empty);return;
+      const empty=document.createElement("p");empty.className="bookmark-empty";empty.textContent="No bookmarks are pressed between these pages yet.";panel.appendChild(empty);return;
     }
     bookmarks.forEach((bookmark,index)=>{
       const row=document.createElement("div");row.className="bookmark-row";

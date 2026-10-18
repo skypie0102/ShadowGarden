@@ -24,7 +24,7 @@
     },120);
   }
   if(batchList){
-    new MutationObserver(scheduleEditorRestore).observe(batchList,{childList:true,subtree:false});
+    window.ShadowGardenKeeper.events.addEventListener('upload:queue-rendered',scheduleEditorRestore);
   }
   dialog?.addEventListener('close',()=>clearTimeout(editorRestoreTimer));
 
@@ -84,7 +84,7 @@
   }
 
   if(stage){
-    new MutationObserver(()=>queueMicrotask(()=>void enhanceSeriesChooser())).observe(stage,{childList:true,subtree:true});
+    window.ShadowGardenKeeper.events.addEventListener('upload:view-rendered',()=>queueMicrotask(()=>void enhanceSeriesChooser()));
     void enhanceSeriesChooser();
   }
 })();

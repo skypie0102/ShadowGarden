@@ -1,17 +1,10 @@
 :root{
   color-scheme:dark;
-  --panel:#101612;--panel2:#141c17;
-  --line:rgba(180,210,190,.12);--line2:rgba(180,210,190,.22);
-  --text:#edf2ed;--muted:#9aa69d;--dim:#6e7b72;
-  --leaf:#91bd9d;--leaf2:#b4d9bd;--gold:#b69a68;--danger:#cf8181;
+  --gold:#b69a68;--danger:#cf8181;
   --serif:Georgia,"Times New Roman",serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --max:1500px
 }
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:
-radial-gradient(circle at 85% 4%,rgba(83,127,95,.09),transparent 30rem),
-radial-gradient(circle at 8% 44%,rgba(152,123,75,.045),transparent 26rem),
-linear-gradient(180deg,#080b09,#0a0e0b 50%,#070907);
-color:var(--text);font-family:var(--sans);min-height:100vh}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:var(--sans);min-height:100vh}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:
 linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),
 linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);background-size:54px 54px}
@@ -53,7 +46,7 @@ footer{width:min(var(--max),calc(100% - 40px));margin:0 auto;padding:28px 0 38px
 
 /* adult / NSFW library */
 .adult-nav-link span{margin-left:4px;padding:2px 5px;border:1px solid rgba(190,119,139,.22);border-radius:999px;color:#c88c9c;font-size:.55rem;vertical-align:1px}
-.adult-library{--leaf:#b7798b;--leaf2:#d6a0ad;--gold:#c09a76;background:radial-gradient(circle at 84% 3%,rgba(125,61,80,.10),transparent 30rem),radial-gradient(circle at 8% 44%,rgba(138,75,94,.045),transparent 27rem),linear-gradient(180deg,#0b0809,#0e090b 50%,#080607)}
+
 .adult-library .brand-mark{border-color:rgba(196,130,149,.18);background:#160d11}
 .adult-library .adult-intro{position:relative}.adult-library .adult-intro:after{content:"";position:absolute;right:2%;bottom:-1px;width:180px;height:1px;background:linear-gradient(90deg,transparent,rgba(197,126,147,.38),transparent)}
 .adult-pill{position:absolute;right:8px;top:8px;padding:5px 7px;border:1px solid rgba(226,159,178,.22);border-radius:7px;color:#e0a5b5;background:rgba(25,8,14,.82);backdrop-filter:blur(8px);font-size:.6rem;font-weight:700;letter-spacing:.08em}

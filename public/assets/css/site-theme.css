@@ -1,0 +1,31 @@
+/* Public website themes. Layout and navigation consume these tokens. */
+/* Shadow-violet primary theme */
+:root{--panel:#13101a;--panel2:#181420;--line:rgba(196,184,225,.12);--line2:rgba(196,184,225,.22);--text:#f0edf5;--muted:#aaa2b5;--dim:#7b7385;--leaf:#9a86d3;--leaf2:#c3b4ee}
+body:not(.adult-library){background:radial-gradient(circle at 85% 4%,rgba(109,79,158,.11),transparent 30rem),radial-gradient(circle at 8% 44%,rgba(83,58,116,.06),transparent 26rem),linear-gradient(180deg,#09080d,#0d0a12 50%,#08070b)}
+body:not(.adult-library) .site-header{background:rgba(10,8,14,.88)}
+body:not(.adult-library) .brand-mark{background:#130f1b}
+body:not(.adult-library) .continue-mark{background:linear-gradient(145deg,#211932,#100d17)}
+body:not(.adult-library) .search-field,body:not(.adult-library) .filter-group select{background:#0e0b13}
+body:not(.adult-library) .genre-chips button:hover,body:not(.adult-library) .genre-chips button.active{border-color:rgba(154,134,211,.38);background:rgba(154,134,211,.08)}
+body:not(.adult-library) .cover{background:radial-gradient(circle at 72% 22%,rgba(132,104,183,.17),transparent 23%),linear-gradient(150deg,#1a1523,#0f0c14 70%,#17111d)}
+body:not(.adult-library) .cover-fallback:before{color:rgba(190,172,231,.27)}
+body:not(.adult-library) .volume-pill{background:rgba(6,4,10,.80);color:#e0d9eb}
+body:not(.adult-library) .series-hero:has(.series-backdrop) .series-backdrop:after{background:linear-gradient(180deg,rgba(9,7,13,.45),#09080d 88%)}
+body:not(.adult-library) .series-cover{background:#15111c}
+body:not(.adult-library) .series-cover-fallback{background:linear-gradient(145deg,#1c1627,#0f0c14)}
+body:not(.adult-library) .primary-button{border-color:#b9a8e3;color:#0d0914;background:linear-gradient(#cbbdf0,#9a86d3)}
+body:not(.adult-library) .tag{color:#a99bc2;background:rgba(132,104,183,.06)}
+body:not(.adult-library) .volume-cover{background:#14101a}
+body:not(.adult-library) .volume-actions a.read{border-color:rgba(154,134,211,.28)}
+
+/* Adult section remains rose / wine */
+.adult-library{--leaf:#b7798b;--leaf2:#d6a0ad;--gold:#c09a76;--line:rgba(209,163,176,.13);--line2:rgba(209,163,176,.22);--panel:#171014;--panel2:#1d1318;background:radial-gradient(circle at 84% 3%,rgba(125,61,80,.10),transparent 30rem),radial-gradient(circle at 8% 44%,rgba(138,75,94,.045),transparent 27rem),linear-gradient(180deg,#0b0809,#0e090b 50%,#080607)}
+.adult-library .brand-mark:hover,.adult-library .brand-mark:focus-visible{border-color:rgba(205,139,159,.36);background:#1a0e13}
+.adult-library .site-nav-drawer{background:rgba(16,8,12,.98);border-right-color:rgba(196,120,145,.18)}
+.adult-library .site-nav-drawer a:hover,.adult-library .site-nav-drawer a:focus-visible,.adult-library .site-nav-drawer .active{background:rgba(190,119,139,.07)!important}
+.adult-library .site-nav-backdrop{background:rgba(8,2,5,.62)}
+.adult-library .primary-button{border-color:#c28b9a;color:#17080d;background:linear-gradient(#d6a0ad,#b7798b)}
+.adult-library .genre-chips button:hover,.adult-library .genre-chips button.active{border-color:rgba(190,119,139,.34);background:rgba(190,119,139,.08)}
+.adult-library .tag{color:#c39aa6;background:rgba(190,119,139,.055)}
+.adult-library .volume-actions a.read{border-color:rgba(190,119,139,.28)}
+

@@ -149,9 +149,10 @@
       const seriesPreview=series.slice(0,3).map(value=>`<span>${esc(value)}</span>`).join("");
       review.innerHTML=`<div class="upload-review-head"><div><span>REVIEW</span><strong>Upload summary</strong></div><b>${ready.length} ready</b></div><div class="upload-review-metrics"><span>${main} Main</span><span>${adult} 18+</span><span>${series.length} ${series.length===1?"series":"series"}</span>${duplicates?`<span>${duplicates} duplicate${duplicates===1?"":"s"}</span>`:""}${skipped?`<span>${skipped} skipped</span>`:""}${failed?`<span class="warn">${failed} need attention</span>`:""}</div>${seriesPreview?`<div class="upload-review-series">${seriesPreview}${series.length>3?`<small>+${series.length-3} more</small>`:""}</div>`:""}<p>${ready.length?"Review the destination and metadata above before planting this batch.":"Nothing is ready to upload yet. Resolve failed or skipped entries first."}</p>`;
       review.classList.remove("hidden");
+      keeper.events.dispatchEvent(new Event("upload:review-rendered"));
     }
-    list&&new MutationObserver(()=>queueMicrotask(render)).observe(list,{childList:true,subtree:false});
-    $("#uploadState")&&new MutationObserver(()=>queueMicrotask(render)).observe($("#uploadState"),{childList:true,subtree:true,characterData:true});
+    keeper.events.addEventListener("upload:queue-rendered",()=>queueMicrotask(render));
+    keeper.events.addEventListener("upload:state",()=>queueMicrotask(render));
     document.addEventListener("input",event=>{if(event.target.closest?.("#addBooksDialog"))queueMicrotask(render)});
     document.addEventListener("change",event=>{if(event.target.closest?.("#addBooksDialog"))queueMicrotask(render)});
     keeper.events.addEventListener("upload:completed",render);render();
