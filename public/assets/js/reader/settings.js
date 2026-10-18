@@ -17,9 +17,18 @@ function normalizeReaderFont(value){
   return "default";
 }
 
-export const READER_DEFAULTS={theme:"garden",font:"default",fontSize:100,lineHeight:1.6,width:760,flow:"paginated",swipeTurns:true};
+export const READER_DEFAULTS=Object.freeze({theme:"garden",font:"default",fontSize:100,lineHeight:1.6,width:760,flow:"paginated",swipeTurns:true});
 
-export function sanitizeReaderSettings(value){
+// The same device default is used for first-open, invalid stored flow and reset.
+// Saved choices remain authoritative until the reader explicitly resets them.
+export function readerDefaults(){
+  const mobile=globalThis.matchMedia?.("(max-width: 700px), (pointer: coarse) and (max-width: 1024px)")?.matches
+    || globalThis.navigator?.userAgentData?.mobile===true
+    || /Android|iPhone|iPod|Mobile/i.test(globalThis.navigator?.userAgent||"");
+  return{...READER_DEFAULTS,flow:mobile?"scrolled-doc":"paginated"};
+}
+
+export function sanitizeReaderSettings(value,defaults=readerDefaults()){
   const input=value||{};
   return{
     theme:["garden","night","black","paper"].includes(input.theme)?input.theme:READER_DEFAULTS.theme,
@@ -27,14 +36,14 @@ export function sanitizeReaderSettings(value){
     fontSize:clamp(input.fontSize??READER_DEFAULTS.fontSize,75,160),
     lineHeight:clamp(input.lineHeight??READER_DEFAULTS.lineHeight,1.25,2.1),
     width:clamp(input.width??READER_DEFAULTS.width,560,1050),
-    flow:["paginated","scrolled-doc"].includes(input.flow)?input.flow:READER_DEFAULTS.flow,
+    flow:["paginated","scrolled-doc"].includes(input.flow)?input.flow:defaults.flow,
     swipeTurns:input.swipeTurns!==false
   };
 }
 
 export function createSettingsController({storage,elements,isAdult=false,onApply,onFlowChange,onReset}={}){
   const scope=createReaderScope();
-  let settings=sanitizeReaderSettings(storage.loadSettings(READER_DEFAULTS));
+  let settings=sanitizeReaderSettings(storage.loadSettings(readerDefaults()));
 
   function syncBody(){
     document.body.classList.remove("reader-theme-garden","reader-theme-night","reader-theme-black","reader-theme-paper");
@@ -79,7 +88,7 @@ export function createSettingsController({storage,elements,isAdult=false,onApply
   scope.listen(elements.widthRange,"input",event=>{settings.width=Number(event.target.value);persist();onApply?.({relayout:settings.flow==="scrolled-doc",rebuildPageMap:true})});
   scope.listen(elements.swipeTurnsToggle,"change",event=>{settings.swipeTurns=event.target.checked;persist()});
   scope.listen(elements.flowSelect,"change",event=>onFlowChange?.(event.target.value));
-  scope.listen(elements.resetReader,"click",()=>{const previous=settings.flow;settings={...READER_DEFAULTS};persist();onReset?.(previous)});
+  scope.listen(elements.resetReader,"click",()=>{const previous=settings.flow;settings=readerDefaults();persist();onReset?.(previous)});
 
   persist();
   return{dispose:()=>scope.dispose(),get:()=>settings,persist,setFlow,replace,sync:scope.guard(()=>{syncBody();syncControls()})};

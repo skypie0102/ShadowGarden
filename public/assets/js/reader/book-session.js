@@ -1,3 +1,4 @@
+import {sanitizeReaderSettings} from "./settings.js";
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope} from "./lifecycle.js";
 /* Shadow Garden R4 — protected Reader book-session boundary. */
@@ -25,7 +26,7 @@ function requestedContext(){
 }
 
 export function syncStoredReaderShell(seriesId=""){
-  const settings=storage.readJson("sg-reader-settings",{})||{};
+  const settings=sanitizeReaderSettings(storage.readJson("sg-reader-settings",{}));
   const theme=["garden","night","black","paper"].includes(settings.theme)?settings.theme:"garden";
   const body=document.body;
   if(!body)return;
