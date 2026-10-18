@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "release": "2.12.7",
+  "checkedAt": "2026-10-18T11:04:41.694Z",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "shadowgarden-bon.pages.dev",
+    "deploymentId": "288e4790-003b-46ef-bb0a-d1bb37377413",
+    "deployedAt": "2026-10-18T11:03:12.839823Z",
+    "source": "3c0ec3b3711051e298b9682dd1421b4985e7207a",
+    "tree": "ac3969ef517007c8e98f1d1dfc331f94aa4f9a36",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39100645437,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39100645437",
+    "attempt": 1,
+    "conclusion": "success",
+    "nodePassed": 211,
+    "browserPassed": 362,
+    "platformSkips": 8
+  },
+  "package": {
+    "sourceFilesMatched": 200,
+    "bindingGuardPassed": true,
+    "configHash": "a4d0b6363e423f5ca564471a8992e4f91023cf8faa0ca025e4016f517d62c9bd",
+    "assetsUploaded": 2,
+    "assetsReused": 158
+  },
+  "configuration": {
+    "saved": {
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "env_vars": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "actual": {
+      "d1_databases": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibility_date": "2026-09-23",
+      "compatibility_flags": [],
+      "env_vars": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "matchesFreshBaseline": true
+  },
+  "database": {
+    "revision": 7,
+    "updatedAt": "2026-10-17T04:40:11.572Z",
+    "documentSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
+    "snapshots": [
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      }
+    ],
+    "exactPrePostMatch": true,
+    "readOnlyQueries": [
+      {
+        "rowsWritten": 0,
+        "changedDb": false
+      },
+      {
+        "rowsWritten": 0,
+        "changedDb": false
+      }
+    ]
+  },
+  "version": {
+    "name": "Shadow Garden",
+    "version": "2.12.7",
+    "releaseVersion": "2.12.7",
+    "commit": "3c0ec3b3711051e298b9682dd1421b4985e7207a",
+    "shortCommit": "3c0ec3b",
+    "branch": "main",
+    "builtAt": "2026-10-18T05:28:58.072Z",
+    "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+  },
+  "catalogs": [
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "c764c44e7b54faf122efa014692dd87af518e9692c1237286ff33e3e3bc0a522",
+      "series": 0,
+      "volumes": 0
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "status": 200,
+      "matchesD1": true,
+      "sha256": "d9f63d42958ca585fef003c788362571c6ecf14316d1784c362eb66882bdf1c7",
+      "series": 1,
+      "volumes": 1
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "human challenge",
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    {
+      "name": "Keeper challenge",
+      "status": 200,
+      "siteKeyPresent": true
+    },
+    {
+      "name": "unauthenticated Keeper",
+      "status": 401,
+      "siteKeyPresent": false,
+      "code": "unauthorized"
+    },
+    {
+      "name": "known raw EPUB",
+      "status": 403,
+      "siteKeyPresent": false
+    },
+    {
+      "name": "missing B2 cover",
+      "status": 404,
+      "siteKeyPresent": false,
+      "code": "media_not_found"
+    }
+  ],
+  "assets": [
+    {
+      "path": "assets/js/reader/bookmarks-controller.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "9b0be0785ee2bdaaf16cd576c7dd39393be787c17ab1b45c15c375f2b433cfec"
+    },
+    {
+      "path": "assets/js/reader/app.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "2e07cb961f5b621452faf372520d21ab4171511659e0eb8b2170b046c8833d2d"
+    },
+    {
+      "path": "assets/js/reader/continuous-layout.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "19e22b68261437c74bba9db0402ad2b7d29978b292679f398ffd2db36b7d2587"
+    },
+    {
+      "path": "assets/js/reader-continuous-core.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "43941067a1c473028c6d08892556f4f3187f449cadbcc77c3c33e2ba46ab1262"
+    },
+    {
+      "path": "assets/css/reader-image-focus.css",
+      "status": 200,
+      "matches": true,
+      "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b"
+    },
+    {
+      "path": "assets/js/library-footer-version.js",
+      "status": 200,
+      "matches": true,
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70"
+    },
+    {
+      "path": "reader.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "e01ff252df2396c6141e7c666403a2c399f6148efd4faac954362c8b5488c96f"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "acc0e42e5abdf4ec914a9fd6dfc5975c35f72aa55611d78f9d959de889e29278"
+    },
+    {
+      "path": "nsfw.html",
+      "status": 200,
+      "matches": true,
+      "sha256": "5f91fa043eb30a4165abc8a3c742f11ee2f9aed746aacf08ab43c16d93a57a17"
+    }
+  ],
+  "browser": {
+    "available": false,
+    "renderedFootersInspected": false,
+    "keeperSignInRepeated": false,
+    "authorizedRealBookReopened": false,
+    "footerMarkupAndLoaderSourceMatched": true
+  },
+  "limits": [
+    "Live browser surface unavailable; no new painted-UI or credentialed acceptance claimed.",
+    "Owner Android/Soul manual acceptance applies to v2.12.6 and remains recorded there.",
+    "No migration, seed, catalog edit, B2 object write or credential change."
+  ],
+  "rollback": {
+    "release": "2.12.6",
+    "deploymentId": "7e9cb704-e2bb-4e42-955e-384bb2b4bbe2"
+  }
+}

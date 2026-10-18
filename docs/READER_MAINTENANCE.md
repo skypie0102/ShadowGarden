@@ -1,5 +1,13 @@
 # Reader maintenance roadmap
 
+**Latest deployment — 2026-10-18:** v2.12.7 publishes M5c2 bookmark diagnostic/
+toast lifetime checks as source `3c0ec3b`. Exact-source CI passes 211 Node tests
+and 362 browser cases. Served assets, bindings and exact catalog/snapshot baseline
+checks pass; live browser-only checks were unavailable. See the
+[release record](READER_RELEASE.md) for evidence and verification boundaries.
+App callback diagnostics are the next source increment. Dated notes below retain
+their original deployment state.
+
 **Production update — 2026-10-18:** v2.12.6 publishes the merged cleanup,
 intrinsic sizing and RDR-054/055 fixes through clean source `a5c5347`.
 The exact release passes 204 Node tests and 352 browser cases; live files,

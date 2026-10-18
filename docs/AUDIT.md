@@ -2,17 +2,17 @@
 
 ## Current status — 2026-10-18
 
-The verified production baseline is v2.12.6, source `a5c5347`, with 204 Node
-tests and 352 passing browser cases across five profiles (eight existing platform
-skips). Live source hashes, bindings, catalog/snapshot identity, both library
-footers and genuine authorized book reopening pass the
-[release verification](READER_RELEASE.md). On 2026-10-18 the owner manually
-verified fast upward scrolling and image-focus return on Android/Soul in
-v2.12.6; both requested device checks pass. Earlier RDR-045 first-open observations
-and the causally unattributed historical M5a event remain regression evidence,
-separate from this completed device acceptance and the demonstrated fixes. Current cleanup
-and validation are in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
-Dated sections below preserve historical audit evidence and counts.
+The verified production baseline is v2.12.7, source `3c0ec3b`, with 211 Node tests
+and 362 passing browser cases across five profiles (eight existing platform skips).
+Served source, version metadata, production bindings and exact pre/post catalog/
+snapshot identity pass [release verification](READER_RELEASE.md). Live painted UI,
+credentialed Keeper sign-in and real-book opening were not repeated because the
+browser surface was unavailable. Earlier acceptance remains recorded separately:
+the owner manually passed fast upward scrolling and image-focus return on
+Android/Soul in v2.12.6. Current source maintenance continues with app callback
+diagnostics in [the roadmap](READER_MAINTENANCE.md). Dated sections below preserve
+historical audit evidence, counts and trace limits.
+
 
 
 ## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)

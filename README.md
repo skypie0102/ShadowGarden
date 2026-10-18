@@ -22,10 +22,11 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.12.6**, deployed on 2026-10-18.
+The latest verified production release is **v2.12.7**, deployed on 2026-10-18.
 It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
-chapter-boundary/pending-resume jump fixes (RDR-054/055). All 204 Node tests and
-352 browser cases pass across five profiles. Live assets, both library footers,
+chapter-boundary/pending-resume jump fixes (RDR-054/055). Bookmark lookup and
+navigation failures now stay quiet after reader disposal. All 211 Node tests and
+362 browser cases pass across five profiles. Live assets, both library footers,
 catalog identity, production bindings and authorized real-book opening are verified.
 On 2026-10-18 the owner manually verified fast upward scrolling and image-focus
 return on Android / Soul Browser in v2.12.6; both work correctly. The requested

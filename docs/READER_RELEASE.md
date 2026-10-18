@@ -1,7 +1,55 @@
 # Reader releases
 
-**Current production baseline:** v2.12.6. Ongoing
+**Current production baseline:** v2.12.7. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.12.7 — bookmark failure lifetime
+
+**Live:** deployment `288e4790-003b-46ef-bb0a-d1bb37377413` succeeded on
+2026-10-18 at 11:03:12 UTC (19:03 in Manila), from clean `main` source
+`3c0ec3b3711051e298b9682dd1421b4985e7207a`, tree
+`ac3969ef517007c8e98f1d1dfc331f94aa4f9a36`.
+[Verification evidence](reader-release-2.12.7.json) records identities and limits.
+
+[PR #27](https://github.com/skypie0102/ShadowGarden/pull/27) guards the bookmark
+handler's diagnostic and failure toast with its root controller lifetime.
+Delayed lookup/navigation rejection stays quiet after closure; active failures,
+including an `AbortError`, remain visible. A list refresh keeps a live bookmark
+intent. Navigation order, persistence, scrolling and focus behavior are unchanged.
+
+The exact release commit passes the audit, **211 Node tests**, static build,
+binding-aware Functions package and **362 browser cases** in
+[CI run 39100645437](https://github.com/skypie0102/ShadowGarden/actions/runs/39100645437)
+on its first attempt. Both Chromium profiles pass 74 cases; Firefox and desktop
+WebKit pass 72 each with two existing skips; mobile WebKit passes 70 with four
+existing skips. The complete matrix retains the same eight platform skips.
+
+The pinned Wrangler package compiled the release with the binding guard.
+All 200 checked source/build-input files match the release's Git blobs.
+Two static assets were uploaded and 158 reused. Actual and saved configuration
+match the fresh baseline: original D1, B2 bucket, compatibility settings and all
+nine encrypted-setting names/types. Read-only pre/post queries match the exact
+revision-7 document, timestamp `2026-10-17T04:40:11.572Z` and all seven snapshot
+identities/checksums, with zero rows written and `changed_db: false`.
+Both public catalogs match sanitized D1 content exactly.
+
+Live metadata identifies `v2.12.7 · 3c0ec3b` on `main`. All nine checked
+reader/entry/footer/CSS asset hashes match source. Both challenge endpoints
+provide site keys; unauthenticated Keeper access returns 401, the known raw EPUB
+returns 403 without a ticket, and a nonexistent B2 cover returns the expected
+`media_not_found` 404.
+
+The live browser surface was unavailable for this rollout. Rendered footer
+inspection, credentialed Keeper sign-in and authorized real-book reopening were
+not repeated. Both library HTML version targets and their shared loader match
+the tested source, and the live version payload is correct; this is source/
+endpoint verification, separate from a new live painted-UI check. The v2.12.6
+phone report and earlier genuine authorization/provider checks retain their
+documented scopes. No migration, seed, catalog edit, B2 object write or credential
+change occurred.
+
+Rollback target: accepted v2.12.6 deployment
+`7e9cb704-e2bb-4e42-955e-384bb2b4bbe2`.
 
 ## Reader v2.12.6 — maintenance and scroll follow-up
 
