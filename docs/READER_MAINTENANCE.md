@@ -10,9 +10,9 @@ the owner manually checked fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6 and reports both work correctly. The requested device
 acceptance gate is complete.
 
-**Current maintenance:** M5c2 covers bookmark lookup/navigation rejection after
-disposal, including diagnostic and toast ownership; implementation and local
-regressions are complete below, with the full CI matrix required before merge.
+**Current maintenance:** M5c2 bookmark diagnostic/toast lifetime checks are
+verified and merged through [PR #27](https://github.com/skypie0102/ShadowGarden/pull/27).
+All 211 Node tests and 362 browser cases pass across five profiles.
 Next, review app callbacks against their scope, rendition and operation ownership.
 Keep active failures visible and retain the accepted scrolling/focus regressions.
 
@@ -420,7 +420,7 @@ does not change catalog data, migrations, storage or configuration.
 | --- | --- | --- |
 | M5a | Cohesive TOC book-text search presentation, preserving cancellation, scope ownership, status and navigation. | Merged through [PR #20](https://github.com/skypie0102/ShadowGarden/pull/20); verified below |
 | M5b | Name/document the adapter's 300/1200/2600/4200 ms media fallback passes and 150 ms reconciliation debounce; evaluate readiness or polling changes only against equivalent coverage. | Timing cleanup merged through [PR #21](https://github.com/skypie0102/ShadowGarden/pull/21); scroll-stress cause remains open |
-| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); M5c2 bookmark lifetime checks implemented below; app callbacks follow separately |
+| M5c | Keep expected cancellation/quiet teardown distinct from actionable diagnostics. | M5c1 merged through [PR #22](https://github.com/skypie0102/ShadowGarden/pull/22); M5c2 bookmark lifetime checks merged through [PR #27](https://github.com/skypie0102/ShadowGarden/pull/27); app callbacks follow separately |
 
 ### M5a implementation
 
@@ -957,3 +957,26 @@ remain visible.
 Production remains the accepted **v2.12.6** deployment. This increment changes
 source only; it does not deploy, edit catalogs, run migrations, write B2 objects
 or change credentials.
+
+
+### M5c2 CI and merge
+
+[CI run 39099848133](https://github.com/skypie0102/ShadowGarden/actions/runs/39099848133)
+passes the audit, all **211 Node tests**, static build and binding-aware Functions
+package, plus **362 browser cases** across five profiles on its first attempt.
+Desktop/mobile Chromium pass 74 cases each; Firefox and desktop WebKit pass 72
+each with two existing skips; mobile WebKit passes 70 with four existing skips.
+Both new bookmark cases pass in every profile. These are the same eight platform
+skips; existing input, waits, assertions, tolerances and retries are unchanged.
+
+Tested head `12889951ec10f0cb34c183a36f0f05095175563d`, tree
+`cdac02e4ed9342b81e46f3db16f25a5880d84fe3`, merges through
+[PR #27](https://github.com/skypie0102/ShadowGarden/pull/27) as
+`22e89da2ca40deddf7745ea6cd0b938e87af16dc` with that exact tested tree.
+A documentation-only follow-up records these final results. All 33 local
+Markdown file links in the changed documents resolve.
+
+M5c2 is complete; M5c remains in progress for the app callback review described
+above. Production remains the separately accepted v2.12.6 deployment. This source
+increment is merged but has not been deployed and performs no remote data,
+storage, migration or configuration changes.
