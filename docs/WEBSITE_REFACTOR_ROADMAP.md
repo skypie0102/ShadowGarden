@@ -33,8 +33,8 @@ D1 database, change B2 objects, expose secrets, or alter reader layout/scroll lo
 | W1 — access presentation | Extract Garden Pass dialog and static CSS from ticket policy; author its final copy directly; correct midnight/rose contexts | Reset defaults regression, main/adult dialog colors, cancellation, rejected verification retry, one shared challenge, successful ticket retry; full existing suite |
 | W2 — direct copy | Move each remaining flavor transformation to its owning template/renderer/workflow; retire the body observer and native-dialog wrappers | Preserve rendered copy and all destructive consequences; normal/error/empty states and Keeper confirmation flows |
 | W3 — themes | Move public palette ownership out of navigation; replace superseded base colors and contextual overrides with explicit shared tokens | Main/adult/series/Keeper screenshots at mobile and desktop widths; no horizontal overflow or navigation regression |
-| W4 — Library controller | Separate URL/filter state and incremental rendering from page composition; use explicit initialization/cleanup where it improves ownership | Search, contextual filters, history/back, pin/status refresh, pagination and age-gate return links |
-| W5 — Keeper batch | Separate batch state/validation/preview from upload orchestration while retaining client and workflow contracts | Preflight failures, cancellation, partial success/retry, revision conflicts, retained-media safety and upload limits |
+| W4 — Library controller | Separate URL/filter state from page composition; retain the existing catalog model/renderers and explicit batched rendering owner | Search, contextual filters, history/back, pin/status refresh, pagination and age-gate return links |
+| W5 — Keeper batch | Extract local EPUB inspection and publish explicit queue/status/view events while retaining client and workflow contracts | Preflight failures, cancellation, partial success/retry, revision conflicts, retained-media safety and upload limits |
 | W6 — closeout | Remove obsolete glue, document public interfaces, review duplicate CSS and repeated work using observed cases | Full five-profile browser suite, audit/build/binding guards; guarded production rollout and honest live-check evidence |
 
 Do not replace functioning boundaries just to rename files. Each increment needs
@@ -59,7 +59,7 @@ W1 is deployed as v2.13.0 from `5389ebe` on 2026-10-18. All 217 Node tests
 and 407 browser cases pass across five profiles (eight existing platform skips).
 The live midnight dialog, main footer, fourteen source hashes, unchanged D1
 document/snapshots and actual/saved bindings are verified. See the
-[website release record](WEBSITE_RELEASE.md). W2–W6 remain planned.
+[website release record](WEBSITE_RELEASE.md). W2–W6 are implemented and verified in v2.14.0.
 
 ## W2–W6 implementation
 
@@ -79,4 +79,7 @@ and motion behavior are retained.
 
 The [architecture guide](WEBSITE_ARCHITECTURE.md) documents these final boundaries
 and event contracts. This is a frontend ownership refactor, not a framework
-migration or visual redesign. Full verification and release acceptance are pending.
+migration or visual redesign. Full verification is complete and the refactor is deployed as v2.14.0 from
+`ff5bb9c`. All 220 Node tests and 422 browser cases pass across five profiles
+(eight existing skips). Live UI/source/configuration checks pass and production
+data is unchanged. See the [release record](WEBSITE_RELEASE.md).

@@ -23,13 +23,17 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.13.0**, deployed on 2026-10-18.
-Mobile settings reset to Continuous; desktop settings reset to Pages. Main Garden
-Pass uses the midnight theme. Its dialog and stylesheet now have explicit owners
-separate from ticket policy. All 217 Node tests and 407 browser cases pass across
-five profiles. Live dialog, footer, served assets, unchanged catalog/snapshots and
-production bindings are verified. See the [website release record](docs/WEBSITE_RELEASE.md)
-and [website refactor roadmap](docs/WEBSITE_REFACTOR_ROADMAP.md).
+The latest verified production release is **v2.14.0**, deployed on 2026-10-18.
+Mobile reset restores Continuous and desktop reset restores Pages; the main
+Garden Pass uses midnight colors. The website now authors final copy directly,
+owns themes separately from navigation, separates Library URL state and local
+EPUB inspection, and uses explicit Keeper upload events. Global text/native-dialog
+patches, obsolete button cloning and the polling completion shim are removed.
+All 220 Node tests and 422 browser cases pass across five profiles (eight existing
+platform skips). Live Library controls, Keeper sign-in styling, Garden Pass,
+served files, unchanged data and bindings are verified. See the
+[website release record](docs/WEBSITE_RELEASE.md) and
+[architecture guide](docs/WEBSITE_ARCHITECTURE.md).
 
 The completed reader baseline is **v2.12.8**, deployed on 2026-10-18.
 It includes the gradual reader cleanup, shared intrinsic sizing and reproduced

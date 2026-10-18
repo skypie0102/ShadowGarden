@@ -1,24 +1,27 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-18:** v2.13.0, deployment
-`749d732f-c40c-4782-9074-fff9c4eaf8be`, clean `main` source
-`5389ebebcfa31e5f8a00c5a69b77e6e2c79b4620`, deployed at 21:16:49 UTC.
+**Last verified production release — 2026-10-18:** v2.14.0, deployment
+`c91b8b1e-2033-4215-b59c-61edb547749f`, clean `main` source
+`ff5bb9c700d0e709d9e838791a282946a8c47533`, deployed at 21:51:59 UTC.
 The [website release record](WEBSITE_RELEASE.md) and
-[evidence](website-release-2.13.0.json) identify the tested tree, all 217 Node
-tests and 407 browser cases (eight existing platform skips), live midnight dialog,
-main footer, fourteen matching assets and unchanged catalog/snapshot identities.
+[evidence](website-release-2.14.0.json) identify the tested/merged tree, all
+220 Node tests, 422 browser cases (eight existing skips), live Library controls,
+Keeper sign-in layout, midnight Garden Pass and 28 matching served files.
+Both retired runtime layers return 404.
 
 Actual and saved D1/bucket/compatibility settings and all nine encrypted-setting
 names/types match the refreshed baseline. Revision 8, the exact catalog document
-and all eight snapshot IDs/checksums are unchanged. Both public catalogs match
-D1 exactly; unauthenticated Keeper access and raw EPUB access remain denied.
-The live human and Keeper challenges return site keys, and the missing-cover B2
-read returns `media_not_found`. No data, migration, storage or credential changes
-were needed. Physical-device reset and authenticated real-book opening are not
-claimed as live checks; the production browser verified the actual gate appearance.
+and all eight snapshot identities/checksums are unchanged. Both public catalogs
+match D1 exactly. Challenge endpoints return site keys, unauthenticated Keeper
+access returns 401, raw EPUB HEAD returns 403 and the missing-cover B2 read returns
+404 `media_not_found`. No production catalog, storage, migration or credential
+changes were needed.
 
-The owner's Android/Soul scroll/focus acceptance remains the v2.12.6 result, and
-their Keeper acceptance remains v2.12.8. See the [reader release record](READER_RELEASE.md).
+Physical Android/Soul reset and credential-based live sign-in/book opening are
+not claimed as new manual acceptance. The owner's earlier Android/Soul scroll/
+focus acceptance remains v2.12.6, and Keeper acceptance remains v2.12.8; see the
+[reader release record](READER_RELEASE.md). Current upload/preflight/retry behavior
+passes in the real isolated Pages/D1 fixture across all five browser profiles.
 
 ## Existing resources
 
@@ -38,7 +41,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.12.8, `9493cc7c-1b23-4bfd-b55d-19109e638d98` |
+| Last verified rollback target | v2.13.0, `749d732f-c40c-4782-9074-fff9c4eaf8be` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,

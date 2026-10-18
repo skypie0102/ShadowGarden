@@ -1,0 +1,247 @@
+{
+  "release": "2.14.0",
+  "source": "ff5bb9c700d0e709d9e838791a282946a8c47533",
+  "tree": "66d8b41968e4022940adeb6a481cd3e2e023ac25",
+  "pullRequest": 30,
+  "deployment": "c91b8b1e-2033-4215-b59c-61edb547749f",
+  "url": "https://shadowgarden-bon.pages.dev/",
+  "deployedAt": "2026-10-18T21:51:59.788891Z",
+  "ci": {
+    "primaryRun": 39168727522,
+    "pushRun": 39168723400,
+    "testedCommit": "ccbfe76222acfdef03c0b81b0cf1155f55173c95",
+    "testedTree": "66d8b41968e4022940adeb6a481cd3e2e023ac25",
+    "mergedTreeMatches": true,
+    "attempt": 1,
+    "nodeTests": 220,
+    "browserPassed": 422,
+    "browserSkipped": 8,
+    "profiles": [
+      {
+        "job": "browser (mobile-webkit, webkit)",
+        "passed": 82,
+        "skipped": 4
+      },
+      {
+        "job": "browser (desktop-chromium, chromium)",
+        "passed": 86,
+        "skipped": 0
+      },
+      {
+        "job": "browser (desktop-firefox, firefox)",
+        "passed": 84,
+        "skipped": 2
+      },
+      {
+        "job": "browser (desktop-webkit, webkit)",
+        "passed": 84,
+        "skipped": 2
+      },
+      {
+        "job": "browser (mobile-chromium, chromium)",
+        "passed": 86,
+        "skipped": 0
+      }
+    ]
+  },
+  "production": {
+    "revision": 8,
+    "snapshots": 8,
+    "exactDocumentAndSnapshotsUnchanged": true,
+    "documentHash": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "catalogs": [
+      {
+        "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+        "series": 1,
+        "volumes": 1
+      }
+    ],
+    "actualAndSavedBindingsMatch": true,
+    "encryptedSettingCount": 9,
+    "uploadedAssets": 165,
+    "changedAssetsUploaded": 36,
+    "plainRootHtmlMatches": true
+  },
+  "ui": {
+    "browser": "Cloud Chromium via CUA",
+    "mainGardenPass": "Midnight dialog and real Turnstile widget visually verified on an actual book-opening route",
+    "mainFooter": "v2.14.0 \u00b7 ff5bb9c",
+    "mainSeriesCount": 1,
+    "mainVolumeCount": 1,
+    "librarySearchAndReset": "Passed with actual catalog",
+    "sharedThemeLinkPresent": true,
+    "mainPanel": "#13101a",
+    "keeperSignInCardStyles": "Match the pre-release background, border and text colors exactly",
+    "newKeeperInspectionScriptPresent": true,
+    "physicalAndroidSoulReset": "Not newly manually tested; mobile Chromium and WebKit reset tests pass",
+    "authenticatedBookOpening": "Not attempted beyond the rendered challenge",
+    "keeperCredentialSignIn": "Not repeated; real isolated fixture session and upload/retry UI pass in all profiles"
+  },
+  "local": {
+    "nodeTests": 220,
+    "desktopChromiumNewChecks": 3,
+    "mobileChromiumNewChecks": 3,
+    "workspaceOnlyAdaptation": "Restricted OS interface enumeration is adapted for the local CLI; repository browser config and assertions are unchanged. CI uses the normal runtime."
+  },
+  "verificationNote": "The initial file probe started while deployment was queued and saw the prior root HTML. After canonical success, the ordinary root and all 28 files with a release query were verified against source.",
+  "http": {
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.14.0",
+      "releaseVersion": "2.14.0",
+      "commit": "ff5bb9c700d0e709d9e838791a282946a8c47533",
+      "shortCommit": "ff5bb9c",
+      "branch": "main",
+      "builtAt": "2026-10-18T21:50:32.343Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "index.html",
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9"
+      },
+      {
+        "path": "nsfw.html",
+        "sha256": "79e77045d37fbcb4c9a26456ef0df41ad09aa3f01f3a8e9df49828edf278648b"
+      },
+      {
+        "path": "reader.html",
+        "sha256": "631565ffce4182009279670d67c11f7624cea3472f21d4325b95776bc7f4c92f"
+      },
+      {
+        "path": "series.html",
+        "sha256": "a766de38b935e982ac3faadae62f88f149780fb0588bfd7c066a8847b54a99d8"
+      },
+      {
+        "path": "admin.html",
+        "sha256": "09c10a2190e337297385fd9f708bb87caa1db1c1ae219411d68907a453be26d6"
+      },
+      {
+        "path": "assets/css/site.css",
+        "sha256": "6ae685c571c5bd8f4e6e5a832276e61d052bbc3c5b677a8e276a120e148194b9"
+      },
+      {
+        "path": "assets/css/nav.css",
+        "sha256": "b1410be51b715da0d59146b002b3312e741bade4a4fd921593818fb63cdfee7a"
+      },
+      {
+        "path": "assets/css/site-theme.css",
+        "sha256": "1e0fa302c1ba37fbe68e7b406290d6cd3e4029bad8d58650d2b926b3f384a2f8"
+      },
+      {
+        "path": "assets/css/admin-security.css",
+        "sha256": "1ae85016b9b9546ca85e28e11a2c2010b205b4b571756374345459aa4e6f0518"
+      },
+      {
+        "path": "assets/css/garden-pass.css",
+        "sha256": "663e72678ac62cc26023cc987a79e94741b606829ba5166d6c237d9afd52bfec"
+      },
+      {
+        "path": "assets/js/book-access.js",
+        "sha256": "29c75d0433f321f8cbbde6594ca8dbbe0a68e05d1ff3f797f5c9d207cff06cf8"
+      },
+      {
+        "path": "assets/js/library.js",
+        "sha256": "d30818b0a35b1f4be84c2e6f055c6d26ee4d13746859de3f7b005e480dd3a7c3"
+      },
+      {
+        "path": "assets/js/public/library-location.js",
+        "sha256": "2740ac05ed29b659b6dbad9e0430d254547b31fac6e4eb717b30a546fa9c9a99"
+      },
+      {
+        "path": "assets/js/public/garden-pass.js",
+        "sha256": "165e0f2e99794a10ae145bf81c13825acf22fa576516a72749edcbaf74d33103"
+      },
+      {
+        "path": "assets/js/public/turnstile.js",
+        "sha256": "c539dc8c2e9cfef602afd4570c999af991375d7837472d014b2f85798465bdd6"
+      },
+      {
+        "path": "assets/js/admin/core.js",
+        "sha256": "349ba037d25bdcb51f4d3341d15ab825a54789eb33a4b5e4b2561c05e1febeff"
+      },
+      {
+        "path": "assets/js/admin/app.js",
+        "sha256": "cd852490457348f86ef77889982c097dbc599031c93c9f5420412d5b0cbfff06"
+      },
+      {
+        "path": "assets/js/admin/epub-inspection.js",
+        "sha256": "76af9e848355a2dc3b8aa32baba2f87c5c94d87800923b7c4666da42551d3006"
+      },
+      {
+        "path": "assets/js/admin-batch.js",
+        "sha256": "4e34e9532c1456cdae5645a27a0424943075c3fc32403406d0e29ff0981f438b"
+      },
+      {
+        "path": "assets/js/admin-upload-workflow.js",
+        "sha256": "4f0cd58d8a02af621ad5461525ad348354a906998c16330cebcd9374bf361723"
+      },
+      {
+        "path": "assets/js/admin/upload-events.js",
+        "sha256": "a208b687dce6e961e1d696e791d6b446adb0c63cdd3b40e3a3ee320442309dc6"
+      },
+      {
+        "path": "assets/js/admin/editor-interactions.js",
+        "sha256": "8538e8f269139eef20eef66903d509e654e9762ba48e0e264a53c97f8d2e5eda"
+      },
+      {
+        "path": "assets/js/admin/auth-session.js",
+        "sha256": "a4a5ad0308c826ca175e0b518f58baf1459bc13094758b701a6a68644a4daa6e"
+      },
+      {
+        "path": "assets/js/admin/shell.js",
+        "sha256": "6ebe6283845590cb2226d6dabd8358aae1f5dc1b16c7f32f866087e9185df1fd"
+      },
+      {
+        "path": "assets/js/reader/settings.js",
+        "sha256": "f2edb0fcbab4ddbb020edead9d075816d8de542dbf620d2da0a869b1b092e805"
+      },
+      {
+        "path": "assets/css/reader-image-focus.css",
+        "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b"
+      },
+      {
+        "path": "assets/js/reader/app.js",
+        "sha256": "ba0eb840294e5f35cdbdbbcc6f9a8faf53277d2c62b5d5bb942e7c439a58cd19"
+      },
+      {
+        "path": "assets/js/library-footer-version.js",
+        "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70"
+      }
+    ],
+    "catalogs": [
+      {
+        "scope": "catalog",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "scope": "adult-catalog",
+        "series": 1,
+        "volumes": 1
+      }
+    ],
+    "checks": {
+      "/human-access": {
+        "status": 200,
+        "siteKeyPresent": true
+      },
+      "/admin-access": {
+        "status": 200,
+        "siteKeyPresent": true
+      },
+      "unauthenticatedKeeper": 401,
+      "rawEpubWithoutTicket": 403,
+      "B2MissingCover": 404,
+      "retiredRuntimeLayers": {
+        "/assets/js/site-flavor.js": 404,
+        "/assets/js/admin-upload-completion.js": 404
+      }
+    }
+  }
+}
