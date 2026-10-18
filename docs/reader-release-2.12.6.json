@@ -258,7 +258,27 @@
     "pageMap": 385,
     "readerWarningsOrErrorsCaptured": 0,
     "keeperCredentialedSignInRepeated": false,
-    "phoneAcceptanceOfThisRelease": false
+    "phoneAcceptanceOfThisRelease": true,
+    "phoneAcceptance": {
+      "date": "2026-10-18",
+      "timezone": "Asia/Manila",
+      "release": "2.12.6",
+      "platform": "Android",
+      "browser": "Soul",
+      "reportedBy": "owner",
+      "method": "manual",
+      "checks": [
+        {
+          "behavior": "fast upward scrolling",
+          "result": "passed"
+        },
+        {
+          "behavior": "image-focus return",
+          "result": "passed"
+        }
+      ],
+      "sourceStatement": "I manually checked fast upward scrolling and image-focus return on Android/Soul, both works fine in v2.12.6"
+    }
   },
   "assets": [
     {
@@ -497,8 +517,8 @@
     }
   ],
   "limits": [
-    "Owner ordinary-use Android/Soul acceptance applies to v2.12.5; v2.12.6 phone acceptance remains pending.",
-    "RDR-045 intermittent first-open partial-cover return was not repeated.",
+    "Owner manually passed fast upward scrolling and image-focus return on Android/Soul in v2.12.6 on 2026-10-18; the requested phone acceptance gate is complete.",
+    "Earlier RDR-045 intermittent first-open partial-cover observations remain regression evidence; the owner's image-focus-return report does not separately isolate that exact historical cycle.",
     "Historical M5a single reversal remains causally unattributed; reproduced intrinsic sizing and RDR-054/055 mechanisms are fixed.",
     "Book reopening can use its existing local cache; it does not alone prove a fresh EPUB download.",
     "No migration, seed, catalog edit, B2 object write, upload test or credential change."

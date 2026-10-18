@@ -27,9 +27,11 @@ It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
 chapter-boundary/pending-resume jump fixes (RDR-054/055). All 204 Node tests and
 352 browser cases pass across five profiles. Live assets, both library footers,
 catalog identity, production bindings and authorized real-book opening are verified.
-Android / Soul Browser ordinary-use acceptance applies to v2.12.5; the latest
-release still needs its own phone check. The [release record](docs/READER_RELEASE.md)
-keeps that distinction and the intermittent first-open cover-return case, RDR-045.
+On 2026-10-18 the owner manually verified fast upward scrolling and image-focus
+return on Android / Soul Browser in v2.12.6; both work correctly. The requested
+phone acceptance checks pass. The [release record](docs/READER_RELEASE.md)
+preserves the earlier first-open cover-return observations and the exact scope
+of this device result.
 The historical single 56 px stress event has not been uniquely attributed.
 See the [original-trace follow-up](docs/READER_SCROLL_AUDIT.md#original-failure-artifact-follow-up).
 

@@ -1,11 +1,13 @@
 # Reader scroll-stability audit
 
-**Phone acceptance — 2026-10-17:** after v2.12.5 the owner reports no more jumping
-or dimming in ordinary Android/Soul use. This passes general phone acceptance;
-the separate first-open partial-cover cycle RDR-045 remains tracked in the
-[release record](READER_RELEASE.md). Current cleanup is in
-[maintenance](READER_MAINTENANCE.md). The dated investigation below retains its
-original reproductions and automated evidence.
+**Phone acceptance — 2026-10-18:** the owner manually checked fast upward
+scrolling and image-focus return on Android/Soul in v2.12.6 and reports that
+both work correctly. This completes the requested device acceptance, following
+the successful v2.12.5 ordinary-use report. Earlier RDR-045 first-open cover
+observations remain regression evidence; the report does not separately isolate
+that exact historical cycle. See the [release record](READER_RELEASE.md).
+Current cleanup is in [maintenance](READER_MAINTENANCE.md). The dated investigation
+below retains its original reproductions and automated evidence.
 
 
 Opened 2026-10-17 after the owner confirmed that v2.12.4 resolves Soul Browser
@@ -34,7 +36,7 @@ does not establish physical-phone acceptance or prove that no other bug exists.
 | Location reporting | Vendor Continuous `currentLocation()` calls `updateLayout()` before querying location. | Query `scrolledLocation()` directly for the supported nonpaginated Continuous manager. Check formatting calls as well as DOM mutations; an idempotent style write alone is insufficient evidence. |
 | Window resize / browser chrome | Height-only stage resize clears/reopens live chapters; app recovery also replays a snapshot. | Demonstrated on v2.12.4: a 100 px height-only viewport change disconnects the original chapter. Keep live frames when width is unchanged, refresh stage metrics, and remember the new height without starting semantic recovery. Width/orientation recovery retains its existing path. |
 | User input versus delayed work | Only explicit navigation previously invalidated ownership. | Demonstrated with both wheel input and scroll continuation while access renewal waits. Native movement now invalidates older work. Track owned scroll writes synchronously so buffer compensation is not mistaken for user movement; cover wheel, touch, keyboard, scrollbar and inertia paths. |
-| Focus / notes / settings / flow | Existing callbacks share navigation/lifecycle ownership. | The complete five-profile matrix passes focus return, notes, settings, mode changes, width reflow, BFCache and disposal. RDR-045's intermittent real-cover return remains open pending a faithful live reproduction/acceptance. |
+| Focus / notes / settings / flow | Existing callbacks share navigation/lifecycle ownership. | The complete five-profile matrix passes focus return, notes, settings, mode changes, width reflow, BFCache and disposal. The owner manually accepts image-focus return on Android/Soul in v2.12.6 on 2026-10-18; earlier RDR-045 first-open observations remain regression evidence with the scope recorded above. |
 
 ## Release and evidence
 

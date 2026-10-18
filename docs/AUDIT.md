@@ -6,10 +6,11 @@ The verified production baseline is v2.12.6, source `a5c5347`, with 204 Node
 tests and 352 passing browser cases across five profiles (eight existing platform
 skips). Live source hashes, bindings, catalog/snapshot identity, both library
 footers and genuine authorized book reopening pass the
-[release verification](READER_RELEASE.md). The owner's successful ordinary-use
-Android/Soul report applies to v2.12.5; phone acceptance of v2.12.6 remains pending.
-RDR-045's specific cover cycle and the causally unattributed historical M5a stress
-event remain tracked separately from the demonstrated fixes. Current cleanup
+[release verification](READER_RELEASE.md). On 2026-10-18 the owner manually
+verified fast upward scrolling and image-focus return on Android/Soul in
+v2.12.6; both requested device checks pass. Earlier RDR-045 first-open observations
+and the causally unattributed historical M5a event remain regression evidence,
+separate from this completed device acceptance and the demonstrated fixes. Current cleanup
 and validation are in [READER_MAINTENANCE.md](READER_MAINTENANCE.md).
 Dated sections below preserve historical audit evidence and counts.
 

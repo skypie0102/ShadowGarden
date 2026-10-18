@@ -37,9 +37,11 @@ profiles, with eight platform skips, in CI run
 [39001700811](https://github.com/skypie0102/ShadowGarden/actions/runs/39001700811).
 The owner subsequently reported: “Tested the reader, works great so far, no more
 jumping and dimming.” This passes ordinary-use Android/Soul acceptance of those
-reported problems. RDR-045's earlier first-open partial-cover cycle remains a
-specifically tracked intermittent case; that exact reproduction was not repeated
-independently by the general phone report.
+reported problems. On 2026-10-18 the owner additionally manually checked fast
+upward scrolling and image-focus return on Android/Soul in v2.12.6 and reports
+both work correctly. The requested v2.12.6 device acceptance is complete.
+RDR-045's earlier first-open partial-cover observations remain regression
+evidence; this report does not separately isolate that exact historical cycle.
 
 M1 removes the functional visual-cache global, expands app wiring without changing
 normalized JavaScript behavior, and documents the vendor contract. See

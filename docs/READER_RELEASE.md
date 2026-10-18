@@ -62,11 +62,17 @@ book may reuse its existing local cache; reopening alone does not prove a fresh
 EPUB download. No migration, seed, catalog edit, B2 object write or credential
 change is part of the release.
 
-**Acceptance still distinct:** the owner's ordinary Android/Soul acceptance
-belongs to v2.12.5. Recheck v2.12.6 on that phone for fast upward scrolling,
-chapter boundaries and focus return. RDR-045 remains specifically tracked, and
-the historical M5a single reversal remains causally unattributed; the demonstrated
-sizing, boundary and stale-resume defects are fixed.
+**Phone acceptance — 2026-10-18 (Asia/Manila):** the owner manually checked fast
+upward scrolling and image-focus return on Android/Soul in **v2.12.6** and reports
+that both work correctly. This completes the requested device acceptance gate
+for these two behaviors. It follows the earlier v2.12.5 ordinary-use acceptance.
+
+RDR-045's earlier intermittent first-open partial-cover observations remain
+regression evidence; this report confirms image-focus return on the owner's
+phone without claiming a separately isolated replay of that exact historical
+cycle. The historical M5a single reversal remains causally unattributed. The
+demonstrated sizing, boundary and stale-resume mechanisms are fixed; those
+evidence limits do not leave the requested v2.12.6 phone checks pending.
 
 Rollback target: the correctly bound v2.12.5 deployment
 `0ceadeec-4e53-4e20-a841-83c72bde66a2`.

@@ -2,9 +2,9 @@
 
 The latest verified production baseline is v2.12.6, deployed on 2026-10-18.
 Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.6.json)
-identify the exact source, automated results and live checks. The owner's
-ordinary-use Android/Soul acceptance applies to v2.12.5; v2.12.6 phone acceptance
-remains pending.
+identify the exact source, automated results and live checks. On 2026-10-18
+the owner manually verified fast upward scrolling and image-focus return on
+Android/Soul in v2.12.6; both requested device checks pass.
 
 | Document | Use it for |
 | --- | --- |

@@ -5,8 +5,14 @@ intrinsic sizing and RDR-054/055 fixes through clean source `a5c5347`.
 The exact release passes 204 Node tests and 352 browser cases; live files,
 bindings, catalog identity, both footer labels and authorized real-book opening
 are verified in the [release record](READER_RELEASE.md). Historical increment
-notes below retain the deployment state at their original dates. Phone acceptance
-of this release remains pending; the earlier ordinary-use report is v2.12.5.
+notes below retain the deployment state at their original dates. On 2026-10-18
+the owner manually checked fast upward scrolling and image-focus return on
+Android/Soul in v2.12.6 and reports both work correctly. The requested device
+acceptance gate is complete.
+
+**Next maintenance:** resume M5c with bookmark lookup/navigation rejection after
+disposal, including diagnostic and toast ownership, then review app callbacks.
+Keep active failures visible and retain the accepted scrolling/focus regressions.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The

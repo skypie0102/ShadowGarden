@@ -16,10 +16,11 @@ returns the expected 404. No catalog, storage or credential changes were needed.
 
 [Release evidence](READER_RELEASE.md) and [machine-readable checks](reader-release-2.12.6.json)
 record exact identities and limits. Credentialed Keeper sign-in was not repeated;
-the earlier genuine sign-in remains historical evidence. Ordinary Android/Soul
-acceptance applies to v2.12.5. Phone acceptance of v2.12.6 and the specific
-intermittent first-open cover-return case RDR-045 remain separate. The historical
-single scroll-stress reversal has not been uniquely attributed. See
+the earlier genuine sign-in remains historical evidence. On 2026-10-18 the owner
+manually verified fast upward scrolling and image-focus return on Android/Soul
+in v2.12.6; both requested device checks pass. Earlier RDR-045 first-open
+observations remain regression evidence; the historical single scroll-stress
+reversal has not been uniquely attributed. See
 [ongoing source maintenance](READER_MAINTENANCE.md).
 
 ## Existing resources
