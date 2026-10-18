@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-18T11:20:52.584Z",
+  "scope": "M5c3 reader app callback lifetime",
+  "baseline": {
+    "source": "3c0ec3b3711051e298b9682dd1421b4985e7207a",
+    "appSha256": "2e07cb961f5b621452faf372520d21ab4171511659e0eb8b2170b046c8833d2d",
+    "profiles": [
+      "desktop-chromium",
+      "mobile-chromium"
+    ],
+    "failed": 8,
+    "passed": 2,
+    "uncaughtPageErrors": 0,
+    "failure": "Each obsolete-owner assertion receives one extra diagnostic; the active double-flow failure control passes."
+  },
+  "candidate": {
+    "appSha256": "ba0eb840294e5f35cdbdbbcc6f9a8faf53277d2c62b5d5bb942e7c439a58cd19",
+    "testSha256": "a443e803be8a662c90ed70dbdd08e2d83d5c560a5baabca03863a17623f6b280",
+    "profiles": [
+      "desktop-chromium",
+      "mobile-chromium"
+    ],
+    "appCasesPassed": 10,
+    "bookmarkCasesPassed": 4,
+    "uncaughtPageErrors": 0,
+    "nodeTestsPassed": 211
+  },
+  "cases": [
+    {
+      "name": "startup TOC load",
+      "activeError": "AbortError",
+      "obsoleteError": "Error",
+      "code": "navigation.tocUnavailable",
+      "activeCountDelta": 1,
+      "obsoleteCountDelta": 0
+    },
+    {
+      "name": "scheduled page-map refresh",
+      "activeError": "AbortError",
+      "obsoleteError": "Error",
+      "code": "pageMap.refreshFailed",
+      "activeCountDelta": 1,
+      "obsoleteCountDelta": 0
+    },
+    {
+      "name": "page-only saved-position startup correction",
+      "activeError": "AbortError",
+      "obsoleteError": "scope disposal during paint",
+      "code": "navigation.canonicalFallback",
+      "activeCountDelta": 1,
+      "obsoleteCountDelta": 0
+    },
+    {
+      "name": "active flow switch and recovery failure",
+      "activeError": "AbortError",
+      "codes": [
+        "flow.switchFailed",
+        "flow.recoveryFailed"
+      ],
+      "activeCountDeltaEach": 1,
+      "visibleRecoveryError": true
+    },
+    {
+      "name": "disposed flow recovery",
+      "activeSwitchCountDelta": 1,
+      "obsoleteRecoveryCountDelta": 0,
+      "disposedLoadingHidden": true,
+      "reopenSucceeds": true
+    }
+  ],
+  "localHarness": {
+    "runtime": "Playwright 1.63.0 / Chromium headless shell 153.0.8010.12 (build 1243)",
+    "server": "Temporary static frontend server; production startup/modules with disposable network fixtures",
+    "boundary": "Local checks do not substitute for Pages/D1 CI or live credentialed production checks."
+  },
+  "ci": {
+    "status": "required before merge",
+    "profiles": 5
+  },
+  "production": {
+    "version": "2.12.7",
+    "thisIncrementDeployed": false
+  }
+}

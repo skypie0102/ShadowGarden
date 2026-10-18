@@ -288,7 +288,9 @@ async function initializeReader(session, scope) {
     scope.clearTimeout(state.pageMapRefreshTimer);
     state.pageMapRefreshTimer = scope.timeout(() => {
       if (!state.pageMap || !state.book) return;
-      state.pageMap.ensure({ anchorCfi: progressController?.currentCfi?.() || "" }).catch((error) => recordReaderDiagnostic("pageMap.refreshFailed"));
+      state.pageMap.ensure({ anchorCfi: progressController?.currentCfi?.() || "" }).catch((error) => {
+        if (!scope.disposed) recordReaderDiagnostic("pageMap.refreshFailed");
+      });
     }, delay);
   }
   function scheduleRelayout() {
@@ -586,6 +588,7 @@ async function initializeReader(session, scope) {
         try {
           await openRendition(target);
         } catch (recoveryError) {
+          if (scope.disposed) return;
           recordReaderDiagnostic("flow.recoveryFailed");
           elements.loading?.classList.remove("hidden");
           if (elements.loading) elements.loading.innerHTML = "<p>Shadow Garden could not restore the reader.</p>";
@@ -714,7 +717,7 @@ async function initializeReader(session, scope) {
     const book = state.book;
     scope.add(() => book.destroy());
     const metadataPromise = state.book.loaded.metadata, navigationPromise = state.book.loaded.navigation.catch((error) => {
-      recordReaderDiagnostic("navigation.tocUnavailable");
+      if (!scope.disposed) recordReaderDiagnostic("navigation.tocUnavailable");
       return { toc: [] };
     });
     const opening = scope.child();
@@ -755,7 +758,7 @@ async function initializeReader(session, scope) {
       try {
         await correctCanonicalPosition(opened, saved, state.renderedFlow);
       } catch (error) {
-        recordReaderDiagnostic("navigation.canonicalFallback");
+        if (!scope.disposed) recordReaderDiagnostic("navigation.canonicalFallback");
       }
     }
     const queuedFlow = state.queuedFlow;

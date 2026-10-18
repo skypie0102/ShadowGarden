@@ -438,7 +438,14 @@ lookup/navigation report a rejection only while their root controller scope is
 live. Bookmark failure toasts follow the same lifetime check; a list refresh does
 not retire a live bookmark intent. Active failures remain reportable regardless
 of error name; cleanup failures remain actionable even while a scope is being
-disposed. Application callback review follows separately in the maintenance roadmap.
+disposed.
+
+Application startup TOC loading, scheduled page-map refresh and startup saved-page
+correction report failures only while their reader scope is live. Flow recovery
+uses that same lifetime before both its diagnostic and error-screen update.
+These book/map/startup owners live for the session; rendition-specific relayout
+and canonical navigation keep their existing operation-current checks. Active
+errors, including `AbortError`, retain the same fallback and recovery behavior.
 
 ## Verification boundaries
 
