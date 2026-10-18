@@ -56,11 +56,6 @@
     else sync();
   });
 
-  new MutationObserver(()=>queueMicrotask(sync)).observe(list,{
-    childList:true,
-    subtree:true,
-    attributes:true,
-    attributeFilter:["class","disabled","data-status"]
-  });
+  window.ShadowGardenKeeper.events.addEventListener("upload:queue-rendered",()=>queueMicrotask(sync));
   sync();
 })();

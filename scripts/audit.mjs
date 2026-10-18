@@ -35,8 +35,10 @@ for(const path of files){
 }
 const provenance=JSON.parse(await readFile('recovery-info/provenance.json','utf8'));
 const modified=[];
+// Retired after final copy moved to its owning templates/workflows (website W2).
+const retired=new Set(['public/assets/js/site-flavor.js','public/assets/js/admin-upload-completion.js']);
 for(const entry of provenance.files){
-  if(!await exists(entry.path)){errors.push(`Missing recovered file ${entry.path}`);continue;}
+  if(!await exists(entry.path)){if(!retired.has(entry.path))errors.push(`Missing recovered file ${entry.path}`);continue;}
   const sha=createHash('sha256').update(await readFile(entry.path)).digest('hex');
   if(sha!==entry.sha256)modified.push(entry.path);
 }
@@ -50,6 +52,24 @@ const deliberate=new Set([
   'public/assets/js/admin/library-workflow.js',
   'public/assets/js/admin/history-workflow.js',
   'public/assets/js/admin/maintenance-workflow.js',
+  'public/assets/js/reader-a11y.js',
+  'public/assets/js/site-a11y.js',
+  'public/assets/js/admin/app.js',
+  'public/assets/js/admin/auth-session.js',
+  'public/assets/js/admin/shell.js',
+  'public/assets/js/admin-batch.js',
+  'public/assets/js/admin-upload-workflow.js',
+  'public/assets/js/admin/abuse-workflow.js',
+  'public/admin.html',
+  'public/assets/css/nav.css',
+  'public/assets/css/site.css',
+  'public/assets/js/admin-batch-editor.js',
+  'public/assets/js/admin-upload-presentation.js',
+  'public/assets/js/admin/upload-similar-volume.js',
+  'public/assets/js/admin/upload-safety.js',
+  'public/assets/js/admin/upload-preflight-report.js',
+  'public/assets/js/admin/upload-events.js',
+  'public/assets/js/admin/editor-interactions.js',
   'public/assets/js/library.js',
   'public/series.html',
   'public/assets/js/book-access.js',
@@ -105,5 +125,5 @@ for(const name of ['catalog','adult-catalog']){
 for(const path of await walk('functions'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 for(const path of await walk('server'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 // The owner confirmed these five books are disposable test fixtures, not a recovery gate.
-console.log(JSON.stringify({recoveredFiles:provenance.files.length,byteIdentical:provenance.files.length-modified.length,documentedModifications:modified,routes:routes.length,literalReferences:references.length,series,volumes,warnings,errors},null,2));
+console.log(JSON.stringify({recoveredFiles:provenance.files.length,byteIdentical:provenance.files.length-modified.length-provenance.files.filter(entry=>retired.has(entry.path)).length,retiredRecoveredFiles:[...retired],documentedModifications:modified,routes:routes.length,literalReferences:references.length,series,volumes,warnings,errors},null,2));
 if(errors.length)process.exitCode=1;

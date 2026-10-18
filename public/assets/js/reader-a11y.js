@@ -66,5 +66,4 @@
   // Progress semantics are owned by reader/progress-controller.js and mirrored by
   // reader-continuous-rail.js. This bridge must not write progress aria state.
 
-  void import('/assets/js/site-flavor.js?v=2.11.0').catch(error=>console.warn('Shadow Garden flavor copy unavailable',error));
 })();

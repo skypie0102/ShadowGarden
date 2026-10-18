@@ -14,7 +14,7 @@
       for(const id of ["#trashCount","#maintenanceTrashCount"])if($(id))$(id).textContent=unreadable?"—":String(trash.length);
       const purgeAll=$("#purgeAllTrash");if(purgeAll){purgeAll.disabled=busy||unreadable||!trash.length;purgeAll.textContent="Purge all Trash";purgeAll.title="Remove Trash entries; retained backups and shared media stay protected."}
       if(unreadable)list.innerHTML='<div class="maintenance-empty maintenance-bad">Trash cannot be read until a valid catalog snapshot is restored.</div>';
-      else if(!trash.length)list.innerHTML='<div class="maintenance-empty maintenance-good">Trash is empty.</div>';
+      else if(!trash.length)list.innerHTML='<div class="maintenance-empty maintenance-good">Nothing is resting in Trash.</div>';
       else list.innerHTML=trash.map(item=>`<div class="maintenance-item"><div class="maintenance-item-copy"><strong>${safe(item.title||"Deleted item")}</strong><span>${safe(item.subtitle||"")}</span><span class="trash-meta"><i>${item.type==="series"?"Series":"Volume"}</i><i>${item.scope==="adult"?"18+":"Main"}</i><i>${safe(fmtDate(item.removedAt))}</i></span></div><div class="maintenance-item-actions"><button class="admin-secondary" type="button" data-restore-trash="${safe(item.id)}" ${busy?"disabled":""}>Restore</button><button class="danger-button" type="button" data-purge-trash="${safe(item.id)}" ${busy?"disabled":""}>Purge</button></div></div>`).join("");
       const jobs=arr(data?.purgeJobs);
       cleanup.innerHTML=jobs.length?'<p class="maintenance-copy">Media cleanup keeps files used by the catalog, retained snapshots or active uploads. Bundled covers stay available. Continue or retry unfinished jobs here after a reload.</p>'+jobs.map(job=>`<div class="maintenance-item"><div class="maintenance-item-copy"><strong>${job.complete?"Cleanup complete":"Cleanup pending"} · ${safe(fmtDate(job.createdAt))}</strong><span>${safe(job.removedCount)} Trash entries removed · ${safe(job.deleted)} objects deleted · ${safe(job.staticAssets)} bundled assets kept · ${safe(job.retained)} protected · ${safe(job.pending)} pending · ${safe(job.failed)} failed</span>${job.error?`<span class="maintenance-bad">${safe(job.error)}</span>`:""}</div><div class="maintenance-item-actions">${job.complete?'<span class="state-pill ready">DONE</span>':`<button class="admin-secondary" type="button" data-continue-purge="${safe(job.id)}" ${busy||unreadable?"disabled":""}>${job.failed?"Retry cleanup":"Continue cleanup"}</button>`}</div></div>`).join(""):"";
@@ -29,7 +29,7 @@
     }
     async function restore(id){
       const item=arr(snapshot?.trash).find(entry=>entry.id===id);if(!item||busy)return;
-      if(confirm(`Restore “${item.title}” to the ${item.scope==="adult"?"18+":"Main"} library?`))await run("restore-trash",{id},`Restored “${item.title}”.`);
+      if(confirm(`Return “${item.title}” to the ${item.scope==="adult"?"18+":"Main"} shelves?`))await run("restore-trash",{id},`Restored “${item.title}”.`);
     }
     async function purge(ids){
       const count=ids.length||arr(snapshot?.trash).length;if(!count||busy)return;

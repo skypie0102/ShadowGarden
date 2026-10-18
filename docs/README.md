@@ -10,6 +10,7 @@ Android/Soul in v2.12.6; both requested device checks pass.
 
 | Document | Use it for |
 | --- | --- |
+| [Website architecture](WEBSITE_ARCHITECTURE.md) | Current public page, access, theme and Keeper upload ownership |
 | [Website refactor](WEBSITE_REFACTOR_ROADMAP.md) | Website scope, ownership findings and tested increments |
 | [Reader maintenance](READER_MAINTENANCE.md) | Current cleanup increments, completion checks and next priorities |
 | [Reader architecture](READER_ARCHITECTURE.md) | Startup, service boundaries, navigation, layout and resource ownership |

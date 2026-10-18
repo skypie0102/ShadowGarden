@@ -39,5 +39,4 @@
     syncBusy();
   }
 
-  void import('/assets/js/site-flavor.js?v=2.11.0').catch(error=>console.warn('Shadow Garden flavor copy unavailable',error));
 })();

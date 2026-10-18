@@ -42,7 +42,7 @@
       q.items.splice(0,q.items.length);q.activeId=null;q.library=null;q.objectUrl="";
       $("#batchPanel")?.classList.add("hidden");if($("#batchList"))$("#batchList").innerHTML="";
       $("#metadataCard")?.classList.add("hidden");$("#preflightCard")?.classList.add("hidden");$("#uploadCard")?.classList.add("hidden");$("#openSeries")?.classList.add("hidden");
-      if($("#epubFile"))$("#epubFile").value="";if($("#filePickerTitle"))$("#filePickerTitle").textContent="Choose EPUBs from phone";if($("#filePickerMeta"))$("#filePickerMeta").textContent="Select one or many EPUBs · 50 MB maximum per file";
+      if($("#epubFile"))$("#epubFile").value="";if($("#filePickerTitle"))$("#filePickerTitle").textContent="Choose EPUBs from this device";if($("#filePickerMeta"))$("#filePickerMeta").textContent="Select one or many EPUBs · 50 MB maximum per file";
       setFileState("WAITING");setUploadState("WAITING");setStatus("Ready to upload","Choose one or more EPUBs to begin.","✦");return true;
     }
 
@@ -58,7 +58,7 @@
         const q=state.batch,item=q?.items?.find(entry=>entry.id===q.activeId&&entry.metaReady);if(item){item.series=target.title;item.adult=target.scope==="adult";item.targetSeriesId=target.id;if(!String(item.author||"").trim()&&target.author)item.author=target.author}
         if($("#previewSeries")&&item)$("#previewSeries").textContent=`${target.title} · Volume ${item.number||"?"}`;
       }else{
-        if($("#addBooksHeading"))$("#addBooksHeading").textContent="Plant new seeds";if(seriesInput)seriesInput.readOnly=false;if(adultInput)adultInput.disabled=false;
+        if($("#addBooksHeading"))$("#addBooksHeading").textContent="Plant new volumes";if(seriesInput)seriesInput.readOnly=false;if(adultInput)adultInput.disabled=false;
       }
     }
 
@@ -90,7 +90,7 @@
 
     /* Targeted uploads are a shell-to-Upload integration contract. The Upload engine owns queue
        rendering; the shell only reapplies immutable series context after an editor switch/render. */
-    const batchList=$("#batchList");if(batchList)new MutationObserver(()=>queueMicrotask(applyTargetToEditor)).observe(batchList,{childList:true,subtree:false});
+    const batchList=$("#batchList");keeper.events.addEventListener("upload:queue-rendered",()=>queueMicrotask(applyTargetToEditor));
     batchList?.addEventListener("click",event=>{if(event.target.closest("[data-batch-edit]"))queueMicrotask(applyTargetToEditor)});
     $("#batchEditorSelect")?.addEventListener("change",()=>queueMicrotask(applyTargetToEditor));
     addDialog.addEventListener("close",()=>{if(!state.batch?.running){state.addBookTarget=null;applyTargetToEditor()}});

@@ -29,12 +29,12 @@
        Upload and never replace the shared API, authentication, Library/Series, Maintenance,
        History, Trash, or Abuse owners. */
     for(const src of [
+      "/assets/js/admin/epub-inspection.js?v=2.14.0",
       "/assets/js/admin-batch.js?v=2.11.0",
       "/assets/js/admin/upload-similar-volume.js?v=2.11.0",
       "/assets/js/admin/upload-safety.js?v=2.11.0",
       "/assets/js/admin-batch-editor.js?v=2.11.0",
       "/assets/js/admin-upload-workflow.js?v=2.11.0",
-      "/assets/js/admin-upload-completion.js?v=2.11.0",
       "/assets/js/admin-upload-presentation.js?v=2.11.0",
       "/assets/js/admin/upload-events.js?v=2.11.0",
       "/assets/js/admin/editor-interactions.js?v=2.11.0",
@@ -43,7 +43,7 @@
 
     await loadScript("/assets/js/admin/shell.js?v=2.11.0");
     await loadScript("/assets/js/admin/motion.js?v=2.11.0");
-    await Promise.all([loadScript("/assets/js/site-flavor.js?v=2.11.0"),loadScript("/assets/js/ui-direction-triangles.js?v=2.11.0")]);
+    await loadScript("/assets/js/ui-direction-triangles.js?v=2.11.0");
 
     for(const name of ["version","session","library","translations","maintenance","recoveryReadiness","history","trash","abuse","shell","motion"])await keeper.initializeWorkflow(name);
 

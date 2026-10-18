@@ -40,10 +40,10 @@
     async function loadLibrary(force=false){
       if(!client.isAuthorized())return;
       if(state.management&&!force){renderManagerList();return}
-      const loading=$("#manageLoading");if(loading){loading.textContent="Loading the Garden…";loading.classList.remove("hidden")}
+      const loading=$("#manageLoading");if(loading){loading.textContent="Walking the rows…";loading.classList.remove("hidden")}
       $("#manageEmpty")?.classList.add("hidden");if(list)list.innerHTML="";
       try{updateManagement(await client.request("/admin-api/library",{method:"GET"}));loading?.classList.add("hidden")}
-      catch(error){console.error(error);if(loading)loading.textContent=`Could not load the library: ${error.message}`}
+      catch(error){console.error(error);if(loading)loading.textContent=`The Garden could not open its catalog: ${error.message}`}
     }
 
     function renderManagerList(){

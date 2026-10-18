@@ -1,9 +1,6 @@
 :root{
   color-scheme:dark;
-  --panel:#101612;--panel2:#141c17;
-  --line:rgba(180,210,190,.12);--line2:rgba(180,210,190,.22);
-  --text:#edf2ed;--muted:#9aa69d;--dim:#6e7b72;
-  --leaf:#91bd9d;--leaf2:#b4d9bd;--gold:#b69a68;--danger:#cf8181;
+  --gold:#b69a68;--danger:#cf8181;
   --serif:Georgia,"Times New Roman",serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --max:1500px
 }

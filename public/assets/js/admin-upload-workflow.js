@@ -78,18 +78,20 @@
       decorateDuplicate(article,item);
     }
     queueSummary();
+    window.ShadowGardenKeeper.events.dispatchEvent(new Event('upload:view-rendered'));
   }
 
   function emptyEditor(){
     document.querySelector('#metadataCard')?.classList.add('hidden');preflight.classList.add('hidden');document.querySelector('#uploadCard')?.classList.add('hidden');document.querySelector('#batchEditorPicker')?.classList.add('hidden');
     if(typeof setFileState==='function')setFileState('WAITING');fileInput.value='';
-    const title=document.querySelector('#filePickerTitle'),meta=document.querySelector('#filePickerMeta');if(title)title.textContent='Choose EPUBs from phone';if(meta)meta.textContent='Select one or many EPUBs · 50 MB maximum per file';
+    const title=document.querySelector('#filePickerTitle'),meta=document.querySelector('#filePickerMeta');if(title)title.textContent="Choose EPUBs from this device";if(meta)meta.textContent='Select one or many EPUBs · 50 MB maximum per file';
   }
 
   function removeItem(id){
     if(q.running)return;const index=q.items.findIndex(i=>i.id===id);if(index<0)return;
     const active=q.activeId===id;q.items.splice(index,1);if(active){q.activeId=null;if(q.objectUrl){try{URL.revokeObjectURL(q.objectUrl)}catch{}q.objectUrl=''}}
     list.querySelector(`[data-batch-id="${CSS.escape(id)}"]`)?.remove();reconcileBatchDuplicates();enhanceQueue();
+    window.ShadowGardenKeeper.events.dispatchEvent(new Event("upload:queue-rendered"));
     if(!q.items.length){emptyEditor();return}
     if(active){const next=q.items.find(i=>i.metaReady);if(next)queueMicrotask(()=>list.querySelector(`[data-batch-edit="${CSS.escape(next.id)}"]`)?.click())}
   }
@@ -129,17 +131,20 @@
   function clearSuccessfulQueue(){
     q.items.splice(0);q.activeId=null;q.library=null;if(q.objectUrl){try{URL.revokeObjectURL(q.objectUrl)}catch{}q.objectUrl=''}list.innerHTML='';panel.classList.add('hidden');fileInput.value='';
     const summary=document.querySelector('#batchSummary');if(summary)summary.textContent='';document.querySelector('#metadataCard')?.classList.add('hidden');preflight.classList.add('hidden');document.querySelector('#uploadCard')?.classList.add('hidden');document.querySelector('#batchEditorPicker')?.classList.add('hidden');
+    window.ShadowGardenKeeper.events.dispatchEvent(new Event('upload:queue-rendered'));
   }
 
   function renderComplete(successes,failures){
     const success=failures.length===0&&successes.length===sessionIds.length;mode=success?'complete':'partial';completedSeries=seriesFrom(successes);showStage();
     stage.innerHTML=`<div class="upload-state-card ${success?'upload-state-complete':'upload-state-partial'}"><div class="upload-state-mark" aria-hidden="true">${success?'✓':'△'}</div><p class="kicker">${success?'UPLOAD COMPLETE':'BATCH FINISHED'}</p><h2>${success?'The new books have taken root.':'Some books need attention.'}</h2><p>${success?`${successes.length} book${successes.length===1?' was':'s were'} uploaded successfully and the upload queue has been cleared.`:`${successes.length} uploaded · ${failures.length} failed. Failed/reviewable entries remain in the queue so they can be corrected or retried.`}</p><div class="upload-state-actions">${completedSeries.length?'<button id="workflowOpenSeries" class="admin-primary" type="button">Open uploaded series</button>':''}<button id="workflowNextBatch" class="admin-secondary" type="button">${success?'Upload another batch':'Review upload queue'}</button></div></div>`;
     if(success)clearSuccessfulQueue();
+    window.ShadowGardenKeeper.events.dispatchEvent(new Event('upload:view-rendered'));
     stage.querySelector('#workflowOpenSeries')?.addEventListener('click',()=>completedSeries.length===1?location.assign(`/series.html?id=${encodeURIComponent(completedSeries[0].id)}`):renderChooser());stage.querySelector('#workflowNextBatch')?.addEventListener('click',showEditor);
   }
 
   function renderChooser(){
     mode='chooser';showStage();stage.innerHTML=`<div class="upload-state-card upload-state-complete"><div class="upload-state-mark" aria-hidden="true">✦</div><p class="kicker">UPLOADED SERIES</p><h2>Choose a series to open</h2><p>This batch added books to ${completedSeries.length} series.</p><div class="upload-series-grid">${completedSeries.map(s=>`<button class="upload-series-choice" type="button" data-open-uploaded-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><span>${s.adult?'18+ Library':'Main Library'} · ${s.books} uploaded book${s.books===1?'':'s'}</span></button>`).join('')}</div><div class="upload-state-actions"><button id="workflowChooserBack" class="admin-secondary" type="button">◀ Back</button><button id="workflowChooserNext" class="admin-secondary" type="button">Upload another batch</button></div></div>`;
+    window.ShadowGardenKeeper.events.dispatchEvent(new Event('upload:view-rendered'));
     stage.querySelectorAll('[data-open-uploaded-series]').forEach(b=>b.addEventListener('click',()=>location.assign(`/series.html?id=${encodeURIComponent(b.dataset.openUploadedSeries)}`)));stage.querySelector('#workflowChooserBack')?.addEventListener('click',()=>renderComplete(completionSnapshot.successes,completionSnapshot.failures));stage.querySelector('#workflowChooserNext')?.addEventListener('click',showEditor);
   }
 
@@ -147,26 +152,14 @@
   function finishUpload(){
     if(mode!=='uploading'||finishing)return;finishing=true;const items=sessionIds.map(id=>q.items.find(i=>i.id===id)).filter(Boolean),successes=items.filter(i=>i.status==='done'),failures=items.filter(i=>i.status==='failed'||i.validation?.status==='fail');completionSnapshot={successes:[...successes],failures:[...failures]};renderComplete(successes,failures);finishing=false;
   }
-  function finishSettledBatch(){
-    if(mode!=='uploading'||q.running)return false;
-    const items=sessionIds.map(id=>q.items.find(i=>i.id===id)).filter(Boolean);
-    if(!items.length||items.length!==sessionIds.length||items.some(i=>i.status!=='done'&&i.status!=='failed'&&i.validation?.status!=='fail'))return false;
-    const failures=items.filter(i=>i.status==='failed'||i.validation?.status==='fail');
-    if(typeof setUploadState==='function')setUploadState(failures.length?'COMPLETE WITH ERRORS':'COMPLETE',failures.length?'warning':'ready');
-    finishUpload();return true;
-  }
   function syncState(){
-    const text=String(uploadState.textContent||'').trim().toUpperCase();
+    const text=String(window.ShadowGardenKeeper.state.uploadStatus?.label||uploadState.textContent||'').trim().toUpperCase();
     if(text==='UPLOADING'){beginUpload();updateUploading();return}
     if(text.startsWith('COMPLETE')){finishUpload();return}
-    finishSettledBatch();
   }
 
-  /* The base uploader replaces direct queue rows on every real progress/status render. Observe
-     only those direct replacements, never descendant markup that this layer decorates. */
-  const queueObserver=new MutationObserver(()=>queueMicrotask(()=>{enhanceQueue();updateUploading();syncState()}));
-  queueObserver.observe(list,{childList:true,subtree:false});
-  new MutationObserver(()=>queueMicrotask(syncState)).observe(uploadState,{childList:true,subtree:true,characterData:true});
+  window.ShadowGardenKeeper.events.addEventListener('upload:queue-rendered',()=>queueMicrotask(()=>{enhanceQueue();updateUploading();syncState()}));
+  window.ShadowGardenKeeper.events.addEventListener('upload:state',()=>queueMicrotask(syncState));
   dialog.addEventListener('close',()=>{if(mode!=='uploading')showEditor()});dialog.addEventListener('cancel',e=>{if(mode==='uploading')e.preventDefault()});
   enhanceQueue();
 })();

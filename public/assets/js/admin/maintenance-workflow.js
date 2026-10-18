@@ -50,7 +50,7 @@
       if(deep?.missing?.length)for(const item of deep.missing)issues.unshift({severity:"error",title:"B2 object missing",detail:item.key,code:"missing-object"});
       const status=deep?.missing?.length?"attention":health.status||"healthy";setPill($("#gardenHealthState"),status==="healthy"?"HEALTHY":status==="warning"?"CHECK":"ATTENTION",status==="attention"?"error":"ready");
       $("#gardenHealthMetrics").innerHTML=[metric("Referenced objects",metrics.referencedObjects??0),metric("Missing covers",metrics.missingCovers??0),metric("Missing thumbnails",metrics.missingThumbs??0),metric("Legacy identity data",metrics.legacyIdentity??0),...(deep?[metric("B2 checked",deep.checked??0),metric("B2 missing",deep.missing?.length??0)]:[])].join("");
-      const list=$("#gardenHealthIssues");if(!issues.length){list.innerHTML='<div class="maintenance-empty maintenance-good">No catalog health issues found.</div>';return}
+      const list=$("#gardenHealthIssues");if(!issues.length){list.innerHTML='<div class="maintenance-empty maintenance-good">The Garden&#39;s roots show no catalog health issues.</div>';return}
       const rank={error:0,warning:1,info:2},sorted=issues.sort((a,b)=>(rank[a.severity]??3)-(rank[b.severity]??3)).slice(0,100);
       list.innerHTML=sorted.map(issue=>`<div class="maintenance-item health-issue" data-severity="${safe(issue.severity||"info")}"><span class="health-mark">${issue.severity==="error"?"!":issue.severity==="warning"?"△":"i"}</span><div class="maintenance-item-copy"><strong>${safe(issue.title||issue.code||"Health note")}</strong><span>${safe(issue.detail||"")}</span></div></div>`).join("")+(issues.length>100?`<div class="maintenance-empty">${issues.length-100} additional health notes are not shown.</div>`:"");
     }
@@ -65,7 +65,7 @@
     function renderCovers(data){
       const candidates=arr(data?.health?.optimizationCandidates),stateEl=$("#coverMaintenanceState"),detail=$("#coverMaintenanceDetail"),button=$("#optimizeLegacyCovers"),queued=operationState("covers");
       if(data?.catalog?.readable===false){setPill(stateEl,"UNAVAILABLE","error");if(detail)detail.textContent="Restore a valid catalog snapshot to inspect covers.";if(button){button.disabled=true;button.textContent="Catalog recovery required"}return}
-      if(!candidates.length){setPill(stateEl,"CURRENT","ready");if(detail)detail.innerHTML='<span class="maintenance-good">All cataloged covers already have lightweight thumbnails.</span>';if(button){button.disabled=true;button.textContent="Covers are current"}return}
+      if(!candidates.length){setPill(stateEl,"CURRENT","ready");if(detail)detail.innerHTML='<span class="maintenance-good">Every cataloged cover is already carrying a lightweight thumbnail.</span>';if(button){button.disabled=true;button.textContent="Covers are current"}return}
       setPill(stateEl,`${candidates.length} FOUND`);if(detail)detail.textContent=`${candidates.length} legacy cover${candidates.length===1?"":"s"} can be upgraded to a ~1000px WebP detail image plus a 480px WebP thumbnail.`;if(button){button.disabled=Boolean(queued);button.textContent=queued==="running"?"Optimizing…":queued==="queued"?"Cover optimization queued":`Optimize ${candidates.length} legacy cover${candidates.length===1?"":"s"}`}
     }
     function render(data){snapshot=data;renderSummary(data);renderHealth(data);renderTaxonomy(data);renderCovers(data);renderDeepCheckControl();renderOperationQueue();keeper.events.dispatchEvent(new CustomEvent("maintenance:data",{detail:{data}}))}
@@ -79,9 +79,9 @@
     function invalidate(){snapshot=null;renderDeepCheckControl()}
 
     function deepCheck(){
-      if(operationState("deep")||!snapshot)return;const available=arr(snapshot.health?.objectKeys);if(!available.length){alert("There are no cataloged B2 objects to check.");return}
+      if(operationState("deep")||!snapshot)return;const available=arr(snapshot.health?.objectKeys);if(!available.length){alert("There are no cataloged objects in the private vault to trace.");return}
       enqueueOperation("deep","Deep B2 check",async()=>{
-        const keys=arr(snapshot?.health?.objectKeys);if(!keys.length)throw new Error("There are no cataloged B2 objects to check.");deepChecking=true;renderDeepCheckControl();const progress=$("#deepHealthProgress"),missing=[];let checked=0;
+        const keys=arr(snapshot?.health?.objectKeys);if(!keys.length)throw new Error("There are no cataloged objects in the private vault to trace.");deepChecking=true;renderDeepCheckControl();const progress=$("#deepHealthProgress"),missing=[];let checked=0;
         try{for(let index=0;index<keys.length;index+=25){const batch=keys.slice(index,index+25),text=`Checking B2 objects ${checked+1}–${Math.min(keys.length,checked+batch.length)} of ${keys.length}…`;setProgress(progress,text,checked/keys.length*100);updateOperationDetail("deep",text);const result=await action("check-objects",{keys:batch});checked+=Number(result.checked)||batch.length;missing.push(...arr(result.missing))}const text=missing.length?`${missing.length} missing B2 object${missing.length===1?"":"s"} found.`:`All ${checked} referenced B2 objects were found.`;setProgress(progress,text,100);updateOperationDetail("deep",text);renderHealth(snapshot,{checked,missing})}
         catch(error){const text=`Deep check failed: ${error.message}`;setProgress(progress,text,0);updateOperationDetail("deep",text);throw error}finally{deepChecking=false;renderDeepCheckControl()}
       });
@@ -97,7 +97,7 @@
 
     function optimizeCovers(){
       if(operationState("covers")||!snapshot)return;const candidates=arr(snapshot.health?.optimizationCandidates);if(!candidates.length)return;
-      if(!confirm(`Optimize ${candidates.length} legacy cover${candidates.length===1?"":"s"}? New WebP derivatives will be uploaded and the catalogs will be backed up before they are applied.`))return;
+      if(!confirm(`Refine ${candidates.length} legacy cover${candidates.length===1?"":"s"}?\n\nShadow Garden will preserve a catalog snapshot first, then create and apply new WebP cover derivatives.`))return;
       enqueueOperation("covers",`Optimize ${candidates.length} legacy cover${candidates.length===1?"":"s"}`,async()=>{
         const current=arr(snapshot?.health?.optimizationCandidates);if(!current.length){updateOperationDetail("covers","No legacy covers remain to optimize.");return}optimizing=true;renderCovers(snapshot);const progress=$("#coverMaintenanceProgress"),updates=[],cache=new Map(),failures=[];let wakeLock=null;try{wakeLock=await navigator.wakeLock?.request("screen")}catch{}
         try{

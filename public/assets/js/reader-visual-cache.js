@@ -412,7 +412,7 @@ export function createVisualPageCacheExtension(){
       if(cached?.version===CACHE_VERSION&&Array.isArray(cached.visuals)){
         const result=activate(cached,true);
         finish({scanned:result.scanned,assets:result.visualPages},'visual.cached');
-        setLoadingMessage("Opening the book…");
+        setLoadingMessage("Parting the pages…");
         return result;
       }
 
@@ -424,7 +424,7 @@ export function createVisualPageCacheExtension(){
 
       const result=activate(payload,false);
       finish({scanned:result.scanned,assets:result.visualPages,converted:result.converted});
-      setLoadingMessage("Opening the book…");
+      setLoadingMessage("Parting the pages…");
       return result;
     })().catch(error=>{
       if(!isCurrent())return null;
@@ -433,7 +433,7 @@ export function createVisualPageCacheExtension(){
       current.summary={cached:false,scanned:0,visualPages:0,converted:0,reused:0,error:String(error?.message||error)};
       finish({},'visual.failed');
       document.dispatchEvent(new CustomEvent("sg-visual-pages-error",{detail:{error}}));
-      setLoadingMessage("Opening the book…");
+      setLoadingMessage("Parting the pages…");
       return current.summary;
     }).finally(()=>{
       finish({},'visual.cancelled');

@@ -115,7 +115,7 @@
     }finally{decorating=false}
   }
 
-  new MutationObserver(()=>queueMicrotask(decorate)).observe(list,{childList:true,subtree:true});
+  keeper.events.addEventListener('upload:queue-rendered',()=>queueMicrotask(decorate));
   keeper.events.addEventListener('library:changed',()=>queueMicrotask(decorate));
   document.addEventListener('input',event=>{if(event.target?.closest?.('#metadataCard'))queueMicrotask(decorate)});
   document.addEventListener('change',event=>{if(event.target?.closest?.('#metadataCard'))queueMicrotask(decorate)});

@@ -100,8 +100,8 @@
         }
       });
 
-      new MutationObserver(()=>queueMicrotask(decorate)).observe(review,{childList:true,subtree:false});
-      new MutationObserver(()=>queueMicrotask(decorate)).observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:["data-action","data-status"]});
+      keeper.events.addEventListener("upload:review-rendered",()=>queueMicrotask(decorate));
+      keeper.events.addEventListener("upload:queue-rendered",()=>queueMicrotask(decorate));
       document.addEventListener("input",event=>{if(event.target.closest?.("#addBooksDialog"))queueMicrotask(decorate)});
       document.addEventListener("change",event=>{if(event.target.closest?.("#addBooksDialog"))queueMicrotask(decorate)});
       keeper.events.addEventListener("library:changed",()=>queueMicrotask(decorate));
@@ -110,12 +110,9 @@
 
     const review=document.querySelector("#uploadReviewSummary");
     if(review){mount(review);return}
-    const observer=new MutationObserver(()=>{
-      const next=document.querySelector("#uploadReviewSummary");
-      if(!next)return;
-      observer.disconnect();mount(next);
+    keeper.events.addEventListener("upload:review-rendered",()=>{
+      const next=document.querySelector("#uploadReviewSummary");if(next)mount(next);
     });
-    observer.observe(uploadCard,{childList:true,subtree:true});
   }
 
   runWhenReady(install);

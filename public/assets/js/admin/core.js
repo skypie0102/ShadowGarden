@@ -60,7 +60,12 @@
     element.className=`state-pill ${kind}`.trim();
   }
   function setFileState(label,kind=""){setPill($("#fileState"),label,kind)}
-  function setUploadState(label,kind=""){setPill($("#uploadState"),label,kind)}
+  function setUploadState(label,kind=""){
+    setPill($("#uploadState"),label,kind);
+    const previous=state.uploadStatus;
+    state.uploadStatus={label,kind};
+    if(previous?.label!==label||previous?.kind!==kind)events.dispatchEvent(new CustomEvent("upload:state",{detail:state.uploadStatus}));
+  }
   function setAuthState(label,kind=""){setPill($("#authState"),label,kind)}
   function setStatus(title,detail,mark="✦"){
     if($("#statusTitle"))$("#statusTitle").textContent=title;
