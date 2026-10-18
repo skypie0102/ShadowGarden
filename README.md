@@ -26,8 +26,10 @@ The latest verified production release is **v2.12.7**, deployed on 2026-10-18.
 It includes the gradual reader cleanup, shared intrinsic sizing and reproduced
 chapter-boundary/pending-resume jump fixes (RDR-054/055). Bookmark lookup and
 navigation failures now stay quiet after reader disposal. All 211 Node tests and
-362 browser cases pass across five profiles. Live assets, both library footers,
-catalog identity, production bindings and authorized real-book opening are verified.
+362 browser cases pass across five profiles. Live source, version metadata,
+catalog identity and production bindings are verified. Rendered footer inspection
+and credentialed real-book opening were not repeated for this release because
+the live browser surface was unavailable.
 On 2026-10-18 the owner manually verified fast upward scrolling and image-focus
 return on Android / Soul Browser in v2.12.6; both work correctly. The requested
 phone acceptance checks pass. The [release record](docs/READER_RELEASE.md)

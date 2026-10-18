@@ -5,7 +5,7 @@ toast lifetime checks as source `3c0ec3b`. Exact-source CI passes 211 Node tests
 and 362 browser cases. Served assets, bindings and exact catalog/snapshot baseline
 checks pass; live browser-only checks were unavailable. See the
 [release record](READER_RELEASE.md) for evidence and verification boundaries.
-App callback diagnostics are the next source increment. Dated notes below retain
+App callback diagnostics are the current source increment. Dated notes below retain
 their original deployment state.
 
 **Production update — 2026-10-18:** v2.12.6 publishes the merged cleanup,
@@ -18,11 +18,12 @@ the owner manually checked fast upward scrolling and image-focus return on
 Android/Soul in v2.12.6 and reports both work correctly. The requested device
 acceptance gate is complete.
 
-**Current maintenance:** M5c2 bookmark diagnostic/toast lifetime checks are
-verified and merged through [PR #27](https://github.com/skypie0102/ShadowGarden/pull/27).
-All 211 Node tests and 362 browser cases pass across five profiles.
-Next, review app callbacks against their scope, rendition and operation ownership.
-Keep active failures visible and retain the accepted scrolling/focus regressions.
+**Current maintenance:** M5c3 adds reader lifetime checks to reproduced late app
+callbacks: startup TOC loading, page-map refresh, saved-page startup correction
+and flow recovery. Failing-before and active-error controls are documented below.
+The complete five-profile matrix must pass before merge. M5c2 bookmark checks
+are merged and deployed in v2.12.7. Keep active failures visible and retain the
+accepted scrolling/focus regressions.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
@@ -988,3 +989,47 @@ M5c2 is complete; M5c remains in progress for the app callback review described
 above. Production remains the separately accepted v2.12.6 deployment. This source
 increment is merged but has not been deployed and performs no remote data,
 storage, migration or configuration changes.
+
+
+## M5c3 - application callback lifetime
+
+Reviewed on 2026-10-18 from deployed v2.12.7 app source `3c0ec3b`, after
+release documentation commit `ad786b5`. Four asynchronous catches could record
+failures after their reader scope was disposed: startup TOC loading, scheduled
+page-map refresh, startup canonical correction of a page-only saved position,
+and recovery after a failed flow switch. The recovery catch also restored the
+loading error screen after closure. These catches now check the same reader
+lifetime as their owners. A live failure retains its existing diagnostic,
+fallback and recovery UI regardless of error name.
+
+Five new production-reader browser cases use the actual startup, settings,
+page-map and rendition paths. Controlled rejection is substituted only at
+provider boundaries; the saved-page case pauses the real correction paint.
+The TOC test waits for vendor package readiness before disposing, and recovery
+keeps the normal attach-before-display queue order. This isolates reporting
+lifetime from unrelated vendor startup teardown. Four cases first establish
+that an active `AbortError` is reported, then cancel or reject obsolete work;
+the fifth keeps both active flow failure and failed recovery visible. Recovery
+also checks that disposed UI stays hidden and a new reader can open normally.
+Diagnostics retain no raw error details.
+
+The final tests run against byte-identical v2.12.7 app code (SHA256
+`2e07cb961f5b621452faf372520d21ab4171511659e0eb8b2170b046c8833d2d`).
+On both desktop and mobile Chromium, all four obsolete-owner controls fail at
+the diagnostic-count assertion and the active flow control passes: eight
+expected failures, two passes, no uncaught page errors. The candidate retains
+operation-current guards on rendition-specific relayout/canonical navigation,
+synchronous theme errors, and actionable cleanup diagnostics. It changes no
+existing test input, waits, tolerances, retries or scroll/focus assertions.
+
+Local checks use the pinned Chromium runtime and a temporary static frontend
+server with network fixtures; this is separate from the normal Pages/D1 CI
+harness. The Node suite passes all 211 tests. Full audit, binding-aware package
+and five-profile browser CI are required before merge. No production data,
+configuration, dependency, migration, persistence or accepted reader CSS changes
+are part of this increment. Production remains the separately recorded v2.12.7.
+
+The guarded candidate passes all 14 focused browser cases (ten app cases and
+four existing bookmark cases) on both Chromium profiles. The [machine-readable
+record](reader-app-diagnostics.json) retains exact source/test hashes and the
+failing-before comparison. Full five-profile CI follows before merge.
