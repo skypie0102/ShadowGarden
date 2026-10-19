@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 1,
+  "release": "2.15.0",
+  "audit": "CODEBASE_AUDIT_2026-10.md",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "shadowgarden-bon.pages.dev",
+    "deploymentId": "710c6175-587f-40ff-899b-94b5c33e5be5",
+    "deployedAt": "2026-10-19T09:15:01.580677Z",
+    "source": "5718ace6b63fece04794561fa2d988410a6ae366",
+    "tree": "37a45d2c7bac1f34b79dfe6d6b0fd78d68fc0719",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39226860643,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39226860643",
+    "attempt": 1,
+    "conclusion": "success",
+    "testedSource": "c8382bfd14f5cce03422f06f291ca66d909a9564",
+    "testedTree": "37a45d2c7bac1f34b79dfe6d6b0fd78d68fc0719",
+    "nodePassed": 240,
+    "browserPassed": 462,
+    "platformSkips": 8,
+    "profiles": [
+      {
+        "name": "mobile-chromium",
+        "jobId": 117975255482,
+        "passed": 94,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 117975255613,
+        "passed": 94,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 117975255637,
+        "passed": 92,
+        "skipped": 2
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 117975255630,
+        "passed": 90,
+        "skipped": 4
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 117975255562,
+        "passed": 92,
+        "skipped": 2
+      }
+    ],
+    "localTargetedChromiumCases": 32,
+    "localCompletionAssertionFollowupCases": 4,
+    "mergedTreeMatches": true
+  },
+  "corrections": [
+    "A01 Keeper session fencing and re-unlock",
+    "A02 immutable cover retry coordinates",
+    "A03 moved-series scope and legacy links",
+    "A04 protected Request fidelity and cancellation",
+    "A05 discarded provider body cleanup",
+    "A06 explicit catalog configuration failure",
+    "A07 bookmark storage results and row identity",
+    "A08 single Series loading-state owner",
+    "A09 invalid successful Keeper API responses",
+    "A10 repeated backend scans",
+    "A11 validated development toolchain update",
+    "A12 age-gate initialization race"
+  ],
+  "dependencies": {
+    "wrangler": "4.151.1",
+    "playwright": "1.63.0",
+    "npmAuditVulnerabilities": 0,
+    "scope": "development dependency graph; browser-vendored distributions are not covered by npm audit"
+  },
+  "data": {
+    "revision": 8,
+    "updatedAt": "2026-10-18T13:54:43.265Z",
+    "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "snapshots": [
+      {
+        "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
+        "created_at": "2026-10-18T13:54:43.265Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      }
+    ],
+    "documentAndSnapshotsExactlyUnchanged": true,
+    "bindingConfigurationUnchanged": true,
+    "encryptedSettingNamesAndTypesUnchanged": true,
+    "compatibilityDate": "2026-09-23",
+    "compatibilityFlags": [],
+    "databaseWrites": 0,
+    "mediaObjectWrites": 0,
+    "credentialChanges": 0,
+    "checkedAt": "2026-10-19T09:25:06.501Z"
+  },
+  "rollback": {
+    "release": "2.14.1",
+    "deploymentId": "fab2efb5-42d7-4dce-be2c-42990c9b517a",
+    "source": "7d50991eeaca4f96077da2fa1467f99f4e322917"
+  },
+  "packaging": {
+    "staticAssets": 165,
+    "uniqueHashes": 164,
+    "changedAssetsUploaded": 21,
+    "allHashesRevalidated": true,
+    "functionsBindingGuardPassed": true,
+    "compatibilityMetadataChecked": true
+  },
+  "verificationCorrections": [
+    {
+      "ciRunId": 39226579598,
+      "description": "The new completion-link assertion initially read href before asynchronous controller initialization. The corrected assertion waits for the same expected scope; final full CI has no retries."
+    },
+    {
+      "description": "The served-file probe initially expected HTTP 200 for Pages' legacy .html URLs. Pages correctly returns 308 to canonical extensionless URLs; final source comparisons use those canonical routes with the same exact byte hashes."
+    },
+    {
+      "description": "The first live mobile Library assertion expired at the local 5-second default while a module response took 4.7 seconds through the workspace proxy. The live-only harness uses a 15-second readiness assertion budget and reruns the mobile cases; production expectations and zero-retry CI configuration are unchanged."
+    }
+  ],
+  "limits": [
+    "Cross-subsystem source/contract review does not prove absence of bugs or independently audit all vendored code.",
+    "Physical Android/Soul and owner Keeper acceptance retain their earlier release scope; no new physical acceptance is claimed.",
+    "Live browser cases use isolated disposable EPUB/catalog/authorization responses; real CAPTCHA and credential sign-in are not repeated."
+  ],
+  "live": {
+    "checkedAt": "2026-10-19T09:17:49.903629+00:00",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.15.0",
+      "releaseVersion": "2.15.0",
+      "commit": "5718ace6b63fece04794561fa2d988410a6ae366",
+      "shortCommit": "5718ace",
+      "branch": "main",
+      "builtAt": "2026-10-19T09:13:08.575Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "catalogs": {
+      "/media/shadow-garden/data/catalog.json": {
+        "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+        "series": 1,
+        "volumes": 1
+      },
+      "/media/shadow-garden/data/adult-catalog.json": {
+        "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+        "series": 1,
+        "volumes": 1
+      }
+    },
+    "files": [
+      {
+        "path": "assets/js/admin/auth-session.js",
+        "sha256": "3e5914fb0f4aa2a3b517bacf892eb01ccb1555d0fce40fc20f52acb908688910"
+      },
+      {
+        "path": "assets/js/admin/core.js",
+        "sha256": "8957646550c8424d50011aded67a27a9f0abc907e48791569b45c4b6aa547ba2"
+      },
+      {
+        "path": "assets/js/book-access.js",
+        "sha256": "e8df68266e608f9b2a19e3894aa1836fad9803f830d9d87962ea4bbec73e1e0a"
+      },
+      {
+        "path": "assets/js/data-source.js",
+        "sha256": "b763913b871781ef857c519a2866bb59f4136bc784b1f52e69c94d292d59e40f"
+      },
+      {
+        "path": "assets/js/domain/catalog.js",
+        "sha256": "13f1ad83aff6c4d8c82aa7882a2f81253102a360f576548555c3c30586605f6e"
+      },
+      {
+        "path": "assets/js/domain/urls.js",
+        "sha256": "63458cbbfa41d6327167533b6406dfb25908c4081ec829d4135c66bbbed42fab"
+      },
+      {
+        "path": "assets/js/library-renderers.js",
+        "sha256": "5346502f316c3f83ffad314683a950da78247e46a3aa7fa83f1e4071db410121"
+      },
+      {
+        "path": "assets/js/library.js",
+        "sha256": "f7885025b2e999bc5a15432d4e42fbeed7e9655820a203a4f8c5fe3fca8a0983"
+      },
+      {
+        "path": "assets/js/nav-pinned.js",
+        "sha256": "18ea22c0f6ddaf8b9e93a457e45f5d4519a126e8b0d14dcf18ac6964a747ac70"
+      },
+      {
+        "path": "assets/js/public/volume-actions.js",
+        "sha256": "6f199373164a21856d1d00d74cee3dec8038c9d8d746d19f25d8c04fcdc87725"
+      },
+      {
+        "path": "assets/js/reader-bootstrap.js",
+        "sha256": "2eacf39a0f57f09913ec56dd9caefbeaa00efc092216e46bcdbb03a0c4496bb4"
+      },
+      {
+        "path": "assets/js/reader/app.js",
+        "sha256": "4d48cb4953b5f1fedfcba5fed21763fd4a1f50802d5c79f9d297efc2fb500433"
+      },
+      {
+        "path": "assets/js/reader/book-session.js",
+        "sha256": "84b6bb2f2f213736d5ae54856a1df7d0e3389fce13ca4af5e00bdcb54442e06e"
+      },
+      {
+        "path": "assets/js/reader/bookmarks-controller.js",
+        "sha256": "b817fc95fe5538c9c5341b89c66f1c0f9a7a051ead9a1388b8a544072a2d78e1"
+      },
+      {
+        "path": "assets/js/reader/completion.js",
+        "sha256": "397cc67e7352e44dfea80fd48ce3d6299d6601d3a5712a32c6dbf7d2940465aa"
+      },
+      {
+        "path": "assets/js/series-renderers.js",
+        "sha256": "d40c128fa03c036cb5d75f0d42d7207b987dacfbc5ea18d3137bca49532096c2"
+      },
+      {
+        "path": "assets/js/series.js",
+        "sha256": "6000838ca03d739cd860f8d30c9083c1cacec358243e7696588daed1682734ee"
+      },
+      {
+        "path": "assets/js/site-a11y.js",
+        "sha256": "4778979550552c76cd2db7cab9b8661ba1b663803b986aa0987f1721e54f806b"
+      },
+      {
+        "path": "nsfw.html",
+        "sha256": "3e2fa0f97e6a13a6ccfb2367991ffe88b2f9afa925add2ecd1457e4fc80ae66b"
+      },
+      {
+        "path": "series.html",
+        "sha256": "1dcc899ee91f8c8d531a69a2faa8ed412e58ec0ac67068f65551001a4d6e68fc"
+      },
+      {
+        "path": "admin.html",
+        "sha256": "09c10a2190e337297385fd9f708bb87caa1db1c1ae219411d68907a453be26d6"
+      },
+      {
+        "path": "reader.html",
+        "sha256": "46d1b351c0706320c4e5dbd0fe48e767892861a320cfc7af60bad955d73c21c2"
+      },
+      {
+        "path": "assets/js/reader/image-focus.js",
+        "sha256": "079ac2d2af654e244859727a724cfd54413eb1ffedb912c88541d144108cc8b3"
+      },
+      {
+        "path": "assets/js/reader/settings.js",
+        "sha256": "f2edb0fcbab4ddbb020edead9d075816d8de542dbf620d2da0a869b1b092e805"
+      },
+      {
+        "path": "index.html",
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9"
+      }
+    ],
+    "catalogsUnchanged": true,
+    "challengeEndpoints": "200, site keys present",
+    "unauthenticatedAdmin": 401,
+    "missingB2Cover": 404,
+    "knownRawEpubWithoutTicket": 403,
+    "browser": {
+      "casesPassed": 16,
+      "catalogCasesPassed": 10,
+      "readerCasesPassed": 6,
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "source": "deployed production reader/public controllers",
+      "publication": "original disposable technical EPUB",
+      "interceptions": [
+        "fixture book authorization",
+        "fixture EPUB bytes",
+        "fixture public catalogs",
+        "source-configuration outage fixture",
+        "delayed Library module transport"
+      ],
+      "liveAssertionTimeoutMs": 15000,
+      "checks": [
+        "both series move directions and original IDs/legacy links",
+        "correct shelf theme and completion return scope",
+        "age acknowledgement before EPUB fetch",
+        "gate disabled until its module handler is ready",
+        "Series busy state until catalog render",
+        "source outages do not request archived catalogs",
+        "single input remains inactive",
+        "double activation opens/dismisses in Continuous and Pages",
+        "zoom/X return retains image position"
+      ]
+    }
+  },
+  "checkedAt": "2026-10-19T09:25:06.501Z"
+}

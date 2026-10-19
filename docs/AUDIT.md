@@ -2,11 +2,12 @@
 
 ## Current status — 2026-10-19
 
-Production is v2.14.1, source `7d50991`, with 224 Node tests and 432 browser
-passes across five profiles (eight existing platform skips). The [current
-whole-codebase audit](CODEBASE_AUDIT_2026-10.md) records newly reproduced defects,
-implemented corrections and prioritized maintenance work. Its v2.15.0 verification
-is in progress; deployment is recorded independently of implementation.
+Production is v2.15.0, source `5718ace`, with 240 Node tests and 462 browser
+passes across five profiles (eight existing platform skips). The [whole-codebase
+audit](CODEBASE_AUDIT_2026-10.md) records twelve corrections and prioritized
+maintenance work. Sixteen live disposable-fixture cases, served-source checks,
+and exact pre/post data/configuration comparisons pass; [evidence](codebase-release-2.15.0.json)
+records the release independently of implementation.
 
 The documented reader/website ownership refactors and double-activation image
 focus are deployed. The owner manually accepted Android/Soul scrolling and focus

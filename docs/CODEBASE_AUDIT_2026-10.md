@@ -88,14 +88,47 @@ live database/size errors is also removed without changing error codes or contra
    reviewable batches. Review Garden Pass keyboard focus containment with the
    real third-party iframe before changing dialog mechanics.
 
+8. **Website module startup:** measure the serial dynamic-import waterfall and
+   duplicate versioned/unversioned module requests. Evaluate parallel loading and
+   consistent module URLs while preserving initialization order and shared state.
+   The live proxy trace identifies a startup sensitivity, not a measured production
+   performance regression; profile realistic network conditions before changing it.
+
 These are scoped engineering follow-ups, not demonstrated current production
 outages. Avoid broad rewrites, arbitrary sleeps and replacing accepted EPUB.js
 compatibility behavior without a failing reproduction.
 
 ## Validation and release
 
-Implemented as v2.15.0 on `audit/codebase-2026-10`. The local audit, 240 Node tests,
-static build and Wrangler 4.151.1 binding-aware Functions package pass. Additional
-browser verification and the full five-profile CI matrix are in progress. Failing
-controls are retained in test source; the audit also preserves their observed
-old-source failures. Production is still v2.14.1 until guarded deployment completes.
+Merged through [PR #32](https://github.com/skypie0102/ShadowGarden/pull/32) as
+`5718ace6b63fece04794561fa2d988410a6ae366`; its tree exactly matches tested source `c8382bfd14f5cce03422f06f291ca66d909a9564`.
+[Final CI](https://github.com/skypie0102/ShadowGarden/actions/runs/39226860643) passes on attempt 1 with zero test retries:
+
+- Asset/provenance audit, 240 Node tests, static build and binding-aware Functions package.
+- 462 browser passes across desktop/mobile Chromium, Firefox and desktop/mobile
+  WebKit, with eight existing platform skips.
+- 32 focused local Chromium cases, plus four follow-up completion-link cases.
+- Wrangler 4.151.1, zero npm audit vulnerabilities; compatibility date/flags verified.
+
+Production **v2.15.0** is deployed as `710c6175-587f-40ff-899b-94b5c33e5be5` at
+`2026-10-19T09:15:01.580677Z`. Sixteen live browser cases exercise the deployed
+reader/public controllers with original disposable EPUBs, intercepted catalog/
+authorization responses and isolated browser storage. They cover moves in both
+directions, old links, age acknowledgement before EPUB fetch, delayed gate startup,
+loading accessibility, source outages, double image activation and zoom/X return.
+Served-file hashes match the built merge; public challenges, unauthorized admin,
+raw EPUB denial and missing-cover behavior pass.
+
+Both live catalogs retain their exact hashes. The refreshed D1 document and all
+eight snapshots are exactly unchanged at revision 8. Actual/saved bindings, nine
+encrypted setting names/types and compatibility settings match the pre-deploy
+baseline. No database, book-object or credential writes were performed.
+[Machine-readable evidence](codebase-release-2.15.0.json) records IDs, hashes,
+profile counts, rollback and verification corrections. The initial new WebKit
+assertion was changed to await the same asynchronous completion-link value; the
+served-file probe uses Pages' canonical extensionless URLs. These harness
+corrections are separate from application defects.
+
+Earlier physical Android/Soul and owner Keeper acceptance retain their recorded
+release scope. This rollout does not claim new physical acceptance or a completed
+real CAPTCHA/credential flow. The ordered follow-ups above remain open.

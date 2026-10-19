@@ -24,11 +24,14 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.14.1**, deployed on 2026-10-19.
-Images require double tap on touch devices or double click with a mouse to open
-and dismiss focus. The X button remains a single action. All 224 Node tests and
-432 browser cases pass across five profiles, plus six live reader checks with a
-disposable EPUB. See the [reader release record](docs/READER_RELEASE.md).
+The latest verified production release is **v2.15.0**, deployed on 2026-10-19.
+The whole-codebase audit corrects Keeper sessions/retries, moved-series routing,
+protected requests, bookmark persistence, source outages and loading state.
+All 240 Node tests and 462 browser cases pass across five profiles (eight existing
+platform skips), plus 16 live disposable-fixture browser cases. Production data
+and configuration are verified unchanged. See the [audit and follow-ups](docs/CODEBASE_AUDIT_2026-10.md)
+and [release evidence](docs/codebase-release-2.15.0.json).
+Image focus retains double tap/double click to open and dismiss; X remains one action.
 
 **Website refactor: v2.14.0**, deployed on 2026-10-18.
 Mobile reset restores Continuous and desktop reset restores Pages; the main

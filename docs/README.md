@@ -1,15 +1,15 @@
 # ShadowGarden documentation
 
-The latest verified production baseline is v2.14.1, deployed on 2026-10-19.
-Image focus requires double tap or double click for opening and return; the
-[reader release record](READER_RELEASE.md) and [evidence](reader-release-2.14.1.json)
-cover the gesture policy, five-profile CI and live reader verification.
-The [website release record](WEBSITE_RELEASE.md) covers the reset/theme fixes and
-website ownership refactor. The earlier reader cleanup baseline is v2.12.8.
-Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.8.json)
-identify the exact source, automated results and live checks. On 2026-10-18
-the owner manually verified fast upward scrolling and image-focus return on
-Android/Soul in v2.12.6; both requested device checks pass.
+The latest verified production release is v2.15.0, deployed on 2026-10-19.
+The [whole-codebase audit](CODEBASE_AUDIT_2026-10.md) and
+[release evidence](codebase-release-2.15.0.json) cover twelve corrections,
+240 Node tests, 462 browser passes, 16 live fixture cases and unchanged data/configuration.
+The [website release record](WEBSITE_RELEASE.md) retains the reset/theme fixes and
+website ownership refactor. The [reader release record](READER_RELEASE.md) and
+[gesture evidence](reader-release-2.14.1.json) retain double-tap/double-click image
+focus and earlier reader maintenance. The owner manually accepted Keeper in
+v2.12.8, and fast upward scrolling/image-focus return on Android/Soul in v2.12.6.
+Those physical/provider observations keep their original release scope.
 
 | Document | Use it for |
 | --- | --- |

@@ -1,8 +1,8 @@
 # Website ownership
 
-The public website and Keeper retain their existing plain JavaScript delivery and
-Pages Functions API. This refactor changes frontend ownership rather than URLs,
-book identities, storage formats or backend authorization/data operations.
+The public website and Keeper use plain JavaScript delivery and the Pages
+Functions API. Book identities, browser storage formats and backend authorization
+remain stable. Existing links continue to work when series move between shelves.
 
 | Boundary | Owner | Responsibilities |
 | --- | --- | --- |
@@ -22,6 +22,26 @@ book identities, storage formats or backend authorization/data operations.
 | Upload workflow | `admin-upload-workflow.js` | Queue review, upload progress/completion/retry and uploaded-series view |
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
+
+## Catalog and session contracts
+
+`data-source.js` loads the configured live catalogs. A failed/invalid source
+configuration reports an outage; bundled catalogs require explicit local mode.
+`domain/catalog.js` resolves a series against current catalog membership. The
+`adult-` ID prefix remains a compatibility hint. Explicit `nsfw: false` is respected,
+and shared URL builders add `scope=main|adult` only when current membership differs
+from that prefix. Legacy links resolve across both catalogs without changing IDs.
+The resolved scope owns themes, pinned navigation, Garden Pass, reader
+acknowledgement and return/next/restart links. Age-gate Enter stays disabled until
+its handler is installed; the Series controller exclusively owns loading status.
+
+`AdminClient` owns API timeouts, caller cancellation and session generations.
+Locking aborts owned requests, clears editor/revision/mapping state and prevents
+late responses from updating the interface. `auth-session.js` owns challenge/widget
+lifetime and rejects obsolete callbacks. Invalid successful API response bodies
+are errors. Every cover upload attempt gets a fresh immutable coordinate; logical
+cover/book mappings are committed only after upload success. Server reservations
+and snapshot/object immutability still enforce storage safety.
 
 ## Direct copy and presentation
 
