@@ -1,7 +1,7 @@
 /* Shadow Garden R2 — canonical browser-local reading progress service. */
 
 import { bookIdForLegacyPath, cleanIdentities, cleanIdentity, isBookId, legacyBookPath } from "./book-identity.js";
-import { dispatchLocalEvent, listKeys, readJson, removeKey, writeJson } from "./storage.js";
+import { dispatchLocalEvent, listKeys, readJson, writeChanges, writeJson } from "./storage.js";
 
 export const PROGRESS_PREFIX = "sg-progress:";
 export const PROGRESS_EVENT = "sg-progress-changed";
@@ -51,8 +51,7 @@ export function writeProgressAliases(ids, value, { canonicalIdentity = "", notif
   if (!aliases.length || !value || typeof value !== "object" || Array.isArray(value)) return false;
   const canonical = cleanIdentity(canonicalIdentity) || aliases.find(isBookId) || cleanIdentity(value.file) || aliases[0];
   const next = { ...value, file: canonical };
-  let ok = true;
-  for (const id of aliases) ok = writeJson(progressKey(id), next) && ok;
+  const ok = writeChanges(aliases.map(id => ({key: progressKey(id), value: () => JSON.stringify(next)})));
   if (notify && ok) dispatchLocalEvent(PROGRESS_EVENT, { identity: canonical, identities: aliases, progress: next });
   return ok;
 }
@@ -60,10 +59,13 @@ export function writeProgressAliases(ids, value, { canonicalIdentity = "", notif
 export function clearProgressAliases(ids, { notify = true } = {}) {
   const aliases = cleanIdentities(ids);
   if (!aliases.length) return true;
-  let ok = true;
-  for (const id of aliases) ok = removeKey(progressKey(id)) && ok;
+  const ok = writeChanges(progressRemovalChanges(aliases));
   if (notify && ok) dispatchLocalEvent(PROGRESS_EVENT, { identity: aliases[0], identities: aliases, progress: null, cleared: true });
   return ok;
+}
+
+export function progressRemovalChanges(ids) {
+  return cleanIdentities(ids).map(id => ({key: progressKey(id), value: null}));
 }
 
 export function progressAtBeginning(progress) {
