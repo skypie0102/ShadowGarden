@@ -24,14 +24,16 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.15.0**, deployed on 2026-10-19.
-The whole-codebase audit corrects Keeper sessions/retries, moved-series routing,
-protected requests, bookmark persistence, source outages and loading state.
-All 240 Node tests and 462 browser cases pass across five profiles (eight existing
-platform skips), plus 16 live disposable-fixture browser cases. Production data
-and configuration are verified unchanged. See the [audit and follow-ups](docs/CODEBASE_AUDIT_2026-10.md)
-and [release evidence](docs/codebase-release-2.15.0.json).
-Image focus retains double tap/double click to open and dismiss; X remains one action.
+The latest verified production release is **v2.16.0**, deployed on 2026-10-19.
+Keeper history loads ten inspected summaries per page, one full snapshot at a
+time. The large fixture reads 95% fewer document bytes for its first page.
+Readiness has a 20-second deadline and preserves unfinished checks as unverified.
+All 250 Node tests and 477 browser cases pass across five profiles (eight existing
+platform skips), plus six live Keeper frontend fixture cases. Production data and
+configuration are unchanged. See [maintenance budgets](docs/MAINTENANCE_BUDGETS.md)
+and [release evidence](docs/maintenance-release-2.16.0.json).
+The [whole-codebase audit](docs/CODEBASE_AUDIT_2026-10.md) retains the v2.15.0 fixes
+and remaining priorities. Reader double-tap/double-click image focus is unchanged.
 
 **Website refactor: v2.14.0**, deployed on 2026-10-18.
 Mobile reset restores Continuous and desktop reset restores Pages; the main

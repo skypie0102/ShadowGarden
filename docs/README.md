@@ -1,9 +1,12 @@
 # ShadowGarden documentation
 
-The latest verified production release is v2.15.0, deployed on 2026-10-19.
-The [whole-codebase audit](CODEBASE_AUDIT_2026-10.md) and
-[release evidence](codebase-release-2.15.0.json) cover twelve corrections,
-240 Node tests, 462 browser passes, 16 live fixture cases and unchanged data/configuration.
+The latest verified production release is v2.16.0, deployed on 2026-10-19.
+[Maintenance budgets](MAINTENANCE_BUDGETS.md) and
+[release evidence](maintenance-release-2.16.0.json) cover bounded history/readiness,
+250 Node tests, 477 browser passes and six live Keeper frontend fixture cases.
+The [whole-codebase audit](CODEBASE_AUDIT_2026-10.md) retains the twelve v2.15.0
+corrections and remaining priorities; [its evidence](codebase-release-2.15.0.json)
+records that earlier release. Production data/configuration are verified unchanged.
 The [website release record](WEBSITE_RELEASE.md) retains the reset/theme fixes and
 website ownership refactor. The [reader release record](READER_RELEASE.md) and
 [gesture evidence](reader-release-2.14.1.json) retain double-tap/double-click image

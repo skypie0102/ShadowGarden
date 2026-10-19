@@ -2,12 +2,13 @@
 
 ## Current status — 2026-10-19
 
-Production is v2.15.0, source `5718ace`, with 240 Node tests and 462 browser
-passes across five profiles (eight existing platform skips). The [whole-codebase
-audit](CODEBASE_AUDIT_2026-10.md) records twelve corrections and prioritized
-maintenance work. Sixteen live disposable-fixture cases, served-source checks,
-and exact pre/post data/configuration comparisons pass; [evidence](codebase-release-2.15.0.json)
-records the release independently of implementation.
+Production is v2.16.0, source `4b2aed1`, with 250 Node tests and 477 browser
+passes across five profiles (eight existing platform skips). [Maintenance budgets](MAINTENANCE_BUDGETS.md)
+close the first [codebase audit](CODEBASE_AUDIT_2026-10.md) follow-up: paginated,
+one-document-at-a-time history and a request-owned readiness deadline. Six live
+Keeper frontend fixture cases, served-source checks and exact pre/post data/
+configuration comparisons pass. [Release evidence](maintenance-release-2.16.0.json)
+records deployment independently of implementation.
 
 The documented reader/website ownership refactors and double-activation image
 focus are deployed. The owner manually accepted Android/Soul scrolling and focus

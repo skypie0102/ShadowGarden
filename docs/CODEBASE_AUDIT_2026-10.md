@@ -60,12 +60,13 @@ live database/size errors is also removed without changing error codes or contra
 | UI/accessibility | Existing main/adult themes and responsive controls remain; loading state now has one owner. Browser coverage includes real public/controller markup, not only unit mocks. |
 | Tooling | Asset/provenance audit, exact package pins, isolated local D1 harness and actual Functions binding checks remain. New deliberate recovered-file changes are individually listed in the audit script. |
 
-## Remaining improvements, ordered
+## Audit follow-ups, ordered
 
-1. **Maintenance budgets — implementation under verification:** ten-summary
-   history pages inspect one document at a time; readiness has a 20-second
-   deadline with uncertain results after timeout. The 205-snapshot and stalled
-   provider fixtures pass. See [scope and measurements](MAINTENANCE_BUDGETS.md).
+1. **Maintenance budgets — completed in v2.16.0:** ten-summary history pages
+   inspect one document at a time; readiness has a 20-second request deadline.
+   The 205-snapshot fixture reads 95% fewer first-page document bytes, and stalled
+   provider/authentication tests preserve unverified outcomes. See [measurements
+   and release](MAINTENANCE_BUDGETS.md).
 2. **Large-upload memory:** profile the published 50 MiB limit under workerd. The
    bounded byte reader concatenates chunks before ZIP validation and hashing;
    avoid changing the supported limit without measured memory evidence and a
@@ -131,4 +132,5 @@ corrections are separate from application defects.
 
 Earlier physical Android/Soul and owner Keeper acceptance retain their recorded
 release scope. This rollout does not claim new physical acceptance or a completed
-real CAPTCHA/credential flow. The ordered follow-ups above remain open.
+real CAPTCHA/credential flow. Maintenance budgets are completed in v2.16.0;
+the other ordered follow-ups above remain open.

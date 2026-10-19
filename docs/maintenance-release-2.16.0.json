@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "release": "2.16.0",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "https://shadowgarden-bon.pages.dev",
+    "deploymentId": "8212de19-5ccb-40bd-9241-14b9427ea565",
+    "deployedAt": "2026-10-19T10:35:06.445657Z",
+    "source": "4b2aed1a8f75dc5ad50df5cb5bc8f0d7443488ae",
+    "tree": "da077ae49d6471c7bcb3f0b03de19311668712bf",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39236613307,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39236613307",
+    "attempt": 1,
+    "conclusion": "success",
+    "testedSource": "e111ee8f099ad192ffa98ee3d49bb49b8482596e",
+    "testedTree": "da077ae49d6471c7bcb3f0b03de19311668712bf",
+    "mergedTreeMatches": true,
+    "nodePassed": 250,
+    "browserPassed": 477,
+    "platformSkips": 8,
+    "automaticRetries": 0,
+    "profiles": [
+      {
+        "name": "mobile-chromium",
+        "jobId": 118007263712,
+        "passed": 97,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 118007263759,
+        "passed": 97,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 118007263684,
+        "passed": 95,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 118007263699,
+        "passed": 95,
+        "skipped": 2
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 118007263868,
+        "passed": 93,
+        "skipped": 4
+      }
+    ],
+    "localTargetedChromiumCases": 12
+  },
+  "measurements": {
+    "fixtureSnapshots": 205,
+    "snapshotBytes": 62872,
+    "before": {
+      "largestBatch": 200,
+      "largestDocumentBytes": 12574400,
+      "documentRows": 200,
+      "documentBytes": 12574400
+    },
+    "after": {
+      "largestBatch": 1,
+      "largestDocumentBytes": 62872,
+      "documentRows": 10,
+      "documentBytes": 628720
+    },
+    "firstPageDocumentBytesReductionPercent": 95,
+    "largestDocumentResultReductionPercent": 99.5,
+    "scope": "D1 full-document payload and batch retention; not peak heap, CPU or production wall-time measurements"
+  },
+  "bounds": {
+    "historyPageSize": 10,
+    "metadataLookahead": 11,
+    "readinessLimitMs": 20000,
+    "candidates": 3,
+    "keysPerCandidate": 25,
+    "maxObjectProbes": 75,
+    "includesAuthentication": true
+  },
+  "rollback": {
+    "release": "2.15.0",
+    "deploymentId": "710c6175-587f-40ff-899b-94b5c33e5be5",
+    "source": "5718ace6b63fece04794561fa2d988410a6ae366"
+  },
+  "packaging": {
+    "staticAssets": 165,
+    "uniqueHashes": 164,
+    "workerBytes": 129315,
+    "workerCharacters": 129303,
+    "workerChunks": 9,
+    "functionsBindingGuardPassed": true,
+    "compatibilityMetadataChecked": true,
+    "changedAssetsUploaded": 4,
+    "allHashesRevalidated": true
+  },
+  "verificationCorrections": [
+    "The existing damaged-snapshot browser fixture now browses older pages before the same restore/delete assertions.",
+    "The local browser used the matching Playwright headless runtime and a loopback interface shim; committed CI configuration was unchanged."
+  ],
+  "limits": [
+    "The deadline bounds asynchronous waiting; it cannot preempt synchronous JavaScript or forcibly terminate an already-running D1 query.",
+    "The 95% reduction is measured on a disposable 205-snapshot fixture, not a production peak-heap or wall-time benchmark.",
+    "Live Keeper browser cases use disposable intercepted API responses. Authenticated backend mutations are covered by disposable local Pages/D1 and CI cases; production checks verify actual unauthenticated denials.",
+    "This release adds no new physical Android/Soul, owner Keeper or real CAPTCHA acceptance claim."
+  ],
+  "data": {
+    "revision": 8,
+    "updatedAt": "2026-10-18T13:54:43.265Z",
+    "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "snapshots": [
+      {
+        "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
+        "created_at": "2026-10-18T13:54:43.265Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      }
+    ],
+    "documentAndSnapshotsExactlyUnchanged": true,
+    "catalogsExactlyUnchanged": true,
+    "bindingConfigurationUnchanged": true,
+    "encryptedSettingNamesAndTypesUnchanged": true,
+    "encryptedSettingNames": [
+      "B2_READ_APPLICATION_KEY",
+      "B2_READ_KEY_ID",
+      "B2_WRITE_APPLICATION_KEY",
+      "B2_WRITE_KEY_ID",
+      "SESSION_SECRET",
+      "SG_ADMIN_TOKEN",
+      "SG_MEDIA_SIGNING_SECRET",
+      "SG_TURNSTILE_SECRET_KEY",
+      "SG_TURNSTILE_SITE_KEY"
+    ],
+    "compatibilityDate": "2026-09-23",
+    "compatibilityFlags": [],
+    "databaseWrites": 0,
+    "mediaObjectWrites": 0,
+    "credentialChanges": 0,
+    "baselineCheckedAt": "2026-10-19T10:33:33.589Z",
+    "checkedAt": "2026-10-19T10:38:15.292Z"
+  },
+  "live": {
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.16.0",
+      "releaseVersion": "2.16.0",
+      "commit": "4b2aed1a8f75dc5ad50df5cb5bc8f0d7443488ae",
+      "shortCommit": "4b2aed1",
+      "branch": "main",
+      "builtAt": "2026-10-19T10:33:22.078Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "catalogs": {
+      "/media/shadow-garden/data/catalog.json": {
+        "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+        "series": 1,
+        "volumes": 1
+      },
+      "/media/shadow-garden/data/adult-catalog.json": {
+        "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+        "series": 1,
+        "volumes": 1
+      }
+    },
+    "files": [
+      {
+        "path": "admin.html",
+        "sha256": "7ab32bf6387f6c710503c768b5ff73df2b9d48a613ae5d02df17ea88f40a1185"
+      },
+      {
+        "path": "assets/js/admin/history-workflow.js",
+        "sha256": "8ad6f2a28266badf9a42f371dd0e715227c89ed95219d7f71652e269462b7e85"
+      },
+      {
+        "path": "assets/js/admin/recovery-readiness-workflow.js",
+        "sha256": "2be0292a1c5cbe03e4c1d6524401f117c8e8dffa57cf348466551fef63ecb635"
+      },
+      {
+        "path": "index.html",
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9"
+      },
+      {
+        "path": "nsfw.html",
+        "sha256": "3e2fa0f97e6a13a6ccfb2367991ffe88b2f9afa925add2ecd1457e4fc80ae66b"
+      },
+      {
+        "path": "series.html",
+        "sha256": "1dcc899ee91f8c8d531a69a2faa8ed412e58ec0ac67068f65551001a4d6e68fc"
+      },
+      {
+        "path": "reader.html",
+        "sha256": "46d1b351c0706320c4e5dbd0fe48e767892861a320cfc7af60bad955d73c21c2"
+      },
+      {
+        "path": "assets/js/admin/core.js",
+        "sha256": "8957646550c8424d50011aded67a27a9f0abc907e48791569b45c4b6aa547ba2"
+      },
+      {
+        "path": "assets/js/admin/auth-session.js",
+        "sha256": "3e5914fb0f4aa2a3b517bacf892eb01ccb1555d0fce40fc20f52acb908688910"
+      },
+      {
+        "path": "assets/js/reader/settings.js",
+        "sha256": "f2edb0fcbab4ddbb020edead9d075816d8de542dbf620d2da0a869b1b092e805"
+      },
+      {
+        "path": "assets/js/reader/image-focus.js",
+        "sha256": "079ac2d2af654e244859727a724cfd54413eb1ffedb912c88541d144108cc8b3"
+      },
+      {
+        "path": "assets/js/reader/engine.js",
+        "sha256": "54c65c6e9fd34469f24accce88332cb81a7578f3ba0f6ea4b9ee88f1ee59bdd5"
+      },
+      {
+        "path": "assets/js/reader-bootstrap.js",
+        "sha256": "2eacf39a0f57f09913ec56dd9caefbeaa00efc092216e46bcdbb03a0c4496bb4"
+      }
+    ],
+    "catalogsUnchanged": true,
+    "challengeEndpoints": "200, site keys present",
+    "unauthenticatedEndpoints": {
+      "/admin-api/library": 401,
+      "/admin-api/backup": 401,
+      "/admin-api/recovery-readiness": 401
+    },
+    "missingB2Cover": 404,
+    "knownRawEpubWithoutTicket": 403,
+    "verificationStartedAt": "2026-10-19T10:35:49.516112+00:00",
+    "verifiedBefore": "2026-10-19T10:38:15.292Z",
+    "browser": {
+      "casesPassed": 6,
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "source": "Deployed Keeper frontend",
+      "apiResponses": "All /admin-api/** responses intercepted with disposable fixtures; no real login or production snapshot mutation",
+      "realEndpointScope": "Unauthenticated server denials, public challenge metadata, raw EPUB denial and missing media behavior"
+    }
+  },
+  "checkedAt": "2026-10-19T10:38:15.292Z"
+}

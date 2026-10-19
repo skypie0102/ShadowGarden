@@ -1,7 +1,7 @@
 # Bounded Keeper history and recovery readiness
 
-Baseline: v2.15.0, app source `5718ace`; implementation targets v2.16.0.
-Production remains v2.15.0 until release verification is recorded below.
+Baseline: v2.15.0, app source `5718ace`. Deployed as **v2.16.0** on 2026-10-19,
+source `4b2aed1`. Exact release evidence is linked below.
 
 ## Ownership and limits
 
@@ -86,15 +86,34 @@ checks, caller cancellation and stalled metadata.
 
 ## Validation and release
 
-Local asset/provenance audit, 250 Node tests, static build and the binding-aware
-Wrangler 4.151.1 Functions package pass. Twelve focused desktop/mobile Chromium cases pass: six new UI cases and six
-existing real Pages/D1 history, recovery and purge cases. The full five-profile CI
-matrix is pending. Browser cases cover page failure/retry,
-refresh versus a pending old page, and honest time-limit/unverified presentation.
-The existing real Pages/D1 recovery and purge cases remain required.
+Merged through [PR #33](https://github.com/skypie0102/ShadowGarden/pull/33) as
+`4b2aed1a8f75dc5ad50df5cb5bc8f0d7443488ae`. Its tree exactly matches tested source `e111ee8f099ad192ffa98ee3d49bb49b8482596e`.
+[CI](https://github.com/skypie0102/ShadowGarden/actions/runs/39236613307) passes on attempt 1 with zero automatic retries:
 
-No schema, binding, compatibility date/flag, credential, storage format, book ID,
-reader layout or image-gesture change is included. Release verification refreshes
-and compares the production catalogs, exact D1 document/snapshots and saved/active
-configuration. No production seed, restore, deletion or media upload is required.
-The next audit priority is measuring the existing large-upload memory behavior.
+- Asset/provenance audit, 250 Node tests, static build and binding-aware Functions package.
+- 477 browser passes across desktop/mobile Chromium, Firefox and desktop/mobile
+  WebKit, plus eight existing platform skips.
+- Twelve focused local Chromium cases: six new UI cases and six existing real
+  Pages/D1 history, recovery and purge cases. The existing damaged-snapshot fixture
+  now browses older pages before asserting the same restore/delete guards.
+
+Production **v2.16.0** is deployed as `8212de19-5ccb-40bd-9241-14b9427ea565` at
+`2026-10-19T10:35:06.445657Z`. Six live desktop/mobile Chromium cases exercise
+the deployed Keeper frontend with disposable API responses. They verify pagination,
+failed-page retry, refresh cancellation and honest time-limit/unverified copy.
+They do not perform a real login or authenticated production snapshot operations.
+Actual live endpoint checks verify unauthorized denials for Library, the new
+history GET and readiness, plus public challenges, raw EPUB denial and missing
+cover behavior. Served source hashes match the built merge.
+
+Both catalogs retain their exact hashes. The refreshed D1 document and all
+eight snapshots are exactly unchanged at revision 8. Saved/active bindings, nine
+encrypted setting names/types and compatibility settings match the pre-deploy
+baseline. No production seed, migration, restore, deletion, media upload or
+credential change was performed. [Release evidence](maintenance-release-2.16.0.json)
+records IDs, hashes, profile counts, measurements, rollback and verification scope.
+
+The asynchronous deadline does not establish a measured peak-heap or CPU bound;
+its cancellation limits are described above. Physical Android/Soul and owner
+Keeper acceptance retain their earlier release scope. The next audit priority
+is profiling the existing large-upload memory behavior.
