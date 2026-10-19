@@ -179,6 +179,14 @@ test('Catalog History marks damaged snapshots and permits deleting only the sele
   await page.locator('#openMaintenance').click();
   const id=`damaged-${test.info().project.name}`;
   const restore=page.locator(`[data-restore-backup="${id}"]`),remove=page.locator(`[data-delete-backup="${id}"]`);
+  await expect(page.locator('#backupHistoryStatus')).toContainText('snapshots loaded');
+  // Earlier fixture mutations can move this snapshot beyond the first page.
+  // Browse the same explicit older-page controls used in Keeper.
+  for(let pageIndex=0;pageIndex<10&&await restore.count()===0;pageIndex++){
+    const more=page.locator('#loadMoreBackups');if(!await more.isVisible())break;
+    const count=await page.locator('#backupList .maintenance-item').count();await more.click();
+    await expect.poll(()=>page.locator('#backupList .maintenance-item').count()).toBeGreaterThan(count);
+  }
   await expect(restore).toBeDisabled();await expect(restore).toHaveText('Cannot restore');
   await expect(restore.locator('xpath=../..')).toContainText('Damaged snapshot');
   await expect(remove).toBeEnabled();await remove.scrollIntoViewIfNeeded();

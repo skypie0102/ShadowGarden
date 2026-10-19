@@ -33,14 +33,13 @@ export async function saveState(env,previous,document,reason) {
   if (results[1]?.meta?.changes !== 1) fail(409,'catalog_conflict','The catalog changed during this edit. Reload and retry.');
   return {revision:previous.revision+1,serialized:next,document,updated_at:date,source:'reconstructed-d1'};
 }
-export async function snapshots(env) {
-  const result=await database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots ORDER BY created_at DESC LIMIT 200').all();
-  return result.results || [];
+export async function snapshotRecord(env,id) {
+  return database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots WHERE id = ?').bind(id).first();
 }
 export async function recoverySnapshots(env) {
   // Count the full history while loading only the bounded candidates. Both
   // values come from one statement, including during concurrent history edits.
-  const result=await database(env).prepare('SELECT id,reason,created_at,document,sha256,COUNT(*) OVER () AS retained_count FROM snapshots ORDER BY created_at DESC LIMIT 3').all();
+  const result=await database(env).prepare('SELECT id,reason,created_at,sha256,COUNT(*) OVER () AS retained_count FROM snapshots ORDER BY created_at DESC,id DESC LIMIT 3').all();
   const entries=result.results || [];
   return {entries,total:entries[0]?.retained_count || 0};
 }

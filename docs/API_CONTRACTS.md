@@ -28,7 +28,7 @@ returned in error payloads. Success payloads include `revision` when applicable.
 | `/admin-api/translations` | POST | `admin/translation-workflow.js`: series/volume credits; sanitized HTTP(S) links |
 | `/admin-api/series-banner` | GET, POST | `admin/library-workflow.js`: GET `id` returns `choices,current`; POST `{id,bannerBookId}` |
 | `/admin-api/maintenance` | GET, POST | Health/taxonomy/backups/trash; actions listed below |
-| `/admin-api/backup` | POST | `admin/history-workflow.js`: `{action:"delete",id}` removes selected snapshot only |
+| `/admin-api/backup` | GET, POST | `admin/history-workflow.js`: GET optional `cursor` returns a bounded history page; POST `{action:"delete",id}` removes selected snapshot only |
 | `/admin-api/recovery-readiness` | GET | `admin/recovery-readiness-workflow.js`: catalog structure, snapshot checksums and active/trash media presence; static recovered covers or B2, protected EPUBs only B2 |
 | `/admin-api/abuse` | GET, POST | `admin/abuse-workflow.js`: pseudonymous cooldown events; `{action:"release",clientId}` releases public limits only |
 | `/admin-api/recovery` | GET, POST | Route exists in inventory but no client call was recovered. GET exposes readiness; POST `{action:"restore-snapshot",id,sha256}` restores validated metadata with required `If-Match` and a safety backup |
@@ -77,9 +77,24 @@ present. Recovered static images count only when the asset response is an image;
 EPUBs never use the static fallback. The separate Deep B2 check remains B2-only.
 An empty snapshot needs no provider access. Uninspected snapshots, provider
 failures and over-limit candidates remain uncertain.
-The history panel displays the newest 200 entries. Readiness counts the entire
-retained history in the same query that loads its newest three candidates; its
-totals do not inherit the panel's display limit or load older document payloads.
+History returns ten inspected summaries at a time. Maintenance responses include
+`backups` plus `history: {total,pageSize:10,nextCursor}`. Authenticated
+`GET /admin-api/backup?cursor=…` returns another page with `revision` and
+`catalog.readable`, without recomputing health/taxonomy/purge reports. A null cursor
+ends pagination. Invalid cursors return 400 `invalid_history_cursor`; ordinary
+admin session/origin checks still apply. Timestamp/ID keyset ordering handles tied
+dates and deletion of the cursor row. Full documents are loaded one at a time;
+paging never prunes retained history or its protected media references.
+
+Readiness counts the entire retained history in the metadata query selecting its
+newest three candidates, then loads candidate documents individually. Its
+20-second asynchronous deadline includes authentication, provider
+authorization, object probes and Assets. Incomplete time-limited reports expose
+`readiness.budget: {limitMs:20000,exhausted:true}` and count unfinished candidates
+as uncertain/unverified. A late successful probe cannot create an anchor. If the
+deadline prevents constructing a report, return 408 `readiness_timeout`; caller
+cancellation returns 408 `readiness_cancelled`. These are read-only checks, and the
+separate Deep B2 contract remains unchanged. See [maintenance budgets](MAINTENANCE_BUDGETS.md).
 
 ## Security policy
 

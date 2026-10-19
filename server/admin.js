@@ -1,9 +1,13 @@
 import {bodyJson, boundedBytes, fail, json, method, required, safeUrl, text} from './http.js';
 import {database, digest, now, requireAdmin} from './security.js';
-import {adminLibrary, counts, inspectSnapshot, loadState, loadStateRecord, readableState, recoverySnapshots, saveState, snapshots} from './state.js';
+import {adminLibrary, inspectSnapshot, loadState, loadStateRecord, readableState, saveState, snapshotRecord} from './state.js';
 import {inspectCatalog} from './catalog-document.js';
+import {health} from './catalog-health.js';
+import {snapshotHistory} from './snapshot-history.js';
+import {checkObjects,readiness} from './recovery-readiness.js';
+export {health,checkObjects,readiness};
 import {activeBooks, bookIdForKey} from './books.js';
-import {getObject, getStaticCover, objectKey, storageConfigured, uploadObject} from './storage.js';
+import {getObject, objectKey, storageConfigured, uploadObject} from './storage.js';
 import {validateEpub} from './epub.js';
 import {createPurge,continuePurge,purgeJobs} from './purge.js';
 import {CANONICAL_GENRES, normalizeSeriesTaxonomy, taxonomyDiff} from '../public/assets/js/domain/catalog-taxonomy.js';
@@ -162,50 +166,16 @@ export async function translationUpdate(context) {
   return json(adminLibrary(await saveState(context.env,row,doc,'translations')));
 }
 
-export function health(doc,{includeTrash=false}={}) {
-  const objectKeys=new Set(),issues=[],optimizationCandidates=[];let missingCovers=0,missingThumbs=0,missingBookMappings=0;
-  for (const scope of ['main','adult']) for (const s of [...doc[scope],...(includeTrash?doc.trash.filter(t=>t.scope===scope).map(t=>t.type==='series'?t.series:{...t.series,volumes:[t.volume]}):[])]) {
-    const check=(v,volumeIndex)=>{
-      for (const field of ['cover','coverThumb']) if (v[field]?.startsWith('/media/')) objectKeys.add(v[field].slice(7));
-      if (!v.cover) missingCovers++;
-      if (v.cover&&!v.coverThumb) {missingThumbs++;optimizationCandidates.push({scope,seriesId:s.id,seriesTitle:s.title,volumeIndex,volumeTitle:v.title,volumeFile:doc.books[v.bookId]?`/media/${doc.books[v.bookId]}`:'',source:v.cover});}
-    };
-    check(s,null);
-    for (const [index,v] of s.volumes.entries()) {
-      check(v,index);
-      if (doc.books[v.bookId]) objectKeys.add(doc.books[v.bookId]);
-      else {missingBookMappings++;issues.push({severity:'error',code:'missing-book-mapping',title:'Private book mapping missing',detail:`${v.title} (${v.bookId})`});}
-    }
-  }
-  if (missingCovers) issues.push({severity:'warning',code:'missing-covers',title:'Missing covers',detail:`${missingCovers} catalog entries lack a cover.`});
-  return {status:issues.some(x=>x.severity==='error')?'attention':issues.length?'warning':'healthy',counts:counts(doc),
-    metrics:{referencedObjects:objectKeys.size,missingCovers,missingThumbs,missingBookMappings,legacyIdentity:0,trashItems:doc.trash.length},issues,objectKeys:[...objectKeys],optimizationCandidates};
-}
 async function maintenanceData(env,row) {
-  const saved=await snapshots(env),{document:doc,error}=inspectCatalog(row.serialized),backups=[];
-  for (const entry of saved) {
-    const result=await inspectSnapshot(entry);
-    backups.push({id:entry.id,reason:entry.reason,createdAt:entry.created_at,counts:result.error?null:counts(result.document),restorable:!result.error,
-      integrity:{status:result.error?'damaged':'valid',detail:result.error||'Catalog snapshot validated. Check recovery readiness for media availability.'}});
-  }
+  const {backups,history}=await snapshotHistory(env),{document:doc,error}=inspectCatalog(row.serialized);
   const preview=doc?allSeries(doc).map(s=>({...taxonomyDiff(s),title:s.title,beforeGenres:s.genres||[],beforeTags:s.tags||[]})).filter(x=>x.changed):[];
   const report=doc?health(doc):{status:'attention',counts:{series:'—',volumes:'—'},metrics:{referencedObjects:'—',missingCovers:'—',missingThumbs:'—',legacyIdentity:'—',trashItems:'—'},
     issues:[{severity:'error',code:'catalog-damaged',title:'Live catalog is unreadable',detail:'Restore a valid snapshot from Catalog History. The current catalog will be preserved in a safety backup.'}],objectKeys:[],optimizationCandidates:[]};
-  return {ok:true,revision:row.revision,catalog:{readable:!error,detail:error},health:report,trash:doc?doc.trash.map(({series,volume,...entry})=>entry):[],backups,purgeJobs:await purgeJobs(env),
+  return {ok:true,revision:row.revision,catalog:{readable:!error,detail:error},health:report,trash:doc?doc.trash.map(({series,volume,...entry})=>entry):[],backups,history,purgeJobs:await purgeJobs(env),
     taxonomy:{readable:!error,totalSeries:doc?allSeries(doc).length:null,affectedSeries:preview.length,canonicalGenreCount:CANONICAL_GENRES.length,preview:preview.slice(0,100)}};
 }
-export async function checkObjects(env,keys,{includeAssets=false,origin}={}) {
-  const missing=[];
-  for (const key of keys) {
-    objectKey(key);
-    const found=(includeAssets && await getStaticCover(env,key,{head:true,origin})) || await getObject(env,key,{head:true});
-    if (!found) missing.push({key});
-    else {await found.body?.cancel();if (!found.ok) fail(502,'storage_error','Media presence could not be verified.');}
-  }
-  return {checked:keys.length,missing};
-}
 async function backupRow(env,id) {
-  const row=await database(env).prepare('SELECT id,reason,created_at,document,sha256 FROM snapshots WHERE id = ?').bind(text(id,100)).first();
+  const row=await snapshotRecord(env,text(id,100));
   if (!row) fail(404,'backup_not_found','Backup not found.');
   return row;
 }
@@ -271,33 +241,15 @@ export async function maintenance(context) {
   return json({...await maintenanceData(context.env,row),...extra});
 }
 export async function backup(context) {
-  method(context.request,['POST']);await requireAdmin(context);const p=await bodyJson(context.request);
+  method(context.request,['GET','POST']);await requireAdmin(context);
+  if(context.request.method==='GET'){
+    const row=await loadStateRecord(context.env);
+    return json({ok:true,revision:row.revision,catalog:{readable:!inspectCatalog(row.serialized).error},...await snapshotHistory(context.env,{cursor:new URL(context.request.url).searchParams.get('cursor')||''})});
+  }
+  const p=await bodyJson(context.request);
   if (p.action!=='delete') fail(400,'unknown_action','Use maintenance to create or restore a snapshot.');
   const selected=await backupRow(context.env,p.id);await database(context.env).prepare('DELETE FROM snapshots WHERE id = ?').bind(selected.id).run();
   return json({ok:true});
-}
-export async function readiness(context) {
-  method(context.request,['GET']);await requireAdmin(context);
-  const row=await loadStateRecord(context.env,{writable:true}),live=inspectCatalog(row.serialized),{entries:saved,total}=await recoverySnapshots(context.env);
-  let verified=0,damaged=0,uncertain=0,stale=0,inspected=0,anchor=null,candidate=null;
-  // Inspect at most 3 complete snapshots and 75 media keys per request.
-  for (const snapshot of saved.slice(0,3)) {
-    inspected++;const result=await inspectSnapshot(snapshot);
-    if (result.error) {damaged++;continue;}
-    verified++;const report=health(result.document,{includeTrash:true});
-    const choice={id:snapshot.id,sha256:snapshot.sha256,reason:snapshot.reason,createdAt:snapshot.created_at,counts:counts(result.document),mediaStatus:'unverified'};
-    candidate ||= choice;
-    if (report.metrics.missingBookMappings) {choice.mediaStatus='incomplete';stale++;continue;}
-    if (report.objectKeys.length>25) {uncertain++;continue;}
-    try {const result=await checkObjects(context.env,report.objectKeys,{includeAssets:true,origin:new URL(context.request.url).origin});if (!result.missing.length) {choice.mediaStatus='complete';candidate=choice;anchor={...choice,verified:true,objectCount:result.checked};break;}choice.mediaStatus='incomplete';stale++;}
-    catch {uncertain++;}
-  }
-  uncertain+=total-inspected;
-  return json({ok:true,revision:row.revision,summary:{total,verified,damaged},
-    live:{entries:['main','adult'].map(scope=>({scope,readable:!live.error,detail:live.error||`${live.document[scope].length} series; ${row.source}`}))},
-    readiness:{status:live.error?'recovery-required':anchor?'ready':'not-ready',anchor,candidate,staleSnapshots:stale,uncertainSnapshots:uncertain,
-      detail:live.error?(anchor?'The live catalog is damaged. A verified recovery snapshot is available in Catalog History.':'The live catalog is damaged and no object-complete recovery snapshot was proven. Inspect Catalog History and restore missing media separately.'):
-        anchor?'A validated snapshot with all active and trashed media was verified.':'No object-complete recovery snapshot was proven. Missing mappings or media must be restored separately.'}});
 }
 export async function recovery(context) {
   method(context.request,['GET','POST']);

@@ -62,10 +62,10 @@ live database/size errors is also removed without changing error codes or contra
 
 ## Remaining improvements, ordered
 
-1. **Maintenance budgets:** paginate/inspect history in bounded batches instead of
-   loading up to 200 full snapshot documents. Give readiness an overall deadline
-   in addition to its 75-key/request bound and individual provider timeouts. Measure
-   these cases with large disposable catalogs and slow provider fixtures first.
+1. **Maintenance budgets — implementation under verification:** ten-summary
+   history pages inspect one document at a time; readiness has a 20-second
+   deadline with uncertain results after timeout. The 205-snapshot and stalled
+   provider fixtures pass. See [scope and measurements](MAINTENANCE_BUDGETS.md).
 2. **Large-upload memory:** profile the published 50 MiB limit under workerd. The
    bounded byte reader concatenates chunks before ZIP validation and hashing;
    avoid changing the supported limit without measured memory evidence and a
