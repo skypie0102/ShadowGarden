@@ -1,6 +1,16 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-18:** v2.14.0, deployment
+**Last verified production release — 2026-10-19:** v2.14.1, deployment
+`fab2efb5-42d7-4dce-be2c-42990c9b517a`, clean main source
+`7d50991eeaca4f96077da2fa1467f99f4e322917`. Double tap/click now opens and
+returns from image focus. All 224 Node tests and 432 browser cases pass across
+five profiles, plus six isolated checks against the deployed reader. Exact served
+files, revision-8 document/eight snapshots, actual/saved bindings, encrypted-setting
+metadata, both catalogs, challenge endpoints and access-denial/B2 probes pass.
+See [reader release evidence](reader-release-2.14.1.json). The retained rollback
+is v2.14.0 deployment `c91b8b1e-2033-4215-b59c-61edb547749f`.
+
+**Website refactor release — 2026-10-18:** v2.14.0, deployment
 `c91b8b1e-2033-4215-b59c-61edb547749f`, clean `main` source
 `ff5bb9c700d0e709d9e838791a282946a8c47533`, deployed at 21:51:59 UTC.
 The [website release record](WEBSITE_RELEASE.md) and

@@ -310,12 +310,12 @@ vendor promise never settles; late results cannot continue application startup.
 
 | Owner | Lifetime and cleanup |
 | --- | --- |
-| Protected runtime | `createReaderRuntime().open()` replaces its previous startup/application. `dispose()` removes interaction/touch controllers and their observers, cancels authorization/preparation, closes the app and releases the failure-view actions. Retry uses the same runtime. |
+| Protected runtime | `createReaderRuntime().open()` replaces its previous startup/application. `dispose()` removes the interaction controller and its observers, cancels authorization/preparation, closes the app and releases the failure-view actions. Retry uses the same runtime. |
 | Authorized session | `session.dispose()` removes foreground/pageshow renewal listeners. Pending renewals cannot mutate a disposed session's ticket. Each replacement session installs its own bindings. Read Again checks cancellation before clearing progress. |
 | Application | `startReader()` replaces an earlier app and returns an abort signal plus `dispose()`. It owns settings/input/drawer listeners, controller cleanup, startup, relayout timers, the page map and the publication. Teardown invalidates navigation before vendor destruction and clears reader frames, hit surfaces and controller lists. |
 | Book/rendition | The engine installs a resource scope once per instance. Book destruction closes remaining renditions; a destroyed rendition detaches from the book's ownership. Navigation delegation, content hooks, marker polling, compatibility timers and manager work are released before vendor teardown. |
 | Contents/manager | Contents destruction releases iframe listeners and delayed height/theme repair as soon as a view is trimmed, without waiting for the whole book to close. Continuous managers own neighbor-display deadlines, paint waits and cleanup of debounce/trim work. |
-| Controller UI | Bookmark rows and search results have replaceable child scopes. Re-rendering releases old controls immediately. Interaction/touch controllers prune disconnected frames and hit targets from their ownership maps. |
+| Controller UI | Bookmark rows and search results have replaceable child scopes. Re-rendering releases old controls immediately. The interaction controller prunes disconnected frames. The image controller owns touch listeners with each EPUB contents scope and WebKit hit surface; no global image-touch observer is installed. |
 
 The installed EPUB prototype patches and the page's external-link, footnote and
 Read Again dialog shells remain runtime resources. They do not get installed

@@ -14,7 +14,7 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 - Main and age-gated libraries with series, volumes, covers and reading status.
 - Paginated and Continuous reading, chapter navigation, book search, bookmarks,
   saved progress, themes and layout preferences.
-- Image focus with zoom and return-position preservation, plus standalone
+- Double-tap/double-click image focus with zoom and return-position preservation, plus standalone
   cover/illustration preparation and bounded local caches.
 - Protected book access through Turnstile sessions and object-specific tickets.
 - Keeper catalog editing, uploads, translations, banners and taxonomy tools.
@@ -23,7 +23,13 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest verified production release is **v2.14.0**, deployed on 2026-10-18.
+The latest verified production release is **v2.14.1**, deployed on 2026-10-19.
+Images require double tap on touch devices or double click with a mouse to open
+and dismiss focus. The X button remains a single action. All 224 Node tests and
+432 browser cases pass across five profiles, plus six live reader checks with a
+disposable EPUB. See the [reader release record](docs/READER_RELEASE.md).
+
+**Website refactor: v2.14.0**, deployed on 2026-10-18.
 Mobile reset restores Continuous and desktop reset restores Pages; the main
 Garden Pass uses midnight colors. The website now authors final copy directly,
 owns themes separately from navigation, separates Library URL state and local

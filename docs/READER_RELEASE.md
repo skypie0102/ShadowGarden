@@ -1,7 +1,42 @@
 # Reader releases
 
-**Current production baseline:** v2.12.8. Ongoing
+**Current production baseline:** v2.14.1. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.14.1 — deliberate image activation
+
+**Live:** deployment `fab2efb5-42d7-4dce-be2c-42990c9b517a` succeeded on 2026-10-19 at 04:19:16 UTC,
+from clean main source `7d50991eeaca4f96077da2fa1467f99f4e322917`, tree `9fef342281ffee0765010cee653346b0ea03d8da`.
+[PR #31](https://github.com/skypie0102/ShadowGarden/pull/31) requires double tap
+on touch devices and double click with a mouse to open or dismiss image focus.
+Single input remains inert; the explicit X close button and Escape remain available.
+The mobile hint now says double-tap to return.
+
+The image controller owns touch transport for each EPUB document and WebKit parent
+hit surface. It replaces competing single-pointer, click and global touch-fallback
+opening paths; one physical tap enters the recognizer once. A pair requires the
+same image, nearby points and at most 350 ms. Scrolls, movement, multi-touch,
+cancelled touches and long presses clear the pair. Native reading scroll/pinch,
+focused-image zoom/pan, artwork colors and reading-position restoration remain.
+
+The two activation controls fail on the original implementation and pass on the
+correction. Audit, 224 Node tests, static build and the binding-aware Functions
+package pass. [CI 39197714084](https://github.com/skypie0102/ShadowGarden/actions/runs/39197714084)
+passes all five profiles on the tested tree: 432 browser passes and eight existing
+platform skips. Local desktop/mobile Chromium also pass 50 targeted cases. The
+new full-reader cases exercise single input, separated input and double activation
+in both Continuous and Pages. Repeated return, image-only covers, zoom/pan and
+color regressions retain their position/appearance assertions.
+
+Production checks compare exact served reader files and version metadata, both
+public catalog hashes, the revision-8 D1 document and eight snapshots, actual/saved
+bindings and encrypted-setting metadata. No catalog, object, credential or database
+migration is performed. All six live desktop/mobile Chromium cases pass against the deployed reader with an original disposable EPUB: single/separated input, double activation in both flows, and zoom/X return. Only fixture responses are intercepted inside those browser contexts.
+
+Physical Android/Soul acceptance from v2.12.6 is historical; this release's touch
+checks use browser device emulation. Real-book authorization/CAPTCHA is not repeated.
+The retained rollback is v2.14.0 deployment `c91b8b1e-2033-4215-b59c-61edb547749f`.
+[Structured verification evidence](reader-release-2.14.1.json).
 
 ## Reader v2.12.8 — app callback lifetime
 

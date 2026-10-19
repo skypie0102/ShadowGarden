@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "release": "2.14.1",
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "shadowgarden-bon.pages.dev",
+    "deploymentId": "fab2efb5-42d7-4dce-be2c-42990c9b517a",
+    "deployedAt": "2026-10-19T04:19:16.538216Z",
+    "source": "7d50991eeaca4f96077da2fa1467f99f4e322917",
+    "tree": "9fef342281ffee0765010cee653346b0ea03d8da",
+    "branch": "main",
+    "commitDirty": false
+  },
+  "ci": {
+    "runId": 39197714084,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39197714084",
+    "attempt": 1,
+    "conclusion": "success",
+    "testedSource": "0fbd7002ff49eafde62679d6049e68cd12638c8b",
+    "testedTree": "9fef342281ffee0765010cee653346b0ea03d8da",
+    "mergedTreeMatches": true,
+    "nodePassed": 224,
+    "browserPassed": 432,
+    "platformSkips": 8,
+    "profiles": [
+      {
+        "name": "mobile-webkit",
+        "jobId": 117884072480,
+        "passed": 84,
+        "skipped": 4
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 117884072485,
+        "passed": 86,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 117884072509,
+        "passed": 86,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 117884072513,
+        "passed": 88,
+        "skipped": 0
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 117884072585,
+        "passed": 88,
+        "skipped": 0
+      }
+    ],
+    "localTargetedChromiumCases": 50,
+    "controls": {
+      "originalImplementationFailed": 2,
+      "correctedImplementationPassed": 2
+    }
+  },
+  "gesturePolicy": {
+    "touch": "double tap to open and dismiss",
+    "mouse": "double click to open and dismiss",
+    "explicitCloseButton": "one activation",
+    "escape": "retained",
+    "tapIntervalMs": 350,
+    "tapRadiusPx": 24,
+    "rejects": [
+      "scroll",
+      "movement",
+      "multi-touch",
+      "cancelled touch",
+      "long press"
+    ],
+    "singlePhysicalTapCountedOnce": true
+  },
+  "data": {
+    "revision": 8,
+    "updatedAt": "2026-10-18T13:54:43.265Z",
+    "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "documentAndSnapshotsExactlyUnchanged": true,
+    "snapshots": [
+      {
+        "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
+        "created_at": "2026-10-18T13:54:43.265Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+        "created_at": "2026-10-17T04:40:11.572Z",
+        "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+      },
+      {
+        "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+        "created_at": "2026-10-17T04:39:34.828Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+        "created_at": "2026-10-03T11:48:02.789Z",
+        "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+      },
+      {
+        "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+        "created_at": "2026-10-17T04:40:05.183Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      },
+      {
+        "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+        "created_at": "2026-10-03T11:52:50.670Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+        "created_at": "2026-10-03T11:52:35.187Z",
+        "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+      },
+      {
+        "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+        "created_at": "2026-10-17T04:39:54.200Z",
+        "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+      }
+    ],
+    "bindingConfigurationUnchanged": true,
+    "encryptedSettingNamesAndTypesUnchanged": true,
+    "databaseWrites": 0,
+    "mediaObjectWrites": 0,
+    "credentialChanges": 0
+  },
+  "rollback": {
+    "release": "2.14.0",
+    "deploymentId": "c91b8b1e-2033-4215-b59c-61edb547749f"
+  },
+  "limits": [
+    "Browser touch profiles emulate devices; no new physical Android/Soul acceptance is claimed.",
+    "Live browser checks intercept only disposable EPUB/catalog/authorization responses in isolated contexts; real CAPTCHA and credential sign-in are not repeated."
+  ],
+  "verificationCorrections": [
+    "Asset helper accepted a successful confirmation without a result property, then rechecked all asset hashes before publishing.",
+    "The adult catalog smoke-check URL was corrected to adult-catalog.json. Its response is compared with the previously verified v2.14.0 hash; the refreshed D1 document has the same exact hash."
+  ],
+  "checkedAt": "2026-10-19T04:21:42.328705+00:00",
+  "live": {
+    "checkedAt": "2026-10-19T04:21:42.328705+00:00",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.14.1",
+      "releaseVersion": "2.14.1",
+      "commit": "7d50991eeaca4f96077da2fa1467f99f4e322917",
+      "shortCommit": "7d50991",
+      "branch": "main",
+      "builtAt": "2026-10-19T04:17:33.797Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "files": [
+      {
+        "path": "reader.html",
+        "sha256": "46d1b351c0706320c4e5dbd0fe48e767892861a320cfc7af60bad955d73c21c2"
+      },
+      {
+        "path": "assets/js/reader-bootstrap.js",
+        "sha256": "1083fd84dcda2caa4aa27107841e352ad62da1148417ce087cbd727828351de3"
+      },
+      {
+        "path": "assets/js/reader/image-focus.js",
+        "sha256": "079ac2d2af654e244859727a724cfd54413eb1ffedb912c88541d144108cc8b3"
+      },
+      {
+        "path": "assets/js/reader/image-focus-touch-compat.js",
+        "sha256": "0e17f728e006451405951ebe6b1ca99d09400783a07485dd84cb7fa951113214"
+      },
+      {
+        "path": "assets/css/reader-image-focus.css",
+        "sha256": "7b799ee09cbbf69a24e7a0ec3583b56d74b862718b00c1eaa1a8708af919ab4b"
+      },
+      {
+        "path": "assets/js/reader/settings.js",
+        "sha256": "f2edb0fcbab4ddbb020edead9d075816d8de542dbf620d2da0a869b1b092e805"
+      },
+      {
+        "path": "assets/js/reader/engine.js",
+        "sha256": "54c65c6e9fd34469f24accce88332cb81a7578f3ba0f6ea4b9ee88f1ee59bdd5"
+      },
+      {
+        "path": "assets/js/reader-a11y.js",
+        "sha256": "a2b0e011da4deafd5b785e312fa0209564323eadf11b5b58b795bc3f0c6a9197"
+      },
+      {
+        "path": "index.html",
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9"
+      }
+    ],
+    "catalogsUnchanged": true,
+    "challengeEndpoints": "200, site keys present",
+    "unauthenticatedAdmin": 401,
+    "missingB2Cover": 404,
+    "knownRawEpubWithoutTicket": 403,
+    "browser": {
+      "casesPassed": 6,
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "source": "deployed production reader",
+      "publication": "original disposable technical EPUB",
+      "interceptions": [
+        "fixture book authorization",
+        "fixture EPUB bytes",
+        "fixture public catalog"
+      ],
+      "checks": [
+        "single input remains inactive",
+        "separated input remains inactive",
+        "double activation opens and dismisses in Continuous and Pages",
+        "zoom/X return retains image position"
+      ]
+    },
+    "catalogHashes": {
+      "/media/shadow-garden/data/catalog.json": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+      "/media/shadow-garden/data/adult-catalog.json": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63"
+    }
+  },
+  "packaging": {
+    "staticAssets": 165,
+    "uniqueHashes": 164,
+    "changedAssetsUploaded": 5,
+    "allHashesRevalidated": true,
+    "functionsBindingGuardPassed": true
+  }
+}

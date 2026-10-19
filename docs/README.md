@@ -1,8 +1,11 @@
 # ShadowGarden documentation
 
-The latest verified production baseline is v2.14.0, deployed on 2026-10-18.
+The latest verified production baseline is v2.14.1, deployed on 2026-10-19.
+Image focus requires double tap or double click for opening and return; the
+[reader release record](READER_RELEASE.md) and [evidence](reader-release-2.14.1.json)
+cover the gesture policy, five-profile CI and live reader verification.
 The [website release record](WEBSITE_RELEASE.md) covers the reset/theme fixes and
-website ownership refactor. The completed reader baseline below is v2.12.8.
+website ownership refactor. The earlier reader cleanup baseline is v2.12.8.
 Its [release record](READER_RELEASE.md) and [verification evidence](reader-release-2.12.8.json)
 identify the exact source, automated results and live checks. On 2026-10-18
 the owner manually verified fast upward scrolling and image-focus return on

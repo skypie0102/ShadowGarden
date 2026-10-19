@@ -1,6 +1,15 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-18:** v2.12.8 publishes the M5c3 app callback
+**Latest deployment — 2026-10-19:** v2.14.1 requires double tap on touch devices
+and double click with a mouse to open and dismiss image focus. Single input is
+inert; X and Escape remain available. The image controller owns touch transport
+for EPUB contents and WebKit hit surfaces, replacing the global fallback observer
+and competing single-input opening paths. Original controls fail before the fix;
+224 Node tests, 432 browser cases and six deployed-reader fixture cases pass.
+Reading position, zoom/pan and artwork colors retain their regression checks.
+See the [release record](READER_RELEASE.md) and [evidence](reader-release-2.14.1.json).
+
+**Reader cleanup baseline — 2026-10-18:** v2.12.8 publishes the M5c3 app callback
 lifetime checks as source `7d3dbed`. Exact-source CI passes 211 Node tests and
 387 browser cases. Served assets, bindings and the refreshed revision-8 catalog/
 eight-snapshot baseline checks pass. Both painted library footers are subsequently
@@ -24,7 +33,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-is v2.12.8; M5c3 and the documented M1–M5 maintenance are deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.14.1; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
