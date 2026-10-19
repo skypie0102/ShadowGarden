@@ -48,7 +48,8 @@ export async function media(context) {
   objectKey(key);
   if (key.startsWith('shadow-garden/books/')) {
     const {document}=await loadState(env);
-    const id=Object.keys(document.books).find(value=>document.books[value]===key && activeBooks(document).has(value));
+    const active=activeBooks(document);
+    const id=Object.keys(document.books).find(value=>document.books[value]===key && active.has(value));
     if (!id) fail(404,'book_not_found','Book not found.');
     const token=url.searchParams.get('sig') || cookies(request)[`__Secure-sg_book_${id}`];
     const claims=await verified(env,token,'book','BOOK_SIGNING_SECRET');

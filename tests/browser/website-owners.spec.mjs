@@ -94,3 +94,29 @@ test('the shared verification loader retries a failed script without leaving a d
   expect(await page.evaluate(()=>window.retriedGate)).toBe('Human verification was cancelled.');
   expect(loads).toBe(2);
 });
+
+test('Keeper can unlock again after locking a completed verification widget',async({page,context})=>{
+  await page.addInitScript(()=>{
+    let active=null;
+    window.turnstile={
+      render(host,options){
+        const button=document.createElement('button');button.textContent='Complete disposable verification';
+        button.onclick=()=>{button.disabled=true;options.callback('disposable-check')};host.appendChild(button);active=button;return 'disposable-widget';
+      },
+      reset(){if(active)active.disabled=false},
+      remove(){active?.remove();active=null}
+    };
+  });
+  // Keep the disposable pre-authenticated session; no real challenge is bypassed.
+  await page.route('**/admin-access',route=>route.fulfill({json:route.request().method()==='GET'?{siteKey:'disposable-key',action:'admin_access'}:{ok:true}}));
+  await openKeeper(page,context);
+  await page.locator('#closeAddBooks').click();
+  for(let attempt=0;attempt<2;attempt++){
+    await page.locator('#lockButton').click();
+    await expect(page.locator('#lockedView')).toBeVisible();
+    await page.locator('#adminToken').fill(adminToken);await expect(page.locator('#unlockButton')).toBeEnabled();await page.locator('#unlockButton').click();
+    const complete=page.getByRole('button',{name:'Complete disposable verification'});
+    await expect(complete).toBeEnabled();await complete.click();
+    await expect(page.locator('#dashboardView')).toBeVisible();
+  }
+});

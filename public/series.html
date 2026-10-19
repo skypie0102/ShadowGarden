@@ -33,8 +33,8 @@
 <body>
   <script>
     (()=>{
-      const id=new URLSearchParams(location.search).get("id")||"";
-      const adult=id.startsWith("adult-");
+      const params=new URLSearchParams(location.search),id=params.get("id")||"",scope=params.get("scope");
+      const adult=scope==="adult"?true:scope==="main"?false:id.startsWith("adult-");
       window.__SG_SERIES_ROUTE_ADULT__=adult;
       if(!adult)return;
       document.body.classList.add("adult-library");

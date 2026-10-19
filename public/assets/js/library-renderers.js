@@ -19,7 +19,7 @@ export function seriesCard(series, index, { readingState, preferences, urls, for
   const activePercent = active ? Math.max(1, Math.min(99, Math.round((Number(active.progress?.percentage) || 0) * 100))) : 0;
   const visualProgress = finished ? 100 : activePercent;
   const pinned = preferences.isPinned(series?.id);
-  const href = urls.seriesUrl(series?.id);
+  const href = urls.seriesUrl(series?.id,{adult:series?.nsfw});
   const translator = translations?.primaryTranslator(series);
   const translationStatus = translations?.normalizeTranslationStatus(series?.translationStatus) || "";
   const translatorLabel = translator ? translations.creditDisplayName(translator) : "";
@@ -66,7 +66,7 @@ export function recentVolumeCard(entry, index, { readingState, urls, format }) {
   const title = volume?.title || `Volume ${volume?.number ?? "—"}`;
   const copy = recentCopy(series, title, volume?.added, esc, format);
   if (!volume?.file) {
-    return `<a class="recent-volume" href="${urls.seriesUrl(series?.id)}"><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">NEW</span></div>${copy}</a>`;
+    return `<a class="recent-volume" href="${urls.seriesUrl(series?.id,{adult:series?.nsfw})}"><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">NEW</span></div>${copy}</a>`;
   }
   const action = volumeActionFor(series, volume, volumeIndex);
   const progress = readingState.volumeProgress(series?.id, volume, volumeIndex);

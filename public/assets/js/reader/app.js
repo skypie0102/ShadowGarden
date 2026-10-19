@@ -708,7 +708,7 @@ async function initializeReader(session, scope) {
   }
   bindDrawers();
   bindNavigation();
-  const returnHref = session.seriesId ? urls.seriesUrl(session.seriesId) : urls.libraryUrl(session.adult);
+  const returnHref = session.seriesId ? urls.seriesUrl(session.seriesId,{adult:session.adult}) : urls.libraryUrl(session.adult);
   if (elements.backLink) elements.backLink.href = returnHref;
   if (elements.returnButton) elements.returnButton.href = returnHref;
   try {

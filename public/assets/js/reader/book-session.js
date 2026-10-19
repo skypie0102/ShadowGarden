@@ -25,21 +25,21 @@ function requestedContext(){
   };
 }
 
-export function syncStoredReaderShell(seriesId=""){
+export function syncStoredReaderShell(seriesId="",adult=catalog.isAdultSeriesId(seriesId)){
   const settings=sanitizeReaderSettings(storage.readJson("sg-reader-settings",{}));
   const theme=["garden","night","black","paper"].includes(settings.theme)?settings.theme:"garden";
   const body=document.body;
   if(!body)return;
   body.classList.remove("reader-theme-garden","reader-theme-night","reader-theme-black","reader-theme-paper","reader-flow-paginated","reader-flow-scrolled");
   body.classList.add(`reader-theme-${theme}`,settings.flow==="scrolled-doc"?"reader-flow-scrolled":"reader-flow-paginated");
-  body.classList.toggle("adult-reader",catalog.isAdultSeriesId(seriesId));
+  body.classList.toggle("adult-reader",adult);
 }
 
-async function resetReadAgain({requested,seriesId,publicBookId,sourcePath,ticket,signal}){
+async function resetReadAgain({requested,seriesId,publicBookId,sourcePath,ticket,signal,adult}){
   const identities=identity.cleanIdentities([requested,publicBookId,ticket?.requestedIdentity,ticket?.identity,sourcePath]);
   let aliases=identities;
   try{
-    const shelf=await window.ShadowGardenData?.loadCatalog?.(catalog.isAdultSeriesId(seriesId));
+    const shelf=await window.ShadowGardenData?.loadCatalog?.(adult);
     const entry=catalog.findVolumeEntry(shelf,seriesId,publicBookId||requested,identities);
     if(entry)aliases=readingState.volumeAliases(entry.series.id,entry.volume,entry.index,identities);
   }catch(error){
@@ -60,6 +60,8 @@ function replacePublicUrl(session){
     const url=new URL(location.href);
     if(identity.isBookId(session.publicBookId))url.searchParams.set("book",session.publicBookId);
     if(session.restartRequested)url.searchParams.delete("restart");
+    if(session.adult!==catalog.isAdultSeriesId(session.seriesId))url.searchParams.set("scope",session.adult?"adult":"main");
+    else url.searchParams.delete("scope");
     history.replaceState(history.state,"",`${url.pathname}${url.search}${url.hash}`);
   }catch{}
 }
@@ -102,10 +104,16 @@ export async function createAuthorizedBookSession({access=window.ShadowGardenBoo
   try{
   scope.signal.throwIfAborted();
   const context=requestedContext();
-  syncStoredReaderShell(context.seriesId);
+  context.adult=catalog.adultRoute(context.seriesId,location.search);
+  syncStoredReaderShell(context.seriesId,context.adult);
   if(!context.requested)throw new Error("No EPUB file was selected.");
-
-  if(identity.isBookId(context.requested)&&catalog.isAdultSeriesId(context.seriesId)&&!preferences.adultAcknowledged()){
+  if(context.seriesId&&window.ShadowGardenData?.loadCatalog){
+    try{
+      const found=await scope.wait(catalog.findSeriesContext(window.ShadowGardenData.loadCatalog,context.seriesId,{adult:context.adult,reuse:true}));
+      if(found){context.adult=found.adult;document.body?.classList.toggle("adult-reader",context.adult)}
+    }catch(error){if(scope.disposed)throw error;recordReaderDiagnostic('access.catalogUnavailable')}
+  }
+  if(identity.isBookId(context.requested)&&context.adult&&!preferences.adultAcknowledged()){
     const ret=`${location.pathname}${location.search}${location.hash}`;
     location.replace(urls.adultGateReturnUrl(ret));
     scope.dispose();return null;
@@ -125,7 +133,7 @@ export async function createAuthorizedBookSession({access=window.ShadowGardenBoo
     publicBookId,
     sourcePath,
     storageIdentity:publicBookId||sourcePath,
-    adult:catalog.isAdultSeriesId(context.seriesId)
+    adult:context.adult
   };
 
   installResumeRenewal(session,access,scope);

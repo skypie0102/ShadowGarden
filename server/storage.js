@@ -23,8 +23,11 @@ export async function getStaticCover(env,key,{head=false,origin}={}) {
   objectKey(key,'cover');
   const response=await env.ASSETS.fetch(new Request(new URL(`/media/${key}`,origin),{method:head?'HEAD':'GET'}));
   if (response.ok && /^image\/(?:webp|png|jpeg|gif)(?:;|$)/i.test(response.headers.get('content-type') || '')) return response;
-  await response.body?.cancel();
+  await discard(response);
   return null;
+}
+async function discard(response){
+  try{await response.body?.cancel()}catch{/* Preserve the provider status if its stream already failed. */}
 }
 function providerUrl(value, {upload=false} = {}) {
   let url; try { url = new URL(value); } catch { fail(502,'storage_error','Storage returned an invalid endpoint.'); }
@@ -41,7 +44,7 @@ async function request(url, options = {}) {
   try { response = await fetch(url, {...init, redirect:'manual', signal:AbortSignal.timeout(timeoutMs)}); }
   catch { fail(502,'storage_unavailable','Private media storage is temporarily unavailable.'); }
   if (response.status>=300 && response.status<400) {
-    await response.body?.cancel();
+    await discard(response);
     fail(502,'storage_redirect_refused','Private media storage returned an unexpected redirect.');
   }
   return response;
@@ -61,7 +64,7 @@ async function authorize(env,access) {
   const response = await request('https://api.backblazeb2.com/b2api/v4/b2_authorize_account', {
     headers:{authorization:`Basic ${btoa(`${id}:${key}`)}`}
   });
-  if (!response.ok) fail(502,'storage_auth_failed','Private media storage authorization failed.');
+  if (!response.ok) {await discard(response);fail(502,'storage_auth_failed','Private media storage authorization failed.');}
   let result;try {result=await response.json();} catch {fail(502,'storage_auth_failed','Storage returned unreadable authorization information.');}
   const storage=result?.apiInfo?.storageApi;
   const data=checkBucket({authorizationToken:result?.authorizationToken,apiUrl:storage?.apiUrl,downloadUrl:storage?.downloadUrl,allowed:storage?.allowed});
@@ -75,8 +78,8 @@ export async function getObject(env, key, {head = false, range = ''} = {}) {
   const url = new URL(`/file/${encodeURIComponent(env.B2_BUCKET_NAME)}/${key.split('/').map(encodeURIComponent).join('/')}`,providerUrl(auth.downloadUrl));
   const headers = {authorization:auth.authorizationToken}; if (range) headers.range=range;
   const response = await request(url,{method:head?'HEAD':'GET',headers});
-  if (response.status === 404) return null;
-  if (![200,206,416].includes(response.status)) fail(502,'storage_error','Private media storage could not serve the object.');
+  if (response.status === 404) {await discard(response);return null;}
+  if (![200,206,416].includes(response.status)) {await discard(response);fail(502,'storage_error','Private media storage could not serve the object.');}
   return response;
 }
 export async function uploadObject(env,key,bytes) {
@@ -84,13 +87,13 @@ export async function uploadObject(env,key,bytes) {
   const response=await request(new URL('/b2api/v2/b2_get_upload_url',providerUrl(auth.apiUrl)),{
     method:'POST',headers:{authorization:auth.authorizationToken,'content-type':'application/json'},body:JSON.stringify({bucketId:env.B2_BUCKET_ID})
   });
-  if (!response.ok) fail(502,'upload_unavailable','Storage could not prepare the upload.');
+  if (!response.ok) {await discard(response);fail(502,'upload_unavailable','Storage could not prepare the upload.');}
   const target=await response.json(), url=providerUrl(target.uploadUrl,{upload:true});
   const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-1',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   const result=await request(url,{method:'POST',headers:{authorization:target.authorizationToken,
     'content-type':mimeFor(key),'x-bz-file-name':key.split('/').map(encodeURIComponent).join('/'),
     'x-bz-content-sha1':hash,'content-length':String(bytes.byteLength)},body:bytes});
-  if (!result.ok) fail(502,'upload_failed','Private media upload failed.');
+  if (!result.ok) {await discard(result);fail(502,'upload_failed','Private media upload failed.');}
   const metadata=await result.json();
   return {key,size:bytes.byteLength,fileId:metadata.fileId};
 }

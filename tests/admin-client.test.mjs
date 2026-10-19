@@ -51,3 +51,53 @@ test('explicit caller preconditions are preserved instead of silently replaced',
   await assert.rejects(post('/admin-api/library',{action:'delete-series',id},{'if-match':'0'}),/catalog changed/i);
   assert.equal((await loadState(env)).document.adult.length,1);
 });
+
+function isolatedClient(fetch){
+  const window={};
+  runInNewContext(core,{window,document:{querySelector:selector=>selector==='#adminToken'?{value:'audit-test-token'}:null},
+    Headers,AbortController,DOMException,EventTarget,CustomEvent,crypto,btoa,setTimeout,clearTimeout,fetch});
+  const client=window.ShadowGardenKeeper.client;client.markUnlocked();return client;
+}
+
+test('locking rejects a late successful request before it can update Keeper state',async()=>{
+  let finish,signal;
+  const client=isolatedClient((_path,options)=>{signal=options.signal;return new Promise(resolve=>{finish=resolve})});
+  const request=client.request('/admin-api/library');
+  client.markLocked();
+  // Even a transport/provider that ignores abort cannot authorize a late result.
+  finish(Response.json({ok:true,revision:99,main:[{id:'obsolete'}]}));
+  await assert.rejects(request,error=>error.name==='AbortError');
+  assert.equal(signal.aborted,true);
+});
+
+test('successful HTML or malformed JSON cannot masquerade as an empty Keeper response',async()=>{
+  const client=isolatedClient(async()=>new Response('<html>upstream error</html>',{headers:{'content-type':'text/html'}}));
+  await assert.rejects(client.request('/admin-api/library'),/invalid.*response/i);
+});
+
+for(const firstFails of [false,true])test(`cover retry uses a new immutable key after ${firstFails?'a failed reserved upload':'an earlier successful upload'}`,async t=>{
+  const {upload}=await import('../server/admin.js');
+  const env=fixture(),headers=await adminHeaders(env),objects=new Set(),attempts=[];
+  t.after(()=>env.DB.sqlite.close());
+  Object.assign(env,{B2_APPLICATION_KEY_ID:crypto.randomUUID(),B2_APPLICATION_KEY:'audit-storage-key',B2_BUCKET_ID:'audit-bucket',B2_BUCKET_NAME:'audit-bucket'});
+  t.mock.method(globalThis,'fetch',async(input,options={})=>{
+    const url=new URL(input);
+    if(url.pathname.endsWith('b2_authorize_account'))return Response.json({authorizationToken:'fixture-auth',apiInfo:{storageApi:{apiUrl:'https://api.audit.backblazeb2.com',downloadUrl:'https://download.audit.backblazeb2.com',allowed:{buckets:[{id:'audit-bucket',name:'audit-bucket'}]}}}});
+    if(url.pathname.endsWith('b2_get_upload_url'))return Response.json({uploadUrl:'https://pod-audit.backblaze.com/upload',authorizationToken:'fixture-upload'});
+    if(url.pathname==='/upload'){
+      const key=decodeURIComponent(options.headers['x-bz-file-name']);attempts.push(key);
+      if(firstFails&&attempts.length===1)return new Response(null,{status:503});
+      objects.add(key);return Response.json({fileId:'fixture-file'});
+    }
+    const key=decodeURIComponent(url.pathname.replace('/file/audit-bucket/',''));
+    return new Response(null,{status:objects.has(key)?200:404});
+  });
+  const client=isolatedClient((path,options)=>endpoint(upload)({env,request:new Request('https://garden.test'+path,{...options,headers:{...headers,...Object.fromEntries(new Headers(options.headers)),authorization:headers.authorization}})}));
+  const bytes=new Blob([Uint8Array.from([137,80,78,71,13,10,26,10,0,0,0,0])],{type:'image/png'});
+  const key='shadow-garden/covers/audit-1-detail.png';
+  if(firstFails)await assert.rejects(client.uploadObject(key,bytes),/upload failed/i);
+  else await client.uploadObject(key,bytes);
+  const result=await client.uploadObject(key,bytes);
+  assert.equal(result.ok,true);assert.equal(attempts.length,2);assert.notEqual(attempts[0],attempts[1]);
+  assert.equal(client.rewriteCoverKeys({coverKey:key}).coverKey,result.key);
+});

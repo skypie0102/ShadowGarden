@@ -16,7 +16,7 @@ export function volumeActionFor(series, volume, index = -1) {
     index,
     state,
     label: readingState.actionLabelForState(state),
-    href: bookId ? urls.readerUrl(bookId, seriesId) : "#"
+    href: bookId ? urls.readerUrl(bookId, seriesId,{adult:catalog.isAdultSeries(series)}) : "#"
   };
 }
 
@@ -81,18 +81,17 @@ export function confirmReadAgain(title, { signal } = {}) {
   });
 }
 
-async function resolveVolume(seriesId, bookId) {
+async function resolveVolume(seriesId, bookId,adult=catalog.isAdultSeriesId(seriesId)) {
   if (!window.ShadowGardenData || !seriesId || !bookId) return null;
-  const adult = catalog.isAdultSeriesId(seriesId);
-  const shelf = await window.ShadowGardenData.loadCatalog(adult);
-  return catalog.findVolumeEntry(shelf, seriesId, bookId);
+  const context=await catalog.findSeriesContext(window.ShadowGardenData.loadCatalog,seriesId,{adult});
+  return context?catalog.findVolumeEntry({series:[context.series]},seriesId,bookId):null;
 }
 
-export async function resetFinishedVolume(seriesId, bookId, { signal } = {}) {
+export async function resetFinishedVolume(seriesId, bookId, { signal,adult } = {}) {
   if(signal?.aborted)return false;
   let entry;
   try {
-    entry = await resolveVolume(seriesId, bookId);
+    entry = await resolveVolume(seriesId, bookId,adult);
   } catch (error) {
     console.warn("Read Again catalog lookup failed", error);
     return false;
@@ -112,25 +111,26 @@ async function handleFinishedLink(link, event) {
   const title = String(link.dataset.volumeTitle || "this volume");
   if (!seriesId || !bookId) return;
 
+  let adult=catalog.adultRoute(seriesId,new URL(link.href,location.href).search);
   let entry = null;
-  try { entry = await resolveVolume(seriesId, bookId); }
+  try { entry = await resolveVolume(seriesId, bookId,adult);if(entry)adult=catalog.isAdultSeries(entry.series); }
   catch (error) { console.warn("Volume state refresh failed", error); }
 
   if (entry) {
     const liveState = readingState.volumeState(entry.series.id, entry.volume, entry.index);
     if (liveState !== readingState.STATES.FINISHED) {
-      location.assign(urls.readerUrl(bookId, seriesId));
+      location.assign(urls.readerUrl(bookId, seriesId,{adult}));
       return;
     }
   }
 
   if (!(await confirmReadAgain(title))) return;
-  const reset = await resetFinishedVolume(seriesId, bookId);
+  const reset = await resetFinishedVolume(seriesId, bookId,{adult});
   if (!reset) {
     window.alert("The Garden could not clear this reading trail. Your place has been left unchanged; please try again.");
     return;
   }
-  location.assign(urls.readerUrl(bookId, seriesId, { restart: true }));
+  location.assign(urls.readerUrl(bookId, seriesId, { restart: true,adult }));
 }
 
 export function installVolumeActionController(root = document) {

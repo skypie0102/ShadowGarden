@@ -1,22 +1,18 @@
 # ShadowGarden project audit
 
-## Current status — 2026-10-18
+## Current status — 2026-10-19
 
-The verified production baseline is v2.12.8, source `7d3dbed`, with 211 Node tests
-and 387 passing browser cases across five profiles (eight existing platform skips).
-Served source, version metadata, production bindings and exact pre/post catalog/
-snapshot identity pass [release verification](READER_RELEASE.md). Isolated Chromium
-subsequently verifies both painted library footers. The owner manually checked
-Keeper in v2.12.8 on 2026-10-18 and reports it works correctly. Authenticated
-real-book opening remains pending its Garden Pass/Turnstile gate.
-Earlier acceptance remains recorded separately:
-the owner manually passed fast upward scrolling and image-focus return on
-Android/Soul in v2.12.6. The documented M1–M5 cleanup, including app callback
-lifetime checks, is deployed; [the roadmap](READER_MAINTENANCE.md) records scope
-and retained compatibility limits. Dated sections below preserve
-historical audit evidence, counts and trace limits.
+Production is v2.14.1, source `7d50991`, with 224 Node tests and 432 browser
+passes across five profiles (eight existing platform skips). The [current
+whole-codebase audit](CODEBASE_AUDIT_2026-10.md) records newly reproduced defects,
+implemented corrections and prioritized maintenance work. Its v2.15.0 verification
+is in progress; deployment is recorded independently of implementation.
 
-
+The documented reader/website ownership refactors and double-activation image
+focus are deployed. The owner manually accepted Android/Soul scrolling and focus
+return in v2.12.6, and Keeper in v2.12.8. Those physical/provider checks retain
+their original scope; isolated test EPUBs are not real-book authorization proof.
+Historical checkpoints below preserve their original counts and observations.
 
 ## Reader rendering and diagnostics — 2026-10-16 (Asia/Manila)
 

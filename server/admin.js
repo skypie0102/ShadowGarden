@@ -171,8 +171,8 @@ export function health(doc,{includeTrash=false}={}) {
       if (v.cover&&!v.coverThumb) {missingThumbs++;optimizationCandidates.push({scope,seriesId:s.id,seriesTitle:s.title,volumeIndex,volumeTitle:v.title,volumeFile:doc.books[v.bookId]?`/media/${doc.books[v.bookId]}`:'',source:v.cover});}
     };
     check(s,null);
-    for (const v of s.volumes) {
-      check(v,s.volumes.indexOf(v));
+    for (const [index,v] of s.volumes.entries()) {
+      check(v,index);
       if (doc.books[v.bookId]) objectKeys.add(doc.books[v.bookId]);
       else {missingBookMappings++;issues.push({severity:'error',code:'missing-book-mapping',title:'Private book mapping missing',detail:`${v.title} (${v.bookId})`});}
     }

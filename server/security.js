@@ -36,7 +36,7 @@ export function cookies(request) {
 export function cookie(name, value, ttl, path = '/') {
   return `${name}=${value}; Path=${path}; Max-Age=${ttl}; HttpOnly; Secure; SameSite=Strict`;
 }
-export function database(env) { if (!env.DB) fail(503,'database_not_configured','The reconstructed database binding is not configured.'); return env.DB; }
+export function database(env) { if (!env.DB) fail(503,'database_not_configured','The database binding is not configured.'); return env.DB; }
 function adminCredential(env) {
   // Keeper's existing token is a login credential, not an HMAC signing key.
   // Preserve its exact value; the independent SESSION_SECRET signs comparisons.

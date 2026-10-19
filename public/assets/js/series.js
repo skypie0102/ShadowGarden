@@ -5,7 +5,7 @@
   if(!root)return;
 
   const id=new URLSearchParams(location.search).get("id")||"";
-  const requestedAdult=window.__SG_SERIES_ROUTE_ADULT__===true||String(id).startsWith("adult-");
+  let requestedAdult=window.__SG_SERIES_ROUTE_ADULT__===true||String(id).startsWith("adult-");
   const bannerRandom=Math.random();
   let domain=null;
   let series=null;
@@ -13,6 +13,8 @@
 
   function syncLibraryScope(adult){
     document.body.classList.toggle("adult-library",Boolean(adult));
+    document.body.dataset.libraryScope=adult?"nsfw":"main";
+    window.dispatchEvent(new CustomEvent("sg:catalog-context",{detail:{adult:Boolean(adult)}}));
     const home=$(".brand-home"),back=$("#headerBack"),adultNav=$(".adult-nav-link"),mainNav=$(".main-nav-link"),themeMeta=document.querySelector('meta[name="theme-color"]');
     if(home){home.href=domain.urls.libraryUrl(adult);home.setAttribute("aria-label",adult?"Shadow Garden Adult Library home":"Shadow Garden home")}
     if(back)back.href=domain.urls.libraryUrl(adult);
@@ -64,17 +66,17 @@
     domain=await import("/assets/js/domain/index.js?v=2.11.0");
     const {installVolumeActionController}=await import("/assets/js/public/volume-actions.js?v=2.11.0");
     installVolumeActionController(document);
+    requestedAdult=domain.catalog.adultRoute(id,location.search);
+    if(!window.ShadowGardenData)throw new Error("Catalog data source is unavailable");
+    const context=await domain.catalog.findSeriesContext(window.ShadowGardenData.loadCatalog,id,{adult:requestedAdult});
+    if(!context)throw new Error("Series not found");
+    series=context.series;requestedAdult=context.adult;
     syncLibraryScope(requestedAdult);
 
     if(requestedAdult&&!domain.preferences.adultAcknowledged()){
-      location.replace(domain.urls.adultGateReturnUrl(domain.urls.seriesUrl(id)));
+      location.replace(domain.urls.adultGateReturnUrl(domain.urls.seriesUrl(id,{adult:requestedAdult})));
       return;
     }
-    if(!window.ShadowGardenData)throw new Error("Catalog data source is unavailable");
-    const catalog=await window.ShadowGardenData.loadCatalog(requestedAdult);
-    series=domain.catalog.seriesById(catalog,id);
-    if(!series)throw new Error("Series not found");
-
     syncLibraryScope(Boolean(series.nsfw));
     document.title=`${series.title} — Shadow Garden`;
     bindControllerEvents();

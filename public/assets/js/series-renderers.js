@@ -1,4 +1,5 @@
 /* Shadow Garden R3 — Series hero and volume-card render ownership. */
+import {isAdultSeries} from "./domain/catalog.js";
 import { volumeActionFor } from "./public/volume-actions.js";
 
 const arr = value => Array.isArray(value) ? value : [];
@@ -32,7 +33,7 @@ export function selectBannerVolume(series, identity, randomValue = Math.random) 
 
 function tagLinks(series, urls, format) {
   const esc = format.escapeHtml;
-  const adult = Boolean(series?.nsfw) || String(series?.id || "").startsWith("adult-");
+  const adult = isAdultSeries(series);
   const base = urls.libraryUrl(adult);
   const genres=arr(series?.genres).map(genre=>{const value=String(genre||"");const href=`${base}?genre=${encodeURIComponent(value)}`;return `<a class="tag genre" href="${href}" title="Show ${esc(value)} genre in ${adult ? "Adult Library" : "Library"}">${esc(value)}</a>`});
   const tags=arr(series?.tags).map(tag=>{const value=String(tag||"");const href=`${base}?tag=${encodeURIComponent(value)}`;return `<a class="tag" href="${href}" title="Show ${esc(value)} in ${adult ? "Adult Library" : "Library"}">${esc(value)}</a>`});
@@ -40,7 +41,7 @@ function tagLinks(series, urls, format) {
 }
 
 function translatorFilterHref(series, value, urls) {
-  const adult = Boolean(series?.nsfw) || String(series?.id || "").startsWith("adult-");
+  const adult = isAdultSeries(series);
   return `${urls.libraryUrl(adult)}?translator=${encodeURIComponent(value)}`;
 }
 
