@@ -43,6 +43,13 @@ are errors. Every cover upload attempt gets a fresh immutable coordinate; logica
 cover/book mappings are committed only after upload success. Server reservations
 and snapshot/object immutability still enforce storage safety.
 
+Catalog History loads ten inspected summaries per request through the shared
+snapshot-history service. Its cursor/retained total are separate from the loaded
+rows; retry preserves them, while refresh/session lock cancels obsolete pages.
+Recovery readiness owns an overall read deadline and keeps incomplete checks
+unverified. [Maintenance budgets](MAINTENANCE_BUDGETS.md) records the server owners,
+API details, measurements and limits; purge/reference protection remains separate.
+
 ## Direct copy and presentation
 
 Templates and renderers author their final copy. There is no global text walker,

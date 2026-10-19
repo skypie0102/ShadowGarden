@@ -240,9 +240,14 @@
               <div><span>BACKUPS</span><h2>Catalog History</h2></div>
               <strong id="backupCount" class="state-pill">0</strong>
             </div>
-            <p class="maintenance-copy">Before major changes, Shadow Garden preserves a snapshot of both catalogs. The newest 15 are kept as stepping stones back.</p>
+            <p class="maintenance-copy">Snapshots preserve both catalogs before major changes. Browse older snapshots below; restoring one leaves EPUB and cover files unchanged.</p>
             <button id="createCatalogBackup" class="admin-secondary" type="button">Create backup now</button>
             <div id="backupList" class="maintenance-list"></div>
+            <p id="backupHistoryStatus" class="maintenance-copy" role="status" aria-live="polite"></p>
+            <div class="maintenance-actions">
+              <button id="loadMoreBackups" class="admin-secondary hidden" type="button">Load older snapshots</button>
+              <button id="refreshCatalogHistory" class="admin-secondary" type="button">Refresh history</button>
+            </div>
           </section>
 
           <section class="admin-card maintenance-card danger-zone" id="trashMaintenanceCard">

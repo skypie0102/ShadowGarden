@@ -18,10 +18,12 @@ export function storageConfigured(env,access='all') {
     const {id,key}=storageCredentials(env,role);return present(id)&&present(key);
   });
 }
-export async function getStaticCover(env,key,{head=false,origin}={}) {
+export async function getStaticCover(env,key,{head=false,origin,signal}={}) {
+  signal?.throwIfAborted();
   if (!key.startsWith('shadow-garden/covers/') || !env.ASSETS) return null;
   objectKey(key,'cover');
-  const response=await env.ASSETS.fetch(new Request(new URL(`/media/${key}`,origin),{method:head?'HEAD':'GET'}));
+  const response=await env.ASSETS.fetch(new Request(new URL(`/media/${key}`,origin),{method:head?'HEAD':'GET',signal}));
+  if(signal?.aborted){await discard(response);signal.throwIfAborted();}
   if (response.ok && /^image\/(?:webp|png|jpeg|gif)(?:;|$)/i.test(response.headers.get('content-type') || '')) return response;
   await discard(response);
   return null;
@@ -38,11 +40,13 @@ function providerUrl(value, {upload=false} = {}) {
   return url;
 }
 async function request(url, options = {}) {
-  const {timeoutMs=30000,...init}=options;
+  const {timeoutMs=30000,signal,...init}=options;
+  signal?.throwIfAborted();
   let response;
   // workerd accepts manual/follow; reject redirects ourselves without forwarding credentials.
-  try { response = await fetch(url, {...init, redirect:'manual', signal:AbortSignal.timeout(timeoutMs)}); }
-  catch { fail(502,'storage_unavailable','Private media storage is temporarily unavailable.'); }
+  try { response = await fetch(url, {...init, redirect:'manual', signal:signal?AbortSignal.any([signal,AbortSignal.timeout(timeoutMs)]):AbortSignal.timeout(timeoutMs)}); }
+  catch { signal?.throwIfAborted();fail(502,'storage_unavailable','Private media storage is temporarily unavailable.'); }
+  if(signal?.aborted){await discard(response);signal.throwIfAborted();}
   if (response.status>=300 && response.status<400) {
     await discard(response);
     fail(502,'storage_redirect_refused','Private media storage returned an unexpected redirect.');
@@ -50,7 +54,8 @@ async function request(url, options = {}) {
   return response;
 }
 const authorizationCache = new Map();
-async function authorize(env,access) {
+async function authorize(env,access,{signal}={}) {
+  signal?.throwIfAborted();
   if (!storageConfigured(env,access)) fail(503,'storage_not_configured',`Backblaze B2 ${access} access is not configured.`);
   const {id,key}=storageCredentials(env,access),cacheKey=`${access}:${id}`;
   const checkBucket=data=>{
@@ -62,10 +67,11 @@ async function authorize(env,access) {
   const cached = authorizationCache.get(cacheKey);
   if (cached && cached.key === key && cached.until > Date.now()) return checkBucket(cached.data);
   const response = await request('https://api.backblazeb2.com/b2api/v4/b2_authorize_account', {
-    headers:{authorization:`Basic ${btoa(`${id}:${key}`)}`}
+    signal,headers:{authorization:`Basic ${btoa(`${id}:${key}`)}`}
   });
   if (!response.ok) {await discard(response);fail(502,'storage_auth_failed','Private media storage authorization failed.');}
   let result;try {result=await response.json();} catch {fail(502,'storage_auth_failed','Storage returned unreadable authorization information.');}
+  signal?.throwIfAborted();
   const storage=result?.apiInfo?.storageApi;
   const data=checkBucket({authorizationToken:result?.authorizationToken,apiUrl:storage?.apiUrl,downloadUrl:storage?.downloadUrl,allowed:storage?.allowed});
   providerUrl(data.apiUrl); providerUrl(data.downloadUrl);
@@ -73,11 +79,11 @@ async function authorize(env,access) {
   authorizationCache.set(cacheKey,{key,until:Date.now()+15*60000,data});
   return data;
 }
-export async function getObject(env, key, {head = false, range = ''} = {}) {
-  objectKey(key); const auth = await authorize(env,'read');
+export async function getObject(env, key, {head = false, range = '',signal} = {}) {
+  objectKey(key); const auth = await authorize(env,'read',{signal});
   const url = new URL(`/file/${encodeURIComponent(env.B2_BUCKET_NAME)}/${key.split('/').map(encodeURIComponent).join('/')}`,providerUrl(auth.downloadUrl));
   const headers = {authorization:auth.authorizationToken}; if (range) headers.range=range;
-  const response = await request(url,{method:head?'HEAD':'GET',headers});
+  const response = await request(url,{method:head?'HEAD':'GET',headers,signal});
   if (response.status === 404) {await discard(response);return null;}
   if (![200,206,416].includes(response.status)) {await discard(response);fail(502,'storage_error','Private media storage could not serve the object.');}
   return response;
