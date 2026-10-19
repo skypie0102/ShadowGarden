@@ -1,5 +1,24 @@
 # ShadowGarden project audit
 
+## Browser persistence continuation — 2026-10-20 (Asia/Manila)
+
+The v2.17.0 persistence increment is merged through
+[PR #35](https://github.com/skypie0102/ShadowGarden/pull/35) as `129a1d2`.
+Checked grouped writes and conditional rollback cover aliases, Finished state,
+settings and migration. Both Read Again entry points reset progress/Finished
+state in one operation. Eight failing-before controls pass; final CI has 285
+Node tests and 492 browser passes, eight existing skips and no test retries.
+[The report](BROWSER_PERSISTENCE.md) records the limits of rollback and preserves
+the distinction from crash atomicity or concurrent-writer isolation.
+
+The merged main build is ready. A fresh documented Pages JWT still receives
+403 on a real asset check; dashboard fallback requires sign-in. Production
+remains v2.16.0. Refreshed revision-8 D1 data matches the verified release, all
+eight snapshot checksums match their actual documents, and the live main
+library loads with its v2.16.0 footer. No production write was performed.
+Next independent audit item: map vendor protected-fetch consumers before
+replacing the compatibility hook with explicit authorized-source transport.
+
 ## Audit continuation — 2026-10-20 (Asia/Manila)
 
 The v2.16.1 upload-memory increment is merged through

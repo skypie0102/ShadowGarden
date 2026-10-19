@@ -1,8 +1,10 @@
 # ShadowGarden documentation
 
-[Browser persistence](BROWSER_PERSISTENCE.md) records the prepared v2.17.0
+[Browser persistence](BROWSER_PERSISTENCE.md) records the merged v2.17.0
 increment: checked grouped writes, conditional rollback, compound Read Again,
-failure reproductions and the limits of Web Storage.
+285 Node tests and 492 browser passes. Publication awaits Cloudflare dashboard
+sign-in. [Verification evidence](persistence-verification-2.17.0.json) retains the
+production baseline and the limits of Web Storage.
 
 [Upload memory](UPLOAD_MEMORY.md) records the merged v2.16.1 audit increment:
 47.9% less sampled backing storage for declared-length 50 MiB uploads, 259 Node

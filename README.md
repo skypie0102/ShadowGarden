@@ -24,13 +24,16 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next audit increment is prepared as **v2.17.0**: grouped browser persistence
-and conditional rollback after failed saves. Read Again now resets progress and
-Finished status in one operation. Existing browser-storage formats remain; crash
-atomicity and concurrent-writer isolation are not claimed. See
-[browser persistence](docs/BROWSER_PERSISTENCE.md) for contracts and validation.
+The latest audit increment is merged for **v2.17.0** through
+[PR #35](https://github.com/skypie0102/ShadowGarden/pull/35): grouped browser
+persistence and conditional rollback after failed saves. Read Again resets
+progress and Finished status in one operation. All 285 Node tests and 492 browser
+cases pass (eight existing skips). Existing formats remain; crash atomicity and
+concurrent-writer isolation are not claimed. Publication awaits Cloudflare
+dashboard sign-in after the asset API rejects its freshly issued upload token.
+See [browser persistence](docs/BROWSER_PERSISTENCE.md) for contracts and evidence.
 
-The latest audit increment is merged for **v2.16.1** through
+The preceding audit increment is merged for **v2.16.1** through
 [PR #34](https://github.com/skypie0102/ShadowGarden/pull/34): measured large-upload
 memory and direct buffering for declared-length bodies. A 50 MiB EPUB uses 47.9%
 less sampled ArrayBuffer storage in the local workerd fixture. All 259 Node tests

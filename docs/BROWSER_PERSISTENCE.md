@@ -1,7 +1,8 @@
 # Browser persistence after failed writes
 
-Baseline: main `f76b688`, v2.16.1 implementation. This audit increment is prepared
-as v2.17.0. Production remains the verified v2.16.0 deployment until a new
+Baseline: main `f76b688`, v2.16.1 implementation. This audit increment is merged
+for v2.17.0 through [PR #35](https://github.com/skypie0102/ShadowGarden/pull/35)
+as `129a1d2`. Production remains the verified v2.16.0 deployment until a new
 release is explicitly recorded.
 
 ## Reproduced failures
@@ -88,9 +89,36 @@ They inject a storage exception, check visible feedback, reload the page and
 verify durable state. A successful reset retry preserves bookmarks and publishes
 events containing consistent final state.
 
-CI, merge and deployment results will be recorded here after validation. The
+[CI run 39337221966](https://github.com/skypie0102/ShadowGarden/actions/runs/39337221966)
+passes on attempt 1: asset/provenance audit, 285 Node tests, static build,
+binding-aware Functions package and 492 browser passes. Eight existing platform
+skips remain; there are no automatic test retries. All three new browser cases
+pass in every profile. The tested source is `88c825ab453d11c41205e335deec523222b84aee`;
+its tree exactly matches merge `129a1d25cec760283987938e218345ac3e417b96`:
+`3c34fe0a6482dceb4bb4e0d609c676c6e749d3bb`.
+
+| Profile | Passed | Existing skips |
+| --- | ---: | ---: |
+| Desktop Chromium | 100 | 0 |
+| Mobile Chromium | 100 | 0 |
+| Desktop Firefox | 98 | 2 |
+| Desktop WebKit | 98 | 2 |
+| Mobile WebKit | 96 | 4 |
+
+The merged main build is prepared with v2.17.0 metadata at `/data/version.json`.
+The compiled Functions package passes actual D1/variable binding checks and
+matches the configured compatibility date/flags. Publication is pending: the
 Pages upload-token API issues a fresh token, but the documented asset operation
 still returns 403 with that token and a real asset hash. Dashboard fallback is
 at Cloudflare sign-in; authorization to act has already been supplied by the
-owner. No production database, media, credential or configuration write was
-performed while preparing this increment.
+owner. The last observed live main library loads its expected volume and renders
+the v2.16.0 footer. Production still uses deployment
+`8212de19-5ccb-40bd-9241-14b9427ea565`.
+
+The refreshed D1 document matches the verified v2.16.0 release at revision 8;
+all eight actual snapshot hashes match their stored checksums. Production
+bindings/compatibility settings are unchanged. No production database, media,
+credential or configuration write was performed. This adds no physical-device
+or authenticated real-book acceptance claim.
+[Verification evidence](persistence-verification-2.17.0.json) records the merge,
+tests, baseline and pending publication separately.

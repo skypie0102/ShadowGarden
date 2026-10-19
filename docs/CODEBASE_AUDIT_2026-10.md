@@ -74,11 +74,12 @@ live database/size errors is also removed without changing error codes or contra
    100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
    design follow-up; the supported limits are unchanged. See [measurements and
    limitations](UPLOAD_MEMORY.md).
-3. **Browser persistence — v2.17.0 prepared:** progress/bookmark aliases, Finished
+3. **Browser persistence — v2.17.0 merged, deployment pending:** progress/bookmark aliases, Finished
    map/markers and settings use checked grouped writes with conditional rollback.
    Public/startup Read Again resets progress and Finished state together. Eight
-   baseline controls reproduce partial writes or false success; new coverage
-   includes reload, concurrency and rollback refusal. Existing formats/identities
+   baseline controls reproduce partial writes or false success; all 285 Node
+   tests and 492 browser cases pass, including reload, concurrency and rollback
+   refusal. Existing formats/identities
    remain. This does not provide crash atomicity or cross-tab isolation; see
    [contracts and limits](BROWSER_PERSISTENCE.md).
 4. **Compatibility transport:** map remaining vendor consumers before replacing
@@ -141,4 +142,6 @@ release scope. This rollout does not claim new physical acceptance or a complete
 real CAPTCHA/credential flow. Maintenance budgets are completed in v2.16.0.
 The measured upload increment is merged through PR #34 with 259 Node tests and
 477 browser passes; [its verification](UPLOAD_MEMORY.md#validation-and-release)
-records the pending publication separately. The other ordered follow-ups remain open.
+records the pending publication separately. Browser persistence is merged through
+PR #35; [its report](BROWSER_PERSISTENCE.md) records 285 Node tests, 492 browser
+passes, rollback limits and pending deployment. The other ordered follow-ups remain open.

@@ -8,10 +8,14 @@ history, bounded readiness, 250 Node tests, 477 browser cases and unchanged
 production data/configuration. The retained rollback is v2.15.0 deployment
 `710c6175-587f-40ff-899b-94b5c33e5be5`.
 
-The v2.16.1 upload-memory increment is merged through PR #34 with 259 Node tests
-and 477 browser passes. It is not deployed: the current Cloudflare connection
-returned HTTP 403 for the Pages asset-upload operation. No deployment or
-production write was performed. See [upload verification](UPLOAD_MEMORY.md).
+The v2.16.1 upload-memory increment and v2.17.0 browser persistence increment
+are merged through PRs #34/#35. The latest implementation passes 285 Node tests
+and 492 browser cases (eight existing skips). Neither increment is deployed:
+a fresh Pages upload JWT still receives HTTP 403 for the documented asset
+operation with a real hash. Dashboard fallback requires sign-in. The merged
+main build and binding/compatibility checks are ready; no deployment or
+production write was performed. See [upload verification](UPLOAD_MEMORY.md)
+and [persistence verification](BROWSER_PERSISTENCE.md).
 
 **Reader gesture release — 2026-10-19:** v2.14.1, deployment
 `fab2efb5-42d7-4dce-be2c-42990c9b517a`, clean main source
