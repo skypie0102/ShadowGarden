@@ -43,6 +43,13 @@ for(const entry of provenance.files){
   if(sha!==entry.sha256)modified.push(entry.path);
 }
 const deliberate=new Set([
+  'public/assets/js/data-source.js',
+  'public/assets/js/domain/catalog.js',
+  'public/assets/js/domain/urls.js',
+  'public/assets/js/library-renderers.js',
+  'public/assets/js/series-renderers.js',
+  'public/assets/js/series.js',
+  'public/assets/js/nav-pinned.js',
   'public/index.html',
   'public/nsfw.html',
   'public/assets/js/library-footer-version.js',

@@ -29,14 +29,5 @@
     syncGate();
   }
 
-  const seriesRoot=document.getElementById('seriesRoot');
-  if(seriesRoot){
-    const syncBusy=()=>{
-      const busy=Boolean(seriesRoot.querySelector('.loading-screen'));
-      seriesRoot.setAttribute('aria-busy',busy?'true':'false');
-    };
-    new MutationObserver(syncBusy).observe(seriesRoot,{childList:true,subtree:true});
-    syncBusy();
-  }
 
 })();

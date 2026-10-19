@@ -54,7 +54,7 @@ export function createReaderRuntime(){
       if(cancelled)return null;
       recordReaderDiagnostic('reader.startupFailed');
       const loading=document.getElementById("readerLoading"),hasSeries=Boolean(session?.seriesId);
-      const returnHref=hasSeries?urls.seriesUrl(session.seriesId):urls.libraryUrl(session?.adult===true);
+      const returnHref=hasSeries?urls.seriesUrl(session.seriesId,{adult:session.adult}):urls.libraryUrl(session?.adult===true);
       failure=showReaderFailure({container:loading,error,phase:session?"open":"authorization",returnHref,returnLabel:hasSeries?"Return to series":"Return to library",retry:()=>void open()});
       return null;
     }

@@ -70,17 +70,26 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
       });
       const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.setAttribute("aria-label",`Delete bookmark ${index+1}`);
       rows.listen(remove,"click",()=>{
-        const next=list();next.splice(index,1);storage.saveBookmarks(next);render();syncButton();toast?.("Bookmark removed");
+        const next=list(),current=next.findIndex(item=>["cfi","at","page","pageMapFingerprint","sectionIndex","localPage"].every(key=>item[key]===bookmark[key]));
+        if(current<0){render();syncButton();toast?.("This bookmark is no longer saved");return}
+        next.splice(current,1);persist(next,"Bookmark removed");
       });
       row.append(copy,open,remove);panel.appendChild(row);
     });
+  }
+
+  function persist(bookmarks,message){
+    const saved=storage.saveBookmarks(bookmarks)===true;
+    render();syncButton();
+    toast?.(saved?message:"Could not save bookmarks. Check browser storage and try again.");
+    return saved;
   }
 
   function toggle(){
     if(scope.disposed)return;
     if(!getCfi?.()&&!getPosition?.())return;
     const bookmarks=list(),index=bookmarks.findIndex(item=>samePosition(item));
-    if(index>=0){bookmarks.splice(index,1);storage.saveBookmarks(bookmarks);render();syncButton();toast?.("Bookmark removed");return}
+    if(index>=0){bookmarks.splice(index,1);persist(bookmarks,"Bookmark removed");return}
     const position=getPosition?.()||{},pageMap=getPageMap?.();
     bookmarks.push({
       cfi:getCfi?.()||position.cfi||"",
@@ -89,7 +98,7 @@ export function createBookmarksController({storage,elements,getPosition,getCfi,g
       pageMapFingerprint:pageMap?.fingerprint?.()||null,
       label:getChapter?.()||elements.bookTitle?.textContent||"Saved location",at:Date.now()
     });
-    storage.saveBookmarks(bookmarks);render();syncButton();toast?.("Bookmark saved");
+    persist(bookmarks,"Bookmark saved");
   }
 
   scope.listen(elements.bookmarkButton,"click",toggle);

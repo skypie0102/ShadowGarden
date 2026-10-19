@@ -108,3 +108,23 @@ export function findVolumeEntry(catalog, seriesId, identity, extra = []) {
 export function isAdultSeriesId(seriesId) {
   return String(seriesId || "").startsWith("adult-");
 }
+
+// Scope is mutable metadata; a series identity is permanent. The prefix remains
+// a compatibility hint for old links, never an override of an explicit scope.
+export function isAdultSeries(series){
+  return typeof series?.nsfw==='boolean'?series.nsfw:isAdultSeriesId(series?.id);
+}
+
+export function adultRoute(seriesId,search=''){
+  const scope=new URLSearchParams(search).get('scope');
+  return scope==='adult'?true:scope==='main'?false:isAdultSeriesId(seriesId);
+}
+
+export async function findSeriesContext(loadCatalog,seriesId,{adult=isAdultSeriesId(seriesId),reuse=false}={}){
+  for(const scope of [adult,!adult]){
+    const shelf=await loadCatalog(scope,{reuse});
+    const series=seriesById(shelf,seriesId);
+    if(series)return {adult:scope,series:{...series,nsfw:scope},catalog:shelf};
+  }
+  return null;
+}

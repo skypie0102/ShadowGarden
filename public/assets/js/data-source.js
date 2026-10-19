@@ -18,8 +18,8 @@ window.ShadowGardenData=(()=>{
   async function getSource(){
     if(!sourcePromise){
       sourcePromise=fetch('/data/source.json',{cache:'default'})
-        .then(r=>r.ok?r.json():{mode:'local'})
-        .catch(()=>({mode:'local'}));
+        .then(r=>{if(!r.ok)throw new Error('Catalog source configuration could not be loaded.');return r.json()})
+        .catch(error=>{sourcePromise=null;throw error});
     }
     return sourcePromise;
   }
@@ -29,7 +29,8 @@ window.ShadowGardenData=(()=>{
       const url=adult?source.adultCatalogUrl:source.catalogUrl;
       if(url)return url;
     }
-    return adult?'/data/adult-catalog.json':'/data/catalog.json';
+    if(source?.mode==='local')return adult?'/data/adult-catalog.json':'/data/catalog.json';
+    throw new Error('Catalog source configuration is invalid.');
   }
   async function normalizeCatalog(catalog){
     const domain=await loadDomain();
@@ -48,7 +49,8 @@ window.ShadowGardenData=(()=>{
       const url=await catalogUrl(adult);
       const r=await fetch(url,{cache:'default',mode:'cors'});
       if(!r.ok)throw new Error(`Catalog request failed: ${r.status}`);
-      return normalizeCatalog(await r.json());
+      const normalized=await normalizeCatalog(await r.json());
+      return {...normalized,series:normalized.series.map(series=>({...series,nsfw:adult}))};
     })();
     catalogPromises.set(key,request);
     try{

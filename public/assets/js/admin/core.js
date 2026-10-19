@@ -111,18 +111,23 @@
 
   class AdminClient{
     #authorized=false;
-    #coverRoots=new Map();
     #coverKeys=new Map();
     #bookKeys=new Map();
     #revision=null;
     #editor=null;
+    #session=0;
+    #requests=new Set();
 
     beginEdit(id,revision){this.#editor={id,revision}}
 
     token(){return $("#adminToken")?.value.trim()||""}
     isAuthorized(){return this.#authorized}
     markUnlocked(){this.#authorized=true}
-    markLocked(){this.#authorized=false}
+    markLocked(){
+      this.#authorized=false;this.#session++;this.#revision=null;this.#editor=null;
+      for(const controller of this.#requests)controller.abort(new DOMException("Garden Keeper was locked.","AbortError"));
+      this.#coverKeys.clear();this.#bookKeys.clear();
+    }
 
     timeoutFor(path,method){
       if(String(path).startsWith("/admin-api/upload"))return 180000;
@@ -139,13 +144,14 @@
     }
 
     opaqueCoverKey(key){
-      const raw=String(key||""),prefix="shadow-garden/covers/",opaque=/^shadow-garden\/covers\/cv_[A-Za-z0-9_-]{20,64}-(?:detail|thumb)\.[A-Za-z0-9]+$/i;
-      if(!raw.startsWith(prefix)||opaque.test(raw))return raw;
-      if(this.#coverKeys.has(raw))return this.#coverKeys.get(raw);
-      const extension=(raw.match(/(\.[A-Za-z0-9]+)$/)||[])[1]?.toLowerCase();if(!extension)throw new Error("Cover upload is missing a file extension.");
-      const stem=raw.slice(prefix.length,-extension.length),variant=stem.match(/^(.*)-(detail|thumb)$/i),rootKey=variant?variant[1]:stem,kind=(variant?.[2]||"detail").toLowerCase();
-      let id=this.#coverRoots.get(rootKey);if(!id){id=this.randomCoverId();this.#coverRoots.set(rootKey,id)}
-      const mapped=`${prefix}cv_${id}-${kind}${extension}`;this.#coverKeys.set(raw,mapped);return mapped;
+      const raw=String(key||""),prefix="shadow-garden/covers/";
+      if(!raw.startsWith(prefix))return raw;
+      const extension=(raw.match(/(\.[A-Za-z0-9]+)$/)||[])[1]?.toLowerCase();
+      if(!extension)throw new Error("Cover upload is missing a file extension.");
+      const kind=/-thumb\.[A-Za-z0-9]+$/i.test(raw)?"thumb":"detail";
+      // Every attempt needs a fresh coordinate: successful and failed uploads
+      // both reserve their old key so snapshots can never be overwritten.
+      return `${prefix}cv_${this.randomCoverId()}-${kind}${extension}`;
     }
 
     rewriteCoverKeys(value){
@@ -183,13 +189,21 @@
       const editor=method==="POST"&&/^\/admin-api\/(library|translations|series-banner)$/.test(path)&&payload?.id===this.#editor?.id?this.#editor:null;
       const revision=editor?editor.revision:this.#revision;
       if(method==="POST"&&Number.isInteger(revision)&&!headers.has("if-match")&&/^\/admin-api\/(catalog|library|maintenance|recovery|translations|series-banner)$/.test(path))headers.set("if-match",String(revision));
-      const controller=options.signal?null:new AbortController(),timeoutMs=this.timeoutFor(path,method),timer=controller?setTimeout(()=>controller.abort(),timeoutMs):0;
+      const session=this.#session,controller=new AbortController(),timeoutMs=this.timeoutFor(path,method);
+      let timedOut=false;
+      const abort=()=>controller.abort(options.signal.reason);
+      if(options.signal?.aborted)abort();else options.signal?.addEventListener("abort",abort,{once:true});
+      const timer=setTimeout(()=>{timedOut=true;controller.abort()},timeoutMs);
+      this.#requests.add(controller);
+      const checkSession=()=>{if(session!==this.#session||controller.signal.aborted)throw controller.signal.reason||new DOMException("Garden Keeper was locked.","AbortError")};
       try{
-        const response=await fetch(path,{...options,method,headers,body,credentials:"same-origin",cache:"no-store",signal:options.signal||controller?.signal});
-        let data={};try{data=await response.json()}catch{}
+        const response=await fetch(path,{...options,method,headers,body,credentials:"same-origin",cache:"no-store",signal:controller.signal});
+        let data=null;try{data=await response.json()}catch{}
+        checkSession();
+        if(response.ok&&(!data||typeof data!=="object"||Array.isArray(data)))throw new Error("Garden Keeper returned an invalid API response. Refresh and try again.");
         if(!response.ok){
           if(response.status===401||response.status===403)events.dispatchEvent(new CustomEvent("session:rejected",{detail:{path,status:response.status}}));
-          throw new Error(data.detail||data.error||`Request failed (${response.status})`);
+          throw new Error(data?.detail||data?.error||`Request failed (${response.status})`);
         }
         if(Number.isInteger(data.revision)){
           this.#revision=this.#revision===null?data.revision:Math.max(this.#revision,data.revision);
@@ -200,13 +214,20 @@
         }
         return data;
       }catch(error){
-        if(error?.name==="AbortError")throw new Error(path.startsWith("/admin-api/upload")?`Upload timed out after ${Math.round(timeoutMs/1000)} seconds. Check the connection and try again.`:`Garden Keeper request timed out after ${Math.round(timeoutMs/1000)} seconds.`);
+        if(timedOut)throw new Error(path.startsWith("/admin-api/upload")?`Upload timed out after ${Math.round(timeoutMs/1000)} seconds. Check the connection and try again.`:`Garden Keeper request timed out after ${Math.round(timeoutMs/1000)} seconds.`);
         throw error;
-      }finally{if(timer)clearTimeout(timer)}
+      }finally{clearTimeout(timer);options.signal?.removeEventListener("abort",abort);this.#requests.delete(controller)}
     }
 
     verifySession(){return this.request("/admin-api/status",{method:"POST"},{allowLocked:true})}
-    async uploadObject(key,blob,type){let mapped=this.opaqueCoverKey(key);if(String(key).startsWith("shadow-garden/books/")){mapped=`shadow-garden/books/book_${this.randomCoverId()}.epub`;this.#bookKeys.set(key,mapped)}return this.request(`/admin-api/upload?key=${encodeURIComponent(mapped)}`,{method:"POST",headers:{"content-type":type||"application/octet-stream"},body:blob})}
+    async uploadObject(key,blob,type){
+      const raw=String(key),book=raw.startsWith("shadow-garden/books/");
+      const mapped=book?`shadow-garden/books/book_${this.randomCoverId()}.epub`:this.opaqueCoverKey(raw);
+      const result=await this.request(`/admin-api/upload?key=${encodeURIComponent(mapped)}`,{method:"POST",headers:{"content-type":type||"application/octet-stream"},body:blob});
+      (book?this.#bookKeys:this.#coverKeys).set(raw,mapped);
+      return result;
+    }
+
     async closeSession(){this.markLocked();try{await fetch("/admin-access",{method:"DELETE",credentials:"same-origin",cache:"no-store",keepalive:true})}catch{}}
   }
 

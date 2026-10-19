@@ -25,7 +25,7 @@ export async function saveState(env,previous,document,reason) {
   if (catalogError(document)) fail(409,'catalog_invalid','Catalog data failed structural validation; nothing was saved.');
   const db=database(env),id=crypto.randomUUID(),date=new Date().toISOString();
   const old=previous.serialized || JSON.stringify(previous.document),next=JSON.stringify(document);
-  if (new TextEncoder().encode(next).length > 1500000) fail(413,'catalog_too_large','Catalog exceeds the reconstructed storage limit.');
+  if (new TextEncoder().encode(next).length > 1500000) fail(413,'catalog_too_large','Catalog exceeds the storage limit.');
   const results=await db.batch([
     db.prepare('INSERT INTO snapshots(id,reason,created_at,document,sha256) SELECT ?,?,?,document,? FROM library_state WHERE id = 1 AND revision = ?').bind(id,reason,date,await digest(old),previous.revision),
     db.prepare('UPDATE library_state SET document = ?, revision = revision+1, updated_at = ? WHERE id = 1 AND revision = ?').bind(next,date,previous.revision)

@@ -77,7 +77,7 @@ export async function createCompletionController({session,elements,toast,signal}
     const next=page.querySelector(".volume-complete-next");
     const back=page.querySelector(".volume-complete-return");
     if(title)title.textContent=volume?.title||elements.bookTitle?.textContent||"This volume";
-    if(back)back.href=seriesId?urls.seriesUrl(seriesId):urls.libraryUrl(session?.adult);
+    if(back)back.href=seriesId?urls.seriesUrl(seriesId,{adult:session?.adult}):urls.libraryUrl(session?.adult);
 
     const target=destinationEntry(),bookId=entryBookId(target);
     if(target&&bookId&&next){
@@ -89,7 +89,7 @@ export async function createCompletionController({session,elements,toast,signal}
         if(detail)detail.textContent=`${nextTitle} is ready beneath the next branch of the Garden.`;
         next.textContent=`Read ${nextTitle} ▶`;
       }
-      next.href=urls.readerUrl(bookId,seriesId);
+      next.href=urls.readerUrl(bookId,seriesId,{adult:session?.adult});
       next.classList.remove("hidden");
     }else{
       if(detail)detail.textContent=series?"You've reached the last volume currently growing in this series.":"You've reached the end of this volume.";
@@ -126,10 +126,10 @@ export async function createCompletionController({session,elements,toast,signal}
   async function restartDestination(target,bookId){
     if(!seriesId||!target||!bookId)return;
     if(!(await confirmReadAgain(entryTitle(target),{signal:scope.signal}))||scope.disposed)return;
-    const reset=await resetFinishedVolume(seriesId,bookId,{signal:scope.signal});
+    const reset=await resetFinishedVolume(seriesId,bookId,{signal:scope.signal,adult:session?.adult});
     if(scope.disposed)return;
     if(!reset){toast?.("Could not restart this volume");return}
-    location.assign(urls.readerUrl(bookId,seriesId,{restart:true}));
+    location.assign(urls.readerUrl(bookId,seriesId,{restart:true,adult:session?.adult}));
   }
 
   function onChange(event){

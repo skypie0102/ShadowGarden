@@ -73,3 +73,25 @@ test('an unmapped bookmark uses its saved CFI and cannot close drawers after dis
   f.controller.dispose();f.navigation.resolve();await tick();assert.equal(f.closed(),0);
   assert.deepEqual(f.messages,[]);assert.equal(f.writes(),0);
 });
+
+function editableFixture(t){
+  const previous=Object.getOwnPropertyDescriptor(globalThis,'document');
+  Object.defineProperty(globalThis,'document',{configurable:true,value:{createElement:()=>new Element()}});
+  t.after(()=>previous?Object.defineProperty(globalThis,'document',previous):delete globalThis.document);
+  const saved={cfi:'epubcfi(saved)',label:'Original bookmark',at:1000},inserted={cfi:'epubcfi(other)',label:'Another tab bookmark',at:2000};
+  let records=[saved],writable=true;const messages=[],panel=new Element();
+  const controller=createBookmarksController({storage:{loadBookmarks:()=>structuredClone(records),saveBookmarks:next=>{if(!writable)return false;records=structuredClone(next);return true}},elements:{bookmarksPanel:panel},getCfi:()=> 'epubcfi(current)',getPosition:()=>({cfi:'epubcfi(current)'}),toast:message=>messages.push(message)});
+  t.after(()=>controller.dispose());
+  return{controller,messages,records:()=>records,failWrites:()=>{writable=false},externalInsert:()=>{records=[inserted,...records]},remove:()=>panel.children[0].children.find(child=>child.attributes.get('aria-label')==='Delete bookmark 1').click()};
+}
+
+for(const action of ['add','remove'])test(`failed bookmark ${action} reports a storage failure instead of success`,t=>{
+  const f=editableFixture(t);f.failWrites();
+  if(action==='add')f.controller.toggle();else f.remove();
+  assert.equal(f.records().length,1);assert.match(f.messages[0],/could not save bookmarks/i);
+});
+
+test('deleting a displayed bookmark cannot remove a different bookmark inserted by another tab',t=>{
+  const f=editableFixture(t);f.externalInsert();f.remove();
+  assert.deepEqual(f.records().map(b=>b.cfi),['epubcfi(other)']);
+});

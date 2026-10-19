@@ -6,7 +6,7 @@
   keeper.registerWorkflow("session",()=>{
     const unlockButton=$("#unlockButton"),tokenInput=$("#adminToken"),authCard=$("#authCard"),lockButton=$("#lockButton");
     if(!unlockButton||!tokenInput||!authCard)return{};
-    let widgetId=null,challenge=null,submitting=false,cooldownTimer=0;
+    let widgetId=null,challenge=null,submitting=false,cooldownTimer=0,generation=0,initializing=false;
 
     function panel(){
       let host=$("#adminSecurityPanel");if(host)return host;
@@ -39,32 +39,41 @@
       keeper.events.dispatchEvent(new Event("session:locked"));
     }
 
-    async function establishSession(turnstileToken){
-      if(submitting||cooldownTimer)return;submitting=true;unlockButton.disabled=true;setAuthState("VERIFYING");setPanelStatus("Checking your Garden Pass and Keeper key…");
+    async function establishSession(turnstileToken,epoch=generation){
+      if(epoch!==generation||submitting||cooldownTimer)return;submitting=true;unlockButton.disabled=true;setAuthState("VERIFYING");setPanelStatus("Checking your Garden Pass and Keeper key…");
       try{
         const response=await fetch("/admin-access",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"content-type":"application/json"},body:JSON.stringify({adminToken:tokenInput.value,turnstileToken})});
-        let data=null;try{data=await response.json()}catch{}const retryAfter=Number(response.headers.get("Retry-After")||0);
+        let data=null;try{data=await response.json()}catch{}if(epoch!==generation)return;const retryAfter=Number(response.headers.get("Retry-After")||0);
         if(response.ok&&data?.ok){
           stopCooldown();setPanelStatus("The gate yields. Opening Garden Keeper…");
-          try{await client.verifySession()}catch(error){await client.closeSession();throw error}
+          try{await client.verifySession()}catch(error){if(epoch===generation)await client.closeSession();throw error}
+          if(epoch!==generation)return;
           showUnlocked();return;
         }
         if(retryAfter>0)beginCooldown(retryAfter);else{setAuthState("DENIED","error");setPanelStatus(data?.error||"Access denied. Please try again.",true);try{if(widgetId!==null)window.turnstile?.reset(widgetId)}catch{}unlockButton.disabled=false}
-      }catch(error){setAuthState("UNAVAILABLE","error");setPanelStatus(error?.message||"Garden Keeper verification is temporarily unavailable.",true);unlockButton.disabled=false;try{if(widgetId!==null)window.turnstile?.reset(widgetId)}catch{}}
-      finally{submitting=false}
+      }catch(error){if(epoch!==generation)return;setAuthState("UNAVAILABLE","error");setPanelStatus(error?.message||"Garden Keeper verification is temporarily unavailable.",true);unlockButton.disabled=false;try{if(widgetId!==null)window.turnstile?.reset(widgetId)}catch{}}
+      finally{if(epoch===generation)submitting=false}
     }
 
     async function beginUnlock(){
-      if(submitting||cooldownTimer)return;if(!tokenInput.value.trim()){setAuthState("TOKEN NEEDED","error");tokenInput.focus();return}
+      if(submitting||initializing||cooldownTimer)return;if(!tokenInput.value.trim()){setAuthState("TOKEN NEEDED","error");tokenInput.focus();return}
+      const epoch=generation;initializing=true;
+      const live=callback=>(...args)=>{if(epoch===generation)return callback(...args)};
       unlockButton.disabled=true;setAuthState("CHECKING");const host=panel();host.classList.remove("hidden");setPanelStatus("Waking the Keeper's gate…");
       try{
-        if(!challenge)challenge=await getChallenge();const turnstile=await loadTurnstile();
-        if(widgetId===null){const widgetHost=host.querySelector("[data-admin-security-widget]");widgetId=turnstile.render(widgetHost,{sitekey:challenge.siteKey,action:challenge.action||"admin_access",theme:"dark",size:"flexible",callback:token=>void establishSession(token),"expired-callback":()=>setPanelStatus("Verification expired. Complete it again.",true),"error-callback":()=>{setPanelStatus("Verification could not complete. Please try again.",true);return true},"timeout-callback":()=>setPanelStatus("Verification timed out. Please try again.")})}
+        if(!challenge){const next=await getChallenge();if(epoch!==generation)return;challenge=next}const turnstile=await loadTurnstile();if(epoch!==generation)return;
+        if(widgetId===null){const widgetHost=host.querySelector("[data-admin-security-widget]");widgetId=turnstile.render(widgetHost,{sitekey:challenge.siteKey,action:challenge.action||"admin_access",theme:"dark",size:"flexible",callback:token=>void establishSession(token,epoch),"expired-callback":live(()=>setPanelStatus("Verification expired. Complete it again.",true)),"error-callback":live(()=>{setPanelStatus("Verification could not complete. Please try again.",true);return true}),"timeout-callback":live(()=>setPanelStatus("Verification timed out. Please try again."))})}
         setPanelStatus("Complete the check to open the Keeper's gate.");unlockButton.disabled=false;
-      }catch(error){setAuthState("UNAVAILABLE","error");setPanelStatus(error?.message||"Garden Keeper verification is unavailable.",true);unlockButton.disabled=false}
+      }catch(error){if(epoch!==generation)return;setAuthState("UNAVAILABLE","error");setPanelStatus(error?.message||"Garden Keeper verification is unavailable.",true);unlockButton.disabled=false}
+      finally{if(epoch===generation)initializing=false}
     }
 
-    async function lock(){stopCooldown();challenge=null;showLocked();await client.closeSession();panel().classList.add("hidden")}
+    async function lock(){
+      const epoch=++generation;initializing=false;submitting=false;stopCooldown();challenge=null;
+      try{if(widgetId!==null)window.turnstile?.remove(widgetId)}catch{}widgetId=null;
+      showLocked();unlockButton.disabled=false;
+      await client.closeSession();if(epoch===generation)panel().classList.add("hidden");
+    }
     unlockButton.addEventListener("click",event=>{event.preventDefault();void beginUnlock()});
     tokenInput.addEventListener("keydown",event=>{if(event.key!=="Enter")return;event.preventDefault();void beginUnlock()});
     lockButton?.addEventListener("click",event=>{event.preventDefault();void lock()});

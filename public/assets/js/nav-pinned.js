@@ -3,7 +3,7 @@
   const nav=document.querySelector('#siteNav')||document.querySelector('.site-nav-drawer')||document.querySelector('.site-header nav');
   if(!nav||!window.ShadowGardenData)return;
 
-  const {preferences,format,urls}=await import('/assets/js/domain/index.js?v=2.11.0');
+  const {preferences,format,urls,catalog}=await import('/assets/js/domain/index.js?v=2.11.0');
   const esc=format.escapeHtml;
   const arr=format.asArray;
 
@@ -30,11 +30,10 @@
   });
 
   const requestedSeries=new URLSearchParams(location.search).get('id')||'';
-  const currentAdult=document.body.dataset.libraryScope==='nsfw'||document.body.classList.contains('adult-library')||requestedSeries.startsWith('adult-');
-  const currentScope=currentAdult?'adult':'main';
-  const catalogPromise=window.ShadowGardenData.loadCatalog(currentAdult,{reuse:true,shareNext:true})
-    .catch(()=>({series:[]}))
-    .then(catalog=>arr(catalog?.series).map(series=>({...series,__scope:currentScope})));
+  let currentAdult=document.body.dataset.libraryScope?document.body.dataset.libraryScope==='nsfw':catalog.adultRoute(requestedSeries,location.search);
+  const loadShelf=()=>window.ShadowGardenData.loadCatalog(currentAdult,{reuse:true,shareNext:true}).catch(()=>({series:[]})).then(value=>arr(value?.series));
+  let catalogPromise=loadShelf();
+  window.addEventListener('sg:catalog-context',event=>{if(event.detail.adult===currentAdult)return;currentAdult=event.detail.adult;catalogPromise=loadShelf();void render()});
 
   function markCards(){
     const pins=preferences.pinnedIds();
@@ -57,7 +56,7 @@
     if(!pinned.length){
       list.innerHTML=`<div class="nav-pinned-empty">No pinned ${currentAdult?'18+ ':''}series yet.</div>`;
     }else{
-      list.innerHTML=pinned.map(series=>`<a class="nav-pinned-entry" href="${urls.seriesUrl(series.id)}"><span class="pin-mark" aria-hidden="true">◆</span><span class="pin-title">${esc(series.title||'Untitled series')}</span>${currentAdult?'<span class="pin-scope">18+</span>':''}</a>`).join('');
+      list.innerHTML=pinned.map(series=>`<a class="nav-pinned-entry" href="${urls.seriesUrl(series.id,{adult:currentAdult})}"><span class="pin-mark" aria-hidden="true">◆</span><span class="pin-title">${esc(series.title||'Untitled series')}</span>${currentAdult?'<span class="pin-scope">18+</span>':''}</a>`).join('');
     }
     markCards();
   }

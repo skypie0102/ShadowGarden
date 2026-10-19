@@ -46,15 +46,20 @@
     return `bk_${base64Url(digest.slice(0,16))}`;
   }
 
-  function adultContext(){
-    if(document.body?.classList.contains("adult-library")||document.body?.classList.contains("adult-reader"))return true;
-    return String(new URLSearchParams(location.search).get("series")||"").startsWith("adult-");
+  async function adultContext(){
+    const {adultRoute,findSeriesContext}=await import("./domain/catalog.js");
+    const params=new URLSearchParams(location.search),seriesId=params.get("series")||params.get("id")||"";
+    const hint=seriesId?adultRoute(seriesId,location.search):document.body?.classList.contains("adult-library")||document.body?.classList.contains("adult-reader");
+    if(seriesId&&window.ShadowGardenData?.loadCatalog){
+      try{const found=await findSeriesContext(window.ShadowGardenData.loadCatalog,seriesId,{adult:hint,reuse:true});if(found)return found.adult}catch{}
+    }
+    return Boolean(hint);
   }
 
   async function ensureHumanAccess(challenge){
     if(humanAccessPromise)return humanAccessPromise;
-    humanAccessPromise=import("./public/garden-pass.js").then(({presentHumanChallenge})=>presentHumanChallenge(challenge,{
-      adult:adultContext(),
+    humanAccessPromise=import("./public/garden-pass.js").then(async({presentHumanChallenge})=>presentHumanChallenge(challenge,{
+      adult:await adultContext(),
       verify:async token=>{
         const response=await nativeFetch("/human-access",{
           method:"POST",credentials:"same-origin",
@@ -174,16 +179,29 @@
     },delay);
   }
 
+  function fetchAuthorizedSource(input,init,path){
+    if(!(input instanceof Request))return nativeFetch(path,init);
+    const request=new Request(input,init);
+    const options=Object.fromEntries(["method","headers","credentials","mode","cache","redirect","referrer","referrerPolicy","integrity","keepalive","signal"].map(key=>[key,request[key]]));
+    if(request.body){options.body=request.body;options.duplex="half"}
+    return nativeFetch(new Request(new URL(path,location.href),options));
+  }
+
   window.fetch=async(input,init)=>{
     const opaque=opaquePseudoRequest(input);
+    const raw=isRawEpubRequest(input);
+    if(!opaque&&!raw)return nativeFetch(input,init);
+    const signal=init&&"signal" in init?init.signal:input instanceof Request?input.signal:null;
+    signal?.throwIfAborted();
     if(opaque){
       const ticket=await resolve(opaque);
+      signal?.throwIfAborted();
       if(!ticket?.sourcePath)throw new Error("Authorized EPUB source is unavailable.");
-      return nativeFetch(ticket.sourcePath,init);
+      return fetchAuthorizedSource(input,init,ticket.sourcePath);
     }
-    if(!isRawEpubRequest(input))return nativeFetch(input,init);
     const identity=normalizeIdentity(input instanceof Request?input.url:input);
     await resolve(identity);
+    signal?.throwIfAborted();
     return nativeFetch(input,init);
   };
 
