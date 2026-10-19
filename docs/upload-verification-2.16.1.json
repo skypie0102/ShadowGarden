@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "release": "2.16.1",
+  "status": "merged_not_deployed",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/34",
+  "source": "d259667b89820560587a892633264cb47e87c52b",
+  "merge": "a862ad5b0a7699e3194923860d4d970f7eb5ce57",
+  "testedTree": "3e0be156734af6c261831a697efe169c3efd25d4",
+  "mergedTree": "3e0be156734af6c261831a697efe169c3efd25d4",
+  "ci": {
+    "runId": 39332285024,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39332285024",
+    "attempt": 1,
+    "conclusion": "success",
+    "nodePassed": 259,
+    "browserPassed": 477,
+    "existingPlatformSkips": 8,
+    "automaticTestRetries": 0,
+    "jobs": [
+      {
+        "id": 118333153515,
+        "name": "verify",
+        "conclusion": "success"
+      },
+      {
+        "id": 118333316396,
+        "name": "browser (desktop-firefox, firefox)",
+        "conclusion": "success"
+      },
+      {
+        "id": 118333316438,
+        "name": "browser (desktop-chromium, chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 118333316441,
+        "name": "browser (mobile-chromium, chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 118333316475,
+        "name": "browser (desktop-webkit, webkit)",
+        "conclusion": "success"
+      },
+      {
+        "id": 118333316513,
+        "name": "browser (mobile-webkit, webkit)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "measurements": {
+    "baseline": "upload-memory-baseline.json",
+    "corrected": "upload-memory-2.16.1.json",
+    "runtime": "workerd 1.20261012.1",
+    "compatibilityDate": "2026-09-23",
+    "inputBytes": 52428800,
+    "declaredLength": {
+      "beforeBackingMiB": 100.2698335647583,
+      "afterBackingMiB": 52.2112398147583,
+      "reductionPercent": 47.9
+    },
+    "unknownLength": {
+      "beforeBackingMiB": 103.9065523147583,
+      "afterBackingMiB": 104.0003023147583
+    },
+    "casesPerSource": 8,
+    "scope": "Sampled local isolate ArrayBuffer backing storage; excludes a total-memory, concurrency, CPU or production speed guarantee."
+  },
+  "production": {
+    "unchangedRelease": "2.16.0",
+    "unchangedDeployment": "8212de19-5ccb-40bd-9241-14b9427ea565",
+    "publication": "pending",
+    "blocker": {
+      "operation": "POST /pages/assets/check-missing",
+      "status": 403,
+      "message": "Authorization failed"
+    },
+    "deploymentCreated": false,
+    "databaseWrites": 0,
+    "mediaObjectWrites": 0,
+    "credentialChanges": 0,
+    "configurationChanges": 0
+  },
+  "nextAuditItem": "Browser persistence partial-write semantics; retain identity aliases and storage formats."
+}

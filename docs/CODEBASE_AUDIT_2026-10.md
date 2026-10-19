@@ -67,11 +67,11 @@ live database/size errors is also removed without changing error codes or contra
    The 205-snapshot fixture reads 95% fewer first-page document bytes, and stalled
    provider/authentication tests preserve unverified outcomes. See [measurements
    and release](MAINTENANCE_BUDGETS.md).
-2. **Large-upload memory — profiled; v2.16.1 prepared:** the real workerd upload
+2. **Large-upload memory — profiled; v2.16.1 merged, deployment pending:** the real workerd upload
    pipeline validates/transfers exact 50 MiB fixtures and rejects one byte above
    the limit before provider access/reservation. Declared-length input now copies
    into one destination, reducing sampled 50 MiB backing storage from about
-   101 MiB to 52–53 MiB. Unknown-length/concurrent buffering remains a separate
+   100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
    design follow-up; the supported limits are unchanged. See [measurements and
    limitations](UPLOAD_MEMORY.md).
 3. **Browser persistence transactions:** progress/Finished/bookmark alias writes
@@ -135,5 +135,7 @@ corrections are separate from application defects.
 
 Earlier physical Android/Soul and owner Keeper acceptance retain their recorded
 release scope. This rollout does not claim new physical acceptance or a completed
-real CAPTCHA/credential flow. Maintenance budgets are completed in v2.16.0;
-the other ordered follow-ups above remain open.
+real CAPTCHA/credential flow. Maintenance budgets are completed in v2.16.0.
+The measured upload increment is merged through PR #34 with 259 Node tests and
+477 browser passes; [its verification](UPLOAD_MEMORY.md#validation-and-release)
+records the pending publication separately. The other ordered follow-ups remain open.

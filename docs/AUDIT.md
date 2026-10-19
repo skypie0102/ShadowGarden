@@ -1,5 +1,24 @@
 # ShadowGarden project audit
 
+## Audit continuation — 2026-10-20 (Asia/Manila)
+
+The v2.16.1 upload-memory increment is merged through
+[PR #34](https://github.com/skypie0102/ShadowGarden/pull/34) as `a862ad5`.
+The real local workerd handler transfers exact 50 MiB fixtures with matching
+provider hashes; one byte above the limit fails before provider access or a
+reservation. Direct buffering reduces sampled declared-length backing storage
+from 100.27 MiB to 52.21 MiB (47.9%). Unknown-length input remains around 104 MiB.
+All 259 Node tests and 477 browser cases pass, with eight existing skips and no
+test retries. [Measurements and validation](UPLOAD_MEMORY.md) distinguish
+allocation samples from total production memory.
+
+Production remains v2.16.0: the current Cloudflare connection returned 403 for
+the required Pages asset-upload operation. No new deployment or production
+data/configuration write occurred. The next independent audit item is browser
+persistence transactions in `domain/progress.js`, `domain/bookmarks.js`,
+`domain/reading-state.js` and `reader/storage.js`; preserve existing identity
+aliases and storage formats while defining partial-write behavior.
+
 ## Current status — 2026-10-19
 
 Production is v2.16.0, source `4b2aed1`, with 250 Node tests and 477 browser

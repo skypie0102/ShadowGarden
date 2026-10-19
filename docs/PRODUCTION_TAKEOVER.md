@@ -1,6 +1,19 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-19:** v2.14.1, deployment
+**Last verified production release — 2026-10-19:** v2.16.0, deployment
+`8212de19-5ccb-40bd-9241-14b9427ea565`, source `4b2aed1`.
+[Maintenance budgets](MAINTENANCE_BUDGETS.md) and
+[release evidence](maintenance-release-2.16.0.json) record paginated Keeper
+history, bounded readiness, 250 Node tests, 477 browser cases and unchanged
+production data/configuration. The retained rollback is v2.15.0 deployment
+`710c6175-587f-40ff-899b-94b5c33e5be5`.
+
+The v2.16.1 upload-memory increment is merged through PR #34 with 259 Node tests
+and 477 browser passes. It is not deployed: the current Cloudflare connection
+returned HTTP 403 for the Pages asset-upload operation. No deployment or
+production write was performed. See [upload verification](UPLOAD_MEMORY.md).
+
+**Reader gesture release — 2026-10-19:** v2.14.1, deployment
 `fab2efb5-42d7-4dce-be2c-42990c9b517a`, clean main source
 `7d50991eeaca4f96077da2fa1467f99f4e322917`. Double tap/click now opens and
 returns from image focus. All 224 Node tests and 432 browser cases pass across
@@ -51,7 +64,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.13.0, `749d732f-c40c-4782-9074-fff9c4eaf8be` |
+| Last verified rollback target | v2.15.0, `710c6175-587f-40ff-899b-94b5c33e5be5` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,

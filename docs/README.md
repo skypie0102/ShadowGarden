@@ -1,8 +1,10 @@
 # ShadowGarden documentation
 
-[Upload memory](UPLOAD_MEMORY.md) records the next prepared v2.16.1 audit
-increment, its workerd measurements and the remaining unknown-length/concurrency
-design work.
+[Upload memory](UPLOAD_MEMORY.md) records the merged v2.16.1 audit increment:
+47.9% less sampled backing storage for declared-length 50 MiB uploads, 259 Node
+tests and 477 browser passes. Publication is pending asset-upload authorization.
+The report retains remaining unknown-length/concurrency design work and links
+[verification evidence](upload-verification-2.16.1.json).
 
 The latest verified production release is v2.16.0, deployed on 2026-10-19.
 [Maintenance budgets](MAINTENANCE_BUDGETS.md) and

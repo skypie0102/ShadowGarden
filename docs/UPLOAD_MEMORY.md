@@ -2,8 +2,9 @@
 
 Baseline: v2.16.0, main `4143089`. Follow-up to the
 [whole-codebase audit](CODEBASE_AUDIT_2026-10.md), measured on 2026-10-20
-(Asia/Manila). The implementation is prepared for v2.16.1; production remains
-v2.16.0 until the release verification below is recorded.
+(Asia/Manila). Merged for v2.16.1 through
+[PR #34](https://github.com/skypie0102/ShadowGarden/pull/34) as `a862ad5`.
+Production remains v2.16.0; deployment status is recorded below.
 
 ## Finding and correction
 
@@ -50,10 +51,17 @@ the source hash, Node/workerd versions and byte budgets:
 - [v2.16.0 control](upload-memory-baseline.json)
 - [v2.16.1 implementation](upload-memory-2.16.1.json)
 
-The representative 50 MiB declared-length case drops from about 101 MiB to
-52–53 MiB of sampled ArrayBuffer backing storage, approximately 48% less.
-The 10 MiB case also improves; small-case totals depend more on garbage
-collection. Unknown-length 50 MiB inputs remain around 104 MiB.
+Representative maximum sampled ArrayBuffer backing storage, in MiB:
+
+| Input | Declared length | v2.16.0 control | v2.16.1 | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| 1 MiB | Yes | 2.27 | 2.27 | 0.0% |
+| 10 MiB | Yes | 20.35 | 14.74 | 27.6% |
+| 50 MiB | Yes | 100.27 | 52.21 | 47.9% |
+| 50 MiB | No | 103.91 | 104.00 | No improvement |
+
+Small-case totals depend more on garbage collection. The remaining input sizes
+and over-limit results are retained in the raw reports.
 
 These are sampled local isolate allocation measurements, not a production
 peak-memory guarantee, whole-process RSS, CPU or upload-speed benchmark.
@@ -76,8 +84,31 @@ overflow/cancellation, malformed advertised lengths, mismatches, stream failures
 empty bodies and JSON. The real upload-handler tests cover declared-length
 success/retry/replacement and reject mismatches before provider access or
 reservation. The workerd profile covers exact-limit success and rejection one
-byte above it in both transport modes. Full CI and rollout results will be
-recorded here after they complete.
+byte above it in both transport modes.
+
+[CI run 39332285024](https://github.com/skypie0102/ShadowGarden/actions/runs/39332285024)
+passes on attempt 1: asset/provenance audit, 259 Node tests, static build,
+binding-aware Functions package and 477 browser cases across five profiles,
+with eight existing platform skips and no automatic test retries. The tested
+source is `d259667b89820560587a892633264cb47e87c52b`; the merged tree is exactly
+the same `3e0be156734af6c261831a697efe169c3efd25d4`.
+
+| Profile | Passed | Existing skips |
+| --- | ---: | ---: |
+| Desktop Chromium | 97 | 0 |
+| Mobile Chromium | 97 | 0 |
+| Desktop Firefox | 95 | 2 |
+| Desktop WebKit | 95 | 2 |
+| Mobile WebKit | 93 | 4 |
+
+Publication is pending. The current Cloudflare connection returned HTTP 403
+`Authorization failed` for `/pages/assets/check-missing`, the asset operation
+needed for Direct Upload. No new deployment was created. The verified canonical
+deployment is still v2.16.0, `8212de19-5ccb-40bd-9241-14b9427ea565`.
+No production database, object, credential or configuration write was performed.
+This increment adds no live authenticated-upload or physical-device acceptance
+claim. [Verification evidence](upload-verification-2.16.1.json) records the tested
+source, merge, counts, measurements and publication boundary.
 
 ## Remaining work
 

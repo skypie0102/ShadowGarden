@@ -24,11 +24,14 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next audit increment is prepared as **v2.16.1**: measured large-upload memory
-and direct buffering for declared-length bodies. A 50 MiB EPUB uses about 48%
-less sampled ArrayBuffer storage in the local workerd fixture. The 50 MiB limit
-is unchanged; unknown-length/concurrent buffering remains documented. See
-[upload measurements](docs/UPLOAD_MEMORY.md) for reproducible evidence and scope.
+The latest audit increment is merged for **v2.16.1** through
+[PR #34](https://github.com/skypie0102/ShadowGarden/pull/34): measured large-upload
+memory and direct buffering for declared-length bodies. A 50 MiB EPUB uses 47.9%
+less sampled ArrayBuffer storage in the local workerd fixture. All 259 Node tests
+and 477 browser cases pass (eight existing skips). The 50 MiB limit is unchanged;
+unknown-length/concurrent buffering remains documented. Publication is pending
+because the current Cloudflare connection rejects the asset-upload authorization.
+See [upload measurements](docs/UPLOAD_MEMORY.md) for evidence and scope.
 
 The latest verified production release is **v2.16.0**, deployed on 2026-10-19.
 Keeper history loads ten inspected summaries per page, one full snapshot at a
