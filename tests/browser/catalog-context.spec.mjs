@@ -20,7 +20,7 @@ for(const adult of [false,true])test(`a series moved to ${adult?'Adult':'Main'} 
   await expect(page.locator('#bookTitle')).toHaveText(readerTitle);
   expect(await page.locator('body').evaluate(b=>b.classList.contains('adult-reader'))).toBe(adult);
   const back=page.locator('#completeReturnLink');
-  expect(new URL(await back.getAttribute('href'),'https://garden.test').searchParams.get('scope')).toBe(adult?'adult':'main');
+  await expect(back).toHaveAttribute('href',new RegExp('[?&]scope='+(adult?'adult':'main')+'(?:&|$)'));
 });
 
 test('series loading status stays busy until its catalog is ready',async({page})=>{
