@@ -46,12 +46,8 @@ async function resetReadAgain({requested,seriesId,publicBookId,sourcePath,ticket
     recordReaderDiagnostic('access.catalogUnavailable');
   }
   signal?.throwIfAborted();
-  const finishedCleared=readingState.setAliasesFinished(aliases,false);
-  const progressCleared=readingState.clearProgressAliases(aliases);
-  const stillFinished=readingState.isAnyFinished?.(aliases)===true;
-  const stillProgress=aliases.some(alias=>Boolean(readingState.progressForIdentity?.(alias)));
-  if(!finishedCleared||!progressCleared||stillFinished||stillProgress){
-    throw new Error("Shadow Garden could not reset this volume. Your reading place was left unchanged.");
+  if(!readingState.resetReadingAliases(aliases)){
+    throw new Error("Shadow Garden could not reset this volume. Please try again.");
   }
 }
 

@@ -74,10 +74,13 @@ live database/size errors is also removed without changing error codes or contra
    100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
    design follow-up; the supported limits are unchanged. See [measurements and
    limitations](UPLOAD_MEMORY.md).
-3. **Browser persistence transactions:** progress/Finished/bookmark alias writes
-   span multiple localStorage keys. A quota/security failure can leave only part
-   of an update committed. Design rollback/canonical-write semantics separately;
-   this audit fixes false bookmark success reports, not multi-key atomicity.
+3. **Browser persistence — v2.17.0 prepared:** progress/bookmark aliases, Finished
+   map/markers and settings use checked grouped writes with conditional rollback.
+   Public/startup Read Again resets progress and Finished state together. Eight
+   baseline controls reproduce partial writes or false success; new coverage
+   includes reload, concurrency and rollback refusal. Existing formats/identities
+   remain. This does not provide crash atomicity or cross-tab isolation; see
+   [contracts and limits](BROWSER_PERSISTENCE.md).
 4. **Compatibility transport:** map remaining vendor consumers before replacing
    the global protected-fetch compatibility hook with explicit authorized-source
    transport. The present correction preserves its Request contract.

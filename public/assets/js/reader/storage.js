@@ -1,7 +1,7 @@
 import { cleanIdentities, cleanIdentity, isBookId } from "../domain/book-identity.js";
 import { readBookmarksAliases, writeBookmarksAliases } from "../domain/bookmarks.js";
 import { progressForAliases, writeProgressAliases } from "../domain/progress.js";
-import { readJson, writeJson } from "../domain/storage.js";
+import { readJson, writeChanges, writeJson } from "../domain/storage.js";
 
 export const READER_SETTINGS_KEY = "sg-reader-settings";
 export const LEGACY_GESTURE_SETTINGS_KEY = "sg-reader-polish-settings";
@@ -52,9 +52,10 @@ export function createReaderStorage(input,options={}) {
       return { ...defaults, ...main, swipeTurns: typeof main.swipeTurns==="boolean" ? main.swipeTurns : legacy.swipeTurns!==false };
     },
     saveSettings(value) {
-      const saved=writeJson(READER_SETTINGS_KEY,value);
-      const legacySaved=writeJson(LEGACY_GESTURE_SETTINGS_KEY,{swipeTurns:value?.swipeTurns!==false});
-      return saved&&legacySaved;
+      return writeChanges([
+        {key:READER_SETTINGS_KEY,value:()=>JSON.stringify(value)},
+        {key:LEGACY_GESTURE_SETTINGS_KEY,value:()=>JSON.stringify({swipeTurns:value?.swipeTurns!==false})}
+      ]);
     }
   };
 }

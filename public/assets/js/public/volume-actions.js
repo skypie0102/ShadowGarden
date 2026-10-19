@@ -97,9 +97,7 @@ export async function resetFinishedVolume(seriesId, bookId, { signal,adult } = {
     return false;
   }
   if (signal?.aborted || !entry) return false;
-  const clearedFinished = readingState.setVolumeFinished(entry.series.id, entry.volume, false, entry.index);
-  const clearedProgress = readingState.clearVolumeProgress(entry.series.id, entry.volume, entry.index);
-  return Boolean(clearedFinished && clearedProgress && readingState.volumeState(entry.series.id, entry.volume, entry.index) === readingState.STATES.UNREAD);
+  return readingState.resetVolumeReadingState(entry.series.id, entry.volume, entry.index);
 }
 
 async function handleFinishedLink(link, event) {
@@ -127,7 +125,7 @@ async function handleFinishedLink(link, event) {
   if (!(await confirmReadAgain(title))) return;
   const reset = await resetFinishedVolume(seriesId, bookId,{adult});
   if (!reset) {
-    window.alert("The Garden could not clear this reading trail. Your place has been left unchanged; please try again.");
+    window.alert("The Garden could not clear this reading trail. Please try again.");
     return;
   }
   location.assign(urls.readerUrl(bookId, seriesId, { restart: true,adult }));

@@ -1,7 +1,7 @@
 /* Shadow Garden R2 — canonical browser-local bookmark service. */
 
 import { bookIdForLegacyPath, cleanIdentities, cleanIdentity, isBookId, legacyBookPath } from "./book-identity.js";
-import { listKeys, readJson, writeJson } from "./storage.js";
+import { listKeys, readJson, writeChanges, writeJson } from "./storage.js";
 
 export const BOOKMARK_PREFIX = "sg-bookmarks:";
 
@@ -39,9 +39,7 @@ export function writeBookmarksAliases(ids, value) {
   const aliases = cleanIdentities(ids);
   if (!aliases.length) return false;
   const next = Array.isArray(value) ? value : [];
-  let ok = true;
-  for (const id of aliases) ok = writeJson(bookmarkKey(id), next) && ok;
-  return ok;
+  return writeChanges(aliases.map(id => ({key: bookmarkKey(id), value: () => JSON.stringify(next)})));
 }
 
 export async function migrateLegacyBookmarks(bookIds = []) {

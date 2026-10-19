@@ -1,5 +1,9 @@
 # ShadowGarden documentation
 
+[Browser persistence](BROWSER_PERSISTENCE.md) records the prepared v2.17.0
+increment: checked grouped writes, conditional rollback, compound Read Again,
+failure reproductions and the limits of Web Storage.
+
 [Upload memory](UPLOAD_MEMORY.md) records the merged v2.16.1 audit increment:
 47.9% less sampled backing storage for declared-length 50 MiB uploads, 259 Node
 tests and 477 browser passes. Publication is pending asset-upload authorization.
@@ -25,6 +29,7 @@ Those physical/provider observations keep their original release scope.
 | [Whole-codebase audit](CODEBASE_AUDIT_2026-10.md) | Reproduced fixes, subsystem review and prioritized follow-ups |
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Upload memory](UPLOAD_MEMORY.md) | Workerd upload measurements, declared-length buffering and remaining limits |
+| [Browser persistence](BROWSER_PERSISTENCE.md) | Failed-write rollback, compound Read Again and concurrency/crash limits |
 | [Website architecture](WEBSITE_ARCHITECTURE.md) | Current public page, access, theme and Keeper upload ownership |
 | [Website refactor](WEBSITE_REFACTOR_ROADMAP.md) | Website scope, ownership findings and tested increments |
 | [Reader maintenance](READER_MAINTENANCE.md) | Current cleanup increments, completion checks and next priorities |

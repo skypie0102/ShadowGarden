@@ -1,8 +1,8 @@
 /* Shadow Garden R2 — canonical Unread / In Progress / Finished state machine. */
 
 import { cleanIdentities, cleanIdentity, stableVolumeId, volumeAliases as identityVolumeAliases, volumePrimaryIdentity } from "./book-identity.js";
-import { clearProgressAliases as clearProgress, isProgressStorageKey, progressAtBeginning, progressForAliases, readProgress } from "./progress.js";
-import { dispatchLocalEvent, readJson, readText, removeKey, writeJson, writeText } from "./storage.js";
+import { clearProgressAliases as clearProgress, isProgressStorageKey, progressAtBeginning, progressForAliases, progressRemovalChanges, PROGRESS_EVENT, readProgress } from "./progress.js";
+import { dispatchLocalEvent, readJson, readText, writeChanges } from "./storage.js";
 
 export const KEY = "sg-finished-books";
 export const MARKER_PREFIX = "sg-finished:";
@@ -13,10 +13,6 @@ export function load() {
   const value = readJson(KEY, {});
   if (Array.isArray(value)) return Object.fromEntries(value.filter(Boolean).map(id => [String(id), Date.now()]));
   return value && typeof value === "object" ? value : {};
-}
-
-function save(value) {
-  return writeJson(KEY, value);
 }
 
 function markerKey(identity) {
@@ -38,24 +34,24 @@ export function isAnyFinished(ids) {
   return cleanIdentities(ids).some(isFinished);
 }
 
+function finishedChanges(updates) {
+  const stamp = Date.now();
+  return [{key: KEY, value: raw => {
+    // A failed read or malformed map must not erase other books' Finished state.
+    const previous = raw === null ? {} : JSON.parse(raw);
+    if (!previous || typeof previous !== "object") throw new TypeError("Invalid Finished state");
+    const state = Object.assign(Object.create(null), Array.isArray(previous) ? Object.fromEntries(previous.filter(Boolean).map(id => [String(id), stamp])) : previous);
+    for (const [id, finished] of updates) {
+      if (finished) state[id] = stamp;
+      else delete state[id];
+    }
+    return JSON.stringify(state);
+  }}, ...updates.map(([id, finished]) => ({key: markerKey(id), value: finished ? "1" : null}))];
+}
+
 export function setAliasesFinished(ids, finished = true) {
   const aliases = cleanIdentities(ids);
-  if (!aliases.length) return false;
-  const state = load();
-  const stamp = Date.now();
-  let ok = true;
-  for (const id of aliases) {
-    const marker = markerKey(id);
-    if (finished) {
-      state[id] = stamp;
-      ok = writeText(marker, "1") && ok;
-    } else {
-      delete state[id];
-      ok = removeKey(marker) && ok;
-    }
-  }
-  ok = save(state) && ok;
-  if (!ok || !aliases.every(id => isFinished(id) === Boolean(finished))) return false;
+  if (!aliases.length || !writeChanges(finishedChanges(aliases.map(id => [id, Boolean(finished)])))) return false;
   dispatchLocalEvent(EVENT, { bookId: aliases[0], bookIds: aliases, finished: Boolean(finished) });
   return true;
 }
@@ -67,12 +63,22 @@ export function setFinished(bookId, finished = true) {
 export function migrateFinished(fromId, toId) {
   const from = cleanIdentity(fromId), to = cleanIdentity(toId);
   if (!from || !to || from === to || !isFinished(from)) return false;
-  if (!setAliasesFinished([from, to], true)) return false;
-  const state = load();
-  delete state[from];
-  const ok = removeKey(markerKey(from)) && save(state);
-  if (ok) dispatchLocalEvent(EVENT, { bookId: to, bookIds: [to], finished: true, migratedFrom: from });
-  return Boolean(ok && isFinished(to) && !isFinished(from));
+  const ok = writeChanges(finishedChanges([[from, false], [to, true]]));
+  if (ok) dispatchLocalEvent(EVENT, { bookId: to, bookIds: [from, to], finished: true, migratedFrom: from });
+  return ok;
+}
+
+export function resetReadingAliases(ids) {
+  const aliases = cleanIdentities(ids);
+  if (!aliases.length) return false;
+  if (!writeChanges([...finishedChanges(aliases.map(id => [id, false])), ...progressRemovalChanges(aliases)])) return false;
+  dispatchLocalEvent(EVENT, {bookId: aliases[0], bookIds: aliases, finished: false});
+  dispatchLocalEvent(PROGRESS_EVENT, {identity: aliases[0], identities: aliases, progress: null, cleared: true});
+  return true;
+}
+
+export function resetVolumeReadingState(seriesId, volume, index = -1, extra = []) {
+  return resetReadingAliases(volumeAliases(seriesId, volume, index, extra));
 }
 
 export function volumeId(volume) {
