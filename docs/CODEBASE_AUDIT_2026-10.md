@@ -67,10 +67,13 @@ live database/size errors is also removed without changing error codes or contra
    The 205-snapshot fixture reads 95% fewer first-page document bytes, and stalled
    provider/authentication tests preserve unverified outcomes. See [measurements
    and release](MAINTENANCE_BUDGETS.md).
-2. **Large-upload memory:** profile the published 50 MiB limit under workerd. The
-   bounded byte reader concatenates chunks before ZIP validation and hashing;
-   avoid changing the supported limit without measured memory evidence and a
-   compatible upload/validation design.
+2. **Large-upload memory — profiled; v2.16.1 prepared:** the real workerd upload
+   pipeline validates/transfers exact 50 MiB fixtures and rejects one byte above
+   the limit before provider access/reservation. Declared-length input now copies
+   into one destination, reducing sampled 50 MiB backing storage from about
+   101 MiB to 52–53 MiB. Unknown-length/concurrent buffering remains a separate
+   design follow-up; the supported limits are unchanged. See [measurements and
+   limitations](UPLOAD_MEMORY.md).
 3. **Browser persistence transactions:** progress/Finished/bookmark alias writes
    span multiple localStorage keys. A quota/security failure can leave only part
    of an update committed. Design rollback/canonical-write semantics separately;

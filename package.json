@@ -1,6 +1,6 @@
 {
   "name": "shadowgarden",
-  "version": "2.16.0",
+  "version": "2.16.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -17,7 +17,8 @@
     "db:local": "wrangler d1 migrations apply DB --local",
     "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql",
     "seed:empty": "wrangler d1 execute DB --local --file recovery-info/empty-seed.sql",
-    "profile:reader": "npm run build && playwright test --config playwright.profile.config.mjs"
+    "profile:reader": "npm run build && playwright test --config playwright.profile.config.mjs",
+    "profile:uploads": "node scripts/profile-upload-memory.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

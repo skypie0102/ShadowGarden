@@ -36,7 +36,7 @@ test('EPUB structural checks reject disguised and malformed archives',()=>{
 test('upload, catalog insert and replacement preserve identity and old bytes',async(t)=>{
   const env=fixture(),headers=await adminHeaders(env),objects=mockStorage(t,env),key='shadow-garden/books/first.epub';
   const bytes=epubFixture();
-  const uploadCtx=k=>({env,request:new Request(`https://garden.test/admin-api/upload?key=${k}`,{method:'POST',headers:{...headers,'content-type':'application/epub+zip'},body:bytes})});
+  const uploadCtx=k=>({env,request:new Request(`https://garden.test/admin-api/upload?key=${k}`,{method:'POST',headers:{...headers,'content-type':'application/epub+zip','content-length':String(bytes.length)},body:bytes})});
   assert.equal((await endpoint(upload)(uploadCtx(key))).status,200);
   assert.equal((await endpoint(upload)(uploadCtx(key))).status,409);
   const payload={series:'Test Series',title:'Test Volume',number:1,epubKey:key,adult:false,size:999999};
@@ -48,6 +48,17 @@ test('upload, catalog insert and replacement preserve identity and old bytes',as
   assert.equal(replaced.status,200);assert.equal((await replaced.json()).bookId,added.bookId);
   const row=await loadState(env);assert.equal(row.document.books[added.bookId],nextKey);assert.ok(objects.has(key));
   const snapshot=env.DB.sqlite.prepare("SELECT document FROM snapshots WHERE reason='replace-volume'").get();assert.equal(JSON.parse(snapshot.document).books[added.bookId],key);
+});
+test('rejected body lengths never reserve an upload key or contact storage',async(t)=>{
+  const env=fixture(),headers=await adminHeaders(env);t.after(()=>env.DB.sqlite.close());
+  let providerCalls=0;t.mock.method(globalThis,'fetch',async()=>{providerCalls++;throw new Error('Unexpected provider call')});
+  for(const length of ['1','3',String(50*1024*1024+1)]){
+    const response=await endpoint(upload)({env,request:new Request(`https://garden.test/admin-api/upload?key=shadow-garden/books/length-${length}.epub`,{method:'POST',headers:{...headers,'content-length':length},body:Uint8Array.of(1,2)})});
+    assert.equal(response.status,length==='1'||length==='3'?400:413);
+  }
+  assert.equal(providerCalls,0);
+  assert.equal(env.DB.sqlite.prepare('SELECT count(*) AS n FROM media_uploads').get().n,0);
+  assert.equal(env.DB.sqlite.prepare('SELECT count(*) AS n FROM media_upload_activity').get().n,0);
 });
 test('missing objects cannot be cataloged and unsupported media cannot be uploaded',async(t)=>{
   const env=fixture(),headers=await adminHeaders(env);mockStorage(t,env);
