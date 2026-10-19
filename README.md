@@ -24,6 +24,12 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+The next audit increment is prepared as **v2.16.1**: measured large-upload memory
+and direct buffering for declared-length bodies. A 50 MiB EPUB uses about 48%
+less sampled ArrayBuffer storage in the local workerd fixture. The 50 MiB limit
+is unchanged; unknown-length/concurrent buffering remains documented. See
+[upload measurements](docs/UPLOAD_MEMORY.md) for reproducible evidence and scope.
+
 The latest verified production release is **v2.16.0**, deployed on 2026-10-19.
 Keeper history loads ten inspected summaries per page, one full snapshot at a
 time. The large fixture reads 95% fewer document bytes for its first page.
@@ -132,6 +138,10 @@ npm run profile:reader -- --repeat-each=3
 
 The [performance report](docs/READER_PERFORMANCE.md) records measured results,
 cache budgets and measurement limits.
+
+For isolated workerd upload measurements with generated files and a disposable
+provider, run `npm run profile:uploads`. Optional arguments select a Git ref and
+JSON report path; see [upload memory](docs/UPLOAD_MEMORY.md).
 
 ## Code layout
 
