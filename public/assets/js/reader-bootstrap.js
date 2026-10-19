@@ -5,7 +5,6 @@ import {startReader} from "./reader/app.js";
 import {showReaderFailure} from "./reader/error-presentation.js";
 import {initializeReaderEngine} from "./reader/engine.js";
 import {installReaderInteractionController} from "./reader/interaction-controller.js";
-import {installImageFocusTouchCompatibility} from "./reader/image-focus-touch-compat.js";
 import {createReaderScope} from "./reader/lifecycle.js";
 import {urls} from "./domain/index.js";
 
@@ -30,8 +29,8 @@ export function createReaderRuntime(){
       loading.setAttribute("role","status");loading.setAttribute("aria-live","polite");
       if(loading.querySelector(".reader-failure")){loading.replaceChildren();const text=document.createElement("p");loading.appendChild(text)}
     }
-    const interactions=installReaderInteractionController(),touch=installImageFocusTouchCompatibility();
-    scope.add(()=>interactions.dispose());scope.add(()=>touch.dispose());
+    const interactions=installReaderInteractionController();
+    scope.add(()=>interactions.dispose());
     // BFCache suspension keeps its live reader. Only a real departure tears it down.
     scope.listen(window,"pagehide",event=>{if(!event.persisted&&lifetime===scope)dispose()});
     let session=null;

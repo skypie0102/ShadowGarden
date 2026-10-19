@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {activateImage} from './image-focus-input.mjs';
 import {installReaderFixture,readerURL,readerTitle,readerBookId,readerArtworkCenterColor} from './reader-production-fixture.mjs';
 
 test.describe('production reader integration',()=>{
@@ -52,8 +53,7 @@ test.describe('production reader integration',()=>{
     // Target screen coordinates so the check exercises that surface as well as
     // direct iframe image input, without bypassing it with a forced DOM click.
     const point={x:before.x+before.width/2,y:before.y+before.height/2};
-    if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
-    else await page.mouse.click(point.x,point.y);
+    await activateImage(page,point);
     await expect(page.locator('#imageFocus')).toBeVisible();
     return{image,before};
   }
@@ -137,6 +137,31 @@ test.describe('production reader integration',()=>{
     await returned(page,image,before);
   });
 
+  for(const flow of ['scrolled-doc','paginated'])test(`single input is inert and double input toggles image focus in ${flow}`,async({page})=>{
+    if(flow==='paginated')await setFlow(page,flow);
+    const frame=await chapter(page,3),image=frame.locator('#art-3');
+    await image.scrollIntoViewIfNeeded();
+    const before=await image.boundingBox(),point={x:before.x+before.width/2,y:before.y+before.height/2};
+    const single=async p=>{
+      if(test.info().project.use.hasTouch)await page.touchscreen.tap(p.x,p.y);
+      else await page.mouse.click(p.x,p.y);
+    };
+    await single(point);
+    await expect(page.locator('#imageFocus')).toBeHidden();
+    // An isolated tap cannot pair with another one after the gesture interval.
+    await page.waitForTimeout(500);await single(point);
+    await expect(page.locator('#imageFocus')).toBeHidden();
+    await page.waitForTimeout(500);await activateImage(page,point);
+    await expect(page.locator('#imageFocus')).toBeVisible();
+    const exit={x:160,y:250};await single(exit);
+    await expect(page.locator('#imageFocus')).toBeVisible();
+    await page.waitForTimeout(500);await single(exit);
+    await expect(page.locator('#imageFocus')).toBeVisible();
+    await page.waitForTimeout(500);await activateImage(page,exit);
+    await returned(page,image,before);
+    await expect(page.locator('#imageFocusHint')).toContainText(test.info().project.use.hasTouch?'double-tap':'double-click');
+  });
+
   test('an image-only cover keeps its partial Continuous scroll after focus return',async({page})=>{
     // Image-only visual pages have no prose block to use as a return anchor.
     // Start with the settled Continuous reader so a mode's pending canonical
@@ -154,8 +179,7 @@ test.describe('production reader integration',()=>{
     }).toBe(true);
     await expect(image).toBeVisible();
     const tap=async point=>{
-      if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
-      else await page.mouse.click(point.x,point.y);
+      await activateImage(page,point);
       await expect(page.locator('#imageFocus')).toBeVisible();
     };
     await page.locator('#tocToggle').focus();
@@ -257,11 +281,10 @@ test.describe('production reader integration',()=>{
     }finally{await session.detach()}
   });
 
-  test('double-click or touch return retains the image on repeated visits',async({page})=>{
+  test('double-click or double-tap return retains the image on repeated visits',async({page})=>{
     for(let i=0;i<2;i++){
       const {image,before}=await openImage(page);
-      if(test.info().project.name.startsWith('mobile'))await page.locator('#imageFocusViewport').tap({position:{x:160,y:250}});
-      else await page.locator('#imageFocusViewport').dblclick({position:{x:160,y:250}});
+      await activateImage(page,{x:160,y:250});
       await returned(page,image,before);
     }
   });

@@ -4,6 +4,7 @@ import {createReaderScope,readerContentsScope,readerInstanceScope} from "./lifec
 import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
 import {hasPendingRenditionNavigation,renditionNavigationRevision} from "./navigation-state.js";
 import {continuousGeneration} from './continuous-state.js';
+import {createDoubleTapActivation,installImageFocusTapTransport} from './image-focus-touch-compat.js';
 
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const distance=(a,b)=>Math.hypot((Number(a?.clientX)||0)-(Number(b?.clientX)||0),(Number(a?.clientY)||0)-(Number(b?.clientY)||0));
@@ -51,7 +52,7 @@ export function createImageFocusController({
   const scope=createReaderScope(),documents=new WeakMap();
   const state={active:false,scale:1,x:0,y:0,maxScale:4,gesture:null,suppressCloseClickUntil:0,returnFocus:null};
   let returnPosition=null,focusCycle=0;
-  const parentHits=new Map();
+  const parentHits=new Map(),openTap=createDoubleTapActivation(),closeTap=createDoubleTapActivation();
   let parentHitFrame=0;
   /* v2.6.6 owner request (#160 follow-up family): desktop focus gets wheel-zoom +
      pointer-drag pan + double-click return with a fine-pointer hint variant, and the
@@ -64,9 +65,8 @@ export function createImageFocusController({
   function applyHintCopy(){
     if(!hint)return;
     const fineCopy=hint.dataset?.hintFine||"";
-    const coarseCopy=hint.dataset?.hintCoarse||"Pinch to zoom · drag to inspect · tap again to return";
-    hint.textContent=finePointer&&fineCopy?fineCopy:(hint.textContent||coarseCopy).includes("tap again")?coarseCopy:hint.textContent;
-    if(!finePointer&&!hint.textContent.includes("Pinch"))hint.textContent=coarseCopy;
+    const coarseCopy=hint.dataset?.hintCoarse||"Pinch to zoom · drag to inspect · double-tap to return";
+    hint.textContent=finePointer&&fineCopy?fineCopy:coarseCopy;
   }
   function showHint(){
     if(!hint)return;
@@ -138,10 +138,9 @@ export function createImageFocusController({
     const cycle=++focusCycle;
     state.returnFocus=document.activeElement;
     returnPosition=captureReadingPosition(doc);
+    openTap.reset();closeTap.reset();
     state.active=true;state.scale=1;state.x=0;state.y=0;state.gesture=null;
-    // A touch pointer-up can open the overlay before its compatibility click.
-    // Do not let that same gesture immediately dismiss the newly focused image.
-    state.suppressCloseClickUntil=Date.now()+400;
+    state.suppressCloseClickUntil=0;
     image.src=src;image.alt=String(sourceImage?.alt||"Book image");
     overlay.classList.remove("hidden","reader-image-focus-zoomed");overlay.setAttribute("aria-hidden","false");
     render();showHint();scope.frame(()=>{
@@ -156,6 +155,7 @@ export function createImageFocusController({
     if(!state.active)return false;
     const target=state.returnFocus,saved=returnPosition;
     state.returnFocus=null;returnPosition=null;
+    openTap.reset();closeTap.reset();
     state.active=false;state.scale=1;state.x=0;state.y=0;state.gesture=null;
     hideHintInstant();
     if(image){image.style.transform="";image.removeAttribute("src");image.alt=""}
@@ -178,11 +178,7 @@ export function createImageFocusController({
     const lifetime=documents.get(doc)||scope;
     const hit=document.createElement("span");
     hit.className="reader-image-focus-hit";hit.setAttribute("aria-hidden","true");hit.dataset.sgReaderImageHit="1";hit.hidden=true;
-    lifetime.listen(hit,"click",event=>{
-      event.preventDefault();event.stopPropagation();
-      if(state.active||shouldSuppressOpen?.())return;
-      openImageFocus(sourceImage,doc);
-    });
+    installImageActivation(lifetime,hit,doc,()=>sourceImage);
     document.body.appendChild(hit);return hit;
   }
   function removeHitList(hitList){hitList?.forEach?.(hit=>hit.remove())}
@@ -239,32 +235,27 @@ export function createImageFocusController({
     lifetime.add(release.forget);documents.set(doc,lifetime);
     lifetime.add(()=>{documents.delete(doc);delete doc.documentElement.dataset.sgReaderImageFocus;});
     doc.documentElement.dataset.sgReaderImageFocus="1";
-    try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{cursor:zoom-in;color-scheme:only light!important;-webkit-tap-highlight-color:transparent!important}";doc.head?.appendChild(style)}catch{}
+    try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{touch-action:manipulation;cursor:zoom-in;color-scheme:only light!important;-webkit-tap-highlight-color:transparent!important}";doc.head?.appendChild(style)}catch{}
     installParentHits(doc);
-    let pointerStart=null;
+    installImageActivation(lifetime,doc,doc,event=>imageTarget(event.target));
+  }
+  function installImageActivation(lifetime,node,doc,targetForEvent){
     const activate=(sourceImage,event)=>{
-      if(!sourceImage||state.active)return false;
-      if(shouldSuppressOpen?.()){event?.preventDefault?.();event?.stopImmediatePropagation?.();return false}
-      event?.preventDefault?.();event?.stopImmediatePropagation?.();return openImageFocus(sourceImage,doc);
+      if(!sourceImage)return;
+      event.preventDefault();event.stopImmediatePropagation();
+      if(!state.active&&!shouldSuppressOpen?.())openImageFocus(sourceImage,doc);
     };
-    lifetime.listen(doc,"pointerdown",event=>{
-      const sourceImage=imageTarget(event.target);
-      if(!sourceImage||Number(event.button)>0){pointerStart=null;return}
-      pointerStart={id:event.pointerId,image:sourceImage,x:Number(event.clientX)||0,y:Number(event.clientY)||0};
-    },true);
-    lifetime.listen(doc,"pointerup",event=>{
-      const start=pointerStart;pointerStart=null;
-      const sourceImage=imageTarget(event.target);
-      if(!start||start.id!==event.pointerId||!sourceImage||sourceImage!==start.image)return;
-      if(Math.hypot((Number(event.clientX)||0)-start.x,(Number(event.clientY)||0)-start.y)>12)return;
-      lifetime.timeout(()=>{if(!state.active&&!shouldSuppressOpen?.())openImageFocus(sourceImage,doc)},0);
-    },true);
-    lifetime.listen(doc,"pointercancel",()=>{pointerStart=null},true);
-    lifetime.listen(doc,"click",event=>{
-      const sourceImage=imageTarget(event.target);if(!sourceImage)return;
-      activate(sourceImage,event);
+    installImageFocusTapTransport(lifetime,node,{targetForEvent,onCancel:()=>openTap.reset(),onTap:(sourceImage,point,event)=>{
+      if(state.active||shouldSuppressOpen?.()){openTap.reset();return}
+      if(openTap.tap(sourceImage,point))activate(sourceImage,event);
+    }});
+    lifetime.listen(node,"dblclick",event=>activate(targetForEvent(event),event),true);
+    lifetime.listen(node,"click",event=>{
+      if(!targetForEvent(event))return;
+      event.preventDefault();event.stopImmediatePropagation();
     },true);
   }
+
   function attachRendition(rendition){
     if(scope.disposed||!rendition||rendition.__sgR41ImageFocus)return;
     rendition.__sgR41ImageFocus=true;
@@ -280,14 +271,15 @@ export function createImageFocusController({
     if(!state.active)return;
     const touches=event.touches||[];
     if(touches.length>=2){
+      closeTap.reset();
       const a=touches[0],b=touches[1];
       const midpoint=pointInViewport(((Number(a.clientX)||0)+(Number(b.clientX)||0))/2,((Number(a.clientY)||0)+(Number(b.clientY)||0))/2);
       state.gesture={mode:"pinch",distance:Math.max(1,distance(a,b)),scale:state.scale,x:state.x,y:state.y,midpoint};
       event.preventDefault();return;
     }
     const touch=touches[0];if(!touch)return;
-    if(state.scale>1.001)state.gesture={mode:"pan",clientX:Number(touch.clientX)||0,clientY:Number(touch.clientY)||0,x:state.x,y:state.y,moved:false};
-    else state.gesture={mode:"tap",clientX:Number(touch.clientX)||0,clientY:Number(touch.clientY)||0};
+    if(state.scale>1.001)state.gesture={mode:"pan",clientX:Number(touch.clientX)||0,clientY:Number(touch.clientY)||0,x:state.x,y:state.y,moved:false,time:Date.now()};
+    else state.gesture={mode:"tap",clientX:Number(touch.clientX)||0,clientY:Number(touch.clientY)||0,time:Date.now()};
     event.preventDefault();
   }
   function moveTouch(event){
@@ -302,11 +294,11 @@ export function createImageFocusController({
     }
     if(gesture.mode==="pan"&&touches.length){
       const touch=touches[0],dx=(Number(touch.clientX)||0)-gesture.clientX,dy=(Number(touch.clientY)||0)-gesture.clientY;
-      if(Math.hypot(dx,dy)>6)gesture.moved=true;
+      if(Math.hypot(dx,dy)>6){gesture.moved=true;closeTap.reset()}
       setTransform(state.scale,gesture.x+dx,gesture.y+dy);event.preventDefault();return;
     }
     if(gesture.mode==="tap"&&touches.length){
-      const touch=touches[0];if(Math.hypot((Number(touch.clientX)||0)-gesture.clientX,(Number(touch.clientY)||0)-gesture.clientY)>12)gesture.mode="moved";
+      const touch=touches[0];if(Math.hypot((Number(touch.clientX)||0)-gesture.clientX,(Number(touch.clientY)||0)-gesture.clientY)>12){gesture.mode="moved";closeTap.reset()}
       event.preventDefault();
     }
   }
@@ -317,7 +309,12 @@ export function createImageFocusController({
     }
     state.gesture=null;
     if(gesture.mode==="tap"||(gesture.mode==="pan"&&!gesture.moved)){
-      state.suppressCloseClickUntil=Date.now()+400;event.preventDefault();closeImageFocus();return;
+      state.suppressCloseClickUntil=Date.now()+400;event.preventDefault();
+      const point=event.changedTouches?.[0];
+      if(point&&Date.now()-gesture.time<=300){
+        if(closeTap.tap(viewport,point))closeImageFocus();
+      }else closeTap.reset();
+      return;
     }
     if(gesture.mode==="pinch"||gesture.mode==="pan"||gesture.mode==="moved"){
       state.suppressCloseClickUntil=Date.now()+300;event.preventDefault();
@@ -325,6 +322,7 @@ export function createImageFocusController({
   }
   function handleWheel(event){
     if(!state.active)return;
+    closeTap.reset();
     event.preventDefault();const delta=normalizeWheel(event);
     /* v2.6.6 desktop contract: plain wheel zooms (cursor-anchored); ctrl/meta stays a
        zoom alias for trackpad pinch-reporting; horizontal wheel pans when zoomed. */
@@ -357,27 +355,20 @@ export function createImageFocusController({
   scope.listen(viewport,"touchstart",beginTouch,{passive:false});
   scope.listen(viewport,"touchmove",moveTouch,{passive:false});
   scope.listen(viewport,"touchend",endTouch,{passive:false});
-  scope.listen(viewport,"touchcancel",()=>{state.gesture=null},{passive:true});
+  scope.listen(viewport,"touchcancel",()=>{state.gesture=null;closeTap.reset()},{passive:true});
   scope.listen(viewport,"wheel",handleWheel,{passive:false});
   scope.listen(viewport,"pointerdown",handlePointerDown);
   scope.listen(viewport,"pointermove",handlePointerMove);
   scope.listen(viewport,"pointerup",handlePointerUp,{passive:true});
   scope.listen(viewport,"pointercancel",()=>{pointerDrag=null},{passive:true});
   scope.listen(viewport,"dblclick",event=>{
-    if(!finePointer||!state.active)return;
-    event.preventDefault();closeImageFocus();
-  });
-  scope.listen(viewport,"click",event=>{
-    if(Date.now()<state.suppressCloseClickUntil)return;
-    /* fine-pointer devices return via double-click or the close button; accidental
-       single clicks must not dismiss the focused image */
-    if(finePointer)return;
+    if(!state.active||Date.now()<state.suppressCloseClickUntil)return;
     event.preventDefault();closeImageFocus();
   });
   scope.listen(closeButton,"click",event=>{event.preventDefault();event.stopPropagation();closeImageFocus()});
   scope.listen(image,"load",()=>{if(state.active)setTransform(state.scale,state.x,state.y)});
   scope.listen(window,"resize",()=>{if(state.active)setTransform(state.scale,state.x,state.y);scheduleParentHitRefresh()});
-  scope.listen(document,"scroll",scheduleParentHitRefresh,true);
+  scope.listen(document,"scroll",()=>{openTap.reset();scheduleParentHitRefresh()},true);
   render();
 
   return{dispose(){closeImageFocus({restoreFocus:false});scope.dispose();parentHits.forEach((_entry,doc)=>removeParentHits(doc));parentHitFrame=0},attachRendition,installDocument,openImageFocus,closeImageFocus,isFocused:()=>state.active,isZoomed:()=>state.scale>1.001,scale:()=>state.scale};

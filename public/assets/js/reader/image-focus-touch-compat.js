@@ -1,83 +1,41 @@
-import {createReaderScope} from "./lifecycle.js";
-/* Coarse-pointer compatibility transport for reader/image-focus.js.
- * This module does not own image-focus state or presentation. It only converts a
- * short TouchEvent tap into the click activation already owned by image-focus.js
- * on browsers where EPUB iframe pointer/click delivery is unreliable.
- */
+/* Image-focus touch input. The controller owns each listener's lifetime, including
+ * WebKit's parent hit surfaces. Touches never synthesize mouse clicks: one physical
+ * tap must enter the double-tap recognizer exactly once. */
 
-export function installImageFocusTouchCompatibility(){
-const scope=createReaderScope(),nodes=new Map();
-const viewer=document.getElementById("viewer");
-const coarse=window.matchMedia?.("(pointer:coarse)")?.matches||Number(navigator.maxTouchPoints)>0;
-
-if(viewer&&coarse){
-  const installedDocs=new WeakSet();
-  const installedFrames=new WeakSet();
-
-  function imageTarget(target){return typeof target?.closest==="function"?target.closest("img"):null}
-  function point(touch){return{x:Number(touch?.clientX)||0,y:Number(touch?.clientY)||0}}
-
-  function installDocument(doc,owner){
-    if(!doc||installedDocs.has(doc))return;
-    installedDocs.add(doc);
-    const lifetime=owner.child();lifetime.add(()=>installedDocs.delete(doc));
-    let start=null;
-    lifetime.listen(doc,"touchstart",event=>{
-      if(event.touches?.length!==1){start=null;return}
-      const image=imageTarget(event.target),touch=event.touches[0];
-      if(!image||!touch){start=null;return}
-      const p=point(touch);start={image,x:p.x,y:p.y};
-    },{capture:true,passive:true});
-    lifetime.listen(doc,"touchend",event=>{
-      const active=start;start=null;if(!active)return;
-      const touch=event.changedTouches?.[0],image=imageTarget(event.target);if(!touch||image!==active.image)return;
-      const p=point(touch);if(Math.hypot(p.x-active.x,p.y-active.y)>12)return;
-      event.preventDefault();
-      const win=doc.defaultView;
-      try{image.dispatchEvent(new win.MouseEvent("click",{bubbles:true,cancelable:true,view:win,clientX:p.x,clientY:p.y}))}
-      catch{image.click?.()}
-    },{capture:true,passive:false});
-    lifetime.listen(doc,"touchcancel",()=>{start=null},{capture:true,passive:true});
-    return lifetime;
-  }
-
-  function installFrame(frame){
-    if(!frame||installedFrames.has(frame))return;
-    installedFrames.add(frame);
-    const lifetime=scope.child();nodes.set(frame,lifetime);
-    lifetime.add(()=>{installedFrames.delete(frame);nodes.delete(frame)});
-    let content=null;
-    const attach=()=>{content?.dispose();try{content=installDocument(frame.contentDocument,lifetime)}catch{}};
-    lifetime.listen(frame,"load",attach);attach();
-  }
-
-  function installParentHit(hit){
-    if(!hit||hit.dataset.sgTouchReliability==="1")return;
-    const lifetime=scope.child();nodes.set(hit,lifetime);
-    lifetime.add(()=>{nodes.delete(hit);delete hit.dataset.sgTouchReliability});
-    hit.dataset.sgTouchReliability="1";
-    let start=null;
-    lifetime.listen(hit,"touchstart",event=>{
-      const touch=event.touches?.[0];if(!touch){start=null;return}
-      const p=point(touch);start={x:p.x,y:p.y};
-    },{passive:true});
-    lifetime.listen(hit,"touchend",event=>{
-      const active=start;start=null;const touch=event.changedTouches?.[0];if(!active||!touch)return;
-      const p=point(touch);if(Math.hypot(p.x-active.x,p.y-active.y)>12)return;
-      event.preventDefault();hit.click();
-    },{passive:false});
-    lifetime.listen(hit,"touchcancel",()=>{start=null},{passive:true});
-  }
-
-  function inspect(){
-    for(const [node,owner] of nodes)if(!node.isConnected)owner.dispose();
-    viewer.querySelectorAll("iframe").forEach(installFrame);
-    document.querySelectorAll(".reader-image-focus-hit").forEach(installParentHit);
-  }
-
-  scope.observe(new MutationObserver(scope.guard(inspect)),document.body,{childList:true,subtree:true});
-  inspect();
+export function createDoubleTapActivation(){
+  let previous=null;
+  return{
+    reset(){previous=null},
+    tap(target,point,now=Date.now()){
+      const current={target,x:Number(point?.clientX)||0,y:Number(point?.clientY)||0,time:now};
+      const matched=previous&&previous.target===target&&now>=previous.time&&now-previous.time<=350&&Math.hypot(current.x-previous.x,current.y-previous.y)<=24;
+      previous=matched?null:current;
+      return Boolean(matched);
+    }
+  };
 }
 
-return{dispose:()=>scope.dispose()};
+export function installImageFocusTapTransport(scope,node,{targetForEvent,onTap,onCancel}){
+  let start=null;
+  const cancel=()=>{start=null;onCancel?.()};
+  scope.listen(node,'touchstart',event=>{
+    const target=targetForEvent(event),touch=event.touches?.[0];
+    if(!target||event.touches?.length!==1){cancel();return}
+    start={target,id:touch.identifier,x:touch.clientX,y:touch.clientY,time:Date.now()};
+  },{capture:true,passive:true});
+  scope.listen(node,'touchmove',event=>{
+    const touch=event.touches?.[0];
+    if(start&&(event.touches?.length!==1||touch.identifier!==start.id||Math.hypot(touch.clientX-start.x,touch.clientY-start.y)>12))cancel();
+  },{capture:true,passive:true});
+  scope.listen(node,'touchend',event=>{
+    const tap=start;start=null;
+    const touch=event.changedTouches?.[0];
+    if(!tap)return;
+    if(event.touches?.length||!touch||touch.identifier!==tap.id||targetForEvent(event)!==tap.target||Date.now()-tap.time>300||Math.hypot(touch.clientX-tap.x,touch.clientY-tap.y)>12){cancel();return}
+    // Cancel native double-tap zoom and the compatibility click. Native scrolling
+    // and pinch zoom remain available because start/move are passive.
+    event.preventDefault();onTap(tap.target,touch,event);
+  },{capture:true,passive:false});
+  scope.listen(node,'touchcancel',cancel,{capture:true,passive:true});
+  scope.listen(node,'scroll',cancel,{capture:true,passive:true});
 }
