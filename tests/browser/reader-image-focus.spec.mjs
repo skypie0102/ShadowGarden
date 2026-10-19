@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {activateImage} from './image-focus-input.mjs';
 import {fixtureHTML} from './reader-focus-fixture.mjs';
 
 
@@ -32,8 +33,7 @@ async function openImage(page){
   await settle(page);
   const before=await position(page);
   const point={x:before.left+before.width/2,y:before.top+before.height/2};
-  if(test.info().project.name.startsWith('mobile'))await page.touchscreen.tap(point.x,point.y);
-  else await page.mouse.click(point.x,point.y);
+  await activateImage(page,point);
   await expect(page.locator('#imageFocus')).toBeVisible();
   await expect.poll(()=>page.evaluate(()=>document.activeElement?.id)).toBe('imageFocusClose');
   return before;
@@ -90,11 +90,10 @@ test('zoom and pan then X returns to the same illustration despite a focus scrol
   await expectPosition(page,before);
 });
 
-test('double-click or touch return preserves position across repeated image visits',async({page})=>{
+test('double-click or double-tap return preserves position across repeated image visits',async({page})=>{
   for(let i=0;i<2;i++){
     const before=await openImage(page);
-    if(test.info().project.name.startsWith('mobile'))await page.locator('#imageFocusViewport').tap({position:{x:180,y:280}});
-    else await page.locator('#imageFocusViewport').dblclick({position:{x:180,y:280}});
+    await activateImage(page,{x:180,y:280});
     await expectPosition(page,before);
   }
 });
