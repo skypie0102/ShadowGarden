@@ -15,13 +15,16 @@ async function ordinaryFrameControl(context){
   const page=await context.newPage();
   try{
     await page.route(widgetURL,route=>route.fulfill({contentType:'text/html',body:widgetHTML}));
-    await page.route('**/__closed-frame-control',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><button>Before widget</button><div id="host"></div><button>After widget</button><script>const frame=document.createElement('iframe');frame.title='Disposable keyboard widget';frame.tabIndex=0;frame.src=${JSON.stringify(widgetURL)};document.querySelector('#host').attachShadow({mode:'closed'}).appendChild(frame);</script>`}));
+    await page.route('**/__closed-frame-control',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><button>Before widget</button><div id="host"></div><button>After widget</button><script>window.parentEscapes=[];document.addEventListener('keydown',event=>{if(event.key==='Escape'&&event.isTrusted)window.parentEscapes.push(event.target.textContent)});const frame=document.createElement('iframe');frame.title='Disposable keyboard widget';frame.tabIndex=0;frame.src=${JSON.stringify(widgetURL)};document.querySelector('#host').attachShadow({mode:'closed'}).appendChild(frame);</script>`}));
     await page.goto('/__closed-frame-control');
     await expect.poll(()=>Boolean(page.frame({url:widgetURL}))).toBe(true);
     const frame=page.frame({url:widgetURL});
     await expect(frame.getByRole('button',{name:'First widget control'})).toBeVisible();
     await page.getByRole('button',{name:'After widget'}).focus();
-    return await tabTargets(page,frame);
+    const targets=await tabTargets(page,frame);
+    await frame.getByRole('button',{name:'First widget control'}).click();
+    await page.getByRole('button',{name:'After widget'}).press('Escape');
+    return {targets,parentEscapes:await page.evaluate(()=>window.parentEscapes)};
   }finally{await page.close();}
 }
 
@@ -57,10 +60,11 @@ async function openGate(page,{renderError=false}={}){
 }
 
 test('Garden Pass blocks background focus and Cancel restores its opener',async({page})=>{
-  const {gate,opener}=await openGate(page),cancel=gate.getByRole('button',{name:'Cancel',exact:true});
+  const {gate,opener,frame}=await openGate(page),cancel=gate.getByRole('button',{name:'Cancel',exact:true});
   // Before the fix this successfully focuses the background navigation button.
   await opener.focus();
   await expect(cancel).toBeFocused();
+  await frame.getByRole('button',{name:'First widget control'}).click();
   await cancel.click();await expect(gate).toHaveCount(0);await expect(opener).toBeFocused();
   expect(await page.evaluate(()=>window.gateResult)).toBe('Human verification was cancelled.');
   expect(await page.evaluate(()=>window.gateRemovals)).toBe(1);
@@ -68,14 +72,14 @@ test('Garden Pass blocks background focus and Cancel restores its opener',async(
 
 test('closed-shadow cross-origin widget keyboard access matches an ordinary-page control',async({page,context,browserName})=>{
   const control=await ordinaryFrameControl(context);
-  console.log('SG_WIDGET_TAB_CONTROL='+JSON.stringify({browserName,targets:control}));
+  console.log('SG_WIDGET_TAB_CONTROL='+JSON.stringify({browserName,...control}));
   // Keep the independent background, Cancel, parent-Escape and cleanup tests
   // active in every engine. Only this provider-frame traversal case is blocked
   // when the exact same browser cannot traverse it outside any dialog either.
-  test.skip(browserName==='firefox'&&control.length!==2,'Pinned Firefox also misses the ordinary closed-shadow remote-frame control; see the recorded control and Mozilla bug 2037565 (related boundary).');
-  expect(control).toEqual(['First widget control','Last widget control']);
+  test.skip(browserName==='firefox'&&control.targets.length!==2,'Pinned Firefox also misses the ordinary closed-shadow remote-frame control; see the recorded control and Mozilla bug 2037565 (related boundary).');
+  expect(control.targets).toEqual(['First widget control','Last widget control']);
   const {gate,opener,frame}=await openGate(page);
-  expect(await tabTargets(page,frame,{gate:true})).toEqual(control);
+  expect(await tabTargets(page,frame,{gate:true})).toEqual(control.targets);
   await frame.getByRole('button',{name:'First widget control'}).focus();
   await frame.getByRole('button',{name:'First widget control'}).press('Tab');
   await expect(frame.getByRole('button',{name:'Last widget control'})).toBeFocused();
@@ -84,11 +88,10 @@ test('closed-shadow cross-origin widget keyboard access matches an ordinary-page
   await gate.getByRole('button',{name:'Cancel',exact:true}).click();await expect(opener).toBeFocused();
 });
 
-test('Escape in the parent dialog dismisses the gate after using a cross-origin widget',async({page})=>{
-  const {gate,opener,frame}=await openGate(page);
-  await frame.getByRole('button',{name:'First widget control'}).click();
-  // Cross-document key events do not bubble to the parent. Return to its
-  // visible Cancel control before asserting the parent's Escape contract.
+test('Escape in the parent dialog dismisses the gate and restores its opener',async({page})=>{
+  const {gate,opener}=await openGate(page);
+  // Parent Escape is independent of provider-document key routing. The
+  // preceding Cancel test covers dismissal after interacting with the frame.
   await gate.getByRole('button',{name:'Cancel',exact:true}).press('Escape');
   await expect(gate).toHaveCount(0);await expect(opener).toBeFocused();
   expect(await page.evaluate(()=>window.gateResult)).toBe('Human verification was cancelled.');

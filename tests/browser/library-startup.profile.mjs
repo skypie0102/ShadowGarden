@@ -5,6 +5,7 @@ import {tmpdir,platform,arch} from 'node:os';
 import {join,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {gzipSync} from 'node:zlib';
+import {createHash} from 'node:crypto';
 import {baseURL} from './fixture.mjs';
 
 test.setTimeout(180000);
@@ -89,7 +90,12 @@ test('measure cold Library startup and duplicate module requests against an immu
       const baselineMs=median(group('baseline').map(sample=>sample.readyMs)),currentMs=median(group('current').map(sample=>sample.readyMs));
       summary.push({shelf,delayMs,baselineMedianReadyMs:baselineMs,currentMedianReadyMs:currentMs,differenceMs:currentMs-baselineMs,baselineScriptRequests:group('baseline').map(sample=>sample.scriptRequests),currentScriptRequests:group('current').map(sample=>sample.scriptRequests),baselineDuplicatePaths:group('baseline').map(sample=>sample.duplicateModulePaths.length),currentDuplicatePaths:group('current').map(sample=>sample.duplicateModulePaths.length)});
     }
-    const report={measuredAt:new Date().toISOString(),baselineSha,currentSha:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),environment:{browser:browser.version(),node:process.version,platform:platform(),architecture:arch()},scenario:'Three fresh contexts per variant/shelf/delay, interleaved order; disposable one-series catalogs; first-party JS receives a controlled 0 or 80 ms delay per response. This is not a network/CPU/mobile emulation or a production Core Web Vitals measurement.',summary,samples};
+    const sourceHashes={};
+    for(const variant of ['baseline','current']){
+      const paths=new Set(samples.filter(sample=>sample.variant===variant).flatMap(sample=>sample.scripts.map(script=>script.path.split('?')[0])));
+      sourceHashes[variant]=Object.fromEntries(await Promise.all([...paths].sort().map(async path=>[path,createHash('sha256').update(await source(variant,path)).digest('hex')])));
+    }
+    const report={measuredAt:new Date().toISOString(),baselineSha,currentSha:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),environment:{browser:browser.version(),node:process.version,platform:platform(),architecture:arch()},scenario:'Three fresh contexts per variant/shelf/delay, interleaved order; disposable one-series catalogs; first-party JS receives a controlled 0 or 80 ms delay per response. This is not a network/CPU/mobile emulation or a production Core Web Vitals measurement.',sourceHashes,summary,samples};
     await mkdir(join(root,'library-startup-results'),{recursive:true});
     await writeFile(join(root,'library-startup-results/report.json'),JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({baselineSha,summary},null,2));
