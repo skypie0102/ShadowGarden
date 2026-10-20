@@ -1,13 +1,16 @@
 # ShadowGarden documentation
 
 [Protected source transport](PROTECTED_SOURCE_TRANSPORT.md) maps the visual
-scanner, main EPUB.js and isolated page-map consumers. The v2.17.1 implementation
-replaces the global fetch override with an explicit scanner transport; full
-five-profile CI and publication are pending.
+scanner, main EPUB.js and isolated page-map consumers. **v2.17.1 is live** on
+2026-10-20: the scanner uses an explicit transport and global fetch remains native.
+All 293 Node tests and 502 browser cases pass (eight existing skips).
+[Release evidence](protected-source-verification-2.17.1.json) records the matching
+served modules/catalogs, both Library footers and unchanged revision-9 document,
+nine snapshots and production configuration.
 
 [Browser persistence](BROWSER_PERSISTENCE.md) records the merged v2.17.0
 increment: checked grouped writes, conditional rollback, compound Read Again,
-285 Node tests and 492 browser passes. It is live as v2.17.0 on 2026-10-20.
+285 Node tests and 492 browser passes. It first shipped as v2.17.0 on 2026-10-20.
 [Verification evidence](persistence-verification-2.17.0.json) records the deployment,
 matching live assets/catalogs, unchanged production baseline and Web Storage limits.
 [Pages upload transport](PAGES_UPLOAD_TRANSPORT.md) records the working local asset
@@ -39,6 +42,7 @@ Those physical/provider observations keep their original release scope.
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Upload memory](UPLOAD_MEMORY.md) | Workerd upload measurements, declared-length buffering and remaining limits |
 | [Browser persistence](BROWSER_PERSISTENCE.md) | Failed-write rollback, compound Read Again and concurrency/crash limits |
+| [Protected source transport](PROTECTED_SOURCE_TRANSPORT.md) | Explicit visual scanning and the pinned vendor's XHR/archive consumer map |
 | [Pages upload transport](PAGES_UPLOAD_TRANSPORT.md) | Plugin-issued upload tokens, local asset requests and guarded release procedure |
 | [Website architecture](WEBSITE_ARCHITECTURE.md) | Current public page, access, theme and Keeper upload ownership |
 | [Website refactor](WEBSITE_REFACTOR_ROADMAP.md) | Website scope, ownership findings and tested increments |

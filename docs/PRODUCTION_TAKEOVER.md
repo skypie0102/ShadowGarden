@@ -1,6 +1,20 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-20:** v2.17.0, deployment
+**Last verified production release — 2026-10-20:** v2.17.1, deployment
+`39c54372-231f-4a6d-880b-48f1a3710b57`, clean application source `01b57f9`.
+PR #36 removes the global fetch override and gives the visual scanner an explicit
+book-access transport. The pinned main/page-map EPUB.js runtimes keep their XHR
+and session-cookie behavior. CI passes 293 Node tests and 502 browser cases
+(eight existing skips), including opaque and legacy source loading in every
+profile. Both changed modules match the release build, both catalogs match D1,
+and both Library footers show v2.17.1. The refreshed baseline is revision 9 with
+nine snapshots; the exact document, every snapshot and actual/saved production
+configuration are unchanged across this deployment. No database, book-object or
+credential writes were needed. The retained rollback is v2.17.0,
+`f86f42ef-b710-40f8-bf6a-011c47b875e5`. See [the transport report](PROTECTED_SOURCE_TRANSPORT.md)
+and [verification evidence](protected-source-verification-2.17.1.json).
+
+**Browser persistence release — 2026-10-20:** v2.17.0, deployment
 `f86f42ef-b710-40f8-bf6a-011c47b875e5`, clean application source `129a1d2`.
 The release includes measured upload-memory buffering and grouped browser
 persistence from PRs #34/#35. CI passes 285 Node tests and 492 browser cases
@@ -82,7 +96,7 @@ supersedes the separate-bucket plan in `TEST_DEPLOYMENT.md`.
 | D1 ID | `1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86` |
 | Existing private B2 bucket | `shadow-garden-books-01` |
 | B2 bucket ID | `ddac6e4567151ba5a20f0011` |
-| Last verified rollback target | v2.15.0, `710c6175-587f-40ff-899b-94b5c33e5be5` |
+| Last verified rollback target | v2.17.0, `f86f42ef-b710-40f8-bf6a-011c47b875e5` |
 
 The project name differs from the hostname. Deploy to **`shadowgarden`**.
 Cloudflare retained its original Git source when an API update was attempted,

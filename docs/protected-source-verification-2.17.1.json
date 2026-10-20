@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "release": "2.17.1",
+  "status": "deployed",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/36",
+  "testedSource": "ef1625ef204454317308e9e0008e7de1570ffc18",
+  "merge": "01b57f9f3586839a48c56969799d897bcedf0b64",
+  "testedTree": "1023da0730bcdc52d80a4773494f04ddbf57ea32",
+  "mergedTree": "1023da0730bcdc52d80a4773494f04ddbf57ea32",
+  "ci": {
+    "runId": 39355776707,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39355776707",
+    "attempt": 1,
+    "conclusion": "success",
+    "nodePassed": 293,
+    "browserPassed": 502,
+    "existingPlatformSkips": 8,
+    "automaticTestRetries": 0,
+    "verifyJobId": 118410091213,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "jobId": 118410188170,
+        "passed": 102,
+        "skipped": 0
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 118410188078,
+        "passed": 102,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 118410188155,
+        "passed": 100,
+        "skipped": 2
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 118410188103,
+        "passed": 100,
+        "skipped": 2
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 118410188150,
+        "passed": 98,
+        "skipped": 4
+      }
+    ]
+  },
+  "controls": {
+    "focusedNodeCases": 10,
+    "browserCasesPerProfile": 2,
+    "globalFetchIdentity": {
+      "before": false,
+      "after": true
+    },
+    "explicitTransportPresent": {
+      "before": false,
+      "after": true
+    },
+    "requestOptionsPreserved": true,
+    "cancellationBeforeAndDuringAuthorization": true,
+    "legacyAndOpaqueSourcesCovered": true,
+    "vendorFilesChanged": 0
+  },
+  "packaging": {
+    "staticAssets": 165,
+    "uniqueHashes": 164,
+    "changedAssetsUploaded": 3,
+    "allHashesRevalidated": true,
+    "workerBytes": 129797,
+    "requestSha256": "637c08815150dbfbee6f084591d44c7ba7373e2a2c275d3c36629a69af1aed05",
+    "bindingGuardPassed": true,
+    "compatibilityMetadataChecked": true
+  },
+  "production": {
+    "project": "shadowgarden",
+    "hostname": "https://shadowgarden-bon.pages.dev",
+    "deploymentId": "39c54372-231f-4a6d-880b-48f1a3710b57",
+    "source": "01b57f9f3586839a48c56969799d897bcedf0b64",
+    "branch": "main",
+    "commitDirty": false,
+    "deployedAt": "2026-10-20T10:39:34.676346Z",
+    "baselineCheckedAt": "2026-10-20T10:36:51.242Z",
+    "verifiedAt": "2026-10-20T10:39:48.039Z",
+    "database": {
+      "revision": 9,
+      "updatedAt": "2026-10-20T01:48:08.045Z",
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": [
+        {
+          "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
+          "created_at": "2026-10-18T13:54:43.265Z",
+          "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
+          "actualSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+        },
+        {
+          "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
+          "created_at": "2026-10-17T04:40:11.572Z",
+          "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
+          "actualSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
+        },
+        {
+          "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
+          "created_at": "2026-10-17T04:39:34.828Z",
+          "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
+          "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+        },
+        {
+          "id": "9f6f7195-32ce-4f5e-b05d-43f0352d1d6c",
+          "created_at": "2026-10-20T01:48:08.045Z",
+          "sha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+          "actualSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2"
+        },
+        {
+          "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
+          "created_at": "2026-10-03T11:48:02.789Z",
+          "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7",
+          "actualSha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
+        },
+        {
+          "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
+          "created_at": "2026-10-17T04:40:05.183Z",
+          "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
+          "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+        },
+        {
+          "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
+          "created_at": "2026-10-03T11:52:50.670Z",
+          "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b",
+          "actualSha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+        },
+        {
+          "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
+          "created_at": "2026-10-03T11:52:35.187Z",
+          "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b",
+          "actualSha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
+        },
+        {
+          "id": "f249e424-8884-4774-b6ce-949057b82cf8",
+          "created_at": "2026-10-17T04:39:54.200Z",
+          "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
+          "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
+        }
+      ]
+    },
+    "actualConfiguration": {
+      "d1": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibilityDate": "2026-09-23",
+      "compatibilityFlags": [],
+      "settings": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "savedConfiguration": {
+      "d1": {
+        "DB": {
+          "id": "1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86"
+        }
+      },
+      "compatibilityDate": "2026-09-23",
+      "compatibilityFlags": [],
+      "settings": {
+        "B2_BUCKET_ID": {
+          "type": "plain_text",
+          "value": "ddac6e4567151ba5a20f0011"
+        },
+        "B2_BUCKET_NAME": {
+          "type": "plain_text",
+          "value": "shadow-garden-books-01"
+        },
+        "B2_READ_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_READ_KEY_ID": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_APPLICATION_KEY": {
+          "type": "secret_text"
+        },
+        "B2_WRITE_KEY_ID": {
+          "type": "secret_text"
+        },
+        "SESSION_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_ADMIN_TOKEN": {
+          "type": "secret_text"
+        },
+        "SG_MEDIA_SIGNING_SECRET": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SECRET_KEY": {
+          "type": "secret_text"
+        },
+        "SG_TURNSTILE_SITE_KEY": {
+          "type": "secret_text"
+        }
+      }
+    },
+    "databaseAndSnapshotsExactlyUnchanged": true,
+    "actualAndSavedConfigurationExactlyUnchanged": true,
+    "catalogsExactlyMatchD1": true,
+    "bookObjectWrites": 0,
+    "databaseWrites": 0,
+    "credentialChanges": 0,
+    "configurationChanges": 0,
+    "secondSignInRequired": false
+  },
+  "rollback": {
+    "release": "2.17.0",
+    "deploymentId": "f86f42ef-b710-40f8-bf6a-011c47b875e5",
+    "source": "129a1d25cec760283987938e218345ac3e417b96"
+  },
+  "liveHttp": {
+    "checkedAt": "2026-10-20T10:40:16.219039+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "checks": [
+      {
+        "path": "/data/version.json",
+        "status": 200,
+        "sha256": "665bfbbde403610eaf5229f45e071914f7aa1a232d8e6e9097263390c6d0cbbf",
+        "contentType": "application/json",
+        "version": {
+          "name": "Shadow Garden",
+          "version": "2.17.1",
+          "releaseVersion": "2.17.1",
+          "commit": "01b57f9f3586839a48c56969799d897bcedf0b64",
+          "shortCommit": "01b57f9",
+          "branch": "main",
+          "builtAt": "2026-10-20T10:36:30.867Z",
+          "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+        }
+      },
+      {
+        "path": "/media/shadow-garden/data/catalog.json",
+        "status": 200,
+        "sha256": "43f3346d2b72b68cbea1ac0b000a103a75efd6accf0aff59bf8a0d48bf3e118d",
+        "contentType": "application/json",
+        "matchesD1": true,
+        "volumes": 1
+      },
+      {
+        "path": "/media/shadow-garden/data/adult-catalog.json",
+        "status": 200,
+        "sha256": "d2172db2fb92a1abc5a619a5cc4b9749720cf06ca6c98345c91c30b0d033ce1c",
+        "contentType": "application/json",
+        "matchesD1": true,
+        "volumes": 1
+      },
+      {
+        "path": "/admin-access",
+        "status": 200,
+        "sha256": "b5f5e49d96b158eb7ebb767dec49cd9a526ffe7b4654f3857d31be8522b1d429",
+        "contentType": "application/json",
+        "hasSiteKey": true
+      },
+      {
+        "path": "/human-access",
+        "status": 200,
+        "sha256": "43b156be87812aa9df29b4d5ccc79e70a90ff63e28971548543865a953ecf053",
+        "contentType": "application/json",
+        "hasSiteKey": true
+      },
+      {
+        "path": "/admin-api/library",
+        "status": 401,
+        "sha256": "7222db46cb749146457d29107289188a90e8de2c291b37009099787433090aaf",
+        "contentType": "application/json"
+      },
+      {
+        "path": "/",
+        "status": 200,
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9",
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "path": "/nsfw.html",
+        "status": 200,
+        "sha256": "3e2fa0f97e6a13a6ccfb2367991ffe88b2f9afa925add2ecd1457e4fc80ae66b",
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "path": "/assets/js/book-access.js",
+        "status": 200,
+        "sha256": "e7e4454794190d46cc80245469ef99523a2d77bb4040cc95055466cd31265d30",
+        "contentType": "application/javascript",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/reader-visual-cache.js",
+        "status": 200,
+        "sha256": "01db91f6a95c518ccf4669cfdc4511af5b36f6e6151621a3162b7e324ffdfafa",
+        "contentType": "application/javascript",
+        "matchesBuild": true
+      }
+    ]
+  },
+  "liveBrowser": {
+    "main": {
+      "footer": "Shadow Garden · v2.17.1 · 01b57f9",
+      "catalog": "1 series · 1 volumes",
+      "url": "https://shadowgarden-bon.pages.dev/"
+    },
+    "adult": {
+      "footer": "Shadow Garden · v2.17.1 · 01b57f9 · Adult Section",
+      "catalog": "1 series · 1 volumes",
+      "contentWarningVisible": true,
+      "acknowledgementSubmitted": false,
+      "url": "https://shadowgarden-bon.pages.dev/nsfw"
+    }
+  },
+  "limits": [
+    "No new physical Android/Soul, owner Keeper, live CAPTCHA or authenticated real-book acceptance is claimed.",
+    "The shared ticket request can finish after caller cancellation; the caller cannot start a later EPUB fetch.",
+    "This increment does not coalesce concurrent uncached ticket requests or change vendor XHR/ZIP parsing."
+  ],
+  "nextAuditItems": [
+    "Review legacy-admin revision compatibility.",
+    "Commit a read-only production verifier and compatibility metadata guards.",
+    "Continue scoped readability/accessibility and measured module-startup review."
+  ]
+}

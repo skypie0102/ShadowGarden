@@ -24,13 +24,16 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next audit increment, **v2.17.1**, maps protected archive consumers and removes
-the global fetch override. The visual scanner calls the explicit book-access
-transport; pinned EPUB.js retains its existing XHR/session-cookie path. All 293
-local Node tests and binding-aware build checks pass; full browser CI and
-publication are pending. See [the transport map](docs/PROTECTED_SOURCE_TRANSPORT.md).
+The latest production release is **v2.17.1**, merged through
+[PR #36](https://github.com/skypie0102/ShadowGarden/pull/36) and deployed on 2026-10-20.
+The visual scanner calls an explicit book-access transport; global fetch remains
+native, and pinned EPUB.js retains its XHR/session-cookie path. All 293 Node tests
+and 502 browser cases pass across five profiles (eight existing skips). Both
+live catalogs and footers, exact served modules, revision-9 document, nine
+snapshots and production configuration are verified. See [the transport map](docs/PROTECTED_SOURCE_TRANSPORT.md)
+and [release evidence](docs/protected-source-verification-2.17.1.json).
 
-The latest production release is **v2.17.0**, deployed on 2026-10-20 through
+The preceding browser-persistence release is **v2.17.0**, deployed on 2026-10-20 through
 [PR #35](https://github.com/skypie0102/ShadowGarden/pull/35): grouped browser
 persistence and conditional rollback after failed saves. Read Again resets
 progress and Finished status in one operation. All 285 Node tests and 492 browser

@@ -82,7 +82,7 @@ live database/size errors is also removed without changing error codes or contra
    refusal. Existing formats/identities
    remain. This does not provide crash atomicity or cross-tab isolation; see
    [contracts and limits](BROWSER_PERSISTENCE.md).
-4. **Compatibility transport — v2.17.1 implementation awaiting CI/release:** the
+4. **Compatibility transport — deployed in v2.17.1:** the
    consumer map confirms that pinned EPUB.js uses XHR after session authorization,
    while the visual scanner needs explicit protected fetch. The scanner now calls
    `ShadowGardenBookAccess.fetch`; global fetch remains native. Request options,
@@ -152,4 +152,16 @@ and rollback limits. Both increments are live in v2.17.0, deployment
 Live catalogs match D1, seven changed modules match the build, and the exact
 production document, eight snapshots and configuration are unchanged. The existing
 plugin supplied a valid upload token; [local asset requests](PAGES_UPLOAD_TRANSPORT.md)
-completed the upload without another sign-in. The other ordered follow-ups remain open.
+completed the upload without another sign-in.
+
+Compatibility transport is merged through PR #36 as `01b57f9` and deployed in
+v2.17.1, `39c54372-231f-4a6d-880b-48f1a3710b57`, on 2026-10-20. All 293 Node tests
+and 502 browser cases pass on attempt 1, with eight existing skips and no retries.
+The two changed modules match the build; both catalogs match D1 and both Library
+footers show the release. A fresh revision-9 baseline with nine snapshots is
+exactly unchanged after publication, as are actual/saved production settings.
+[The transport report](PROTECTED_SOURCE_TRANSPORT.md) and
+[machine-readable evidence](protected-source-verification-2.17.1.json) retain the
+consumer map, Request/cancellation contracts and acceptance limits. The remaining
+ordered follow-ups start with legacy-admin revision compatibility and the
+read-only production verifier.
