@@ -18,6 +18,7 @@
     "seed:local": "wrangler d1 execute DB --local --file recovery-info/seed.sql",
     "seed:empty": "wrangler d1 execute DB --local --file recovery-info/empty-seed.sql",
     "profile:reader": "npm run build && playwright test --config playwright.profile.config.mjs",
+    "profile:library": "npm run build && playwright test --config playwright.library-profile.config.mjs",
     "verify:production": "node scripts/verify-production.mjs",
     "profile:uploads": "node scripts/profile-upload-memory.mjs"
   },
