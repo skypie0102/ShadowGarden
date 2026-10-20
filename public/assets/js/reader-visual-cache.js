@@ -325,7 +325,7 @@ export function createVisualPageCacheExtension(){
   async function scanBook(bookUrl,signal){
     signal.throwIfAborted();
     const absolute=new URL(bookUrl,location.href).href;
-    const response=await fetch(absolute,{cache:"force-cache",credentials:"same-origin",signal});
+    const response=await window.ShadowGardenBookAccess.fetch(absolute,{cache:"force-cache",credentials:"same-origin",signal});
     if(!response.ok)throw new Error(`Visual-page scan failed (${response.status})`);
     const zip=await JSZip.loadAsync(await response.arrayBuffer());
     const containerEntry=zip.file("META-INF/container.xml");if(!containerEntry)throw new Error("Visual-page scan: missing container.xml");

@@ -82,9 +82,12 @@ live database/size errors is also removed without changing error codes or contra
    refusal. Existing formats/identities
    remain. This does not provide crash atomicity or cross-tab isolation; see
    [contracts and limits](BROWSER_PERSISTENCE.md).
-4. **Compatibility transport:** map remaining vendor consumers before replacing
-   the global protected-fetch compatibility hook with explicit authorized-source
-   transport. The present correction preserves its Request contract.
+4. **Compatibility transport — v2.17.1 implementation awaiting CI/release:** the
+   consumer map confirms that pinned EPUB.js uses XHR after session authorization,
+   while the visual scanner needs explicit protected fetch. The scanner now calls
+   `ShadowGardenBookAccess.fetch`; global fetch remains native. Request options,
+   cancellation and existing cookie/download behavior are retained. See
+   [the map and validation](PROTECTED_SOURCE_TRANSPORT.md).
 5. **Maintenance consistency:** consider mandatory If-Match on all legacy admin
    mutations after checking external-client compatibility. Current UI clients
    retain their existing revision checks; purge/recovery still require them.
