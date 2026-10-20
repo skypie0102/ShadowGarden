@@ -101,14 +101,17 @@ the same `3e0be156734af6c261831a697efe169c3efd25d4`.
 | Desktop WebKit | 95 | 2 |
 | Mobile WebKit | 93 | 4 |
 
-Publication is pending. The current Cloudflare connection returned HTTP 403
-`Authorization failed` for `/pages/assets/check-missing`, the asset operation
-needed for Direct Upload. No new deployment was created. The verified canonical
-deployment is still v2.16.0, `8212de19-5ccb-40bd-9241-14b9427ea565`.
-No production database, object, credential or configuration write was performed.
+This increment is deployed with browser persistence in **v2.17.0** on 2026-10-20,
+deployment `f86f42ef-b710-40f8-bf6a-011c47b875e5`, clean source `129a1d2`.
+The plugin's upload token worked through a local asset helper after its runtime's
+asset requests returned 403. No second sign-in was needed; see
+[the transport record](PAGES_UPLOAD_TRANSPORT.md). Both catalogs match D1, and the
+exact document, eight snapshots and production configuration are unchanged.
+No production database, book-object or credential writes were performed.
 This increment adds no live authenticated-upload or physical-device acceptance
-claim. [Verification evidence](upload-verification-2.16.1.json) records the tested
-source, merge, counts, measurements and publication boundary.
+claim. [Verification evidence](upload-verification-2.16.1.json) retains the tested
+source, merge, counts and measurements; [release verification](persistence-verification-2.17.0.json)
+records the combined live release.
 
 ## Remaining work
 
@@ -117,4 +120,5 @@ Avoid replacing that path with an unbounded native body reader or dropping ZIP
 validation. A future streaming/spooling design must preserve immutable upload
 coordinates, checksums, retries, provider contracts and catalog adoption rules.
 Concurrent-upload memory should be measured as part of that design. The next
-independent audit item is browser persistence transaction semantics.
+independent audit item, browser persistence semantics, is now included in v2.17.0.
+The next ordered audit item maps protected-fetch compatibility consumers.

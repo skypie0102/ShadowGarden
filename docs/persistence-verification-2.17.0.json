@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": "2.17.0",
-  "status": "merged_pending_sign_in",
+  "status": "deployed",
   "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/35",
   "testedSource": "88c825ab453d11c41205e335deec523222b84aee",
   "merge": "129a1d25cec760283987938e218345ac3e417b96",
@@ -67,61 +67,67 @@
     "version": "2.17.0",
     "branch": "main",
     "bindingGuardPassed": true,
-    "compatibilityMetadataChecked": true
+    "compatibilityMetadataChecked": true,
+    "staticAssets": 165,
+    "uniqueHashes": 164,
+    "changedAssetsUploaded": 8,
+    "allHashesRevalidated": true,
+    "workerBytes": 129799,
+    "requestSha256": "8905ba421f7e9fbaa4fe50397c4058bab3182a9c6d255d2cf6e6238fb63a0ea9"
   },
   "production": {
-    "release": "2.16.0",
-    "deploymentId": "8212de19-5ccb-40bd-9241-14b9427ea565",
-    "source": "4b2aed1a8f75dc5ad50df5cb5bc8f0d7443488ae",
-    "baselineCheckedAt": "2026-10-19T22:48:29.621Z",
+    "release": "2.17.0",
+    "deploymentId": "f86f42ef-b710-40f8-bf6a-011c47b875e5",
+    "source": "129a1d25cec760283987938e218345ac3e417b96",
+    "baselineCheckedAt": "2026-10-20T01:34:34.245Z",
     "revision": 8,
     "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
     "snapshots": [
       {
         "id": "04b00d79-5829-4fd7-9d45-a6a5e8cad559",
-        "createdAt": "2026-10-18T13:54:43.265Z",
+        "created_at": "2026-10-18T13:54:43.265Z",
         "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
         "actualSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
       },
       {
         "id": "2db02ce9-f1fd-46ba-8dab-e08fd1be6535",
-        "createdAt": "2026-10-17T04:40:11.572Z",
+        "created_at": "2026-10-17T04:40:11.572Z",
         "sha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd",
         "actualSha256": "613a27f35502ba664533686c2f27c06faedf36e7dbce21cf981959a42726d4fd"
       },
       {
         "id": "4d3e97b5-0a7e-45b2-ad62-01f87c556894",
-        "createdAt": "2026-10-17T04:39:34.828Z",
+        "created_at": "2026-10-17T04:39:34.828Z",
         "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
         "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
       },
       {
         "id": "a84f4288-fffb-4a41-8d88-8b4e8728af7a",
-        "createdAt": "2026-10-03T11:48:02.789Z",
+        "created_at": "2026-10-03T11:48:02.789Z",
         "sha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7",
         "actualSha256": "503b07d05ffc84abf9c3febc2a9326fbe3176686d250f9b4846274fe946511e7"
       },
       {
         "id": "afabae30-1dcf-4aa7-9e3b-16838fdca95a",
-        "createdAt": "2026-10-17T04:40:05.183Z",
+        "created_at": "2026-10-17T04:40:05.183Z",
         "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
         "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
       },
       {
         "id": "d8035d9f-8893-4380-b58b-d50a9d9cf7b7",
-        "createdAt": "2026-10-03T11:52:50.670Z",
+        "created_at": "2026-10-03T11:52:50.670Z",
         "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b",
         "actualSha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
       },
       {
         "id": "e5dc0089-8ba4-4b54-a089-4de87dc65a83",
-        "createdAt": "2026-10-03T11:52:35.187Z",
+        "created_at": "2026-10-03T11:52:35.187Z",
         "sha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b",
         "actualSha256": "01dcfad0723968ef04c63e0cefd242ada07635ca516f0560ab858e1b15bfea9b"
       },
       {
         "id": "f249e424-8884-4774-b6ce-949057b82cf8",
-        "createdAt": "2026-10-17T04:39:54.200Z",
+        "created_at": "2026-10-17T04:39:54.200Z",
         "sha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75",
         "actualSha256": "e3468a0dae01904d9f210d088af9207eddfd30c276fad90c8be4bbd57a29fe75"
       }
@@ -221,21 +227,192 @@
     "documentMatchesLastVerifiedRelease": true,
     "liveMainLibrary": {
       "volumeCount": 1,
-      "footer": "v2.16.0 · 4b2aed1"
+      "footer": "Shadow Garden · v2.17.0 · 129a1d2"
     },
-    "publication": "pending_dashboard_sign_in",
+    "publication": "deployed",
     "assetAuthentication": {
-      "freshJwtIssued": true,
-      "documentedBearerAuthenticationUsed": true,
-      "actualHashUsed": true,
-      "status": 403,
-      "message": "Authorization failed"
+      "resolved": true,
+      "tokenIssuedByExistingPlugin": true,
+      "tokenIssuanceStatus": 200,
+      "pluginRuntimeAssetStatus": 403,
+      "pluginRuntimeErrorCode": 8000013,
+      "localAssetCheckStatus": 200,
+      "localAssetUploadSucceeded": true,
+      "hiddenStdinUsed": true,
+      "secondSignInRequired": false,
+      "permissionChanges": 0,
+      "underlyingTransportFailureCause": "not established"
     },
     "databaseWrites": 0,
     "mediaObjectWrites": 0,
     "credentialChanges": 0,
     "configurationChanges": 0,
-    "deploymentsCreated": 0
+    "deploymentsCreated": 1,
+    "deployedAt": "2026-10-20T01:38:22.741859Z",
+    "baselineDeploymentId": "8212de19-5ccb-40bd-9241-14b9427ea565",
+    "verifiedAt": "2026-10-20T01:38:55.132Z",
+    "liveAdultLibrary": {
+      "volumeCount": 1,
+      "footer": "Shadow Garden · v2.17.0 · 129a1d2 · Adult Section",
+      "contentWarningVisible": true,
+      "acknowledgementSubmitted": false
+    },
+    "databaseAndSnapshotsExactlyUnchanged": true,
+    "actualAndSavedConfigurationExactlyUnchanged": true,
+    "catalogsExactlyMatchD1": true
   },
-  "nextAuditItem": "Map protected-fetch vendor consumers before replacing the compatibility hook."
+  "nextAuditItem": "Map protected-fetch vendor consumers before replacing the compatibility hook.",
+  "rollback": {
+    "release": "2.16.0",
+    "deploymentId": "8212de19-5ccb-40bd-9241-14b9427ea565",
+    "source": "4b2aed1a8f75dc5ad50df5cb5bc8f0d7443488ae"
+  },
+  "transportDiagnostics": {
+    "plugin": {
+      "ok": true,
+      "pluginStatus": 403,
+      "pluginResponse": {
+        "success": false,
+        "errors": [
+          {
+            "code": 8000013,
+            "message": "Authorization failed"
+          }
+        ]
+      },
+      "ray": "a4d446de1f0ba667-SIN",
+      "date": "Tue, 20 Oct 2026 01:33:51 GMT"
+    },
+    "localProbe": {
+      "status": 200,
+      "result": [],
+      "ray": "a4d445b08e6b3d6e-ORD",
+      "date": "Tue, 20 Oct 2026 01:33:03 GMT"
+    },
+    "procedure": "PAGES_UPLOAD_TRANSPORT.md",
+    "scope": "Observed request-transport difference; the underlying reason for the plugin runtime's rejection is not established."
+  },
+  "liveHttp": {
+    "checkedAt": "2026-10-20T01:39:49.798711+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "checks": [
+      {
+        "path": "/data/version.json",
+        "status": 200,
+        "contentType": "application/json",
+        "sha256": "95a5ed458e0d75e48dc148fcd93a63368bf9bd4de9501eae5b2a96a874e2639b",
+        "version": {
+          "name": "Shadow Garden",
+          "version": "2.17.0",
+          "releaseVersion": "2.17.0",
+          "commit": "129a1d25cec760283987938e218345ac3e417b96",
+          "shortCommit": "129a1d2",
+          "branch": "main",
+          "builtAt": "2026-10-19T22:58:41.003Z",
+          "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+        }
+      },
+      {
+        "path": "/media/shadow-garden/data/catalog.json",
+        "status": 200,
+        "contentType": "application/json",
+        "sha256": "b15e2d80023200995f7ad8a78948260b17d407f04f8d3c4fdbf00732487258c1",
+        "matchesD1": true,
+        "volumes": 1
+      },
+      {
+        "path": "/media/shadow-garden/data/adult-catalog.json",
+        "status": 200,
+        "contentType": "application/json",
+        "sha256": "19ee0a47dcd66c51cbc391b7941ad5d0e2e72b62e1523f33808a73dac60faa63",
+        "matchesD1": true,
+        "volumes": 1
+      },
+      {
+        "path": "/admin-access",
+        "status": 200,
+        "contentType": "application/json",
+        "sha256": "b5f5e49d96b158eb7ebb767dec49cd9a526ffe7b4654f3857d31be8522b1d429",
+        "hasSiteKey": true
+      },
+      {
+        "path": "/human-access",
+        "status": 200,
+        "contentType": "application/json",
+        "sha256": "43b156be87812aa9df29b4d5ccc79e70a90ff63e28971548543865a953ecf053",
+        "hasSiteKey": true
+      },
+      {
+        "path": "/admin-api/library",
+        "status": 401,
+        "contentType": "application/json",
+        "sha256": "7222db46cb749146457d29107289188a90e8de2c291b37009099787433090aaf"
+      },
+      {
+        "path": "/",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9"
+      },
+      {
+        "path": "/nsfw.html",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "sha256": "3e2fa0f97e6a13a6ccfb2367991ffe88b2f9afa925add2ecd1457e4fc80ae66b"
+      },
+      {
+        "path": "/assets/js/domain/bookmarks.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "d2120e0e70b610bdf1299adeb7b4c1655a475170f0f3776e76ef65ee8de822b9",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/domain/progress.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "69ce537c81eebcb940ad731d9d5ee235a7ad7e4d3aa9571a86c1223e93e17855",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/domain/reading-state.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "7e8daa64ed03b5e730580192b44118f135c8fccd94836d45f7dd42b8e188c261",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/domain/storage.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "f23bf43c99ea80f1eee454a8ffb8505bdecedda05e0bbc368a77f1c66e52ddf5",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/public/volume-actions.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "d482067caad157b640ee88e1bac983a5f2421c6cb26f718d6d0093b99bc98ec2",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/reader/book-session.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "68a8b55db27f283e51f4cf6653f4226dfb5180c6fe25a7202b248dabdbc122f3",
+        "matchesBuild": true
+      },
+      {
+        "path": "/assets/js/reader/storage.js",
+        "status": 200,
+        "contentType": "application/javascript",
+        "sha256": "9e1deda856cf825d71e0181ca857f13b94ccd2182cb52e835be9de45aa2a61ab",
+        "matchesBuild": true
+      }
+    ]
+  },
+  "limits": [
+    "No new physical Android/Soul, owner Keeper, live CAPTCHA or authenticated real-book acceptance is claimed.",
+    "Grouped localStorage writes do not provide crash atomicity or cross-tab transaction isolation."
+  ]
 }

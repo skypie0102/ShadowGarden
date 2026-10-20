@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": "2.16.1",
-  "status": "merged_not_deployed",
+  "status": "deployed_in_2.17.0",
   "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/34",
   "source": "d259667b89820560587a892633264cb47e87c52b",
   "merge": "a862ad5b0a7699e3194923860d4d970f7eb5ce57",
@@ -68,19 +68,19 @@
     "scope": "Sampled local isolate ArrayBuffer backing storage; excludes a total-memory, concurrency, CPU or production speed guarantee."
   },
   "production": {
-    "unchangedRelease": "2.16.0",
-    "unchangedDeployment": "8212de19-5ccb-40bd-9241-14b9427ea565",
-    "publication": "pending",
-    "blocker": {
-      "operation": "POST /pages/assets/check-missing",
-      "status": 403,
-      "message": "Authorization failed"
-    },
-    "deploymentCreated": false,
+    "release": "2.17.0",
+    "deploymentId": "f86f42ef-b710-40f8-bf6a-011c47b875e5",
+    "source": "129a1d25cec760283987938e218345ac3e417b96",
+    "deployedAt": "2026-10-20T01:38:22.741859Z",
+    "publication": "deployed",
+    "releaseVerification": "persistence-verification-2.17.0.json",
+    "previousBlockerResolved": true,
+    "secondSignInRequired": false,
+    "deploymentCreated": true,
     "databaseWrites": 0,
     "mediaObjectWrites": 0,
     "credentialChanges": 0,
     "configurationChanges": 0
   },
-  "nextAuditItem": "Browser persistence partial-write semantics; retain identity aliases and storage formats."
+  "nextAuditItem": "Browser persistence completed in v2.17.0; map protected-fetch vendor consumers next."
 }

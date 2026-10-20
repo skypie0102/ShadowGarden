@@ -67,14 +67,14 @@ live database/size errors is also removed without changing error codes or contra
    The 205-snapshot fixture reads 95% fewer first-page document bytes, and stalled
    provider/authentication tests preserve unverified outcomes. See [measurements
    and release](MAINTENANCE_BUDGETS.md).
-2. **Large-upload memory — profiled; v2.16.1 merged, deployment pending:** the real workerd upload
+2. **Large-upload memory — profiled; v2.16.1 increment deployed in v2.17.0:** the real workerd upload
    pipeline validates/transfers exact 50 MiB fixtures and rejects one byte above
    the limit before provider access/reservation. Declared-length input now copies
    into one destination, reducing sampled 50 MiB backing storage from about
    100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
    design follow-up; the supported limits are unchanged. See [measurements and
    limitations](UPLOAD_MEMORY.md).
-3. **Browser persistence — v2.17.0 merged, deployment pending:** progress/bookmark aliases, Finished
+3. **Browser persistence — deployed in v2.17.0:** progress/bookmark aliases, Finished
    map/markers and settings use checked grouped writes with conditional rollback.
    Public/startup Read Again resets progress and Finished state together. Eight
    baseline controls reproduce partial writes or false success; all 285 Node
@@ -142,6 +142,11 @@ release scope. This rollout does not claim new physical acceptance or a complete
 real CAPTCHA/credential flow. Maintenance budgets are completed in v2.16.0.
 The measured upload increment is merged through PR #34 with 259 Node tests and
 477 browser passes; [its verification](UPLOAD_MEMORY.md#validation-and-release)
-records the pending publication separately. Browser persistence is merged through
-PR #35; [its report](BROWSER_PERSISTENCE.md) records 285 Node tests, 492 browser
-passes, rollback limits and pending deployment. The other ordered follow-ups remain open.
+records the measurement scope. Browser persistence is merged through PR #35;
+[its report](BROWSER_PERSISTENCE.md) records 285 Node tests, 492 browser passes
+and rollback limits. Both increments are live in v2.17.0, deployment
+`f86f42ef-b710-40f8-bf6a-011c47b875e5`, clean source `129a1d2`, on 2026-10-20.
+Live catalogs match D1, seven changed modules match the build, and the exact
+production document, eight snapshots and configuration are unchanged. The existing
+plugin supplied a valid upload token; [local asset requests](PAGES_UPLOAD_TRANSPORT.md)
+completed the upload without another sign-in. The other ordered follow-ups remain open.

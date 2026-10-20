@@ -1,6 +1,25 @@
 # ShadowGarden production operations
 
-**Last verified production release — 2026-10-19:** v2.16.0, deployment
+**Last verified production release — 2026-10-20:** v2.17.0, deployment
+`f86f42ef-b710-40f8-bf6a-011c47b875e5`, clean application source `129a1d2`.
+The release includes measured upload-memory buffering and grouped browser
+persistence from PRs #34/#35. CI passes 285 Node tests and 492 browser cases
+(eight existing skips). All seven changed static modules match the release build;
+both live catalogs match D1, and both Library footers show v2.17.0. Revision 8,
+the exact document, all eight snapshots, actual/saved bindings, compatibility
+settings and nine encrypted-setting names/types are unchanged. No database,
+book-object or credential writes were needed. The retained rollback is v2.16.0,
+`8212de19-5ccb-40bd-9241-14b9427ea565`. See [release evidence](persistence-verification-2.17.0.json).
+
+The connected Cloudflare plugin supplied a valid short-lived upload JWT. Its
+runtime's asset requests returned 403, while local requests with a plugin-issued
+token succeeded. Local upload of eight changed assets and revalidation of all
+164 unique hashes completed the release without another sign-in or permission
+change. [The upload procedure](PAGES_UPLOAD_TRANSPORT.md) records the transport
+comparison and the guarded multipart deployment. The underlying reason for the
+runtime difference is not established.
+
+**Maintenance budget release — 2026-10-19:** v2.16.0, deployment
 `8212de19-5ccb-40bd-9241-14b9427ea565`, source `4b2aed1`.
 [Maintenance budgets](MAINTENANCE_BUDGETS.md) and
 [release evidence](maintenance-release-2.16.0.json) record paginated Keeper
@@ -8,14 +27,9 @@ history, bounded readiness, 250 Node tests, 477 browser cases and unchanged
 production data/configuration. The retained rollback is v2.15.0 deployment
 `710c6175-587f-40ff-899b-94b5c33e5be5`.
 
-The v2.16.1 upload-memory increment and v2.17.0 browser persistence increment
-are merged through PRs #34/#35. The latest implementation passes 285 Node tests
-and 492 browser cases (eight existing skips). Neither increment is deployed:
-a fresh Pages upload JWT still receives HTTP 403 for the documented asset
-operation with a real hash. Dashboard fallback requires sign-in. The merged
-main build and binding/compatibility checks are ready; no deployment or
-production write was performed. See [upload verification](UPLOAD_MEMORY.md)
-and [persistence verification](BROWSER_PERSISTENCE.md).
+The upload-memory and browser persistence increments are deployed together in
+v2.17.0 above. See [upload verification](UPLOAD_MEMORY.md) and
+[persistence verification](BROWSER_PERSISTENCE.md) for implementation limits.
 
 **Reader gesture release — 2026-10-19:** v2.14.1, deployment
 `fab2efb5-42d7-4dce-be2c-42990c9b517a`, clean main source

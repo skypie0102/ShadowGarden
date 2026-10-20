@@ -2,17 +2,19 @@
 
 [Browser persistence](BROWSER_PERSISTENCE.md) records the merged v2.17.0
 increment: checked grouped writes, conditional rollback, compound Read Again,
-285 Node tests and 492 browser passes. Publication awaits Cloudflare dashboard
-sign-in. [Verification evidence](persistence-verification-2.17.0.json) retains the
-production baseline and the limits of Web Storage.
+285 Node tests and 492 browser passes. It is live as v2.17.0 on 2026-10-20.
+[Verification evidence](persistence-verification-2.17.0.json) records the deployment,
+matching live assets/catalogs, unchanged production baseline and Web Storage limits.
+[Pages upload transport](PAGES_UPLOAD_TRANSPORT.md) records the working local asset
+helper using the existing plugin's short-lived token; no second sign-in was needed.
 
 [Upload memory](UPLOAD_MEMORY.md) records the merged v2.16.1 audit increment:
 47.9% less sampled backing storage for declared-length 50 MiB uploads, 259 Node
-tests and 477 browser passes. Publication is pending asset-upload authorization.
+tests and 477 browser passes. It is included in the deployed v2.17.0 release.
 The report retains remaining unknown-length/concurrency design work and links
 [verification evidence](upload-verification-2.16.1.json).
 
-The latest verified production release is v2.16.0, deployed on 2026-10-19.
+The preceding maintenance release is v2.16.0, deployed on 2026-10-19.
 [Maintenance budgets](MAINTENANCE_BUDGETS.md) and
 [release evidence](maintenance-release-2.16.0.json) cover bounded history/readiness,
 250 Node tests, 477 browser passes and six live Keeper frontend fixture cases.
@@ -32,6 +34,7 @@ Those physical/provider observations keep their original release scope.
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Upload memory](UPLOAD_MEMORY.md) | Workerd upload measurements, declared-length buffering and remaining limits |
 | [Browser persistence](BROWSER_PERSISTENCE.md) | Failed-write rollback, compound Read Again and concurrency/crash limits |
+| [Pages upload transport](PAGES_UPLOAD_TRANSPORT.md) | Plugin-issued upload tokens, local asset requests and guarded release procedure |
 | [Website architecture](WEBSITE_ARCHITECTURE.md) | Current public page, access, theme and Keeper upload ownership |
 | [Website refactor](WEBSITE_REFACTOR_ROADMAP.md) | Website scope, ownership findings and tested increments |
 | [Reader maintenance](READER_MAINTENANCE.md) | Current cleanup increments, completion checks and next priorities |

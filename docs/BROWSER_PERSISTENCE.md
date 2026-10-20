@@ -107,13 +107,19 @@ its tree exactly matches merge `129a1d25cec760283987938e218345ac3e417b96`:
 
 The merged main build is prepared with v2.17.0 metadata at `/data/version.json`.
 The compiled Functions package passes actual D1/variable binding checks and
-matches the configured compatibility date/flags. Publication is pending: the
-Pages upload-token API issues a fresh token, but the documented asset operation
-still returns 403 with that token and a real asset hash. Dashboard fallback is
-at Cloudflare sign-in; authorization to act has already been supplied by the
-owner. The last observed live main library loads its expected volume and renders
-the v2.16.0 footer. Production still uses deployment
+matches the configured compatibility date/flags. It is deployed on 2026-10-20 as
+`f86f42ef-b710-40f8-bf6a-011c47b875e5`, clean source `129a1d2`. Both live catalogs
+match D1, all seven changed static modules match the build, both Library footers
+show v2.17.0, challenge configuration responds and unauthenticated Keeper access
+returns 401. The Adult content warning remains intact; no acknowledgement was
+submitted. The rollback target is v2.16.0,
 `8212de19-5ccb-40bd-9241-14b9427ea565`.
+
+The existing plugin issued valid upload tokens. Its runtime's asset requests
+returned 403, but the local upload helper succeeded with a plugin-issued token,
+uploaded eight changed files and revalidated all 164 unique hashes. No second
+sign-in or permission change was required. [The transport record](PAGES_UPLOAD_TRANSPORT.md)
+explains the supported request flow and the observed execution-path difference.
 
 The refreshed D1 document matches the verified v2.16.0 release at revision 8;
 all eight actual snapshot hashes match their stored checksums. Production
@@ -121,4 +127,4 @@ bindings/compatibility settings are unchanged. No production database, media,
 credential or configuration write was performed. This adds no physical-device
 or authenticated real-book acceptance claim.
 [Verification evidence](persistence-verification-2.17.0.json) records the merge,
-tests, baseline and pending publication separately.
+tests, refreshed before/after baseline and live publication separately.

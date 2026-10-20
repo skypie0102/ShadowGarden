@@ -24,25 +24,27 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest audit increment is merged for **v2.17.0** through
+The latest production release is **v2.17.0**, deployed on 2026-10-20 through
 [PR #35](https://github.com/skypie0102/ShadowGarden/pull/35): grouped browser
 persistence and conditional rollback after failed saves. Read Again resets
 progress and Finished status in one operation. All 285 Node tests and 492 browser
 cases pass (eight existing skips). Existing formats remain; crash atomicity and
-concurrent-writer isolation are not claimed. Publication awaits Cloudflare
-dashboard sign-in after the asset API rejects its freshly issued upload token.
-See [browser persistence](docs/BROWSER_PERSISTENCE.md) for contracts and evidence.
+concurrent-writer isolation are not claimed. Both live catalogs match D1; the exact
+catalog document, eight snapshots, bindings and secret-setting metadata are unchanged.
+The existing Cloudflare plugin supplied the upload token; a local asset helper
+completed the upload without another sign-in. See [browser persistence](docs/BROWSER_PERSISTENCE.md)
+for contracts and evidence, and [the upload procedure](docs/PAGES_UPLOAD_TRANSPORT.md).
 
 The preceding audit increment is merged for **v2.16.1** through
 [PR #34](https://github.com/skypie0102/ShadowGarden/pull/34): measured large-upload
 memory and direct buffering for declared-length bodies. A 50 MiB EPUB uses 47.9%
 less sampled ArrayBuffer storage in the local workerd fixture. All 259 Node tests
 and 477 browser cases pass (eight existing skips). The 50 MiB limit is unchanged;
-unknown-length/concurrent buffering remains documented. Publication is pending
-because the current Cloudflare connection rejects the asset-upload authorization.
+unknown-length/concurrent buffering remains documented. This increment is included
+in the live v2.17.0 release.
 See [upload measurements](docs/UPLOAD_MEMORY.md) for evidence and scope.
 
-The latest verified production release is **v2.16.0**, deployed on 2026-10-19.
+The preceding maintenance release is **v2.16.0**, deployed on 2026-10-19.
 Keeper history loads ten inspected summaries per page, one full snapshot at a
 time. The large fixture reads 95% fewer document bytes for its first page.
 Readiness has a 20-second deadline and preserves unfinished checks as unverified.
