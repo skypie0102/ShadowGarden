@@ -80,10 +80,14 @@ export async function presentHumanChallenge(challenge,{verify,adult=false}){
       }
     };
 
-    cancel.addEventListener("click",()=>finish(new Error("Human verification was cancelled.")));
-    overlay.addEventListener("cancel",event=>{
+    const dismiss=event=>{
       event.preventDefault();
       finish(new Error("Human verification was cancelled."));
+    };
+    cancel.addEventListener("click",dismiss);
+    overlay.addEventListener("cancel",dismiss);
+    overlay.addEventListener("keydown",event=>{
+      if(event.key==="Escape")dismiss(event);
     });
 
     try{
