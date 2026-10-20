@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Protected source transport](PROTECTED_SOURCE_TRANSPORT.md) maps the visual
+scanner, main EPUB.js and isolated page-map consumers. The v2.17.1 implementation
+replaces the global fetch override with an explicit scanner transport; full
+five-profile CI and publication are pending.
+
 [Browser persistence](BROWSER_PERSISTENCE.md) records the merged v2.17.0
 increment: checked grouped writes, conditional rollback, compound Read Again,
 285 Node tests and 492 browser passes. It is live as v2.17.0 on 2026-10-20.

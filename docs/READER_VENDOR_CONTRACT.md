@@ -41,6 +41,7 @@ without registering another application engine.
 | Navigation | Requests use registered navigators, revisions and ordered vendor moves; obsolete callbacks cannot navigate a replacement rendition. |
 | Contents search | TOC tree/location ownership stays in `reader/toc.js`; `reader/toc-book-search.js` presents book-text queries/results using the same app navigator, root/UI scopes and bounded text-search engine. No additional vendor override is installed. |
 | Sources/lifetime | Source leases outlive reads/serialization. Cancellation stops publication immediately; final release waits for pending source work. |
+| Protected archive transport | The visual scanner explicitly uses `ShadowGardenBookAccess.fetch`. Main and isolated page-map EPUB.js archive opens use the pinned vendor XHR after session authorization; opened ZIP entries use `archive.request`. Global fetch remains native. See [the consumer map](PROTECTED_SOURCE_TRANSPORT.md). |
 | Section identity | Pure helpers in `reader/sections.js` share existing section matching and linear-spine fallback selection. Link/footnote target resolution and iframe-local markers retain their separate contracts. |
 
 The visual manifest and canonical page-map globals are instrumentation snapshots,

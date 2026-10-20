@@ -187,7 +187,9 @@
     return nativeFetch(new Request(new URL(path,location.href),options));
   }
 
-  window.fetch=async(input,init)=>{
+  // Explicit transport for consumers that need protected EPUB bytes. EPUB.js
+  // uses its own XHR after session authorization; leave global fetch untouched.
+  async function fetchSource(input,init){
     const opaque=opaquePseudoRequest(input);
     const raw=isRawEpubRequest(input);
     if(!opaque&&!raw)return nativeFetch(input,init);
@@ -203,7 +205,7 @@
     await resolve(identity);
     signal?.throwIfAborted();
     return nativeFetch(input,init);
-  };
+  }
 
   async function download(book,filename=""){
     const ticket=await resolve(book);
@@ -241,5 +243,5 @@
   const initial=initialBook?resolve(initialBook):Promise.resolve(null);
   initial.then(scheduleRenewal).catch(()=>{});
   window.addEventListener("pagehide",()=>clearTimeout(renewalTimer),{once:true});
-  window.ShadowGardenBookAccess={resolve,download,initial,identity:initialBook,migrateLegacyState,bookIdForLegacyPath,ensureHumanAccess};
+  window.ShadowGardenBookAccess={resolve,fetch:fetchSource,download,initial,identity:initialBook,migrateLegacyState,bookIdForLegacyPath,ensureHumanAccess};
 })();
