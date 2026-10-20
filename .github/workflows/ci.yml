@@ -56,6 +56,13 @@ jobs:
           path: ${{ runner.temp }}/browser-runtime.tar.gz
           retention-days: 1
       - run: npm run test:browser -- --project ${{ matrix.project }} --max-failures=1
+      - name: Profile Library module startup
+        if: ${{ !cancelled() && matrix.project == 'desktop-chromium' && github.event_name == 'pull_request' }}
+        env:
+          SG_STARTUP_BASELINE_REF: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$SG_STARTUP_BASELINE_REF"
+          npm run profile:library
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -63,4 +70,5 @@ jobs:
           path: |
             playwright-report/
             test-results/
+            library-startup-results/
           retention-days: 7

@@ -8,11 +8,13 @@
   let suggestionRandom=Math.random();
   let suggestionKey="";
 
-  const domain=await import("/assets/js/domain/index.js?v=2.11.0");
-  const model=await import("/assets/js/library-model.js?v=2.11.0");
-  const renderers=await import("/assets/js/library-renderers.js?v=2.11.0");
-  const {installVolumeActionController}=await import("/assets/js/public/volume-actions.js?v=2.11.0");
-  const locationState=await import("./public/library-location.js");
+  const [domain,model,renderers,{installVolumeActionController},locationState]=await Promise.all([
+    import("/assets/js/domain/index.js"),
+    import("/assets/js/library-model.js"),
+    import("/assets/js/library-renderers.js"),
+    import("/assets/js/public/volume-actions.js"),
+    import("./public/library-location.js")
+  ]);
   const readingStatus=domain.readingState;
   installVolumeActionController(document);
 

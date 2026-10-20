@@ -17,7 +17,7 @@
   }
   panel.classList.remove('filters-mobile-initial-collapsed');
 
-  const {preferences}=await import('/assets/js/domain/index.js?v=2.11.0');
+  const {preferences}=await import('/assets/js/domain/index.js');
   const scope=document.body.dataset.libraryScope||'main';
   const headActions=document.createElement('span');
   headActions.className='filter-head-actions';
