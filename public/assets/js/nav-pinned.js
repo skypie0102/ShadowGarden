@@ -3,7 +3,7 @@
   const nav=document.querySelector('#siteNav')||document.querySelector('.site-nav-drawer')||document.querySelector('.site-header nav');
   if(!nav||!window.ShadowGardenData)return;
 
-  const {preferences,format,urls,catalog}=await import('/assets/js/domain/index.js?v=2.11.0');
+  const {preferences,format,urls,catalog}=await import('/assets/js/domain/index.js');
   const esc=format.escapeHtml;
   const arr=format.asArray;
 

@@ -1,5 +1,6 @@
 /* Garden Pass presentation: midnight main library and rose adult wing. */
-.sg-human-gate{position:fixed;z-index:10000;inset:0;padding:20px;display:grid;place-items:center;background:rgba(4,5,5,.74);backdrop-filter:blur(12px)}
+.sg-human-gate{position:fixed;z-index:10000;inset:0;width:100%;height:100%;max-width:none;max-height:none;box-sizing:border-box;margin:0;border:0;padding:20px;display:grid;place-items:center;background:rgba(4,5,5,.74);backdrop-filter:blur(12px)}
+.sg-human-gate::backdrop{background:transparent}
 .sg-human-card{width:min(460px,100%);padding:24px;border:1px solid rgba(196,184,225,.20);border-radius:18px;color:#f0edf5;background:linear-gradient(155deg,rgba(24,20,32,.98),rgba(9,8,13,.99));box-shadow:0 28px 90px rgba(0,0,0,.58);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 .sg-human-gate.adult .sg-human-card{border-color:rgba(214,137,160,.24);background:linear-gradient(155deg,rgba(31,16,23,.98),rgba(14,8,11,.99))}
 .sg-human-mark{width:44px;height:44px;display:grid;place-items:center;margin-bottom:14px;border:1px solid rgba(196,184,225,.22);border-radius:13px;color:#c3b4ee;background:rgba(154,134,211,.06)}

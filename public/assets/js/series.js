@@ -34,7 +34,7 @@
     if(!series||rendering)return;
     rendering=true;
     try{
-      const {seriesMarkup}=await import("/assets/js/series-renderers.js?v=2.11.0");
+      const {seriesMarkup}=await import("/assets/js/series-renderers.js");
       root.innerHTML=seriesMarkup(series,{...domain,bannerRandom});
       root.setAttribute("aria-busy","false");
       syncBackToTop();
@@ -63,8 +63,8 @@
   }
 
   try{
-    domain=await import("/assets/js/domain/index.js?v=2.11.0");
-    const {installVolumeActionController}=await import("/assets/js/public/volume-actions.js?v=2.11.0");
+    domain=await import("/assets/js/domain/index.js");
+    const {installVolumeActionController}=await import("/assets/js/public/volume-actions.js");
     installVolumeActionController(document);
     requestedAdult=domain.catalog.adultRoute(id,location.search);
     if(!window.ShadowGardenData)throw new Error("Catalog data source is unavailable");
@@ -83,8 +83,8 @@
     await render();
   }catch(error){
     console.error(error);
-    if(!domain)domain=await import("/assets/js/domain/index.js?v=2.11.0");
-    const {notFoundMarkup}=await import("/assets/js/series-renderers.js?v=2.11.0");
+    if(!domain)domain=await import("/assets/js/domain/index.js");
+    const {notFoundMarkup}=await import("/assets/js/series-renderers.js");
     root.innerHTML=notFoundMarkup(domain.urls.libraryUrl(requestedAdult),domain.format);
     root.setAttribute("aria-busy","false");
   }

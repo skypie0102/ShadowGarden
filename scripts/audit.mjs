@@ -83,6 +83,8 @@ const deliberate=new Set([
   'public/assets/js/admin/upload-events.js',
   'public/assets/js/admin/editor-interactions.js',
   'public/assets/js/library.js',
+  // v2.18.0: the mobile filter shares the canonical public domain module URL.
+  'public/assets/js/library-mobile-filter.js',
   'public/series.html',
   'public/assets/js/book-access.js',
   'public/assets/js/site-flavor.js',

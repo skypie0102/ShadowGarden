@@ -14,7 +14,7 @@ export async function presentHumanChallenge(challenge,{verify,adult=false}){
 
   return new Promise((resolve,reject)=>{
     const previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;
-    const overlay=document.createElement("div");
+    const overlay=document.createElement("dialog");
     overlay.className=`sg-human-gate${adult?" adult":""}`;
     overlay.setAttribute("role","dialog");
     overlay.setAttribute("aria-modal","true");
@@ -43,8 +43,9 @@ export async function presentHumanChallenge(challenge,{verify,adult=false}){
     };
     const cleanup=()=>{
       try{if(widgetId!==null)turnstile.remove(widgetId)}catch{}
+      if(overlay.open)overlay.close();
       overlay.remove();
-      previousFocus?.focus?.();
+      previousFocus?.focus?.({preventScroll:true});
     };
     const finish=(error=null)=>{
       if(settled)return;
@@ -80,11 +81,15 @@ export async function presentHumanChallenge(challenge,{verify,adult=false}){
     };
 
     cancel.addEventListener("click",()=>finish(new Error("Human verification was cancelled.")));
-    overlay.addEventListener("keydown",event=>{
-      if(event.key==="Escape"){event.preventDefault();finish(new Error("Human verification was cancelled."))}
+    overlay.addEventListener("cancel",event=>{
+      event.preventDefault();
+      finish(new Error("Human verification was cancelled."));
     });
 
     try{
+      // Native modality covers closed shadow roots and cross-origin widget
+      // frames without inspecting their controls or changing page tabindexes.
+      overlay.showModal();
       widgetId=turnstile.render(host,{
         sitekey:challenge.siteKey,
         action:challenge.action||"book_access",

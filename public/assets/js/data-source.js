@@ -11,7 +11,7 @@ window.ShadowGardenData=(()=>{
     ['hiatus','Hiatus'],['on hiatus','Hiatus'],['paused','Hiatus'],
     ['dropped','Dropped'],['cancelled','Dropped'],['canceled','Dropped'],['discontinued','Dropped']
   ]);
-  const loadDomain=()=>domainPromise||(domainPromise=import('/assets/js/domain/index.js?v=2.11.0'));
+  const loadDomain=()=>domainPromise||(domainPromise=import('/assets/js/domain/index.js'));
   /* Synchronous compatibility export for older Keeper code. Actual catalog normalization
      and legacy state migration are owned by domain/catalog.js. */
   function normalizeStatus(value){return statusAliases.get(String(value||'').trim().toLowerCase())||'Ongoing'}

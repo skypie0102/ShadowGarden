@@ -4,6 +4,7 @@ import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir,platform,arch} from 'node:os';
 import {join,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {gzipSync} from 'node:zlib';
 import {baseURL} from './fixture.mjs';
 
 test.setTimeout(180000);
@@ -92,5 +93,8 @@ test('measure cold Library startup and duplicate module requests against an immu
     await mkdir(join(root,'library-startup-results'),{recursive:true});
     await writeFile(join(root,'library-startup-results/report.json'),JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({baselineSha,summary},null,2));
+    // Keep the raw public timings recoverable through the text log connector
+    // as well as the ZIP artifact; neither output contains real catalog data.
+    console.log('SG_LIBRARY_PROFILE_GZIP_BASE64='+gzipSync(JSON.stringify(report)).toString('base64'));
   }finally{await rm(temporary,{recursive:true,force:true});}
 });
