@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-20T10:59:44.114Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "deploymentId": "39c54372-231f-4a6d-880b-48f1a3710b57",
+  "source": "01b57f9f3586839a48c56969799d897bcedf0b64",
+  "version": "2.17.1",
+  "baselineCheckedAt": "2026-10-20T10:59:11.252Z",
+  "revision": 9,
+  "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+  "snapshots": 9,
+  "preservationChecked": true,
+  "databaseWrites": 0,
+  "checks": [
+    {
+      "path": "/data/version.json",
+      "source": "01b57f9f3586839a48c56969799d897bcedf0b64",
+      "version": "2.17.1"
+    },
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/assets/js/book-access.js",
+      "sha256": "e7e4454794190d46cc80245469ef99523a2d77bb4040cc95055466cd31265d30",
+      "bytes": 10828
+    },
+    {
+      "path": "/assets/js/reader-visual-cache.js",
+      "sha256": "01db91f6a95c518ccf4669cfdc4511af5b36f6e6151621a3162b7e324ffdfafa",
+      "bytes": 27883
+    }
+  ]
+}

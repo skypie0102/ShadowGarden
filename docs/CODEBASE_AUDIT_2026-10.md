@@ -88,13 +88,20 @@ live database/size errors is also removed without changing error codes or contra
    `ShadowGardenBookAccess.fetch`; global fetch remains native. Request options,
    cancellation and existing cookie/download behavior are retained. See
    [the map and validation](PROTECTED_SOURCE_TRANSPORT.md).
-5. **Maintenance consistency:** consider mandatory If-Match on all legacy admin
-   mutations after checking external-client compatibility. Current UI clients
-   retain their existing revision checks; purge/recovery still require them.
-6. **Release operations:** commit a read-only production verifier with canonical
-   catalog URLs, strict HTTP/JSON baseline validation and served-source checks;
-   add compatibility-date/flag checks to pre-publish bundle validation. Current
-   rollout still compares actual/saved configuration and refreshed D1 before/after.
+5. **Maintenance consistency — compatibility review completed:** current Keeper
+   forms send displayed revisions; legacy catalog/maintenance writes still accept
+   missing headers. Purge/recovery require them. Backend fixtures exercise that
+   legacy contract, and no complete external-client inventory establishes safe
+   removal. Retain it and document the endpoint/action matrix; a mandatory-header
+   migration remains a deliberate version/deprecation decision. See
+   [revision compatibility](API_CONTRACTS.md#revision-header-compatibility).
+6. **Release operations — implemented:** a read-only plugin-compatible collector
+   records exact D1 serialization and snapshot checksums without encrypted values.
+   The production verifier rejects stale/invalid baselines, configuration drift,
+   incorrect canonical catalogs, bad HTTP/JSON, wrong version/source and changed
+   served JS/CSS bytes. Bundle and actual-deployment validation now check the
+   compatibility date/flag set. Live v2.17.1 checks pass with unchanged revision 9,
+   nine snapshots and settings. See [procedure and limits](PRODUCTION_VERIFIER.md).
 7. **Readability/accessibility:** format remaining dense recovered modules in
    reviewable batches. Review Garden Pass keyboard focus containment with the
    real third-party iframe before changing dialog mechanics.
@@ -163,5 +170,14 @@ exactly unchanged after publication, as are actual/saved production settings.
 [The transport report](PROTECTED_SOURCE_TRANSPORT.md) and
 [machine-readable evidence](protected-source-verification-2.17.1.json) retain the
 consumer map, Request/cancellation contracts and acceptance limits. The remaining
-ordered follow-ups start with legacy-admin revision compatibility and the
-read-only production verifier.
+ordered follow-ups now cover scoped readability, Garden Pass keyboard focus
+and measured module startup; legacy mandatory-header migration and broader
+upload buffering remain explicit design follow-ups.
+
+
+The release-operations continuation adds twelve regression cases (305 Node tests
+in total), with negative controls for stale/invalid baselines, configuration and
+source drift, incorrect HTTP/JSON/catalogs, response bounds and unsafe asset paths.
+The application source/version is unchanged; this is tooling/documentation work
+and does not require a new production deployment. The read-only live report
+[records verification](production-tooling-verification.json) against v2.17.1.

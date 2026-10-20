@@ -1,5 +1,14 @@
 # ShadowGarden documentation
 
+The [read-only production verifier](PRODUCTION_VERIFIER.md) now checks fresh D1
+baselines, actual/saved settings, canonical catalogs/version and reviewed served
+assets. Its twelve regression cases bring the Node suite to 305; the
+[live verification](production-tooling-verification.json) passes against existing
+v2.17.1 with revision 9 and nine snapshots preserved. No new application release
+is needed for this tooling increment. The API guide records the
+[legacy revision-header contract](API_CONTRACTS.md#revision-header-compatibility).
+
+
 [Protected source transport](PROTECTED_SOURCE_TRANSPORT.md) maps the visual
 scanner, main EPUB.js and isolated page-map consumers. **v2.17.1 is live** on
 2026-10-20: the scanner uses an explicit transport and global fetch remains native.
@@ -55,6 +64,7 @@ Those physical/provider observations keep their original release scope.
 | [Performance](READER_PERFORMANCE.md) | Publication measurements, cache budgets and limits |
 | [API contracts](API_CONTRACTS.md) | Routes, authorization, catalog mutations and media behavior |
 | [Deployment configuration](DEPLOYMENT.md) | Local/new-environment setup, credentials and legacy imports |
+| [Production verifier](PRODUCTION_VERIFIER.md) | Read-only D1 baselines, configuration guards and served-source checks |
 | [Production operations](PRODUCTION_TAKEOVER.md) | Existing site identity, guarded rollout and rollback |
 
 ## Historical records

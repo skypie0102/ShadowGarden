@@ -20,4 +20,4 @@ execFileSync(process.execPath,[resolve(root,'node_modules/wrangler/bin/wrangler.
   '--output-routes-path',resolve(output,'_routes.json'),'--build-output-directory',resolve(root,'dist')
 ],{stdio:'inherit',env:{...process.env,WRANGLER_SEND_METRICS:'false'}});
 assertReleaseBindings(await readWorkerMetadata(await readFile(bundle)),config);
-console.log('Compiled Pages release and verified configured D1 and variable bindings.');
+console.log('Compiled Pages release and verified D1, variables, compatibility date and flags.');
