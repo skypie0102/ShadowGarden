@@ -31,12 +31,41 @@ returned in error payloads. Success payloads include `revision` when applicable.
 | `/admin-api/backup` | GET, POST | `admin/history-workflow.js`: GET optional `cursor` returns a bounded history page; POST `{action:"delete",id}` removes selected snapshot only |
 | `/admin-api/recovery-readiness` | GET | `admin/recovery-readiness-workflow.js`: catalog structure, snapshot checksums and active/trash media presence; static recovered covers or B2, protected EPUBs only B2 |
 | `/admin-api/abuse` | GET, POST | `admin/abuse-workflow.js`: pseudonymous cooldown events; `{action:"release",clientId}` releases public limits only |
-| `/admin-api/recovery` | GET, POST | Route exists in inventory but no client call was recovered. GET exposes readiness; POST `{action:"restore-snapshot",id,sha256}` restores validated metadata with required `If-Match` and a safety backup |
+| `/admin-api/recovery` | GET, POST | `admin/recovery-readiness-workflow.js`: GET exposes readiness; POST `{action:"restore-snapshot",id,sha256}` restores validated metadata with required `If-Match` and a safety backup |
 
 Maintenance actions: `create-backup`, `restore-backup`, `restore-trash`,
 `normalize-taxonomy`, `check-objects` (up to 25 keys),
 `apply-cover-optimizations` (up to 100 updates), `purge-trash` and `continue-purge`.
 The last two use the explicit replacement retention policy below.
+
+## Revision-header compatibility
+
+Keeper sends the revision belonging to the displayed editor for series,
+translation and banner edits, and its current revision for other catalog and
+maintenance calls. A successful edit advances its form revision; background
+refreshes do not silently update an open form's revision.
+
+| Request | `If-Match` contract |
+| --- | --- |
+| Library, catalog, translations and series-banner POST | Optional for legacy callers; when supplied, must equal the loaded revision or return 409 `catalog_conflict` |
+| Maintenance GET/POST | Supplied headers are checked, including object checks, manual backup and continuation; most actions permit an absent header |
+| Maintenance `purge-trash` | Required; absent returns 428 `revision_required`, stale returns 409 |
+| Recovery `restore-snapshot` | Required, plus the selected snapshot checksum |
+| Backup deletion, upload, status and abuse release | No catalog-revision precondition; these operate on selected snapshots, immutable objects, session status or security state |
+
+Both quoted (`"9"`) and plain (`9`) revision values are accepted. An empty header
+is absent. Legacy catalog-saving calls without a header still use the server's
+conditional D1 revision transaction and safety snapshots. That protects
+concurrent server writes; it cannot detect an edit made since a legacy caller
+last displayed the catalog when the caller omits that earlier revision.
+
+The October audit retains this compatibility deliberately. Repository clients
+send guarded mutations, while backend fixtures also exercise successful legacy
+calls without headers. There is no complete inventory proving that external
+callers have migrated. Requiring headers everywhere would change the existing
+contract and would incorrectly apply catalog revisions to unrelated actions.
+Any future mandatory-header migration needs an explicit version/deprecation
+contract and client coverage. Purge/recovery requirements remain mandatory.
 
 ## Snapshot validation and damaged-catalog recovery
 
@@ -110,8 +139,9 @@ separate Deep B2 contract remains unchanged. See [maintenance budgets](MAINTENAN
 - HMAC-derived client IDs, not raw IPs, are stored. Events retain 30 days; the
   admin UI presents the newest 50. Rate limits are shared across worker instances.
 - Book tickets expire after 15 minutes. The per-object cookie supports the
-  reader's fetch interceptor, which intentionally discards the URL
-  signature and fetches the authorized pathname. Downloads retain the signature.
+  visual scanner's explicit `ShadowGardenBookAccess.fetch` transport, which
+  fetches the authorized pathname. Global fetch remains native; pinned EPUB.js
+  uses XHR after session authorization. Downloads retain the signature.
 - Retired catalog entries cannot be downloaded even with an old valid ticket.
 - D1 revision-guarded writes plus snapshots protect overlapping edits. `If-Match`
   adds a client revision guard. It does not implement a full multi-editor merge.

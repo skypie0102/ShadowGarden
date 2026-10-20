@@ -196,7 +196,8 @@ keys, and cleanup protects live metadata, retained snapshots and active uploads.
 
 [API contracts](docs/API_CONTRACTS.md) describe these behaviors.
 [Production operations](docs/PRODUCTION_TAKEOVER.md) describe release checks and
-rollback. Keep credential values and private exports outside Git.
+rollback. The [read-only verifier](docs/PRODUCTION_VERIFIER.md) checks fresh D1
+baselines, production configuration, catalogs, version and reviewed served assets. Keep credential values and private exports outside Git.
 
 ## Project history
 

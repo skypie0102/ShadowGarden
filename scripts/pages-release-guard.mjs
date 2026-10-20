@@ -1,5 +1,17 @@
 // Validate deployment configuration as well as compiled source. A binding-free
 // Worker can return HTTP 200 while serving the recovered catalog instead of D1.
+export function assertCompatibility(actual,config){
+  const date=config?.compatibility_date;
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date)throw Error('Production compatibility date is invalid.');
+  if(actual?.compatibility_date!==date)throw Error('Pages compatibility date does not match configuration.');
+  const flags=value=>{
+    const list=value===undefined?[]:value;
+    if(!Array.isArray(list)||list.some(flag=>typeof flag!=='string'||!flag.trim())||new Set(list).size!==list.length)throw Error('Pages compatibility flags are invalid.');
+    return [...list].sort();
+  };
+  if(JSON.stringify(flags(actual.compatibility_flags))!==JSON.stringify(flags(config.compatibility_flags)))throw Error('Pages compatibility flags do not match configuration.');
+}
+
 export function assertReleaseBindings(metadata,config){
   if(!Array.isArray(metadata?.bindings))throw Error('Pages release has no binding metadata.');
   const bindings=new Map();
@@ -17,6 +29,7 @@ export function assertReleaseBindings(metadata,config){
     const actual=bindings.get(name);
     if(typeof value!=='string'||actual?.type!=='plain_text'||actual.text!==value)throw Error(`Pages variable does not match configuration: ${name}`);
   }
+  assertCompatibility(metadata,config);
   return metadata;
 }
 
@@ -38,6 +51,7 @@ export function assertDeployedBindings(deployment,config){
     const actual=deployment.env_vars?.[name];
     if(actual?.type!=='plain_text'||actual.value!==value)throw Error(`Deployed variable is missing or incorrect: ${name}`);
   }
+  assertCompatibility(deployment,config);
   return deployment;
 }
 

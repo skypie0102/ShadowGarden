@@ -1,5 +1,27 @@
 # ShadowGarden project audit
 
+## Release verification and revision contracts — 2026-10-20
+
+Production is v2.17.1, source `01b57f9`, deployment
+`39c54372-231f-4a6d-880b-48f1a3710b57`. The older blocked-upload entries below
+are historical; the existing plugin supplied the working upload token and no
+additional sign-in was needed. See [current operations](PRODUCTION_TAKEOVER.md).
+
+The [production verifier](PRODUCTION_VERIFIER.md) adds read-only baseline capture,
+strict canonical catalog/version checks and reviewed served-asset comparison.
+Bundle and deployment guards check compatibility date/flags as well as bindings.
+Twelve new regression cases bring the Node suite to 305. The live report checks
+both catalogs and the two v2.17.1 changed modules, with exact D1 revision-9 data,
+nine snapshots and configuration preserved. This tooling/documentation increment
+requires no application deployment. [Evidence](production-tooling-verification.json)
+contains only sanitized identities, counts and hashes.
+
+The [revision contract matrix](API_CONTRACTS.md#revision-header-compatibility)
+records optional legacy headers and mandatory purge/recovery guards. Existing
+Keeper forms already send revisions. Compatibility is retained until a deliberate
+client migration; the audit does not infer that unseen external callers are gone.
+
+
 ## Browser persistence continuation — 2026-10-20 (Asia/Manila)
 
 The v2.17.0 persistence increment is merged through

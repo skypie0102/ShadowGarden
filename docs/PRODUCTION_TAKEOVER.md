@@ -78,6 +78,20 @@ focus acceptance remains v2.12.6, and Keeper acceptance remains v2.12.8; see the
 [reader release record](READER_RELEASE.md). Current upload/preflight/retry behavior
 passes in the real isolated Pages/D1 fixture across all five browser profiles.
 
+## Reusable production verification
+
+The [read-only verifier](PRODUCTION_VERIFIER.md) replaces the temporary catalog/
+served-source probes with maintained code. Capture exact D1/configuration through
+its self-contained collector using the existing Cloudflare plugin; keep private
+baselines ignored. Run `npm run verify:production` against the exact reviewed
+release directory and a fresh baseline, with `--before` for preservation checks.
+It checks canonical catalog/version URLs and selected served JS/CSS bytes.
+`npm run check:functions` now also rejects compatibility-date/flag drift in the
+compiled multipart Worker metadata. No browser sign-in is needed for this
+connected-plugin workflow. The [2026-10-20 report](production-tooling-verification.json)
+passes against v2.17.1 with unchanged revision 9, nine snapshots and settings.
+This tooling continuation does not deploy or change the application version.
+
 ## Existing resources
 
 The owner authorized replacing the original site on 2026-10-02 and reusing its
