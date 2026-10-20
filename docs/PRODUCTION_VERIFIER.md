@@ -118,3 +118,34 @@ real CAPTCHA/credential flows, B2 writes/deletes, EPUB opening or physical devic
 acceptance. Use the existing CI and separately scoped live acceptance for those
 behaviors. The current production verification record is
 [`production-tooling-verification.json`](production-tooling-verification.json).
+
+
+## Validation — 2026-10-20
+
+[PR #37](https://github.com/skypie0102/ShadowGarden/pull/37) merged as
+`75b6eb7e8e1274e267dc398e54787c8fc6045afc`. Its tree
+`8493c36347d0bec01d4edd661beadd9ceba28b73` exactly matches tested source
+`e1903eaac31edaf2c2fd2742f16156984439f101`.
+[CI run 39412104343](https://github.com/skypie0102/ShadowGarden/actions/runs/39412104343)
+passed on attempt 1 with no test retries: asset/provenance audit, all 305 Node
+tests, static build, binding/compatibility-aware Worker build and the full browser
+matrix. The twelve added Node cases cover the verifier and compatibility guards.
+
+| Browser profile | Passed | Existing skips |
+| --- | ---: | ---: |
+| Desktop Chromium | 102 | 0 |
+| Mobile Chromium | 102 | 0 |
+| Firefox | 100 | 2 |
+| Desktop WebKit | 100 | 2 |
+| Mobile WebKit | 98 | 4 |
+| Total | 502 | 8 |
+
+The committed live report was generated at 10:59 UTC; the exact committed
+collector/verifier was also rerun successfully at 11:03 UTC using the existing
+Cloudflare connection and the reviewed v2.17.1 release directory. Both catalogs,
+version and the two selected assets match. Exact revision-9 serialization, all
+nine snapshot identities/checksums and actual/saved settings match the fresh
+before record. Queries report zero database writes. Private baselines remain
+ignored. No application, production deployment, catalog, media or credential
+change was performed for this tooling increment. Production remains v2.17.1,
+deployment `39c54372-231f-4a6d-880b-48f1a3710b57`, application source `01b57f9`.

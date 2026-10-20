@@ -16,6 +16,11 @@ nine snapshots and configuration preserved. This tooling/documentation increment
 requires no application deployment. [Evidence](production-tooling-verification.json)
 contains only sanitized identities, counts and hashes.
 
+[PR #37](https://github.com/skypie0102/ShadowGarden/pull/37) merged as `75b6eb7`.
+[CI](https://github.com/skypie0102/ShadowGarden/actions/runs/39412104343) passes
+305 Node tests and 502 browser cases with eight existing skips, on attempt 1
+with no retries. The merge tree exactly matches tested source `e1903ea`.
+
 The [revision contract matrix](API_CONTRACTS.md#revision-header-compatibility)
 records optional legacy headers and mandatory purge/recovery guards. Existing
 Keeper forms already send revisions. Compatibility is retained until a deliberate

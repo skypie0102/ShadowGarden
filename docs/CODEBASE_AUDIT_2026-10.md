@@ -181,3 +181,10 @@ source drift, incorrect HTTP/JSON/catalogs, response bounds and unsafe asset pat
 The application source/version is unchanged; this is tooling/documentation work
 and does not require a new production deployment. The read-only live report
 [records verification](production-tooling-verification.json) against v2.17.1.
+
+[PR #37](https://github.com/skypie0102/ShadowGarden/pull/37) merges this tooling as
+`75b6eb7`; the merge tree exactly matches tested source `e1903ea`.
+[CI](https://github.com/skypie0102/ShadowGarden/actions/runs/39412104343) passes
+305 Node tests and 502 browser cases, with eight existing skips, on attempt 1
+and no test retries. [The verifier report](PRODUCTION_VERIFIER.md#validation--2026-10-20)
+records the profile counts, exact source/tree and live read-only scope.
