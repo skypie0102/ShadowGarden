@@ -1,16 +1,24 @@
 # ShadowGarden documentation
 
+The latest deployed release is **v2.18.0**. [Public boundaries](PUBLIC_BOUNDARIES.md)
+records native Garden Pass modality/focus restoration and the measured Library
+startup change: 29 → 26 scripts and no duplicate module paths. CI passes 305 Node
+tests and 541 browser cases, with nine documented skips. [Release evidence](public-boundaries-verification-2.18.0.json)
+separates the 2026-10-20 data/configuration preservation checks from the fresh
+2026-10-21 public HTTP checks and blocked Cloudflare metadata refresh. The
+[raw profile](library-startup-profile-2.18.0.json) retains all 24 samples and hashes.
+
 The [read-only production verifier](PRODUCTION_VERIFIER.md) now checks fresh D1
 baselines, actual/saved settings, canonical catalogs/version and reviewed served
 assets. Its twelve regression cases bring the Node suite to 305; the
 [live verification](production-tooling-verification.json) passes against existing
-v2.17.1 with revision 9 and nine snapshots preserved. No new application release
+v2.17.1 with revision 9 and nine snapshots preserved. No application release
 is needed for this tooling increment. The API guide records the
 [legacy revision-header contract](API_CONTRACTS.md#revision-header-compatibility).
 
 
 [Protected source transport](PROTECTED_SOURCE_TRANSPORT.md) maps the visual
-scanner, main EPUB.js and isolated page-map consumers. **v2.17.1 is live** on
+scanner, main EPUB.js and isolated page-map consumers. **v2.17.1 shipped** on
 2026-10-20: the scanner uses an explicit transport and global fetch remains native.
 All 293 Node tests and 502 browser cases pass (eight existing skips).
 [Release evidence](protected-source-verification-2.17.1.json) records the matching
@@ -48,6 +56,7 @@ Those physical/provider observations keep their original release scope.
 | Document | Use it for |
 | --- | --- |
 | [Whole-codebase audit](CODEBASE_AUDIT_2026-10.md) | Reproduced fixes, subsystem review and prioritized follow-ups |
+| [Public boundaries](PUBLIC_BOUNDARIES.md) | Garden Pass keyboard ownership, module startup measurements and v2.18.0 validation |
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Upload memory](UPLOAD_MEMORY.md) | Workerd upload measurements, declared-length buffering and remaining limits |
 | [Browser persistence](BROWSER_PERSISTENCE.md) | Failed-write rollback, compound Read Again and concurrency/crash limits |

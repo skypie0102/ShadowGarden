@@ -1,0 +1,4670 @@
+{
+  "measuredAt": "2026-10-20T14:01:01.996Z",
+  "baselineSha": "0044174d3c65616b77f176623637b8c0a49c78ef",
+  "currentSha": "a9f4fdfd6049e6632f2693e1d4e1af4ca737f97e",
+  "environment": {
+    "browser": "153.0.8010.12",
+    "node": "v24.22.0",
+    "platform": "linux",
+    "architecture": "x64"
+  },
+  "scenario": "Three fresh contexts per variant/shelf/delay, interleaved order; disposable one-series catalogs; first-party JS receives a controlled 0 or 80 ms delay per response. This is not a network/CPU/mobile emulation or a production Core Web Vitals measurement.",
+  "sourceHashes": {
+    "baseline": {
+      "/assets/js/data-source.js": "b763913b871781ef857c519a2866bb59f4136bc784b1f52e69c94d292d59e40f",
+      "/assets/js/domain/book-identity.js": "66be6a53434659456a04ffafa58c155797f87c22b9275f3a69fc9b01564e3ac6",
+      "/assets/js/domain/bookmarks.js": "d2120e0e70b610bdf1299adeb7b4c1655a475170f0f3776e76ef65ee8de822b9",
+      "/assets/js/domain/catalog-taxonomy.js": "c53ddff8c150942a302ca0668773369837843dec610a0aa2068a0296c18049a8",
+      "/assets/js/domain/catalog.js": "13f1ad83aff6c4d8c82aa7882a2f81253102a360f576548555c3c30586605f6e",
+      "/assets/js/domain/format.js": "ec7c65c5a87b49022250c6309f4084d0cbddf61ab76f6dab7ff78faefe3d75b7",
+      "/assets/js/domain/index.js": "6703e8383afce5dc9715eed885c9ff11c26f12c661c7450c7b5a910c9d304995",
+      "/assets/js/domain/preferences.js": "6910e15582b14d8a5efec229dd9bc8fdb137bd6f96bd1d961abfd5bcaea636c1",
+      "/assets/js/domain/progress.js": "69ce537c81eebcb940ad731d9d5ee235a7ad7e4d3aa9571a86c1223e93e17855",
+      "/assets/js/domain/reading-state.js": "7e8daa64ed03b5e730580192b44118f135c8fccd94836d45f7dd42b8e188c261",
+      "/assets/js/domain/storage.js": "f23bf43c99ea80f1eee454a8ffb8505bdecedda05e0bbc368a77f1c66e52ddf5",
+      "/assets/js/domain/translations.js": "1fe8747fe478ef304515f8cbd7e16200b61687104243a47bf30bcf705bca39f8",
+      "/assets/js/domain/urls.js": "63458cbbfa41d6327167533b6406dfb25908c4081ec829d4135c66bbbed42fab",
+      "/assets/js/library-footer-version.js": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "/assets/js/library-mobile-filter.js": "eeae4824c63e120511921ef25eeadcafc43bae450edc9f3e1141ff79ebec0461",
+      "/assets/js/library-model.js": "c3c9bee171dae11e5ff261250c9115301ab048ae5b402da80fa2b3ab0862fc0f",
+      "/assets/js/library-motion.js": "7b6efff256ca941d1884d355f90e9089ebb7f5152b1505a282baed1ce3d83ec8",
+      "/assets/js/library-renderers.js": "5346502f316c3f83ffad314683a950da78247e46a3aa7fa83f1e4071db410121",
+      "/assets/js/library.js": "f7885025b2e999bc5a15432d4e42fbeed7e9655820a203a4f8c5fe3fca8a0983",
+      "/assets/js/motion.js": "e940a9c1bd0c65cf3920cc83fea5c6c2912a224edc4562db42c0b1808235a406",
+      "/assets/js/nav-pinned.js": "18ea22c0f6ddaf8b9e93a457e45f5d4519a126e8b0d14dcf18ac6964a747ac70",
+      "/assets/js/nav.js": "b9cdb9dc149d0d33c45dcc8725a46ab61cf539b57306dfe62c025683d3304a7e",
+      "/assets/js/public/library-location.js": "2740ac05ed29b659b6dbad9e0430d254547b31fac6e4eb717b30a546fa9c9a99",
+      "/assets/js/public/volume-actions.js": "d482067caad157b640ee88e1bac983a5f2421c6cb26f718d6d0093b99bc98ec2",
+      "/assets/js/site-a11y.js": "4778979550552c76cd2db7cab9b8661ba1b663803b986aa0987f1721e54f806b",
+      "/assets/js/ui-direction-triangles.js": "a6129f7e5773971a0cdfe3c9207564e6f69b242fc4ab340ec3b63020558aa1c1"
+    },
+    "current": {
+      "/assets/js/data-source.js": "3f4aeb852207b1b7f9cdff13b8a6e80141e7a689e699586e9e1e7dc81b6f9a41",
+      "/assets/js/domain/book-identity.js": "66be6a53434659456a04ffafa58c155797f87c22b9275f3a69fc9b01564e3ac6",
+      "/assets/js/domain/bookmarks.js": "d2120e0e70b610bdf1299adeb7b4c1655a475170f0f3776e76ef65ee8de822b9",
+      "/assets/js/domain/catalog-taxonomy.js": "c53ddff8c150942a302ca0668773369837843dec610a0aa2068a0296c18049a8",
+      "/assets/js/domain/catalog.js": "13f1ad83aff6c4d8c82aa7882a2f81253102a360f576548555c3c30586605f6e",
+      "/assets/js/domain/format.js": "ec7c65c5a87b49022250c6309f4084d0cbddf61ab76f6dab7ff78faefe3d75b7",
+      "/assets/js/domain/index.js": "6703e8383afce5dc9715eed885c9ff11c26f12c661c7450c7b5a910c9d304995",
+      "/assets/js/domain/preferences.js": "6910e15582b14d8a5efec229dd9bc8fdb137bd6f96bd1d961abfd5bcaea636c1",
+      "/assets/js/domain/progress.js": "69ce537c81eebcb940ad731d9d5ee235a7ad7e4d3aa9571a86c1223e93e17855",
+      "/assets/js/domain/reading-state.js": "7e8daa64ed03b5e730580192b44118f135c8fccd94836d45f7dd42b8e188c261",
+      "/assets/js/domain/storage.js": "f23bf43c99ea80f1eee454a8ffb8505bdecedda05e0bbc368a77f1c66e52ddf5",
+      "/assets/js/domain/translations.js": "1fe8747fe478ef304515f8cbd7e16200b61687104243a47bf30bcf705bca39f8",
+      "/assets/js/domain/urls.js": "63458cbbfa41d6327167533b6406dfb25908c4081ec829d4135c66bbbed42fab",
+      "/assets/js/library-footer-version.js": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "/assets/js/library-mobile-filter.js": "54a320054dfdf9015d4ed1df6afec8bfecd22317f2078d9ff0aa234768d33c03",
+      "/assets/js/library-model.js": "c3c9bee171dae11e5ff261250c9115301ab048ae5b402da80fa2b3ab0862fc0f",
+      "/assets/js/library-motion.js": "7b6efff256ca941d1884d355f90e9089ebb7f5152b1505a282baed1ce3d83ec8",
+      "/assets/js/library-renderers.js": "5346502f316c3f83ffad314683a950da78247e46a3aa7fa83f1e4071db410121",
+      "/assets/js/library.js": "bff2eb26f9bdeaad10a1c4446767aba527a6bf0be179e9fc4a6f26058d827996",
+      "/assets/js/motion.js": "e940a9c1bd0c65cf3920cc83fea5c6c2912a224edc4562db42c0b1808235a406",
+      "/assets/js/nav-pinned.js": "c78f717061613e757198520a06173551fa6c866944f23cb50b1532b5b185ac5c",
+      "/assets/js/nav.js": "b9cdb9dc149d0d33c45dcc8725a46ab61cf539b57306dfe62c025683d3304a7e",
+      "/assets/js/public/library-location.js": "2740ac05ed29b659b6dbad9e0430d254547b31fac6e4eb717b30a546fa9c9a99",
+      "/assets/js/public/volume-actions.js": "d482067caad157b640ee88e1bac983a5f2421c6cb26f718d6d0093b99bc98ec2",
+      "/assets/js/site-a11y.js": "4778979550552c76cd2db7cab9b8661ba1b663803b986aa0987f1721e54f806b",
+      "/assets/js/ui-direction-triangles.js": "a6129f7e5773971a0cdfe3c9207564e6f69b242fc4ab340ec3b63020558aa1c1"
+    }
+  },
+  "summary": [
+    {
+      "shelf": "main",
+      "delayMs": 0,
+      "baselineMedianReadyMs": 191.5,
+      "currentMedianReadyMs": 165,
+      "differenceMs": -26.5,
+      "baselineScriptRequests": [
+        29,
+        29,
+        29
+      ],
+      "currentScriptRequests": [
+        26,
+        26,
+        26
+      ],
+      "baselineDuplicatePaths": [
+        3,
+        3,
+        3
+      ],
+      "currentDuplicatePaths": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "shelf": "main",
+      "delayMs": 80,
+      "baselineMedianReadyMs": 945,
+      "currentMedianReadyMs": 409.1000000000349,
+      "differenceMs": -535.8999999999651,
+      "baselineScriptRequests": [
+        29,
+        29,
+        29
+      ],
+      "currentScriptRequests": [
+        26,
+        26,
+        26
+      ],
+      "baselineDuplicatePaths": [
+        3,
+        3,
+        3
+      ],
+      "currentDuplicatePaths": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "shelf": "adult",
+      "delayMs": 0,
+      "baselineMedianReadyMs": 178.29999999998836,
+      "currentMedianReadyMs": 161.89999999996508,
+      "differenceMs": -16.400000000023283,
+      "baselineScriptRequests": [
+        29,
+        29,
+        29
+      ],
+      "currentScriptRequests": [
+        26,
+        26,
+        26
+      ],
+      "baselineDuplicatePaths": [
+        3,
+        3,
+        3
+      ],
+      "currentDuplicatePaths": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "shelf": "adult",
+      "delayMs": 80,
+      "baselineMedianReadyMs": 948,
+      "currentMedianReadyMs": 378,
+      "differenceMs": -570,
+      "baselineScriptRequests": [
+        29,
+        29,
+        29
+      ],
+      "currentScriptRequests": [
+        26,
+        26,
+        26
+      ],
+      "baselineDuplicatePaths": [
+        3,
+        3,
+        3
+      ],
+      "currentDuplicatePaths": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 0,
+      "readyMs": 234.80000000004657,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 12.400000000023283,
+          "endMs": 46.300000000046566,
+          "durationMs": 33.90000000002328
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 12.5,
+          "endMs": 120.60000000003492,
+          "durationMs": 108.10000000003492
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 12.5,
+          "endMs": 122.30000000004657,
+          "durationMs": 109.80000000004657
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 12.5,
+          "endMs": 124.20000000001164,
+          "durationMs": 111.70000000001164
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 12.600000000034925,
+          "endMs": 126.80000000004657,
+          "durationMs": 114.20000000001164
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 12.600000000034925,
+          "endMs": 127.10000000003492,
+          "durationMs": 114.5
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 12.600000000034925,
+          "endMs": 128.90000000002328,
+          "durationMs": 116.29999999998836
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 12.600000000034925,
+          "endMs": 129.80000000004657,
+          "durationMs": 117.20000000001164
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 12.600000000034925,
+          "endMs": 129.60000000003492,
+          "durationMs": 117
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 12.700000000011642,
+          "endMs": 130.10000000003492,
+          "durationMs": 117.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 148.80000000004657,
+          "endMs": 152.70000000001164,
+          "durationMs": 3.8999999999650754
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 188.60000000003492,
+          "endMs": 194.40000000002328,
+          "durationMs": 5.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 188.60000000003492,
+          "endMs": 198.90000000002328,
+          "durationMs": 10.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 188.60000000003492,
+          "endMs": 199.70000000001164,
+          "durationMs": 11.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 188.70000000001164,
+          "endMs": 200,
+          "durationMs": 11.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 188.70000000001164,
+          "endMs": 200.30000000004657,
+          "durationMs": 11.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 188.80000000004657,
+          "endMs": 200.80000000004657,
+          "durationMs": 12
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 188.80000000004657,
+          "endMs": 201.60000000003492,
+          "durationMs": 12.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 188.80000000004657,
+          "endMs": 201.20000000001164,
+          "durationMs": 12.399999999965075
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 188.80000000004657,
+          "endMs": 202,
+          "durationMs": 13.199999999953434
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 188.90000000002328,
+          "endMs": 202.40000000002328,
+          "durationMs": 13.5
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 207.40000000002328,
+          "endMs": 210.70000000001164,
+          "durationMs": 3.2999999999883585
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 211.70000000001164,
+          "endMs": 213,
+          "durationMs": 1.2999999999883585
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 216.60000000003492,
+          "endMs": 218.20000000001164,
+          "durationMs": 1.599999999976717
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 221.30000000004657,
+          "endMs": 224.5,
+          "durationMs": 3.199999999953434
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 221.40000000002328,
+          "endMs": 224.70000000001164,
+          "durationMs": 3.2999999999883585
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 225.60000000003492,
+          "endMs": 227.30000000004657,
+          "durationMs": 1.7000000000116415
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 228.10000000003492,
+          "endMs": 229.10000000003492,
+          "durationMs": 1
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 229.90000000002328,
+          "endMs": 230.80000000004657,
+          "durationMs": 0.9000000000232831
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 0,
+      "readyMs": 165,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 15.5,
+          "durationMs": 9.5
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 63.5,
+          "durationMs": 57.5
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 64.20000000001164,
+          "durationMs": 58.20000000001164
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 66.29999999998836,
+          "durationMs": 60.29999999998836
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 67,
+          "durationMs": 60.90000000002328
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 69.89999999996508,
+          "durationMs": 63.79999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 70.79999999998836,
+          "durationMs": 64.70000000001164
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 71.5,
+          "durationMs": 65.40000000002328
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.099999999976717,
+          "endMs": 71.09999999997672,
+          "durationMs": 65
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72.09999999997672,
+          "durationMs": 66
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 87.89999999996508,
+          "endMs": 93.59999999997672,
+          "durationMs": 5.7000000000116415
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 88.09999999997672,
+          "endMs": 93.79999999998836,
+          "durationMs": 5.7000000000116415
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 88.20000000001164,
+          "endMs": 96.79999999998836,
+          "durationMs": 8.599999999976717
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 88.5,
+          "endMs": 97.20000000001164,
+          "durationMs": 8.700000000011642
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 88.70000000001164,
+          "endMs": 97.59999999997672,
+          "durationMs": 8.899999999965075
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 122.79999999998836,
+          "endMs": 126.79999999998836,
+          "durationMs": 4
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 123,
+          "endMs": 129.20000000001164,
+          "durationMs": 6.2000000000116415
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 123,
+          "endMs": 129.89999999996508,
+          "durationMs": 6.899999999965075
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 123,
+          "endMs": 143.5,
+          "durationMs": 20.5
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 123,
+          "endMs": 144.09999999997672,
+          "durationMs": 21.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 123.09999999997672,
+          "endMs": 144.39999999996508,
+          "durationMs": 21.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 123.09999999997672,
+          "endMs": 144.89999999996508,
+          "durationMs": 21.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 123.09999999997672,
+          "endMs": 145.09999999997672,
+          "durationMs": 22
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 123.09999999997672,
+          "endMs": 144.59999999997672,
+          "durationMs": 21.5
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 123.20000000001164,
+          "endMs": 145.39999999996508,
+          "durationMs": 22.199999999953434
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 123.39999999996508,
+          "endMs": 145.59999999997672,
+          "durationMs": 22.20000000001164
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 1,
+      "readyMs": 154,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.399999999965075,
+          "endMs": 16.099999999976717,
+          "durationMs": 10.700000000011642
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 61.699999999953434,
+          "durationMs": 56.199999999953434
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 63,
+          "durationMs": 57.5
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 64.39999999996508,
+          "durationMs": 58.899999999965075
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 65.89999999996508,
+          "durationMs": 60.29999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 66.09999999997672,
+          "durationMs": 60.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 64.69999999995343,
+          "durationMs": 59.09999999997672
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.599999999976717,
+          "endMs": 67.29999999998836,
+          "durationMs": 61.70000000001164
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 67.59999999997672,
+          "durationMs": 62
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 67.89999999996508,
+          "durationMs": 62.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 84.19999999995343,
+          "endMs": 101.89999999996508,
+          "durationMs": 17.70000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 84.19999999995343,
+          "endMs": 102.29999999998836,
+          "durationMs": 18.100000000034925
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 84.29999999998836,
+          "endMs": 102.5,
+          "durationMs": 18.20000000001164
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 84.29999999998836,
+          "endMs": 102.79999999998836,
+          "durationMs": 18.5
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 84.39999999996508,
+          "endMs": 102.89999999996508,
+          "durationMs": 18.5
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 126,
+          "endMs": 128.5,
+          "durationMs": 2.5
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 126.09999999997672,
+          "endMs": 134.69999999995343,
+          "durationMs": 8.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 126.09999999997672,
+          "endMs": 134.89999999996508,
+          "durationMs": 8.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 126.09999999997672,
+          "endMs": 135.09999999997672,
+          "durationMs": 9
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 126.09999999997672,
+          "endMs": 135.39999999996508,
+          "durationMs": 9.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 126.19999999995343,
+          "endMs": 135.5,
+          "durationMs": 9.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 126.19999999995343,
+          "endMs": 135.79999999998836,
+          "durationMs": 9.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 126.29999999998836,
+          "endMs": 136.09999999997672,
+          "durationMs": 9.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 126.29999999998836,
+          "endMs": 136,
+          "durationMs": 9.700000000011642
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 126.29999999998836,
+          "endMs": 136.29999999998836,
+          "durationMs": 10
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 126.59999999997672,
+          "endMs": 136.5,
+          "durationMs": 9.900000000023283
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 1,
+      "readyMs": 189.09999999997672,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 16.599999999976717,
+          "durationMs": 10.900000000023283
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 75.09999999997672,
+          "durationMs": 69.40000000002328
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 75.5,
+          "durationMs": 69.80000000004657
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 80.29999999998836,
+          "durationMs": 74.60000000003492
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 84.5,
+          "durationMs": 78.70000000001164
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 85,
+          "durationMs": 79.20000000001164
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 85.5,
+          "durationMs": 79.70000000001164
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 85.89999999996508,
+          "durationMs": 80.09999999997672
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 86.39999999996508,
+          "durationMs": 80.59999999997672
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 87,
+          "durationMs": 81.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 108.69999999995343,
+          "endMs": 113,
+          "durationMs": 4.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 143.5,
+          "endMs": 150.29999999998836,
+          "durationMs": 6.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 143.5,
+          "endMs": 150.69999999995343,
+          "durationMs": 7.199999999953434
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 143.5,
+          "endMs": 156.39999999996508,
+          "durationMs": 12.899999999965075
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 143.59999999997672,
+          "endMs": 158,
+          "durationMs": 14.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 143.69999999995343,
+          "endMs": 158.29999999998836,
+          "durationMs": 14.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 143.69999999995343,
+          "endMs": 158.89999999996508,
+          "durationMs": 15.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 143.69999999995343,
+          "endMs": 158.59999999997672,
+          "durationMs": 14.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 143.69999999995343,
+          "endMs": 159.09999999997672,
+          "durationMs": 15.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 143.69999999995343,
+          "endMs": 159.59999999997672,
+          "durationMs": 15.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 143.69999999995343,
+          "endMs": 159.29999999998836,
+          "durationMs": 15.600000000034925
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 165.29999999998836,
+          "endMs": 166.69999999995343,
+          "durationMs": 1.3999999999650754
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 167.69999999995343,
+          "endMs": 169.19999999995343,
+          "durationMs": 1.5
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 170.5,
+          "endMs": 172.19999999995343,
+          "durationMs": 1.6999999999534339
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 174.29999999998836,
+          "endMs": 177.39999999996508,
+          "durationMs": 3.099999999976717
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 174.29999999998836,
+          "endMs": 177.69999999995343,
+          "durationMs": 3.3999999999650754
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 178.5,
+          "endMs": 180.29999999998836,
+          "durationMs": 1.7999999999883585
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 181.29999999998836,
+          "endMs": 182.39999999996508,
+          "durationMs": 1.099999999976717
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 183.29999999998836,
+          "endMs": 184.5,
+          "durationMs": 1.2000000000116415
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 2,
+      "readyMs": 191.5,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 34.100000000034925,
+          "durationMs": 28.5
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 66.90000000002328,
+          "durationMs": 61.29999999998836
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 72.5,
+          "durationMs": 66.89999999996508
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 72.79999999998836,
+          "durationMs": 67.09999999997672
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 74,
+          "durationMs": 68.20000000001164
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 73.20000000001164,
+          "durationMs": 67.40000000002328
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 74.79999999998836,
+          "durationMs": 69
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 76.29999999998836,
+          "durationMs": 70.5
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 76.5,
+          "durationMs": 70.70000000001164
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.900000000023283,
+          "endMs": 76.70000000001164,
+          "durationMs": 70.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 95.29999999998836,
+          "endMs": 98.5,
+          "durationMs": 3.2000000000116415
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 132.5,
+          "endMs": 137.90000000002328,
+          "durationMs": 5.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 132.60000000003492,
+          "endMs": 138.40000000002328,
+          "durationMs": 5.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 132.70000000001164,
+          "endMs": 138.60000000003492,
+          "durationMs": 5.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 132.70000000001164,
+          "endMs": 139,
+          "durationMs": 6.2999999999883585
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 132.70000000001164,
+          "endMs": 139.5,
+          "durationMs": 6.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 132.70000000001164,
+          "endMs": 141.20000000001164,
+          "durationMs": 8.5
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 132.79999999998836,
+          "endMs": 142,
+          "durationMs": 9.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 132.90000000002328,
+          "endMs": 144.10000000003492,
+          "durationMs": 11.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 132.90000000002328,
+          "endMs": 144.40000000002328,
+          "durationMs": 11.5
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 132.90000000002328,
+          "endMs": 143.90000000002328,
+          "durationMs": 11
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 149.40000000002328,
+          "endMs": 151.79999999998836,
+          "durationMs": 2.3999999999650754
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 152.90000000002328,
+          "endMs": 155.90000000002328,
+          "durationMs": 3
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 165.79999999998836,
+          "endMs": 170.60000000003492,
+          "durationMs": 4.800000000046566
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 173.20000000001164,
+          "endMs": 176.5,
+          "durationMs": 3.2999999999883585
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 173.29999999998836,
+          "endMs": 176.79999999998836,
+          "durationMs": 3.5
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 178.40000000002328,
+          "endMs": 179.60000000003492,
+          "durationMs": 1.2000000000116415
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 180.60000000003492,
+          "endMs": 181.60000000003492,
+          "durationMs": 1
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 182.5,
+          "endMs": 184.29999999998836,
+          "durationMs": 1.7999999999883585
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 0,
+      "repetition": 2,
+      "readyMs": 166.40000000002328,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 16.79999999998836,
+          "durationMs": 10.799999999988358
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 61.29999999998836,
+          "durationMs": 55.20000000001164
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 62.70000000001164,
+          "durationMs": 56.600000000034925
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 63.5,
+          "durationMs": 57.29999999998836
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 67.90000000002328,
+          "durationMs": 61.70000000001164
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 68.20000000001164,
+          "durationMs": 62
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 68.40000000002328,
+          "durationMs": 62.100000000034925
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 68.59999999997672,
+          "durationMs": 62.29999999998836
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 68.79999999998836,
+          "durationMs": 62.5
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 69,
+          "durationMs": 62.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 83.79999999998836,
+          "endMs": 92.29999999998836,
+          "durationMs": 8.5
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 83.90000000002328,
+          "endMs": 93,
+          "durationMs": 9.099999999976717
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 83.90000000002328,
+          "endMs": 94.59999999997672,
+          "durationMs": 10.699999999953434
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 83.90000000002328,
+          "endMs": 92.70000000001164,
+          "durationMs": 8.799999999988358
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 84,
+          "endMs": 94.70000000001164,
+          "durationMs": 10.700000000011642
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 123.79999999998836,
+          "endMs": 126.5,
+          "durationMs": 2.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 123.79999999998836,
+          "endMs": 129,
+          "durationMs": 5.2000000000116415
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 123.90000000002328,
+          "endMs": 147.20000000001164,
+          "durationMs": 23.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 124,
+          "endMs": 147.59999999997672,
+          "durationMs": 23.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 124,
+          "endMs": 148.09999999997672,
+          "durationMs": 24.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 124,
+          "endMs": 148.20000000001164,
+          "durationMs": 24.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 124,
+          "endMs": 147.79999999998836,
+          "durationMs": 23.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 124.09999999997672,
+          "endMs": 148.40000000002328,
+          "durationMs": 24.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 124.09999999997672,
+          "endMs": 148.40000000002328,
+          "durationMs": 24.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 124.09999999997672,
+          "endMs": 148.70000000001164,
+          "durationMs": 24.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 124.29999999998836,
+          "endMs": 148.90000000002328,
+          "durationMs": 24.600000000034925
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 0,
+      "readyMs": 181.70000000001164,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 7.399999999965075,
+          "endMs": 19.099999999976717,
+          "durationMs": 11.700000000011642
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 7.399999999965075,
+          "endMs": 67.39999999996508,
+          "durationMs": 60
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 7.399999999965075,
+          "endMs": 67.79999999998836,
+          "durationMs": 60.40000000002328
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 7.5,
+          "endMs": 69.5,
+          "durationMs": 62
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 7.5,
+          "endMs": 69.89999999996508,
+          "durationMs": 62.399999999965075
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 7.599999999976717,
+          "endMs": 70.09999999997672,
+          "durationMs": 62.5
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 7.599999999976717,
+          "endMs": 72.39999999996508,
+          "durationMs": 64.79999999998836
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 7.599999999976717,
+          "endMs": 72.59999999997672,
+          "durationMs": 65
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 7.599999999976717,
+          "endMs": 72.79999999998836,
+          "durationMs": 65.20000000001164
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 7.599999999976717,
+          "endMs": 73,
+          "durationMs": 65.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 88.79999999998836,
+          "endMs": 91.5,
+          "durationMs": 2.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 125.20000000001164,
+          "endMs": 128.79999999998836,
+          "durationMs": 3.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 125.20000000001164,
+          "endMs": 131.89999999996508,
+          "durationMs": 6.699999999953434
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 125.20000000001164,
+          "endMs": 132.79999999998836,
+          "durationMs": 7.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 125.20000000001164,
+          "endMs": 132.39999999996508,
+          "durationMs": 7.199999999953434
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 125.39999999996508,
+          "endMs": 133.29999999998836,
+          "durationMs": 7.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 125.39999999996508,
+          "endMs": 133.59999999997672,
+          "durationMs": 8.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 125.39999999996508,
+          "endMs": 133.70000000001164,
+          "durationMs": 8.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 125.5,
+          "endMs": 133.89999999996508,
+          "durationMs": 8.399999999965075
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 125.5,
+          "endMs": 134,
+          "durationMs": 8.5
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 125.5,
+          "endMs": 134.20000000001164,
+          "durationMs": 8.700000000011642
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 139.5,
+          "endMs": 143.29999999998836,
+          "durationMs": 3.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 146.29999999998836,
+          "endMs": 148.5,
+          "durationMs": 2.2000000000116415
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 151.09999999997672,
+          "endMs": 153.79999999998836,
+          "durationMs": 2.7000000000116415
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 159.89999999996508,
+          "endMs": 161,
+          "durationMs": 1.1000000000349246
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 159.89999999996508,
+          "endMs": 162.29999999998836,
+          "durationMs": 2.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 163.29999999998836,
+          "endMs": 165.5,
+          "durationMs": 2.2000000000116415
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 171.29999999998836,
+          "endMs": 172.89999999996508,
+          "durationMs": 1.599999999976717
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 174.09999999997672,
+          "endMs": 175.39999999996508,
+          "durationMs": 1.2999999999883585
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 0,
+      "readyMs": 165.20000000001164,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 32.20000000001164,
+          "durationMs": 26.20000000001164
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 70.70000000001164,
+          "durationMs": 64.60000000003492
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 71.90000000002328,
+          "durationMs": 65.80000000004657
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 73.59999999997672,
+          "durationMs": 67.5
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 75.5,
+          "durationMs": 69.29999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 75.70000000001164,
+          "durationMs": 69.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 75.20000000001164,
+          "durationMs": 69
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 75.79999999998836,
+          "durationMs": 69.59999999997672
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 75.90000000002328,
+          "durationMs": 69.60000000003492
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 76,
+          "durationMs": 69.70000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 97.29999999998836,
+          "endMs": 101.09999999997672,
+          "durationMs": 3.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 97.29999999998836,
+          "endMs": 100.59999999997672,
+          "durationMs": 3.2999999999883585
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 97.40000000002328,
+          "endMs": 101.29999999998836,
+          "durationMs": 3.8999999999650754
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 97.40000000002328,
+          "endMs": 101.90000000002328,
+          "durationMs": 4.5
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 97.40000000002328,
+          "endMs": 101.5,
+          "durationMs": 4.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 136.29999999998836,
+          "endMs": 142.40000000002328,
+          "durationMs": 6.100000000034925
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 136.40000000002328,
+          "endMs": 142.79999999998836,
+          "durationMs": 6.399999999965075
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 136.5,
+          "endMs": 144,
+          "durationMs": 7.5
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 136.5,
+          "endMs": 144.20000000001164,
+          "durationMs": 7.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 136.5,
+          "endMs": 144.40000000002328,
+          "durationMs": 7.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 136.59999999997672,
+          "endMs": 144.70000000001164,
+          "durationMs": 8.100000000034925
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 136.59999999997672,
+          "endMs": 145.20000000001164,
+          "durationMs": 8.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 136.59999999997672,
+          "endMs": 144.90000000002328,
+          "durationMs": 8.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 136.59999999997672,
+          "endMs": 145.29999999998836,
+          "durationMs": 8.700000000011642
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 136.70000000001164,
+          "endMs": 145.5,
+          "durationMs": 8.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 136.70000000001164,
+          "endMs": 145.70000000001164,
+          "durationMs": 9
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 1,
+      "readyMs": 161.89999999996508,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 17.199999999953434,
+          "durationMs": 11.399999999965075
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.899999999965075,
+          "endMs": 67.19999999995343,
+          "durationMs": 61.29999999998836
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 68,
+          "durationMs": 62
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 69.5,
+          "durationMs": 63.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 71.59999999997672,
+          "durationMs": 65.59999999997672
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72,
+          "durationMs": 65.90000000002328
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72.29999999998836,
+          "durationMs": 66.20000000001164
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72.79999999998836,
+          "durationMs": 66.70000000001164
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72.5,
+          "durationMs": 66.40000000002328
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 72.89999999996508,
+          "durationMs": 66.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 90.39999999996508,
+          "endMs": 93,
+          "durationMs": 2.6000000000349246
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 90.5,
+          "endMs": 98.19999999995343,
+          "durationMs": 7.699999999953434
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 90.5,
+          "endMs": 97.69999999995343,
+          "durationMs": 7.199999999953434
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 90.59999999997672,
+          "endMs": 98.5,
+          "durationMs": 7.900000000023283
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 90.59999999997672,
+          "endMs": 98.39999999996508,
+          "durationMs": 7.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 128.79999999998836,
+          "endMs": 132.5,
+          "durationMs": 3.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 128.79999999998836,
+          "endMs": 133.29999999998836,
+          "durationMs": 4.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 128.79999999998836,
+          "endMs": 133.59999999997672,
+          "durationMs": 4.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 128.89999999996508,
+          "endMs": 134.5,
+          "durationMs": 5.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 128.89999999996508,
+          "endMs": 134.79999999998836,
+          "durationMs": 5.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 129,
+          "endMs": 135.09999999997672,
+          "durationMs": 6.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 129.09999999997672,
+          "endMs": 137,
+          "durationMs": 7.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 129.09999999997672,
+          "endMs": 137.39999999996508,
+          "durationMs": 8.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 129.09999999997672,
+          "endMs": 137.19999999995343,
+          "durationMs": 8.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 129.09999999997672,
+          "endMs": 137.39999999996508,
+          "durationMs": 8.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 130.89999999996508,
+          "endMs": 137.69999999995343,
+          "durationMs": 6.7999999999883585
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 1,
+      "readyMs": 178.29999999998836,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 16.900000000023283,
+          "durationMs": 11.400000000023283
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 66.5,
+          "durationMs": 61
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 70.70000000001164,
+          "durationMs": 65.09999999997672
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 71.29999999998836,
+          "durationMs": 65.69999999995343
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 71.79999999998836,
+          "durationMs": 66.19999999995343
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 72.60000000003492,
+          "durationMs": 67
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 72.29999999998836,
+          "durationMs": 66.69999999995343
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 72.90000000002328,
+          "durationMs": 67.20000000001164
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 73,
+          "durationMs": 67.29999999998836
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 73.40000000002328,
+          "durationMs": 67.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 93.20000000001164,
+          "endMs": 96.60000000003492,
+          "durationMs": 3.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 134.29999999998836,
+          "endMs": 137.29999999998836,
+          "durationMs": 3
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 134.5,
+          "endMs": 138.90000000002328,
+          "durationMs": 4.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 134.5,
+          "endMs": 140.29999999998836,
+          "durationMs": 5.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 134.5,
+          "endMs": 139.5,
+          "durationMs": 5
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 134.5,
+          "endMs": 142.29999999998836,
+          "durationMs": 7.7999999999883585
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 134.5,
+          "endMs": 142.70000000001164,
+          "durationMs": 8.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 134.70000000001164,
+          "endMs": 143.10000000003492,
+          "durationMs": 8.400000000023283
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 134.70000000001164,
+          "endMs": 143.5,
+          "durationMs": 8.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 134.70000000001164,
+          "endMs": 143.29999999998836,
+          "durationMs": 8.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 134.70000000001164,
+          "endMs": 143.70000000001164,
+          "durationMs": 9
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 152.79999999998836,
+          "endMs": 155.29999999998836,
+          "durationMs": 2.5
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 156.90000000002328,
+          "endMs": 159.10000000003492,
+          "durationMs": 2.2000000000116415
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 160.70000000001164,
+          "endMs": 163.10000000003492,
+          "durationMs": 2.400000000023283
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 165.40000000002328,
+          "endMs": 167.90000000002328,
+          "durationMs": 2.5
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 165.5,
+          "endMs": 168.20000000001164,
+          "durationMs": 2.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 168.90000000002328,
+          "endMs": 170.10000000003492,
+          "durationMs": 1.2000000000116415
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 171.5,
+          "endMs": 172.40000000002328,
+          "durationMs": 0.9000000000232831
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 173.40000000002328,
+          "endMs": 174.20000000001164,
+          "durationMs": 0.7999999999883585
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 2,
+      "readyMs": 165.89999999996508,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 16.899999999965075,
+          "durationMs": 11.199999999953434
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 64,
+          "durationMs": 58.29999999998836
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 65.20000000001164,
+          "durationMs": 59.40000000002328
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 66.5,
+          "durationMs": 60.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 68.29999999998836,
+          "durationMs": 62.29999999998836
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 68.5,
+          "durationMs": 62.5
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 68.79999999998836,
+          "durationMs": 62.79999999998836
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.099999999976717,
+          "endMs": 69,
+          "durationMs": 62.90000000002328
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 69.5,
+          "durationMs": 63.40000000002328
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.099999999976717,
+          "endMs": 69.79999999998836,
+          "durationMs": 63.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 90.39999999996508,
+          "endMs": 95.5,
+          "durationMs": 5.100000000034925
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 122.5,
+          "endMs": 126,
+          "durationMs": 3.5
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 122.59999999997672,
+          "endMs": 126.70000000001164,
+          "durationMs": 4.100000000034925
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 122.59999999997672,
+          "endMs": 129.70000000001164,
+          "durationMs": 7.100000000034925
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 122.59999999997672,
+          "endMs": 130.5,
+          "durationMs": 7.900000000023283
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 122.59999999997672,
+          "endMs": 130.29999999998836,
+          "durationMs": 7.7000000000116415
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 122.59999999997672,
+          "endMs": 130.89999999996508,
+          "durationMs": 8.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 122.79999999998836,
+          "endMs": 131.59999999997672,
+          "durationMs": 8.799999999988358
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 122.79999999998836,
+          "endMs": 131.39999999996508,
+          "durationMs": 8.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 122.79999999998836,
+          "endMs": 133.39999999996508,
+          "durationMs": 10.599999999976717
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 122.79999999998836,
+          "endMs": 131.09999999997672,
+          "durationMs": 8.299999999988358
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 137,
+          "endMs": 139,
+          "durationMs": 2
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 140.39999999996508,
+          "endMs": 141.70000000001164,
+          "durationMs": 1.3000000000465661
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 147.59999999997672,
+          "endMs": 149,
+          "durationMs": 1.400000000023283
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 150.09999999997672,
+          "endMs": 154.59999999997672,
+          "durationMs": 4.5
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 150.20000000001164,
+          "endMs": 154.70000000001164,
+          "durationMs": 4.5
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 155.70000000001164,
+          "endMs": 156.59999999997672,
+          "durationMs": 0.8999999999650754
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 157.39999999996508,
+          "endMs": 158.5,
+          "durationMs": 1.1000000000349246
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 161.20000000001164,
+          "endMs": 162.09999999997672,
+          "durationMs": 0.8999999999650754
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 0,
+      "repetition": 2,
+      "readyMs": 152,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 17.70000000001164,
+          "durationMs": 12.099999999976717
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 57.100000000034925,
+          "durationMs": 51.5
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 58.40000000002328,
+          "durationMs": 52.79999999998836
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 59.79999999998836,
+          "durationMs": 54.09999999997672
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 59.5,
+          "durationMs": 53.79999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 61.600000000034925,
+          "durationMs": 55.90000000002328
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 61.20000000001164,
+          "durationMs": 55.5
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 61.70000000001164,
+          "durationMs": 56
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 62,
+          "durationMs": 56.20000000001164
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 62.100000000034925,
+          "durationMs": 56.300000000046566
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 80.10000000003492,
+          "endMs": 87,
+          "durationMs": 6.899999999965075
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 80.20000000001164,
+          "endMs": 89.90000000002328,
+          "durationMs": 9.700000000011642
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 80.29999999998836,
+          "endMs": 90.10000000003492,
+          "durationMs": 9.800000000046566
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 80.40000000002328,
+          "endMs": 91.60000000003492,
+          "durationMs": 11.200000000011642
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 80.40000000002328,
+          "endMs": 94.29999999998836,
+          "durationMs": 13.899999999965075
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 122.20000000001164,
+          "endMs": 129.29999999998836,
+          "durationMs": 7.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 122.20000000001164,
+          "endMs": 129.70000000001164,
+          "durationMs": 7.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 122.29999999998836,
+          "endMs": 129.90000000002328,
+          "durationMs": 7.600000000034925
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 122.29999999998836,
+          "endMs": 130.10000000003492,
+          "durationMs": 7.800000000046566
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 122.29999999998836,
+          "endMs": 130.29999999998836,
+          "durationMs": 8
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 122.29999999998836,
+          "endMs": 130.5,
+          "durationMs": 8.200000000011642
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 122.29999999998836,
+          "endMs": 130.79999999998836,
+          "durationMs": 8.5
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 122.29999999998836,
+          "endMs": 131.10000000003492,
+          "durationMs": 8.800000000046566
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 122.40000000002328,
+          "endMs": 131.5,
+          "durationMs": 9.099999999976717
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 122.40000000002328,
+          "endMs": 131.70000000001164,
+          "durationMs": 9.299999999988358
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 123.20000000001164,
+          "endMs": 132,
+          "durationMs": 8.799999999988358
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 0,
+      "readyMs": 941.5,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 93.40000000002328,
+          "durationMs": 87.90000000002328
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 136.20000000001164,
+          "durationMs": 130.60000000003492
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 177.59999999997672,
+          "durationMs": 172
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 179.79999999998836,
+          "durationMs": 174.20000000001164
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 180.20000000001164,
+          "durationMs": 174.60000000003492
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 180.5,
+          "durationMs": 174.90000000002328
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180.79999999998836,
+          "durationMs": 175.09999999997672
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180.70000000001164,
+          "durationMs": 175
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.20000000001164,
+          "durationMs": 175.5
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.70000000001164,
+          "durationMs": 176
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 183.20000000001164,
+          "endMs": 264.5,
+          "durationMs": 81.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 265.70000000001164,
+          "endMs": 350.29999999998836,
+          "durationMs": 84.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 265.70000000001164,
+          "endMs": 350.5999999999767,
+          "durationMs": 84.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 265.79999999998836,
+          "endMs": 350.79999999998836,
+          "durationMs": 85
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 265.79999999998836,
+          "endMs": 351.0999999999767,
+          "durationMs": 85.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 265.9000000000233,
+          "endMs": 351.29999999998836,
+          "durationMs": 85.39999999996508
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 265.9000000000233,
+          "endMs": 351.5999999999767,
+          "durationMs": 85.69999999995343
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 265.9000000000233,
+          "endMs": 351.79999999998836,
+          "durationMs": 85.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 266,
+          "endMs": 352.0999999999767,
+          "durationMs": 86.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 266,
+          "endMs": 352.29999999998836,
+          "durationMs": 86.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 266,
+          "endMs": 352.4000000000233,
+          "durationMs": 86.40000000002328
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 354.5999999999767,
+          "endMs": 436.5999999999767,
+          "durationMs": 82
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 438.0999999999767,
+          "endMs": 519.4000000000233,
+          "durationMs": 81.30000000004657
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 521.0999999999767,
+          "endMs": 602.7999999999884,
+          "durationMs": 81.70000000001164
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 604.2000000000116,
+          "endMs": 686.2000000000116,
+          "durationMs": 82
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 604.2999999999884,
+          "endMs": 686.5999999999767,
+          "durationMs": 82.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 688,
+          "endMs": 769.5999999999767,
+          "durationMs": 81.59999999997672
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 771.0999999999767,
+          "endMs": 852.7000000000116,
+          "durationMs": 81.60000000003492
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 856.0999999999767,
+          "endMs": 937.0999999999767,
+          "durationMs": 81
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 0,
+      "readyMs": 417.0999999999767,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 96.20000000001164,
+          "durationMs": 90
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.2000000000116415,
+          "endMs": 221.39999999996508,
+          "durationMs": 215.19999999995343
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 221.79999999998836,
+          "durationMs": 215.40000000002328
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 223.20000000001164,
+          "durationMs": 216.80000000004657
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 223.59999999997672,
+          "durationMs": 217.09999999997672
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.599999999976717,
+          "endMs": 223.70000000001164,
+          "durationMs": 217.10000000003492
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.599999999976717,
+          "endMs": 224.09999999997672,
+          "durationMs": 217.5
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.599999999976717,
+          "endMs": 223.89999999996508,
+          "durationMs": 217.29999999998836
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.599999999976717,
+          "endMs": 224.29999999998836,
+          "durationMs": 217.70000000001164
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.7000000000116415,
+          "endMs": 224.5,
+          "durationMs": 217.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 226.70000000001164,
+          "endMs": 309.5,
+          "durationMs": 82.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 226.70000000001164,
+          "endMs": 310.0999999999767,
+          "durationMs": 83.39999999996508
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 226.79999999998836,
+          "endMs": 310.3999999999651,
+          "durationMs": 83.59999999997672
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 226.89999999996508,
+          "endMs": 310.5999999999767,
+          "durationMs": 83.70000000001164
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 227,
+          "endMs": 310.8999999999651,
+          "durationMs": 83.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 311.0999999999767,
+          "endMs": 394.29999999998836,
+          "durationMs": 83.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 311.20000000001164,
+          "endMs": 397.0999999999767,
+          "durationMs": 85.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 311.20000000001164,
+          "endMs": 396.79999999998836,
+          "durationMs": 85.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 311.29999999998836,
+          "endMs": 397.3999999999651,
+          "durationMs": 86.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 311.3999999999651,
+          "endMs": 397.5999999999767,
+          "durationMs": 86.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 311.3999999999651,
+          "endMs": 397.8999999999651,
+          "durationMs": 86.5
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 311.3999999999651,
+          "endMs": 398.5,
+          "durationMs": 87.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 311.3999999999651,
+          "endMs": 398.0999999999767,
+          "durationMs": 86.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 311.5,
+          "endMs": 398.70000000001164,
+          "durationMs": 87.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 311.5,
+          "endMs": 398.8999999999651,
+          "durationMs": 87.39999999996508
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 312.3999999999651,
+          "endMs": 399.20000000001164,
+          "durationMs": 86.80000000004657
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 1,
+      "readyMs": 409.1000000000349,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 99.10000000003492,
+          "durationMs": 92.80000000004657
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 150.90000000002328,
+          "durationMs": 144.60000000003492
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 194,
+          "durationMs": 187.70000000001164
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.400000000023283,
+          "endMs": 195.90000000002328,
+          "durationMs": 189.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.600000000034925,
+          "endMs": 196.29999999998836,
+          "durationMs": 189.69999999995343
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.7000000000116415,
+          "endMs": 196.60000000003492,
+          "durationMs": 189.90000000002328
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.7000000000116415,
+          "endMs": 197.10000000003492,
+          "durationMs": 190.40000000002328
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.7000000000116415,
+          "endMs": 196.90000000002328,
+          "durationMs": 190.20000000001164
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.7999999999883585,
+          "endMs": 197.20000000001164,
+          "durationMs": 190.40000000002328
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.7999999999883585,
+          "endMs": 197.5,
+          "durationMs": 190.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 199.40000000002328,
+          "endMs": 283.1000000000349,
+          "durationMs": 83.70000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 199.60000000003492,
+          "endMs": 283.6000000000349,
+          "durationMs": 84
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 199.60000000003492,
+          "endMs": 283.9000000000233,
+          "durationMs": 84.29999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 199.70000000001164,
+          "endMs": 284.20000000001164,
+          "durationMs": 84.5
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 199.70000000001164,
+          "endMs": 284.4000000000233,
+          "durationMs": 84.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 284.70000000001164,
+          "endMs": 370.29999999998836,
+          "durationMs": 85.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 284.79999999998836,
+          "endMs": 370.9000000000233,
+          "durationMs": 86.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 284.79999999998836,
+          "endMs": 371.20000000001164,
+          "durationMs": 86.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 284.79999999998836,
+          "endMs": 371.5,
+          "durationMs": 86.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 284.79999999998836,
+          "endMs": 371.70000000001164,
+          "durationMs": 86.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 284.9000000000233,
+          "endMs": 372,
+          "durationMs": 87.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 284.9000000000233,
+          "endMs": 372.20000000001164,
+          "durationMs": 87.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 284.9000000000233,
+          "endMs": 372.79999999998836,
+          "durationMs": 87.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 285,
+          "endMs": 373.29999999998836,
+          "durationMs": 88.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 285,
+          "endMs": 373.4000000000233,
+          "durationMs": 88.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 287.20000000001164,
+          "endMs": 373.70000000001164,
+          "durationMs": 86.5
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 1,
+      "readyMs": 945,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.900000000023283,
+          "endMs": 95.90000000002328,
+          "durationMs": 90
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 141.5,
+          "durationMs": 135.5
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 180.10000000003492,
+          "durationMs": 174.10000000003492
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 181.70000000001164,
+          "durationMs": 175.70000000001164
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6,
+          "endMs": 181.29999999998836,
+          "durationMs": 175.29999999998836
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.100000000034925,
+          "endMs": 182,
+          "durationMs": 175.89999999996508
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.100000000034925,
+          "endMs": 183,
+          "durationMs": 176.89999999996508
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 183.29999999998836,
+          "durationMs": 177
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.400000000023283,
+          "endMs": 183.70000000001164,
+          "durationMs": 177.29999999998836
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.400000000023283,
+          "endMs": 183.5,
+          "durationMs": 177.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 187.90000000002328,
+          "endMs": 270.1000000000349,
+          "durationMs": 82.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 271.4000000000233,
+          "endMs": 355,
+          "durationMs": 83.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 271.4000000000233,
+          "endMs": 355.70000000001164,
+          "durationMs": 84.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 271.4000000000233,
+          "endMs": 355.4000000000233,
+          "durationMs": 84
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 271.6000000000349,
+          "endMs": 355.9000000000233,
+          "durationMs": 84.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 271.6000000000349,
+          "endMs": 356.1000000000349,
+          "durationMs": 84.5
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 271.6000000000349,
+          "endMs": 356.4000000000233,
+          "durationMs": 84.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 271.70000000001164,
+          "endMs": 356.70000000001164,
+          "durationMs": 85
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 271.70000000001164,
+          "endMs": 357,
+          "durationMs": 85.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 271.70000000001164,
+          "endMs": 357.6000000000349,
+          "durationMs": 85.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 271.70000000001164,
+          "endMs": 357.79999999998836,
+          "durationMs": 86.09999999997672
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 359.20000000001164,
+          "endMs": 440.9000000000233,
+          "durationMs": 81.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 442.29999999998836,
+          "endMs": 523.7000000000116,
+          "durationMs": 81.40000000002328
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 525.6000000000349,
+          "endMs": 607.2999999999884,
+          "durationMs": 81.69999999995343
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 608.7000000000116,
+          "endMs": 690.9000000000233,
+          "durationMs": 82.20000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 608.7999999999884,
+          "endMs": 691.2999999999884,
+          "durationMs": 82.5
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 692.6000000000349,
+          "endMs": 774.4000000000233,
+          "durationMs": 81.79999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 775.9000000000233,
+          "endMs": 857.7000000000116,
+          "durationMs": 81.79999999998836
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 859.4000000000233,
+          "endMs": 940.7000000000116,
+          "durationMs": 81.29999999998836
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 2,
+      "readyMs": 946.0999999999767,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 96.29999999998836,
+          "durationMs": 90
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 137.59999999997672,
+          "durationMs": 131.29999999998836
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.2999999999883585,
+          "endMs": 179,
+          "durationMs": 172.70000000001164
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 182.5,
+          "durationMs": 176.10000000003492
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 183.29999999998836,
+          "durationMs": 176.90000000002328
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 183,
+          "durationMs": 176.60000000003492
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 183.5,
+          "durationMs": 177
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.599999999976717,
+          "endMs": 183.70000000001164,
+          "durationMs": 177.10000000003492
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.599999999976717,
+          "endMs": 183.89999999996508,
+          "durationMs": 177.29999999998836
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.599999999976717,
+          "endMs": 184.20000000001164,
+          "durationMs": 177.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 188.39999999996508,
+          "endMs": 270,
+          "durationMs": 81.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 271.5,
+          "endMs": 353.70000000001164,
+          "durationMs": 82.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 271.5,
+          "endMs": 355.79999999998836,
+          "durationMs": 84.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 271.5999999999767,
+          "endMs": 356.3999999999651,
+          "durationMs": 84.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 271.5999999999767,
+          "endMs": 356.0999999999767,
+          "durationMs": 84.5
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 271.5999999999767,
+          "endMs": 356.5999999999767,
+          "durationMs": 85
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 271.70000000001164,
+          "endMs": 356.8999999999651,
+          "durationMs": 85.19999999995343
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 271.70000000001164,
+          "endMs": 357.3999999999651,
+          "durationMs": 85.69999999995343
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 271.70000000001164,
+          "endMs": 357.20000000001164,
+          "durationMs": 85.5
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 271.79999999998836,
+          "endMs": 357.5999999999767,
+          "durationMs": 85.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 271.8999999999651,
+          "endMs": 357.8999999999651,
+          "durationMs": 86
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 359.70000000001164,
+          "endMs": 441,
+          "durationMs": 81.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 442.5,
+          "endMs": 524.7999999999884,
+          "durationMs": 82.29999999998836
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 526.5,
+          "endMs": 608.2999999999884,
+          "durationMs": 81.79999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 609.5999999999767,
+          "endMs": 691.7999999999884,
+          "durationMs": 82.20000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 609.7999999999884,
+          "endMs": 692.0999999999767,
+          "durationMs": 82.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 693.2999999999884,
+          "endMs": 775.0999999999767,
+          "durationMs": 81.79999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 776.5,
+          "endMs": 858.2000000000116,
+          "durationMs": 81.70000000001164
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 859.7999999999884,
+          "endMs": 941.5999999999767,
+          "durationMs": 81.79999999998836
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "main",
+      "delayMs": 80,
+      "repetition": 2,
+      "readyMs": 378.9000000000233,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 95.30000000004657,
+          "durationMs": 89.70000000001164
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 134.20000000001164,
+          "durationMs": 128.5
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 178.5,
+          "durationMs": 172.69999999995343
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 181.40000000002328,
+          "durationMs": 175.59999999997672
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 182.10000000003492,
+          "durationMs": 176.29999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 182.30000000004657,
+          "durationMs": 176.5
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 181.80000000004657,
+          "durationMs": 176
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.800000000046566,
+          "endMs": 182.5,
+          "durationMs": 176.69999999995343
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.900000000023283,
+          "endMs": 182.70000000001164,
+          "durationMs": 176.79999999998836
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.900000000023283,
+          "endMs": 183,
+          "durationMs": 177.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 185.40000000002328,
+          "endMs": 267.9000000000233,
+          "durationMs": 82.5
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 185.5,
+          "endMs": 268.4000000000233,
+          "durationMs": 82.90000000002328
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 185.5,
+          "endMs": 268.70000000001164,
+          "durationMs": 83.20000000001164
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 185.60000000003492,
+          "endMs": 268.9000000000233,
+          "durationMs": 83.29999999998836
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 185.60000000003492,
+          "endMs": 269.1000000000349,
+          "durationMs": 83.5
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 269.5,
+          "endMs": 352.9000000000233,
+          "durationMs": 83.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 269.5,
+          "endMs": 353.4000000000233,
+          "durationMs": 83.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 269.6000000000349,
+          "endMs": 355.4000000000233,
+          "durationMs": 85.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 269.6000000000349,
+          "endMs": 355.70000000001164,
+          "durationMs": 86.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 269.6000000000349,
+          "endMs": 356.4000000000233,
+          "durationMs": 86.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 269.6000000000349,
+          "endMs": 356.80000000004657,
+          "durationMs": 87.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 269.70000000001164,
+          "endMs": 357.5,
+          "durationMs": 87.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 269.70000000001164,
+          "endMs": 357.1000000000349,
+          "durationMs": 87.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 269.70000000001164,
+          "endMs": 357.6000000000349,
+          "durationMs": 87.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 269.70000000001164,
+          "endMs": 357.30000000004657,
+          "durationMs": 87.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 270.30000000004657,
+          "endMs": 357.80000000004657,
+          "durationMs": 87.5
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 0,
+      "readyMs": 943.0999999999767,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 95.29999999998836,
+          "durationMs": 89.79999999998836
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 168.39999999996508,
+          "durationMs": 162.89999999996508
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 177.79999999998836,
+          "durationMs": 172.29999999998836
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 180.5,
+          "durationMs": 174.90000000002328
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 181,
+          "durationMs": 175.40000000002328
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.29999999998836,
+          "durationMs": 175.59999999997672
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.59999999997672,
+          "durationMs": 175.89999999996508
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.79999999998836,
+          "durationMs": 176.09999999997672
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.89999999996508,
+          "durationMs": 176.19999999995343
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 182.20000000001164,
+          "durationMs": 176.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 183.5,
+          "endMs": 266.0999999999767,
+          "durationMs": 82.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 267.5,
+          "endMs": 351.0999999999767,
+          "durationMs": 83.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 267.5999999999767,
+          "endMs": 352.0999999999767,
+          "durationMs": 84.5
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 267.5999999999767,
+          "endMs": 351.70000000001164,
+          "durationMs": 84.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 267.5999999999767,
+          "endMs": 352.20000000001164,
+          "durationMs": 84.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 267.5999999999767,
+          "endMs": 352.5,
+          "durationMs": 84.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 267.5999999999767,
+          "endMs": 352.70000000001164,
+          "durationMs": 85.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 267.70000000001164,
+          "endMs": 353.0999999999767,
+          "durationMs": 85.39999999996508
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 267.70000000001164,
+          "endMs": 354.20000000001164,
+          "durationMs": 86.5
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 267.70000000001164,
+          "endMs": 353,
+          "durationMs": 85.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 267.79999999998836,
+          "endMs": 354.5999999999767,
+          "durationMs": 86.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 357.0999999999767,
+          "endMs": 439.29999999998836,
+          "durationMs": 82.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 441,
+          "endMs": 523.3999999999651,
+          "durationMs": 82.39999999996508
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 525.0999999999767,
+          "endMs": 607.0999999999767,
+          "durationMs": 82
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 608.5999999999767,
+          "endMs": 689.3999999999651,
+          "durationMs": 80.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 608.5999999999767,
+          "endMs": 690,
+          "durationMs": 81.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 691,
+          "endMs": 772.7999999999884,
+          "durationMs": 81.79999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 774.2000000000116,
+          "endMs": 855.8999999999651,
+          "durationMs": 81.69999999995343
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 857.5999999999767,
+          "endMs": 938.5999999999767,
+          "durationMs": 81
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 0,
+      "readyMs": 378,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 95.20000000001164,
+          "durationMs": 89.70000000001164
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 136.80000000004657,
+          "durationMs": 131.30000000004657
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 178.5,
+          "durationMs": 172.89999999996508
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 178.80000000004657,
+          "durationMs": 173.20000000001164
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.600000000034925,
+          "endMs": 181.5,
+          "durationMs": 175.89999999996508
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 181.80000000004657,
+          "durationMs": 176.10000000003492
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 182,
+          "durationMs": 176.29999999998836
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 182.30000000004657,
+          "durationMs": 176.60000000003492
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 182.5,
+          "durationMs": 176.69999999995343
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.800000000046566,
+          "endMs": 182.70000000001164,
+          "durationMs": 176.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 184.40000000002328,
+          "endMs": 267.5,
+          "durationMs": 83.09999999997672
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 184.5,
+          "endMs": 267.9000000000233,
+          "durationMs": 83.40000000002328
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 184.60000000003492,
+          "endMs": 268.70000000001164,
+          "durationMs": 84.09999999997672
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 184.60000000003492,
+          "endMs": 268.5,
+          "durationMs": 83.89999999996508
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 184.60000000003492,
+          "endMs": 268.20000000001164,
+          "durationMs": 83.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 269.1000000000349,
+          "endMs": 357.4000000000233,
+          "durationMs": 88.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 269.20000000001164,
+          "endMs": 357.70000000001164,
+          "durationMs": 88.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 269.20000000001164,
+          "endMs": 358.20000000001164,
+          "durationMs": 89
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 269.30000000004657,
+          "endMs": 358.4000000000233,
+          "durationMs": 89.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 269.30000000004657,
+          "endMs": 358.6000000000349,
+          "durationMs": 89.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 269.30000000004657,
+          "endMs": 358.70000000001164,
+          "durationMs": 89.39999999996508
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 269.30000000004657,
+          "endMs": 359.1000000000349,
+          "durationMs": 89.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 269.30000000004657,
+          "endMs": 359,
+          "durationMs": 89.69999999995343
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 269.30000000004657,
+          "endMs": 359.4000000000233,
+          "durationMs": 90.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 269.30000000004657,
+          "endMs": 359.5,
+          "durationMs": 90.19999999995343
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 270.5,
+          "endMs": 359.70000000001164,
+          "durationMs": 89.20000000001164
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 1,
+      "readyMs": 375.5999999999767,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 94.39999999996508,
+          "durationMs": 88.79999999998836
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 139.39999999996508,
+          "durationMs": 133.79999999998836
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 178,
+          "durationMs": 172.29999999998836
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180,
+          "durationMs": 174.29999999998836
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180.5,
+          "durationMs": 174.79999999998836
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180.70000000001164,
+          "durationMs": 175
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7000000000116415,
+          "endMs": 180.89999999996508,
+          "durationMs": 175.19999999995343
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 181.20000000001164,
+          "durationMs": 175.40000000002328
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 181.39999999996508,
+          "durationMs": 175.59999999997672
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 181.59999999997672,
+          "durationMs": 175.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 183.39999999996508,
+          "endMs": 266,
+          "durationMs": 82.60000000003492
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 183.59999999997672,
+          "endMs": 266.70000000001164,
+          "durationMs": 83.10000000003492
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 183.59999999997672,
+          "endMs": 266.3999999999651,
+          "durationMs": 82.79999999998836
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 183.59999999997672,
+          "endMs": 267.29999999998836,
+          "durationMs": 83.70000000001164
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 183.59999999997672,
+          "endMs": 267,
+          "durationMs": 83.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 267.3999999999651,
+          "endMs": 350.5,
+          "durationMs": 83.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 267.5999999999767,
+          "endMs": 350.8999999999651,
+          "durationMs": 83.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 267.5999999999767,
+          "endMs": 351.20000000001164,
+          "durationMs": 83.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 267.5999999999767,
+          "endMs": 352.70000000001164,
+          "durationMs": 85.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 267.5999999999767,
+          "endMs": 353,
+          "durationMs": 85.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 267.5999999999767,
+          "endMs": 353.20000000001164,
+          "durationMs": 85.60000000003492
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 268.0999999999767,
+          "endMs": 353.3999999999651,
+          "durationMs": 85.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 268.20000000001164,
+          "endMs": 353.70000000001164,
+          "durationMs": 85.5
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 268.29999999998836,
+          "endMs": 353.8999999999651,
+          "durationMs": 85.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 268.29999999998836,
+          "endMs": 354.0999999999767,
+          "durationMs": 85.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 269.8999999999651,
+          "endMs": 354.20000000001164,
+          "durationMs": 84.30000000004657
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 1,
+      "readyMs": 948,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 95.89999999996508,
+          "durationMs": 90.39999999996508
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 5.5,
+          "endMs": 138.69999999995343,
+          "durationMs": 133.19999999995343
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 5.599999999976717,
+          "endMs": 179.69999999995343,
+          "durationMs": 174.09999999997672
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 182.5,
+          "durationMs": 176.80000000004657
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 182.89999999996508,
+          "durationMs": 177.20000000001164
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 5.699999999953434,
+          "endMs": 183.19999999995343,
+          "durationMs": 177.5
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 183.5,
+          "durationMs": 177.70000000001164
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 183.69999999995343,
+          "durationMs": 177.89999999996508
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 184,
+          "durationMs": 178.20000000001164
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 5.7999999999883585,
+          "endMs": 184.59999999997672,
+          "durationMs": 178.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 186,
+          "endMs": 266.79999999998836,
+          "durationMs": 80.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 268.0999999999767,
+          "endMs": 353.29999999998836,
+          "durationMs": 85.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 268.19999999995343,
+          "endMs": 353.69999999995343,
+          "durationMs": 85.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 268.19999999995343,
+          "endMs": 354,
+          "durationMs": 85.80000000004657
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 268.19999999995343,
+          "endMs": 354.19999999995343,
+          "durationMs": 86
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 268.29999999998836,
+          "endMs": 354.3999999999651,
+          "durationMs": 86.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 268.3999999999651,
+          "endMs": 354.69999999995343,
+          "durationMs": 86.29999999998836
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 268.3999999999651,
+          "endMs": 355.3999999999651,
+          "durationMs": 87
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 268.3999999999651,
+          "endMs": 354.8999999999651,
+          "durationMs": 86.5
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 268.3999999999651,
+          "endMs": 355.5999999999767,
+          "durationMs": 87.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 268.3999999999651,
+          "endMs": 355.19999999995343,
+          "durationMs": 86.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 359.5,
+          "endMs": 442.5,
+          "durationMs": 83
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 444.0999999999767,
+          "endMs": 526.5999999999767,
+          "durationMs": 82.5
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 528.1999999999534,
+          "endMs": 610.0999999999767,
+          "durationMs": 81.90000000002328
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 611.5,
+          "endMs": 693.5,
+          "durationMs": 82
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 611.5,
+          "endMs": 693.8999999999651,
+          "durationMs": 82.39999999996508
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 695.0999999999767,
+          "endMs": 776.7999999999884,
+          "durationMs": 81.70000000001164
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 778.2999999999884,
+          "endMs": 860.1999999999534,
+          "durationMs": 81.89999999996508
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 861.6999999999534,
+          "endMs": 943.2999999999884,
+          "durationMs": 81.60000000003492
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 2,
+      "readyMs": 971.7999999999884,
+      "scriptRequests": 29,
+      "duplicateModulePaths": [
+        {
+          "path": "/assets/js/domain/index.js",
+          "urls": [
+            "/assets/js/domain/index.js",
+            "/assets/js/domain/index.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "urls": [
+            "/assets/js/library-model.js",
+            "/assets/js/library-model.js?v=2.11.0"
+          ]
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "urls": [
+            "/assets/js/public/volume-actions.js",
+            "/assets/js/public/volume-actions.js?v=2.11.0"
+          ]
+        }
+      ],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 98.5,
+          "durationMs": 92.10000000003492
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 142.20000000001164,
+          "durationMs": 135.80000000004657
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.399999999965075,
+          "endMs": 182.29999999998836,
+          "durationMs": 175.90000000002328
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 185.89999999996508,
+          "durationMs": 179.39999999996508
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 185.20000000001164,
+          "durationMs": 178.70000000001164
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 185.59999999997672,
+          "durationMs": 179.09999999997672
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 186,
+          "durationMs": 179.5
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.5,
+          "endMs": 186.29999999998836,
+          "durationMs": 179.79999999998836
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 186.5,
+          "durationMs": 180
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 6.5,
+          "endMs": 186.70000000001164,
+          "durationMs": 180.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js?v=2.11.0",
+          "startMs": 188.5,
+          "endMs": 269.5,
+          "durationMs": 81
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 270.79999999998836,
+          "endMs": 354.70000000001164,
+          "durationMs": 83.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 270.79999999998836,
+          "endMs": 354.29999999998836,
+          "durationMs": 83.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 270.79999999998836,
+          "endMs": 355,
+          "durationMs": 84.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 270.79999999998836,
+          "endMs": 355.20000000001164,
+          "durationMs": 84.40000000002328
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 270.79999999998836,
+          "endMs": 355.5,
+          "durationMs": 84.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 270.8999999999651,
+          "endMs": 355.70000000001164,
+          "durationMs": 84.80000000004657
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 271,
+          "endMs": 356,
+          "durationMs": 85
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 271,
+          "endMs": 356.20000000001164,
+          "durationMs": 85.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 271,
+          "endMs": 356.79999999998836,
+          "durationMs": 85.79999999998836
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 271,
+          "endMs": 357.20000000001164,
+          "durationMs": 86.20000000001164
+        },
+        {
+          "path": "/assets/js/library-model.js?v=2.11.0",
+          "startMs": 358.8999999999651,
+          "endMs": 440.70000000001164,
+          "durationMs": 81.80000000004657
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 449.8999999999651,
+          "endMs": 533.5,
+          "durationMs": 83.60000000003492
+        },
+        {
+          "path": "/assets/js/library-renderers.js?v=2.11.0",
+          "startMs": 538.8999999999651,
+          "endMs": 620.7999999999884,
+          "durationMs": 81.90000000002328
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 622.2000000000116,
+          "endMs": 707,
+          "durationMs": 84.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 622.2999999999884,
+          "endMs": 707.5,
+          "durationMs": 85.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 709.5,
+          "endMs": 792.2999999999884,
+          "durationMs": 82.79999999998836
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js?v=2.11.0",
+          "startMs": 800.5999999999767,
+          "endMs": 882.7000000000116,
+          "durationMs": 82.10000000003492
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 884.5999999999767,
+          "endMs": 966.5999999999767,
+          "durationMs": 82
+        }
+      ]
+    },
+    {
+      "variant": "current",
+      "shelf": "adult",
+      "delayMs": 80,
+      "repetition": 2,
+      "readyMs": 382.5999999999767,
+      "scriptRequests": 26,
+      "duplicateModulePaths": [],
+      "scripts": [
+        {
+          "path": "/assets/js/motion.js?v=2.11.0",
+          "startMs": 6.7000000000116415,
+          "endMs": 99.79999999998836,
+          "durationMs": 93.09999999997672
+        },
+        {
+          "path": "/assets/js/library-motion.js?v=2.11.0",
+          "startMs": 6.7999999999883585,
+          "endMs": 159.70000000001164,
+          "durationMs": 152.90000000002328
+        },
+        {
+          "path": "/assets/js/nav.js?v=2.11.0",
+          "startMs": 6.7999999999883585,
+          "endMs": 182.40000000002328,
+          "durationMs": 175.60000000003492
+        },
+        {
+          "path": "/assets/js/data-source.js?v=2.11.0",
+          "startMs": 6.900000000023283,
+          "endMs": 185.70000000001164,
+          "durationMs": 178.79999999998836
+        },
+        {
+          "path": "/assets/js/library.js?v=2.11.0",
+          "startMs": 6.900000000023283,
+          "endMs": 186.09999999997672,
+          "durationMs": 179.19999999995343
+        },
+        {
+          "path": "/assets/js/nav-pinned.js?v=2.11.0",
+          "startMs": 6.900000000023283,
+          "endMs": 186.70000000001164,
+          "durationMs": 179.79999999998836
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js?v=2.11.0",
+          "startMs": 6.900000000023283,
+          "endMs": 186.90000000002328,
+          "durationMs": 180
+        },
+        {
+          "path": "/assets/js/library-footer-version.js?v=2.12.0",
+          "startMs": 6.900000000023283,
+          "endMs": 187.09999999997672,
+          "durationMs": 180.19999999995343
+        },
+        {
+          "path": "/assets/js/site-a11y.js?v=2.11.0",
+          "startMs": 7,
+          "endMs": 187.29999999998836,
+          "durationMs": 180.29999999998836
+        },
+        {
+          "path": "/assets/js/ui-direction-triangles.js?v=2.11.0",
+          "startMs": 7,
+          "endMs": 187.59999999997672,
+          "durationMs": 180.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/index.js",
+          "startMs": 190.79999999998836,
+          "endMs": 273.5999999999767,
+          "durationMs": 82.79999999998836
+        },
+        {
+          "path": "/assets/js/library-model.js",
+          "startMs": 190.90000000002328,
+          "endMs": 274.0999999999767,
+          "durationMs": 83.19999999995343
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "startMs": 191,
+          "endMs": 274.4000000000233,
+          "durationMs": 83.40000000002328
+        },
+        {
+          "path": "/assets/js/public/volume-actions.js",
+          "startMs": 191.20000000001164,
+          "endMs": 274.5999999999767,
+          "durationMs": 83.39999999996508
+        },
+        {
+          "path": "/assets/js/public/library-location.js",
+          "startMs": 191.20000000001164,
+          "endMs": 274.79999999998836,
+          "durationMs": 83.59999999997672
+        },
+        {
+          "path": "/assets/js/domain/storage.js",
+          "startMs": 276.5,
+          "endMs": 359,
+          "durationMs": 82.5
+        },
+        {
+          "path": "/assets/js/domain/progress.js",
+          "startMs": 276.5999999999767,
+          "endMs": 359.70000000001164,
+          "durationMs": 83.10000000003492
+        },
+        {
+          "path": "/assets/js/domain/bookmarks.js",
+          "startMs": 276.5999999999767,
+          "endMs": 359.9000000000233,
+          "durationMs": 83.30000000004657
+        },
+        {
+          "path": "/assets/js/domain/book-identity.js",
+          "startMs": 276.5999999999767,
+          "endMs": 359.5,
+          "durationMs": 82.90000000002328
+        },
+        {
+          "path": "/assets/js/domain/preferences.js",
+          "startMs": 276.70000000001164,
+          "endMs": 360.9000000000233,
+          "durationMs": 84.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/translations.js",
+          "startMs": 276.70000000001164,
+          "endMs": 361.5999999999767,
+          "durationMs": 84.89999999996508
+        },
+        {
+          "path": "/assets/js/domain/urls.js",
+          "startMs": 276.70000000001164,
+          "endMs": 361.79999999998836,
+          "durationMs": 85.09999999997672
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "startMs": 276.70000000001164,
+          "endMs": 361.20000000001164,
+          "durationMs": 84.5
+        },
+        {
+          "path": "/assets/js/domain/catalog.js",
+          "startMs": 276.70000000001164,
+          "endMs": 361.4000000000233,
+          "durationMs": 84.70000000001164
+        },
+        {
+          "path": "/assets/js/domain/format.js",
+          "startMs": 276.79999999998836,
+          "endMs": 362,
+          "durationMs": 85.20000000001164
+        },
+        {
+          "path": "/assets/js/domain/catalog-taxonomy.js",
+          "startMs": 276.9000000000233,
+          "endMs": 362.20000000001164,
+          "durationMs": 85.29999999998836
+        }
+      ]
+    }
+  ]
+}

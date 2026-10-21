@@ -1,8 +1,33 @@
 # ShadowGarden project audit
 
+## Public boundaries and startup — 2026-10-20; records recovered 2026-10-21
+
+[PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) merged as `8e34ced`
+and shipped v2.18.0 in deployment `8c87a0ed-acf5-4083-a305-c9f5988f8da1`.
+Garden Pass now uses native modality and restores focus on exit. Five independent
+Library imports start together, and canonical module URLs remove three duplicate
+requests. The [24-sample raw profile](library-startup-profile-2.18.0.json) records
+29 → 26 script requests; controlled 80 ms JS-response delays improve median
+readiness from about 0.95 s to 0.38–0.41 s. This is not production CWV or mobile
+performance evidence.
+
+CI run 39434636935 passes 305 Node tests and 541 browser cases on attempt 1,
+without retries. Nine skips comprise eight prior platform skips and one Firefox
+remote-frame traversal case whose ordinary-page control also fails. All other
+Garden Pass checks remain required in Firefox. The exact cause is unresolved;
+the related Mozilla issue is already marked fixed in an earlier Firefox version.
+
+The release session verified revision 9, nine snapshots, exact catalog/settings
+preservation, served assets, both Library footers and the genuine modal. After
+the local checkpoint restored, source/CI/raw profile were recovered from GitHub;
+fresh public checks again pass on 2026-10-21. Cloudflare connector internal errors
+blocked new D1/configuration reads, and the private prior baselines were absent.
+[Public boundaries](PUBLIC_BOUNDARIES.md) and [sanitized evidence](public-boundaries-verification-2.18.0.json)
+distinguish those dates and limits. No data/provider/credential writes were needed.
+
 ## Release verification and revision contracts — 2026-10-20
 
-Production is v2.17.1, source `01b57f9`, deployment
+Production at this tooling checkpoint was v2.17.1, source `01b57f9`, deployment
 `39c54372-231f-4a6d-880b-48f1a3710b57`. The older blocked-upload entries below
 are historical; the existing plugin supplied the working upload token and no
 additional sign-in was needed. See [current operations](PRODUCTION_TAKEOVER.md).

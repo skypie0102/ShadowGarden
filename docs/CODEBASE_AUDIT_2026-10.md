@@ -102,19 +102,36 @@ live database/size errors is also removed without changing error codes or contra
    served JS/CSS bytes. Bundle and actual-deployment validation now check the
    compatibility date/flag set. Live v2.17.1 checks pass with unchanged revision 9,
    nine snapshots and settings. See [procedure and limits](PRODUCTION_VERIFIER.md).
-7. **Readability/accessibility:** format remaining dense recovered modules in
-   reviewable batches. Review Garden Pass keyboard focus containment with the
-   real third-party iframe before changing dialog mechanics.
-
-8. **Website module startup:** measure the serial dynamic-import waterfall and
-   duplicate versioned/unversioned module requests. Evaluate parallel loading and
-   consistent module URLs while preserving initialization order and shared state.
-   The live proxy trace identifies a startup sensitivity, not a measured production
-   performance regression; profile realistic network conditions before changing it.
+7. **Accessibility — Garden Pass completed in v2.18.0; readability remains:**
+   a failing-before background-focus control supports native modal containment,
+   Cancel/parent Escape and focus restoration. Closed-shadow remote-frame tests
+   retain an ordinary-page control and one conditional Firefox traversal skip;
+   the other modal checks run in every profile. Format remaining dense recovered
+   modules in small, reviewable batches. See [public boundaries](PUBLIC_BOUNDARIES.md).
+8. **Website module startup — completed in v2.18.0:** five independent Library
+   imports start together, with controller initialization order retained and
+   canonical public module URLs. The 24-sample controlled profile changes 29 to
+   26 script requests and removes three duplicate paths. Artificial 80 ms per-JS
+   response delay lowers median readiness from about 0.95 s to 0.38–0.41 s.
+   These are fixture measurements, not production/mobile Core Web Vitals or a
+   universal speedup claim. [Raw timings and limits](PUBLIC_BOUNDARIES.md#startup-measurement-and-change)
+   are retained.
 
 These are scoped engineering follow-ups, not demonstrated current production
 outages. Avoid broad rewrites, arbitrary sleeps and replacing accepted EPUB.js
 compatibility behavior without a failing reproduction.
+
+The next scoped work is readability of the remaining recovered modules. The
+unknown-length/concurrent upload budget and broader Keeper fixture variants remain
+deferred as described above; provider/physical-device acceptance retains its
+recorded scope.
+
+The latest release is v2.18.0 through [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38),
+merged as `8e34ced`, with 305 Node tests, 541 browser passes and nine skips.
+The [release record](PUBLIC_BOUNDARIES.md#validation-and-production) identifies the
+tested tree, deployment, rollback and dated data/configuration preservation result.
+Public version/assets were rechecked on 2026-10-21; Cloudflare connector internal
+errors blocked a new D1/configuration comparison that day.
 
 ## Validation and release
 

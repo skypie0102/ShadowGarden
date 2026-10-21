@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "version": "2.18.0",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 38,
+  "source": "8e34cedee712385103ee0116ca21f365b1c7e72d",
+  "testedHead": "2829481aea361de5f15730977686270a67ffc0fb",
+  "tree": "621b3cece20cb82fb3cd50c473899fcd9ba5cbb3",
+  "ci": {
+    "runId": 39434636935,
+    "attempt": 1,
+    "conclusion": "success",
+    "nodeTests": 305,
+    "browserPassed": 541,
+    "browserSkipped": 9,
+    "retries": 0,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "jobId": 118668484701,
+        "passed": 110,
+        "skipped": 0
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 118668484597,
+        "passed": 110,
+        "skipped": 0
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 118668484608,
+        "passed": 107,
+        "skipped": 3
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 118668484616,
+        "passed": 108,
+        "skipped": 2
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 118668484615,
+        "passed": 106,
+        "skipped": 4
+      }
+    ],
+    "newSkip": {
+      "browser": "firefox",
+      "case": "closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+      "controlTargets": [],
+      "controlParentEscapes": [],
+      "condition": "Skip only when pinned Firefox also misses the ordinary-page frame control.",
+      "cause": "Unresolved; related Mozilla bug 2037565 is marked fixed in Firefox 152 and is not established as the cause."
+    }
+  },
+  "profile": {
+    "file": "library-startup-profile-2.18.0.json",
+    "sha256": "f48b88116d0cf6d83353a609ab163f8871798f720e6dbf80389060f73e3f669e",
+    "measuredAt": "2026-10-20T14:01:01.996Z",
+    "samples": 24,
+    "checkout": "a9f4fdfd6049e6632f2693e1d4e1af4ca737f97e",
+    "tree": "621b3cece20cb82fb3cd50c473899fcd9ba5cbb3",
+    "recoveredFrom": "desktop Chromium job SG_LIBRARY_PROFILE_GZIP_BASE64 log payload",
+    "scriptRequests": {
+      "before": 29,
+      "after": 26
+    },
+    "duplicatePaths": {
+      "before": 3,
+      "after": 0
+    },
+    "limits": "Artificial JS response delays and a disposable one-series fixture; not production Core Web Vitals, network/CPU/mobile emulation or total-reader performance."
+  },
+  "priorSessionReleaseRecord": {
+    "provenance": "Recovered conversation checkpoint from 2026-10-20. Private raw baselines and temporary verification files were absent after local checkpoint restoration on 2026-10-21; this is not a fresh D1/configuration comparison.",
+    "deploymentId": "8c87a0ed-acf5-4083-a305-c9f5988f8da1",
+    "createdAt": "2026-10-20T14:13:00.446494Z",
+    "succeededAt": "2026-10-20T14:13:02.422875Z",
+    "beforeCheckedAt": "2026-10-20T14:10:15.032Z",
+    "afterCheckedAt": "2026-10-20T14:13:23.212Z",
+    "finalCheckedAt": "2026-10-20T14:20:54.562Z",
+    "preserved": {
+      "revision": 9,
+      "snapshots": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "comparison": [
+        "exact document serialization and updated timestamp",
+        "all snapshot identities, timestamps and checksums",
+        "actual/saved D1 bindings",
+        "compatibility date and flags",
+        "plain-text settings and encrypted-setting names/types"
+      ]
+    },
+    "productionWrites": {
+      "catalog": 0,
+      "snapshots": 0,
+      "bookObjects": 0,
+      "credentials": 0,
+      "migrations": 0
+    },
+    "verifier": {
+      "checks": 10,
+      "result": "passed"
+    },
+    "ui": {
+      "mainFooter": "Shadow Garden · v2.18.0 · 8e34ced",
+      "adultFooter": "Shadow Garden · v2.18.0 · 8e34ced · Adult Section",
+      "nativeModal": true,
+      "initialCancelFocus": true,
+      "parentEscapeRemovedDialog": true,
+      "realCaptchaCompleted": false,
+      "adultWarningAcknowledged": false,
+      "screenshotCaptureCorrection": "Background-tab capture mismatch resolved using the matching foreground tab and DOM."
+    },
+    "rollback": {
+      "version": "2.17.1",
+      "deploymentId": "39c54372-231f-4a6d-880b-48f1a3710b57",
+      "source": "01b57f9f3586839a48c56969799d897bcedf0b64"
+    }
+  },
+  "resumeVerification": {
+    "date": "2026-10-21",
+    "githubMergeAndCiRecovered": true,
+    "cloudflareMetadataRefresh": {
+      "result": "blocked",
+      "error": "Connected Cloudflare search and execution returned MCP internal errors.",
+      "newD1OrConfigurationComparison": false
+    },
+    "publicHttp": {
+      "checkedAt": "2026-10-21T03:49:19.331Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "c5ca52374f51b93e84a7e77eb253f5628fc75009faa8506b4060304d460ae93a",
+          "bytes": 297,
+          "version": {
+            "name": "Shadow Garden",
+            "version": "2.18.0",
+            "releaseVersion": "2.18.0",
+            "commit": "8e34cedee712385103ee0116ca21f365b1c7e72d",
+            "shortCommit": "8e34ced",
+            "branch": "main",
+            "builtAt": "2026-10-20T14:10:25.656Z",
+            "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+          }
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "43f3346d2b72b68cbea1ac0b000a103a75efd6accf0aff59bf8a0d48bf3e118d",
+          "bytes": 1673,
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "d2172db2fb92a1abc5a619a5cc4b9749720cf06ca6c98345c91c30b0d033ce1c",
+          "bytes": 1434,
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/admin-access",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "b5f5e49d96b158eb7ebb767dec49cd9a526ffe7b4654f3857d31be8522b1d429",
+          "bytes": 62,
+          "siteKeyConfigured": true,
+          "action": "admin_access"
+        },
+        {
+          "path": "/human-access",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "43b156be87812aa9df29b4d5ccc79e70a90ff63e28971548543865a953ecf053",
+          "bytes": 61,
+          "siteKeyConfigured": true,
+          "action": "book_access"
+        },
+        {
+          "path": "/admin-api/library",
+          "status": 401,
+          "contentType": "application/json",
+          "sha256": "7222db46cb749146457d29107289188a90e8de2c291b37009099787433090aaf",
+          "bytes": 78
+        },
+        {
+          "path": "/",
+          "status": 200,
+          "contentType": "text/html; charset=utf-8",
+          "sha256": "b5cb956685c1f5c60494d205133d720df1cee4d640d16b3a52c7818aa9ad98d9",
+          "bytes": 9569
+        },
+        {
+          "path": "/nsfw",
+          "status": 200,
+          "contentType": "text/html; charset=utf-8",
+          "sha256": "3e2fa0f97e6a13a6ccfb2367991ffe88b2f9afa925add2ecd1457e4fc80ae66b",
+          "bytes": 10377
+        },
+        {
+          "path": "/assets/js/public/garden-pass.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "4b33ef2aab19e9385af00a021b61ef5505c300c8524f41b0584b0e51c5a92293",
+          "bytes": 4568,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/css/garden-pass.css",
+          "status": 200,
+          "contentType": "text/css; charset=utf-8",
+          "sha256": "bc0054a0cd7d6945be99ef7f9b6a72236bf00051a0f2e6b587a14934075f2385",
+          "bytes": 2399,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/js/library.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "bff2eb26f9bdeaad10a1c4446767aba527a6bf0be179e9fc4a6f26058d827996",
+          "bytes": 18744,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/js/data-source.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "3f4aeb852207b1b7f9cdff13b8a6e80141e7a689e699586e9e1e7dc81b6f9a41",
+          "bytes": 2989,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "54a320054dfdf9015d4ed1df6afec8bfecd22317f2078d9ff0aa234768d33c03",
+          "bytes": 3753,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/js/nav-pinned.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "c78f717061613e757198520a06173551fa6c866944f23cb50b1532b5b185ac5c",
+          "bytes": 3894,
+          "matchesBuild": true
+        },
+        {
+          "path": "/assets/js/series.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "8b167f798db94a9d76733c9d91ce898a0d53c92575d2dc46e4132f80e108ca6e",
+          "bytes": 4448,
+          "matchesBuild": true
+        }
+      ]
+    }
+  },
+  "acceptanceLimits": [
+    "No new physical Android/Soul acceptance.",
+    "No completed real CAPTCHA or credentialed Keeper/book acceptance.",
+    "Eight earlier platform skips plus one controlled Firefox frame-traversal skip."
+  ]
+}

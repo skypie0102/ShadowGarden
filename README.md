@@ -24,7 +24,19 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.17.1**, merged through
+The latest production release is **v2.18.0**, merged through
+[PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) and deployed on 2026-10-20.
+Garden Pass uses a native modal dialog with focus restoration. Public startup
+loads independent modules together and eliminates three duplicate module requests
+(29 → 26 scripts in the controlled Library profile). CI passes 305 Node tests
+and 541 browser cases, with nine documented skips. The release checks preserved
+revision 9, nine snapshots and production settings. Fresh public checks on
+2026-10-21 confirm the version and exact changed assets; Cloudflare metadata
+refresh was blocked by connector internal errors. See [public boundaries](docs/PUBLIC_BOUNDARIES.md)
+and [release evidence](docs/public-boundaries-verification-2.18.0.json) for scope
+and the controlled Firefox frame-traversal limitation.
+
+The preceding protected-source release is **v2.17.1**, merged through
 [PR #36](https://github.com/skypie0102/ShadowGarden/pull/36) and deployed on 2026-10-20.
 The visual scanner calls an explicit book-access transport; global fetch remains
 native, and pinned EPUB.js retains its XHR/session-cookie path. All 293 Node tests
