@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Public controller readability](PUBLIC_READABILITY.md) records the next source
+cleanup for v2.18.1: seven formatted modules, matching executable syntax trees,
+preserved comment text and [source hashes](public-readability-equivalence.json).
+Production remains v2.18.0 pending a separately recorded guarded deployment.
+
 The latest deployed release is **v2.18.0**. [Public boundaries](PUBLIC_BOUNDARIES.md)
 records native Garden Pass modality/focus restoration and the measured Library
 startup change: 29 → 26 scripts and no duplicate module paths. CI passes 305 Node
@@ -57,6 +62,7 @@ Those physical/provider observations keep their original release scope.
 | --- | --- |
 | [Whole-codebase audit](CODEBASE_AUDIT_2026-10.md) | Reproduced fixes, subsystem review and prioritized follow-ups |
 | [Public boundaries](PUBLIC_BOUNDARIES.md) | Garden Pass keyboard ownership, module startup measurements and v2.18.0 validation |
+| [Public readability](PUBLIC_READABILITY.md) | Scoped controller formatting, source/AST evidence and release state |
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Upload memory](UPLOAD_MEMORY.md) | Workerd upload measurements, declared-length buffering and remaining limits |
 | [Browser persistence](BROWSER_PERSISTENCE.md) | Failed-write rollback, compound Read Again and concurrency/crash limits |
