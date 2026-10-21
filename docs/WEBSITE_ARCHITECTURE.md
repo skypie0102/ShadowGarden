@@ -4,6 +4,10 @@ The public website and Keeper use plain JavaScript delivery and the Pages
 Functions API. Book identities, browser storage formats and backend authorization
 remain stable. Existing links continue to work when series move between shelves.
 
+The [v2.18.1 readability batch](PUBLIC_READABILITY.md) expands seven public
+controllers/loaders while retaining their executable syntax trees and markup
+values. Ownership remains as mapped below.
+
 | Boundary | Owner | Responsibilities |
 | --- | --- | --- |
 | Library page | `library.js` | Composition, control events, batched rendering and reading/preference refresh |

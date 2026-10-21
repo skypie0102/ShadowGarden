@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-21T04:04:24.215Z",
+  "base": "60c97df83a5cfb487800393a147d2be5fc4169a1",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "babel",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": true,
+      "singleQuote": false,
+      "quoteProps": "preserve",
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "embeddedLanguageFormatting": "off"
+    }
+  },
+  "comparison": "Babel AST equality after removing source positions, raw/parenthesis metadata and attached comments; ordered comment text is compared separately after whitespace normalization. Executable nodes, operators, literal values and module URLs are retained.",
+  "files": [
+    {
+      "path": "public/assets/js/library.js",
+      "beforeSha256": "bff2eb26f9bdeaad10a1c4446767aba527a6bf0be179e9fc4a6f26058d827996",
+      "afterSha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+      "normalizedAstSha256": "f6984a00919f5ddcb6785db51304bc5606e3c5ff94f29d5467c2647bd7a51e63",
+      "commentsSha256": "8270fce177d026ba7d2bce7cc7ee8088f4961dd51f54601d1050720f6373f517",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 18744,
+        "lines": 270,
+        "longestLine": 587,
+        "linesOver180": 21
+      },
+      "after": {
+        "bytes": 22002,
+        "lines": 583,
+        "longestLine": 227,
+        "linesOver180": 3
+      }
+    },
+    {
+      "path": "public/assets/js/data-source.js",
+      "beforeSha256": "3f4aeb852207b1b7f9cdff13b8a6e80141e7a689e699586e9e1e7dc81b6f9a41",
+      "afterSha256": "6faf962014ef8025af3ed7b820848ec7871d2eeebaea714465bbe13853c34493",
+      "normalizedAstSha256": "c1724f1f155c89e4b4480e85cec8f2d9b7b0ce5542cc6d28007f5eeb41ef1443",
+      "commentsSha256": "c7e5d3063ccdbd3ff4d670e3952dd2850a528d50a0ce5601c8fb7bc9ce35dca3",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 2989,
+        "lines": 64,
+        "longestLine": 113,
+        "linesOver180": 0
+      },
+      "after": {
+        "bytes": 3378,
+        "lines": 93,
+        "longestLine": 99,
+        "linesOver180": 0
+      }
+    },
+    {
+      "path": "public/assets/js/library-mobile-filter.js",
+      "beforeSha256": "54a320054dfdf9015d4ed1df6afec8bfecd22317f2078d9ff0aa234768d33c03",
+      "afterSha256": "d4a86796d0d308e26bfb1c051d7a4fd0365cf84cbe2b3cafb1e6f4b79e13b2d4",
+      "normalizedAstSha256": "8013285971d41d455f8bf810d6f3acdff6f2b1c39cbbafc13bdbf26b5e57c787",
+      "commentsSha256": "fd3f0c90d5187504cc0f997d056c785820ec25f9760e3826c383a12e75e37ca2",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 3753,
+        "lines": 92,
+        "longestLine": 104,
+        "linesOver180": 0
+      },
+      "after": {
+        "bytes": 3948,
+        "lines": 103,
+        "longestLine": 92,
+        "linesOver180": 0
+      }
+    },
+    {
+      "path": "public/assets/js/nav-pinned.js",
+      "beforeSha256": "c78f717061613e757198520a06173551fa6c866944f23cb50b1532b5b185ac5c",
+      "afterSha256": "df19abe05861ac6d1888c5e44ebc39e3927b94f45d6239fe4630f824828ef02e",
+      "normalizedAstSha256": "234861d19b8e5f9a9e56d3763c15b2a6c5e837ca69ca0ffc5780ef57d5ced20d",
+      "commentsSha256": "6e8f1d7391d0efb7e95d84a090dd170d00c7bcdf9095fcceb3707e8514dd505b",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 3894,
+        "lines": 73,
+        "longestLine": 317,
+        "linesOver180": 3
+      },
+      "after": {
+        "bytes": 4339,
+        "lines": 108,
+        "longestLine": 288,
+        "linesOver180": 2
+      }
+    },
+    {
+      "path": "public/assets/js/series.js",
+      "beforeSha256": "8b167f798db94a9d76733c9d91ce898a0d53c92575d2dc46e4132f80e108ca6e",
+      "afterSha256": "4bdcb218995142e7bbc40e738b5d87c3bee319bd5321c6d6bf9d8b329a9c8663",
+      "normalizedAstSha256": "680a15d0d464f92a472a438fc426e098da4270156d94172e0f43bfaf0064395c",
+      "commentsSha256": "2db458c1c88625935e984559b323829cd1214b737a5641c0a0157ebabe2a50d3",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 4448,
+        "lines": 91,
+        "longestLine": 173,
+        "linesOver180": 0
+      },
+      "after": {
+        "bytes": 5089,
+        "lines": 144,
+        "longestLine": 100,
+        "linesOver180": 0
+      }
+    },
+    {
+      "path": "public/assets/js/public/garden-pass.js",
+      "beforeSha256": "4b33ef2aab19e9385af00a021b61ef5505c300c8524f41b0584b0e51c5a92293",
+      "afterSha256": "ea80b4def5bd94d4af318aafc5a2f5c541abc72ed1f4f3391c2ffdaaad49a41d",
+      "normalizedAstSha256": "f808493e82d1f1162301be4392211d76b4808402fd07f7aab887dc6291abc056",
+      "commentsSha256": "3ca7ed7d7d2646099ce966d8361ab0f772b89b7d25626c628b38e1d71428afbd",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 4568,
+        "lines": 113,
+        "longestLine": 165,
+        "linesOver180": 0
+      },
+      "after": {
+        "bytes": 4838,
+        "lines": 124,
+        "longestLine": 165,
+        "linesOver180": 0
+      }
+    },
+    {
+      "path": "public/assets/js/public/turnstile.js",
+      "beforeSha256": "c539dc8c2e9cfef602afd4570c999af991375d7837472d014b2f85798465bdd6",
+      "afterSha256": "9166d184865e14902570bba264739110c14dfd7f51a8a07e9156b6faea5143df",
+      "normalizedAstSha256": "6b0bbd3c02ebe3199929378651b7a3a3375327678bb0dc2cb035148f03fb1391",
+      "commentsSha256": "51c67d6176790ed014bc4cc214bd94b2493e41dd4d9d7047d36e9b1ce3847f45",
+      "astEqual": true,
+      "commentsEqual": true,
+      "before": {
+        "bytes": 1238,
+        "lines": 22,
+        "longestLine": 147,
+        "linesOver180": 0
+      },
+      "after": {
+        "bytes": 1432,
+        "lines": 42,
+        "longestLine": 97,
+        "linesOver180": 0
+      }
+    }
+  ]
+}

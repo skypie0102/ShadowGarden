@@ -107,7 +107,9 @@ live database/size errors is also removed without changing error codes or contra
    Cancel/parent Escape and focus restoration. Closed-shadow remote-frame tests
    retain an ordinary-page control and one conditional Firefox traversal skip;
    the other modal checks run in every profile. Format remaining dense recovered
-   modules in small, reviewable batches. See [public boundaries](PUBLIC_BOUNDARIES.md).
+   modules in small, reviewable batches. The [public-controller batch](PUBLIC_READABILITY.md)
+   prepares v2.18.1 with seven formatted modules and equivalent executable syntax
+   trees. See [public boundaries](PUBLIC_BOUNDARIES.md) for the accessibility release.
 8. **Website module startup — completed in v2.18.0:** five independent Library
    imports start together, with controller initialization order retained and
    canonical public module URLs. The 24-sample controlled profile changes 29 to
@@ -121,7 +123,8 @@ These are scoped engineering follow-ups, not demonstrated current production
 outages. Avoid broad rewrites, arbitrary sleeps and replacing accepted EPUB.js
 compatibility behavior without a failing reproduction.
 
-The next scoped work is readability of the remaining recovered modules. The
+The next scoped readability work after this public-controller batch is Keeper's
+dense data/maintenance workflows. The
 unknown-length/concurrent upload budget and broader Keeper fixture variants remain
 deferred as described above; provider/physical-device acceptance retains its
 recorded scope.
