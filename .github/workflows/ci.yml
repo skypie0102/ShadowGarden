@@ -124,5 +124,6 @@ jobs:
         with:
           name: production-verification
           path: .wrangler/production-verification.json
+          include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 30

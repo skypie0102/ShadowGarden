@@ -24,9 +24,13 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-[Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is being prepared for the
-existing production project. It runs after the full check matrix; activation
-requires its scoped deployment credential and a successful production verification.
+[Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is merged through
+[PR #40](https://github.com/skypie0102/ShadowGarden/pull/40), targeting the existing
+production project after the full check matrix. Its first main run passes 318
+Node tests and 541 browser cases, then stops before any production write because
+the repository Actions secret `CLOUDFLARE_API_TOKEN` is empty. Configure that scoped
+credential and run the main workflow to finish activation. Production remains
+v2.18.0 until live publication is verified.
 
 [Public controller readability](docs/PUBLIC_READABILITY.md) for v2.18.1 is merged
 through [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39): seven modules

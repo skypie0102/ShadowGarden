@@ -1,5 +1,22 @@
 # ShadowGarden project audit
 
+## Automatic live-deployment workflow — 2026-10-21
+
+[PR #40](https://github.com/skypie0102/ShadowGarden/pull/40) merged as `aed4f06`.
+The workflow targets the existing live `shadowgarden` project after successful
+verification and all browser profiles, with trusted-main, source, baseline and
+post-publication guards. Thirteen operational regression cases bring the Node
+suite to 318; all 541 browser cases pass with nine documented skips.
+
+[The first main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39593282242)
+passes those checks and the binding-aware build, then its production job fails
+before any API request with `Set the production CLOUDFLARE_API_TOKEN Actions
+secret before deployment.` The secret is empty in the job environment. The
+workflow is installed; automatic publication remains blocked pending that scoped
+repository credential and a fresh successful main run. Production remains v2.18.0.
+No production data, configuration, book-object or credential writes occurred.
+[Activation instructions](AUTO_DEPLOYMENT.md) record the exact remaining setup.
+
 ## Public readability — 2026-10-21
 
 [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39) merged as `ba71f00`,

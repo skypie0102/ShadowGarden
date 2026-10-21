@@ -1,9 +1,11 @@
 # ShadowGarden documentation
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) prepares a checked main-only
-workflow targeting the existing `shadowgarden` production project. Activation
-still needs its scoped Actions credential and a successful live verification;
-the test project's automatic main preview is a separate deployment.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is merged through PR #40, targeting
+the existing `shadowgarden` production project. The first main run passes 318 Node
+tests and 541 browser cases, then stops before production writes because the
+`CLOUDFLARE_API_TOKEN` repository Actions secret is empty. The guide records the
+scoped credential and fresh main workflow run needed to finish activation. The
+test project's automatic main preview is a separate deployment.
 
 [Public controller readability](PUBLIC_READABILITY.md) is merged for v2.18.1:
 seven formatted modules, matching executable syntax trees, preserved comment

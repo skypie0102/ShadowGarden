@@ -1,8 +1,11 @@
 # ShadowGarden production operations
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is being prepared to publish
-checked main commits directly to this existing project. Its activation state and
-credential requirements are recorded separately from verified production below.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is merged through PR #40 as
+`aed4f06`. Its first main run passes 318 Node tests and 541 browser cases, then
+stops before publication because `CLOUDFLARE_API_TOKEN` is empty in repository
+Actions secrets. No Cloudflare request or production write was made by that
+failed preflight. Configure its scoped credential and start a fresh main workflow
+to finish activation; the verified production deployment below remains unchanged.
 
 **Source update awaiting deployment — 2026-10-21:** v2.18.1, merged source
 `ba71f00` from PR #39, formats seven public modules with matching executable
