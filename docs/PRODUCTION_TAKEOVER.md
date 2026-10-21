@@ -1,5 +1,9 @@
 # ShadowGarden production operations
 
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is being prepared to publish
+checked main commits directly to this existing project. Its activation state and
+credential requirements are recorded separately from verified production below.
+
 **Source update awaiting deployment — 2026-10-21:** v2.18.1, merged source
 `ba71f00` from PR #39, formats seven public modules with matching executable
 syntax trees. CI passes 305 Node tests and 541 browser cases with the same nine
