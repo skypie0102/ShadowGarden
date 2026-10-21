@@ -24,9 +24,12 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-[Public controller readability](docs/PUBLIC_READABILITY.md) prepares v2.18.1:
-seven modules have expanded statements and matching executable syntax trees.
-This source cleanup is separate from the current production release below.
+[Public controller readability](docs/PUBLIC_READABILITY.md) for v2.18.1 is merged
+through [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39): seven modules
+have expanded statements and matching executable syntax trees. All 305 Node tests
+and 541 browser cases pass, with the same nine documented skips. Deployment is
+pending while the Cloudflare connector returns internal errors; production is
+the v2.18.0 release below.
 
 The latest production release is **v2.18.0**, merged through
 [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) and deployed on 2026-10-20.

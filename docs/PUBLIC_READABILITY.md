@@ -42,15 +42,29 @@ behavioral validation.
 
 ## Validation and release state
 
-The batch prepares package version 2.18.1. The local asset/provenance audit, all
-305 Node tests, static build and binding/compatibility-aware Worker packaging pass.
-The five-profile browser matrix must pass before merge.
+[PR #39](https://github.com/skypie0102/ShadowGarden/pull/39) merged this batch as
+`ba71f00db7aa6a6a2af45a03676107a1d8f1c621`, preparing package version 2.18.1.
+The merged tree `5bad162d9d0b106e130cff8cc0c54c6475c198e1` exactly matches
+tested head `bb4a0971000166ae718a298c12c8578d0a22f4e1` and the profile checkout.
+[CI run 39542225261](https://github.com/skypie0102/ShadowGarden/actions/runs/39542225261)
+passes on attempt 1 with no test retries:
+
+- Asset/provenance audit, all 305 Node tests, static build and binding/compatibility-aware Worker packaging.
+- 541 browser passes across the five profiles, with the same nine documented
+  skips as v2.18.0, including its controlled Firefox frame-traversal limitation.
+- A separate 24-sample startup profile: all baseline/current samples retain
+  26 script requests and zero duplicate paths. No new timing improvement is claimed.
+
+[Sanitized verification](public-readability-verification.json) records per-profile
+counts, source identities, public checks and the deployment blocker.
 
 Production remains the separately verified v2.18.0 until an explicit guarded
 deployment is recorded here. On 2026-10-21 the connected Cloudflare search and
-execution APIs returned internal errors; no fresh production baseline or new
-deployment is claimed. This source cleanup requires no catalog, snapshot,
-book-object, migration or credential writes.
+execution APIs returned internal errors, including a runtime request with no
+Cloudflare API calls. No fresh production baseline or new deployment is claimed.
+Public HTTP checks at 04:10 UTC (12:10 Asia/Manila) confirm v2.18.0/`8e34ced`,
+both catalogs and all seven matching previous-release modules. No catalog,
+snapshot, book-object, migration or credential writes were performed.
 
 The next readability batch is Keeper's dense data/maintenance workflows. The
 unknown-length/concurrent upload-memory budget and broader Keeper fixture variants

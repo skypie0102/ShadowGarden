@@ -1,9 +1,11 @@
 # ShadowGarden documentation
 
-[Public controller readability](PUBLIC_READABILITY.md) records the next source
-cleanup for v2.18.1: seven formatted modules, matching executable syntax trees,
-preserved comment text and [source hashes](public-readability-equivalence.json).
-Production remains v2.18.0 pending a separately recorded guarded deployment.
+[Public controller readability](PUBLIC_READABILITY.md) is merged for v2.18.1:
+seven formatted modules, matching executable syntax trees, preserved comment
+text and [source hashes](public-readability-equivalence.json). All 305 Node tests
+and 541 browser cases pass with the same nine skips. [Verification](public-readability-verification.json)
+records the tested/merged tree and pending deployment: production remains v2.18.0
+while the Cloudflare connector returns internal errors.
 
 The latest deployed release is **v2.18.0**. [Public boundaries](PUBLIC_BOUNDARIES.md)
 records native Garden Pass modality/focus restoration and the measured Library

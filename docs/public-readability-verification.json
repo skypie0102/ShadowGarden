@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-21T04:17:58.448Z",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 39,
+  "preparedVersion": "2.18.1",
+  "base": "60c97df83a5cfb487800393a147d2be5fc4169a1",
+  "testedHead": "bb4a0971000166ae718a298c12c8578d0a22f4e1",
+  "mergedSource": "ba71f00db7aa6a6a2af45a03676107a1d8f1c621",
+  "tree": "5bad162d9d0b106e130cff8cc0c54c6475c198e1",
+  "equivalenceReport": "public-readability-equivalence.json",
+  "ci": {
+    "runId": 39542225261,
+    "attempt": 1,
+    "conclusion": "success",
+    "nodeTests": 305,
+    "browserPassed": 541,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "browser (desktop-webkit, webkit)",
+        "jobId": 119032471660,
+        "passed": 108,
+        "skipped": 2
+      },
+      {
+        "name": "browser (mobile-webkit, webkit)",
+        "jobId": 119032471665,
+        "passed": 106,
+        "skipped": 4
+      },
+      {
+        "name": "browser (mobile-chromium, chromium)",
+        "jobId": 119032471669,
+        "passed": 110,
+        "skipped": 0
+      },
+      {
+        "name": "browser (desktop-firefox, firefox)",
+        "jobId": 119032471679,
+        "passed": 107,
+        "skipped": 3
+      },
+      {
+        "name": "browser (desktop-chromium, chromium)",
+        "jobId": 119032471688,
+        "passed": 110,
+        "skipped": 0
+      }
+    ],
+    "startupProfile": {
+      "samples": 24,
+      "checkout": "80b1c7cfafe18edfb6bda344bf54e09463589d73",
+      "tree": "5bad162d9d0b106e130cff8cc0c54c6475c198e1",
+      "allVariantsScriptRequests": 26,
+      "allVariantsDuplicatePaths": 0,
+      "scope": "Regression fixture only; no new speedup or production performance claim."
+    }
+  },
+  "deployment": {
+    "status": "pending",
+    "attempted": false,
+    "reason": "Cloudflare connector search and execute returned MCP internal errors, including a request with no Cloudflare API calls. No fresh D1/configuration baseline was available.",
+    "productionVersion": "2.18.0",
+    "productionSource": "8e34cedee712385103ee0116ca21f365b1c7e72d",
+    "productionDeploymentId": "8c87a0ed-acf5-4083-a305-c9f5988f8da1",
+    "databaseOrConfigurationRechecked": false,
+    "productionCatalogSnapshotBookObjectCredentialMigrationWrites": 0,
+    "publicHttp": {
+      "checkedAt": "2026-10-21T04:10:45.105Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "c5ca52374f51b93e84a7e77eb253f5628fc75009faa8506b4060304d460ae93a",
+          "version": "2.18.0",
+          "source": "8e34cedee712385103ee0116ca21f365b1c7e72d"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "43f3346d2b72b68cbea1ac0b000a103a75efd6accf0aff59bf8a0d48bf3e118d"
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "status": 200,
+          "contentType": "application/json",
+          "sha256": "d2172db2fb92a1abc5a619a5cc4b9749720cf06ca6c98345c91c30b0d033ce1c"
+        },
+        {
+          "path": "/assets/js/library.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "bff2eb26f9bdeaad10a1c4446767aba527a6bf0be179e9fc4a6f26058d827996",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/data-source.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "3f4aeb852207b1b7f9cdff13b8a6e80141e7a689e699586e9e1e7dc81b6f9a41",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "54a320054dfdf9015d4ed1df6afec8bfecd22317f2078d9ff0aa234768d33c03",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/nav-pinned.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "c78f717061613e757198520a06173551fa6c866944f23cb50b1532b5b185ac5c",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/series.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "8b167f798db94a9d76733c9d91ce898a0d53c92575d2dc46e4132f80e108ca6e",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/public/garden-pass.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "4b33ef2aab19e9385af00a021b61ef5505c300c8524f41b0584b0e51c5a92293",
+          "matchesPreviousRelease": true
+        },
+        {
+          "path": "/assets/js/public/turnstile.js",
+          "status": 200,
+          "contentType": "application/javascript",
+          "sha256": "c539dc8c2e9cfef602afd4570c999af991375d7837472d014b2f85798465bdd6",
+          "matchesPreviousRelease": true
+        }
+      ],
+      "d1AndConfigurationRechecked": false
+    }
+  },
+  "limitations": [
+    "Eight existing platform skips and the same one controlled Firefox remote-frame traversal skip as v2.18.0.",
+    "No new physical Android/Soul or real CAPTCHA/credentialed acceptance.",
+    "No new production deployment or D1/configuration preservation comparison."
+  ]
+}

@@ -1,5 +1,27 @@
 # ShadowGarden project audit
 
+## Public readability — 2026-10-21
+
+[PR #39](https://github.com/skypie0102/ShadowGarden/pull/39) merged as `ba71f00`,
+preparing v2.18.1. Seven public controllers/loaders have expanded statements;
+their executable Babel syntax trees and normalized comment text match the
+baseline. Lines over 180 columns decrease from 24 to five. No new runtime
+dependency or performance improvement is claimed.
+
+[CI run 39542225261](https://github.com/skypie0102/ShadowGarden/actions/runs/39542225261)
+passes 305 Node tests and 541 browser cases with the same nine skips, on attempt 1
+without retries. The 24-sample startup profile retains 26 script requests and
+zero duplicate paths in every baseline/current sample. The tested, profiled and
+merged tree is `5bad162d9d0b106e130cff8cc0c54c6475c198e1`.
+
+Production remains v2.18.0. The connected Cloudflare runtime returns internal
+errors before even a no-API-call request can complete, blocking fresh baseline
+capture and guarded deployment. Ten public HTTP checks confirm the existing
+version, both catalogs and seven previous-release module hashes. There were no
+production data, book-object, migration or credential writes. [The report](PUBLIC_READABILITY.md)
+and [verification](public-readability-verification.json) preserve exact release
+state; Keeper's dense data/maintenance workflows are the next readability batch.
+
 ## Public boundaries and startup — 2026-10-20; records recovered 2026-10-21
 
 [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) merged as `8e34ced`

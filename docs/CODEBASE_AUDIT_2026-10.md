@@ -108,8 +108,11 @@ live database/size errors is also removed without changing error codes or contra
    retain an ordinary-page control and one conditional Firefox traversal skip;
    the other modal checks run in every profile. Format remaining dense recovered
    modules in small, reviewable batches. The [public-controller batch](PUBLIC_READABILITY.md)
-   prepares v2.18.1 with seven formatted modules and equivalent executable syntax
-   trees. See [public boundaries](PUBLIC_BOUNDARIES.md) for the accessibility release.
+   is merged for v2.18.1 through PR #39 with seven formatted modules, equivalent
+   executable syntax trees, 305 Node tests and 541 browser passes (nine existing
+   documented skips). Deployment is pending on Cloudflare connector availability;
+   production remains v2.18.0. See [public boundaries](PUBLIC_BOUNDARIES.md) for the
+   accessibility release.
 8. **Website module startup — completed in v2.18.0:** five independent Library
    imports start together, with controller initialization order retained and
    canonical public module URLs. The 24-sample controlled profile changes 29 to

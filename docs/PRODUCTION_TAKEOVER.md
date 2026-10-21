@@ -1,5 +1,14 @@
 # ShadowGarden production operations
 
+**Source update awaiting deployment — 2026-10-21:** v2.18.1, merged source
+`ba71f00` from PR #39, formats seven public modules with matching executable
+syntax trees. CI passes 305 Node tests and 541 browser cases with the same nine
+documented skips. Cloudflare connector internal errors block fresh baseline
+capture and guarded publication. Ten public HTTP checks still confirm v2.18.0,
+both catalogs and seven previous-release module hashes. See [readability validation](PUBLIC_READABILITY.md)
+and [evidence](public-readability-verification.json). This pending source update
+does not change the last verified production deployment or rollback below.
+
 **Last verified production release — 2026-10-20:** v2.18.0, deployment
 `8c87a0ed-acf5-4083-a305-c9f5988f8da1`, source `8e34ced` from PR #38.
 Native Garden Pass modality/focus restoration and parallel/canonical public
