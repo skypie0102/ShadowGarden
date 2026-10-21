@@ -24,6 +24,10 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+[Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is being prepared for the
+existing production project. It runs after the full check matrix; activation
+requires its scoped deployment credential and a successful production verification.
+
 [Public controller readability](docs/PUBLIC_READABILITY.md) for v2.18.1 is merged
 through [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39): seven modules
 have expanded statements and matching executable syntax trees. All 305 Node tests

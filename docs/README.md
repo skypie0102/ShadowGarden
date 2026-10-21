@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Automatic live deployment](AUTO_DEPLOYMENT.md) prepares a checked main-only
+workflow targeting the existing `shadowgarden` production project. Activation
+still needs its scoped Actions credential and a successful live verification;
+the test project's automatic main preview is a separate deployment.
+
 [Public controller readability](PUBLIC_READABILITY.md) is merged for v2.18.1:
 seven formatted modules, matching executable syntax trees, preserved comment
 text and [source hashes](public-readability-equivalence.json). All 305 Node tests

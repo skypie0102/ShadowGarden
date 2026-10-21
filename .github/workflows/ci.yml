@@ -1,5 +1,8 @@
 name: ShadowGarden checks
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -72,3 +75,54 @@ jobs:
             test-results/
             library-startup-results/
           retention-days: 7
+
+  production:
+    name: Deploy live ShadowGarden
+    needs: [verify, browser]
+    if: github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: shadowgarden-production
+      cancel-in-progress: false
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+      CF_PAGES_BRANCH: main
+      CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+      CLOUDFLARE_ACCOUNT_ID: fa95f62f96a0ff3b92a45175d94a48b6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Skip superseded application source
+        id: source
+        shell: bash
+        run: |
+          git fetch --no-tags origin main
+          if git diff --quiet HEAD origin/main -- . ':(exclude)docs/**' ':(exclude)README.md'; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'A newer application commit is on main; its checked run will deploy.'
+            echo 'deploy=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.source.outputs.deploy == 'true'
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+        if: steps.source.outputs.deploy == 'true'
+      - run: npm run build && npm run check:functions
+        if: steps.source.outputs.deploy == 'true'
+      - name: Publish and verify existing live project
+        if: steps.source.outputs.deploy == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/deploy-production.mjs
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && steps.source.outputs.deploy == 'true' }}
+        with:
+          name: production-verification
+          path: .wrangler/production-verification.json
+          if-no-files-found: ignore
+          retention-days: 30
