@@ -85,8 +85,20 @@ test.describe('production reader integration',()=>{
         // Chromium's IntersectionObserver reports zero for visible paragraphs
         // in the vendor's horizontally translated multi-column iframe. Check
         // parent clipping and the actual hit surface at the visible point.
-        return await iframe.evaluate((element,point)=>document.elementFromPoint(point.x,point.y)===element,
-          {x:(left+right)/2,y:(top+bottom)/2})?1:0;
+        return await iframe.evaluate((element,{point,id})=>{
+          const hit=document.elementFromPoint(point.x,point.y);
+          if(hit===element)return true;
+          // WebKit deliberately puts an image activation surface over the iframe.
+          // Accept it only over this exact visible image with its iframe directly
+          // beneath; unrelated overlays and text occlusion must still fail.
+          const imageHit='.reader-image-focus-hit[data-sg-reader-image-hit="1"]';
+          if(!hit?.matches(imageHit))return false;
+          const doc=element.contentDocument,target=doc?.querySelector(id);
+          if(target?.tagName!=='IMG')return false;
+          const rect=element.getBoundingClientRect();
+          if(doc.elementFromPoint(point.x-rect.left,point.y-rect.top)!==target)return false;
+          return document.elementsFromPoint(point.x,point.y).find(node=>!node.matches(imageHit))===element;
+        },{point:{x:(left+right)/2,y:(top+bottom)/2},id})?1:0;
       }catch{return 0}
     },{timeout:20000}).toBeGreaterThan(0);
   }

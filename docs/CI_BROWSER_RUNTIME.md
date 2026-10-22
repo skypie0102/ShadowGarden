@@ -2,7 +2,7 @@
 
 The v2.18.3 release encountered an infrastructure blocker: the main mobile WebKit
 job spent its entire 30-minute window installing dependencies. Its browser tests
-never started. A fresh-runner retry again spent over 20 minutes in installation.
+never started. A fresh-runner retry again exhausted its 30-minute window in installation.
 The captured log contains long waits and retries against Ubuntu's Azure archive.
 The other four main profiles and all five PR profiles passed.
 
@@ -32,7 +32,20 @@ existing-project deployment remain. Application code and package versions do not
 change in this CI correction. No catalog, snapshot, object or runtime-setting
 write is performed by the correction itself.
 
-Local validation checks the YAML structure, runtime guard syntax and exact image
-pin. Complete PR/main browser validation and production verification remain
+The first container runs reached browser tests within 32–46 seconds. Desktop
+WebKit then exposed a visibility-helper error in the existing mode-switch case:
+the next anchor was `#art-4`, and the settled screenshot retained that illustration.
+The trace shows its deliberate parent image-activation surface covering the
+iframe. The helper previously accepted only a direct iframe hit, so it reported
+an obstruction after that surface appeared. Both independent push/PR runs failed
+at the same case; neither was retried to obtain a pass.
+
+The helper now also accepts the deliberate image surface only when the exact
+requested target is an `IMG` under that point in the correct iframe and that
+iframe is directly beneath the surface. Text, clipping and unrelated overlays
+retain their original checks. No reader implementation or test timeout changes.
+
+Local validation checks browser-test syntax, the YAML structure, runtime guard
+syntax and exact image pin. Complete PR/main browser validation and production verification remain
 pending. This change removes per-job Ubuntu package downloads; it does not claim
 a universal CI speedup or eliminate registry/network failures.
