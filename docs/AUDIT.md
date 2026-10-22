@@ -1,5 +1,24 @@
 # ShadowGarden project audit
 
+## Keeper workflow cleanup candidate — 2026-10-22
+
+Seven data/maintenance controllers have expanded statements. All seven mechanical
+formatting steps retain their Babel ASTs and ordered normalized comments; six
+final modules remain formatting-only. Lines over 180 columns decrease from 114
+to 30. The final Library module additionally fixes a reproduced banner race.
+
+An older banner save could overwrite another editor and retarget its next write
+to the previous series. Each opening now owns its banner identity and async
+results; close/lock invalidate that ownership. Six controls fail against baseline
+source; all seven focused controls and all 325 Node tests pass after correction.
+The asset audit, static build and binding/compatibility-aware package pass.
+
+Two disposable browser cases await the full five-profile CI matrix. Local browser
+archive download failed; no local browser pass is claimed. v2.18.2 is prepared;
+production remains v2.18.1 until the guarded automatic release succeeds. See
+[scope and contracts](KEEPER_WORKFLOWS.md), [source equivalence](keeper-readability-equivalence.json)
+and [verification](keeper-workflow-verification.json).
+
 ## Automatic live deployment activated — 2026-10-22
 
 The saved token's Pages authorization is corrected. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)

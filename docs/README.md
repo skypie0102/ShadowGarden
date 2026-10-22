@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Keeper workflow cleanup](KEEPER_WORKFLOWS.md) prepares v2.18.2: seven expanded
+controllers with [formatting-stage equivalence](keeper-readability-equivalence.json),
+a reproduced banner-editor ownership correction, seven focused regressions and
+325 passing local Node tests. Browser/release verification is pending.
+
 [Automatic live deployment](AUTO_DEPLOYMENT.md) is active. Checked `main` pushes
 publish to the existing `shadowgarden` live project after access, verification
 and all five browser profiles pass. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)

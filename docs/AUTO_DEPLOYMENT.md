@@ -4,8 +4,8 @@
 
 Automatic live deployment was activated on 2026-10-22. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
 (attempt 2) passes both Pages/D1 credential checks and the guarded production job,
-retaining successful verification and all five browser profiles. Production is
-**v2.18.1**, source `a3f1b958ba4249f4766446b2206ec1cf048ebbf4`, deployment
+retaining successful verification and all five browser profiles. The activation
+release was **v2.18.1**, source `a3f1b958ba4249f4766446b2206ec1cf048ebbf4`, deployment
 `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
 
 The workflow was introduced through [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40).

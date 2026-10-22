@@ -24,6 +24,12 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+The next audit increment, [Keeper workflow cleanup](docs/KEEPER_WORKFLOWS.md),
+prepares **v2.18.2**: seven readable data/maintenance controllers and a reproduced
+late-banner response fix. Six baseline controls fail before the correction; all
+seven focused cases and all 325 Node tests now pass locally. The browser matrix
+and guarded release remain pending; the current live release is recorded below.
+
 The latest production release is **v2.18.1**, deployed on 2026-10-22 from
 `a3f1b95`. [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is **active**:
 checked pushes to `main` publish to the existing `shadowgarden` project at
