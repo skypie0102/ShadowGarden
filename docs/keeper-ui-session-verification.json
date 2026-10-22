@@ -31,6 +31,12 @@
         "conclusion": "failure",
         "newCasesPassedPerProfile": 5,
         "reason": "The enhanced Skip-choice case could not operate a selector hidden after duplicate removal. Inspection confirmed a real UI gap: retained Skip had no visible action control. The workflow now retains an ordinary queue-action selector; no forced interaction, timeout change or skip was added."
+      },
+      {
+        "runId": 39866475231,
+        "source": "73868c3fa9a7072288d1767866615c713433c948",
+        "conclusion": "failure",
+        "reason": "JavaScript restored the ordinary selector, but the existing CSS still forced nonduplicate rows to display:none. The CSS now follows the owner\u2019s explicit hidden attribute. The real UI interaction and all assertions/timeouts remain unchanged."
       }
     ]
   },

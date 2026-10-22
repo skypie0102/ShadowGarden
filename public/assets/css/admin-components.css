@@ -17,7 +17,7 @@
 .batch-remove:hover,.batch-remove:focus-visible{background:rgba(142,44,70,.14)!important;border-color:rgba(215,116,142,.4)!important}
 .batch-remove:disabled{opacity:.38;cursor:not-allowed}
 .batch-remove svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.batch-item:not(.has-duplicate) .batch-duplicate{display:none!important}
+.batch-duplicate[hidden]{display:none!important}
 
 .preflight-card{position:relative}
 .preflight-collapse-toggle{

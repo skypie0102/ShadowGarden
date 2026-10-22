@@ -152,6 +152,10 @@
     {
       "path": "public/assets/js/admin-upload-workflow.js",
       "finalSha256": "24b3357e9c45d5695d80ec1dc1427e70a63f2c09920f54c2384109e8203b0b48"
+    },
+    {
+      "path": "public/assets/css/admin-components.css",
+      "finalSha256": "e270c928581e12d761b104762268257528af13458907e4ef7a487d194c5f90b6"
     }
   ]
 }

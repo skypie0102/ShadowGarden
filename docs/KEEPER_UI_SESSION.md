@@ -50,7 +50,8 @@ writes keep their existing serial order and immutable-key rules.
 A retained Skip previously had no visible action control after its duplicate
 partner was removed: the presentation workflow hid the entire selector when
 there was no duplicate. Ordinary prepared entries now keep their Queue action
-selector, allowing a later user choice of Upload or Skip. Unprepared/completed
+selector, allowing a later user choice of Upload or Skip. Its stylesheet follows
+the owner’s explicit hidden attribute instead of hiding all nonduplicate rows. Unprepared/completed
 entries keep their existing hidden presentation, and active uploads disable
 these controls.
 
