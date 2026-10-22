@@ -81,6 +81,11 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Keep the image version/digest aligned with the pinned @playwright/test.
+    # Browsers and OS dependencies are preinstalled; no per-job apt downloads.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+      options: --user 1001 --init --ipc=host
     strategy:
       fail-fast: false
       matrix:
@@ -104,12 +109,25 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Verify pinned browser runtime
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, accessSync, constants } from 'node:fs';
+          import { chromium, firefox, webkit } from '@playwright/test';
+          const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+          if (lock.packages['node_modules/@playwright/test'].version !== '1.63.0') {
+            throw new Error('Update the pinned Playwright CI image with the package version.');
+          }
+          for (const [name, browser] of Object.entries({ chromium, firefox, webkit })) {
+            accessSync(browser.executablePath(), constants.X_OK);
+            console.log(`${name}: preinstalled executable available`);
+          }
+          NODE
       # Optional public runtime export permits reproducing a CI failure when the
       # local network cannot reach Playwright's CDN. No app data is included.
       - name: Archive browser runtime for reproduction
         if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
-        run: tar -czf "$RUNNER_TEMP/browser-runtime.tar.gz" -C "$HOME/.cache" ms-playwright
+        run: tar -czf "$RUNNER_TEMP/browser-runtime.tar.gz" -C / ms-playwright
       - uses: actions/upload-artifact@v4
         if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
         with:

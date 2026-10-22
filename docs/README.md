@@ -1,5 +1,8 @@
 # ShadowGarden documentation
 
+[Browser CI runtime](CI_BROWSER_RUNTIME.md) documents the pinned dependency image
+and its validation.
+
 [Keeper core and Upload](KEEPER_CORE_UPLOAD.md) prepares **v2.18.3** with eight
 expanded modules, [formatting equivalence](keeper-core-upload-equivalence.json)
 and an explicit-Skip queue fix. All 332 Node tests pass locally; browser and
