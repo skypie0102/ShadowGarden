@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "version": "2.18.3",
+  "baseline": "78456d84bdfabf4a135066cc4c92ee8dd4664428",
+  "baselineControls": {
+    "tests": 7,
+    "passed": 4,
+    "failed": 3
+  },
+  "correctedControls": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "local": {
+    "nodePassed": 332,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingCompatibilityBuild": "passed",
+    "browser": "not run; local browser runtime unavailable"
+  },
+  "ci": {
+    "status": "pending",
+    "newBrowserCases": 1,
+    "requiredProfiles": 5
+  },
+  "production": {
+    "status": "pending",
+    "knownVersion": "2.18.2",
+    "publicationAttempted": false
+  },
+  "equivalence": "keeper-core-upload-equivalence.json",
+  "limitations": [
+    "No new physical Android/Soul or live credential acceptance.",
+    "Mechanical formatting equivalence excludes the explicit-Skip correction in the final Upload workflow.",
+    "Further Keeper UI/session readability, broader asynchronous queue/session fixtures and unknown-length/concurrent upload budgeting remain open."
+  ],
+  "recordedAt": "2026-10-22T12:42:56.265549+00:00"
+}

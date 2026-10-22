@@ -1,5 +1,22 @@
 # ShadowGarden project audit
 
+## Keeper core/Upload candidate — 2026-10-22
+
+Eight shared core/Upload modules have expanded statements. All eight mechanical
+formatting stages preserve Babel ASTs and ordered normalized comments; seven
+final files remain formatting-only. Lines over 180 columns decrease from 71 to 19.
+The final Upload workflow separately preserves explicit `userChoseSkip` decisions
+when removing another queued EPUB clears a duplicate. Automatic duplicate
+Skip defaults still clear when appropriate.
+
+Three controls fail against baseline; all seven focused controls and all 332
+Node tests pass after correction. Asset/provenance, static build and binding/
+compatibility packaging pass. One disposable real-Keeper browser regression
+awaits the full matrix. v2.18.3 is prepared; live production remains v2.18.2.
+See [scope and contracts](KEEPER_CORE_UPLOAD.md),
+[source equivalence](keeper-core-upload-equivalence.json) and
+[verification](keeper-core-upload-verification.json).
+
 ## Keeper workflows released — 2026-10-22
 
 [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41) merges as `c4f697b`

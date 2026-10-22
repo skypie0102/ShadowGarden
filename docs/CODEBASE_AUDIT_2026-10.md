@@ -136,6 +136,13 @@ core/upload readability review, unknown-length/concurrent upload budget and
 broader Keeper fixture variants remain follow-ups; provider/physical-device
 acceptance retains its recorded scope.
 
+The next [Keeper core/Upload batch](KEEPER_CORE_UPLOAD.md) prepares v2.18.3:
+eight expanded modules, equivalent mechanical formatting stages and a reproduced
+explicit-Skip queue correction. Three baseline controls fail; all seven focused
+controls and 332 Node tests pass locally. Full browser/release validation remains
+pending. The separate memory design and broader asynchronous queue/session
+fixtures remain follow-ups.
+
 The latest release is **v2.18.2**, source `c4f697b`, deployed on 2026-10-22 by
 the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346). Automatic checked-main publication
 to the existing live Pages project is active. Both catalogs, all seven changed

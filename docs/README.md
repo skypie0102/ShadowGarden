@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Keeper core and Upload](KEEPER_CORE_UPLOAD.md) prepares **v2.18.3** with eight
+expanded modules, [formatting equivalence](keeper-core-upload-equivalence.json)
+and an explicit-Skip queue fix. All 332 Node tests pass locally; browser and
+release verification remain pending.
+
 [Keeper workflow cleanup](KEEPER_WORKFLOWS.md) is deployed in **v2.18.2**
 through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41), source
 `c4f697b`. Seven expanded controllers retain

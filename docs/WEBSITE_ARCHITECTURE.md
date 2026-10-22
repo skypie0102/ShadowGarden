@@ -27,6 +27,13 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.3 core/Upload batch](KEEPER_CORE_UPLOAD.md) expands shared runtime,
+queue and presentation modules. The shared client remains the only API transport;
+the engine retains serial EPUB, cover and catalog writes. Queue reconciliation
+preserves the engine's `userChoseSkip` distinction: explicit Skip survives removal
+of another entry, while an automatic duplicate default can clear when its match
+is removed. Formatting proof and the functional correction are recorded separately.
+
 ## Catalog and session contracts
 
 `data-source.js` loads the configured live catalogs. A failed/invalid source
