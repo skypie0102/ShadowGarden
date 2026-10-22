@@ -126,11 +126,13 @@ These are scoped engineering follow-ups, not demonstrated current production
 outages. Avoid broad rewrites, arbitrary sleeps and replacing accepted EPUB.js
 compatibility behavior without a failing reproduction.
 
-The next scoped readability work after this public-controller batch is Keeper's
-dense data/maintenance workflows. The
-unknown-length/concurrent upload budget and broader Keeper fixture variants remain
-deferred as described above; provider/physical-device acceptance retains its
-recorded scope.
+The [Keeper data/maintenance readability batch](KEEPER_WORKFLOWS.md) prepares
+v2.18.2: seven expanded controllers and a reproduced banner-editor race corrected
+with per-opening ownership. Six baseline controls fail; all seven focused cases
+and 325 Node tests pass locally. Full browser and release validation remain pending.
+Keeper's shared core/upload readability review, unknown-length/concurrent upload
+budget and broader Keeper fixture variants remain follow-ups; provider/physical-
+device acceptance retains its recorded scope.
 
 The latest release is **v2.18.1**, source `a3f1b95`, deployed on 2026-10-22 by
 the [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662). Its corrected-credential retry passes Pages/D1 access and

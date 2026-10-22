@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-22T10:31:54.005890+00:00",
+  "version": "2.18.2",
+  "baseline": "fc5dfca2e66f4686fbd0b2b048138d7b411d795a",
+  "baselineControls": {
+    "tests": 7,
+    "passed": 1,
+    "failed": 6
+  },
+  "correctedControls": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "local": {
+    "nodePassed": 325,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingCompatibilityBuild": "passed",
+    "browser": "not run; browser archive download unavailable"
+  },
+  "ci": {
+    "status": "pending",
+    "newBrowserCases": 2,
+    "requiredProfiles": 5,
+    "earlierInfrastructureCancellation": {
+      "runId": 39764137065,
+      "jobId": 119775420932,
+      "profile": "desktop-webkit",
+      "conclusion": "cancelled at overall job time limit",
+      "dependencyInstallSeconds": 583,
+      "completedCaseIndex": 101,
+      "totalCases": 112,
+      "newBannerCasesPassed": 2,
+      "assertionFailuresBeforeCancellation": 0,
+      "previousJobLimitMinutes": 20,
+      "jobLimitMinutes": 30,
+      "perTestTimeoutsUnchanged": true
+    }
+  },
+  "production": {
+    "status": "pending",
+    "knownVersion": "2.18.1",
+    "publicationAttempted": false
+  },
+  "equivalence": "keeper-readability-equivalence.json",
+  "limitations": [
+    "No new physical Android/Soul or live credential/CAPTCHA acceptance.",
+    "Mechanical formatting equivalence excludes the separately recorded Library banner correction.",
+    "Broader Keeper fixtures, core/upload readability and unknown-length/concurrent upload budgeting remain open."
+  ]
+}

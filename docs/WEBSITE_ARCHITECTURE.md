@@ -47,6 +47,13 @@ are errors. Every cover upload attempt gets a fresh immutable coordinate; logica
 cover/book mappings are committed only after upload success. Server reservations
 and snapshot/object immutability still enforce storage safety.
 
+The Library workflow owns one banner context per editor opening: target series,
+choices, preview and saved selection. Async read/write results and cleanup apply
+only to that current open context. Close/lock invalidates it, and reopening the
+same series creates a new context. This prevents a late result from changing
+another editor or redirecting its next banner write; revision conflicts remain
+the shared client/server contract. See [Keeper workflow validation](KEEPER_WORKFLOWS.md).
+
 Catalog History loads ten inspected summaries per request through the shared
 snapshot-history service. Its cursor/retained total are separate from the loaded
 rows; retry preserves them, while refresh/session lock cancels obsolete pages.
