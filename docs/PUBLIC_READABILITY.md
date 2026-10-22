@@ -55,27 +55,23 @@ passes on attempt 1 with no test retries:
 - A separate 24-sample startup profile: all baseline/current samples retain
   26 script requests and zero duplicate paths. No new timing improvement is claimed.
 
-[Sanitized verification](public-readability-verification.json) records per-profile
-counts, source identities, public checks and the deployment blocker.
+[Original review verification](public-readability-verification.json) preserves
+per-profile counts, source identities and the 2026-10-21 pre-deployment checkpoint.
+Cloudflare connector errors prevented that initial publication; the first Actions
+attempts later stopped at missing-secret and Pages-authorization guards. Those
+entries remain historical and no publication occurred during them.
 
-Production remains the separately verified v2.18.0 until an explicit guarded
-deployment is recorded here. On 2026-10-21 the connected Cloudflare search and
-execution APIs returned internal errors, including a runtime request with no
-Cloudflare API calls. No fresh production baseline or new deployment is claimed.
-Public HTTP checks at 04:10 UTC (12:10 Asia/Manila) confirm v2.18.0/`8e34ced`,
-both catalogs and all seven matching previous-release modules. No catalog,
-snapshot, book-object, migration or credential writes were performed.
+### Production release — 2026-10-22
 
-The next readability batch is Keeper's dense data/maintenance workflows. The
-unknown-length/concurrent upload-memory budget and broader Keeper fixture variants
-remain separate follow-ups in the [whole-codebase audit](CODEBASE_AUDIT_2026-10.md).
+This batch is live in **v2.18.1**, source `a3f1b95`, through the checked
+[automatic production workflow](AUTO_DEPLOYMENT.md). The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+retains 318 passing Node tests and all 541 browser cases, with nine documented
+skips and no test retries. After Pages authorization was corrected, its failed
+access check and dependent production job succeeded on workflow attempt 2.
 
-### Deployment follow-up — 2026-10-22
-
-Fresh main run 39755380834 passes 318 Node tests and all 541 browser cases, with
-nine documented skips and no retries. The Actions credential is now configured;
-the read-only resource check confirms D1 access but Pages project access returns
-HTTP 403 / Cloudflare error 10000. No publication occurred and production remains
-v2.18.0. [Automatic deployment status](AUTO_DEPLOYMENT.md) and
-[current evidence](automatic-deployment-verification.json) identify the remaining
-Pages authorization blocker separately from the historical connector failure.
+The verifier checks both catalogs, all seven changed modules and exact
+catalog/snapshot/settings preservation. Independent public HTTP requests confirm
+the release source/version and all seven reviewed Git blob identities. See
+[current release evidence](automatic-deployment-verification.json) for the
+canonical deployment, hashes, checks and retained v2.18.0 rollback. This adds no
+physical Android/Soul or real CAPTCHA/credentialed acceptance claim.

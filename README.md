@@ -24,33 +24,32 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-[Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is merged through
-[PR #40](https://github.com/skypie0102/ShadowGarden/pull/40), targeting the existing
-live project after the full check matrix. The Actions credential is now present:
-the 2026-10-22 read-only check passes D1 access but Cloudflare rejects the Pages
-project read with HTTP 403 / error 10000. Publication remains blocked by Pages
-authorization. Ensure the saved token has both **Cloudflare Pages Edit** and
-**D1 Read** on the existing account. The early access-check job reports these
-resources separately; see [sanitized evidence](docs/automatic-deployment-verification.json).
+The latest production release is **v2.18.1**, deployed on 2026-10-22 from
+`a3f1b95`. [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is **active**:
+checked pushes to `main` publish to the existing `shadowgarden` project at
+`shadowgarden-bon.pages.dev` after access, verification and all five browser
+profiles pass. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+retains 318 passing Node tests and 541 passing browser cases, with nine documented
+platform skips and no test retries. Its corrected-credential retry passes both
+Pages/D1 access checks and the guarded production job.
 
-[Public controller readability](docs/PUBLIC_READABILITY.md) for v2.18.1 is merged
-through [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39): seven modules
-have expanded statements and matching executable syntax trees. The fresh main
-activation run passes all 318 Node tests and 541 browser cases, with nine
-documented skips and no retries, before Pages authorization blocks the guarded
-production read. No publication or production data write occurred.
+The release verifies both catalogs, all seven changed JavaScript assets and
+exact catalog/snapshot/settings preservation. Revision 9 and all nine snapshots
+remain unchanged. See [sanitized evidence](docs/automatic-deployment-verification.json).
+The retained rollback is the previous v2.18.0 production deployment.
 
-The latest production release is **v2.18.0**, merged through
-[PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) and deployed on 2026-10-20.
-Garden Pass uses a native modal dialog with focus restoration. Public startup
-loads independent modules together and eliminates three duplicate module requests
-(29 → 26 scripts in the controlled Library profile). CI passes 305 Node tests
-and 541 browser cases, with nine documented skips. The release checks preserved
-revision 9, nine snapshots and production settings. Fresh public checks on
-2026-10-21 confirm the version and exact changed assets; Cloudflare metadata
-refresh was blocked by connector internal errors. See [public boundaries](docs/PUBLIC_BOUNDARIES.md)
-and [release evidence](docs/public-boundaries-verification-2.18.0.json) for scope
-and the controlled Firefox frame-traversal limitation.
+[Public controller readability](docs/PUBLIC_READABILITY.md), merged through
+[PR #39](https://github.com/skypie0102/ShadowGarden/pull/39), is included in live
+v2.18.1: seven modules have expanded statements and matching executable syntax
+trees. The earlier missing-secret and Pages-authorization blockers are resolved.
+
+The preceding **v2.18.0** release, merged through
+[PR #38](https://github.com/skypie0102/ShadowGarden/pull/38), added native Garden Pass
+modality/focus restoration and parallel, canonical public imports. The controlled
+Library profile recorded 29 → 26 script requests and no duplicate module paths.
+See [public boundaries](docs/PUBLIC_BOUNDARIES.md) and
+[its dated release evidence](docs/public-boundaries-verification-2.18.0.json) for
+the measurements and controlled Firefox frame-traversal limitation.
 
 The preceding protected-source release is **v2.17.1**, merged through
 [PR #36](https://github.com/skypie0102/ShadowGarden/pull/36) and deployed on 2026-10-20.

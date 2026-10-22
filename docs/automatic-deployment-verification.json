@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-10-22T09:51:21.283Z",
+  "recordedAt": "2026-10-22T10:06:20.963Z",
   "pullRequest": 40,
   "mergedSource": "aed4f065e9c901a759350d908d5f3b0a66ac982f",
   "target": {
@@ -8,10 +8,12 @@
     "branch": "main",
     "origin": "https://shadowgarden-bon.pages.dev"
   },
+  "activation": "verified; checked main pushes automatically publish to existing live Pages project",
   "checks": {
-    "mainRunId": 39755380834,
-    "mainSource": "d8776e1af4d82442f93d8d16e3a55072412b936a",
-    "tree": "bd4291fbd7ba13d0b540eefe2e7398459aa6f9ec",
+    "mainRunId": 39758249662,
+    "workflowAttempt": 2,
+    "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+    "tree": "3edab343e38da3db2131dee7caa3ec4ef1020e5e",
     "nodePassed": 318,
     "browserPassed": 541,
     "browserSkipped": 9,
@@ -19,73 +21,181 @@
     "profiles": [
       {
         "name": "browser (mobile-chromium, chromium)",
-        "jobId": 119746084771,
+        "jobId": 119761175982,
         "passed": 110,
         "skipped": 0,
         "retries": 0
       },
       {
-        "name": "browser (mobile-webkit, webkit)",
-        "jobId": 119746084817,
-        "passed": 106,
-        "skipped": 4,
-        "retries": 0
-      },
-      {
-        "name": "browser (desktop-webkit, webkit)",
-        "jobId": 119746084829,
-        "passed": 108,
-        "skipped": 2,
+        "name": "browser (desktop-chromium, chromium)",
+        "jobId": 119761176660,
+        "passed": 110,
+        "skipped": 0,
         "retries": 0
       },
       {
         "name": "browser (desktop-firefox, firefox)",
-        "jobId": 119746084839,
+        "jobId": 119761215558,
         "passed": 107,
         "skipped": 3,
         "retries": 0
       },
       {
-        "name": "browser (desktop-chromium, chromium)",
-        "jobId": 119746085011,
-        "passed": 110,
-        "skipped": 0,
+        "name": "browser (desktop-webkit, webkit)",
+        "jobId": 119761221398,
+        "passed": 108,
+        "skipped": 2,
+        "retries": 0
+      },
+      {
+        "name": "browser (mobile-webkit, webkit)",
+        "jobId": 119761228771,
+        "passed": 106,
+        "skipped": 4,
         "retries": 0
       }
-    ]
-  },
-  "productionJob": {
-    "id": 119753596353,
-    "conclusion": "failure",
-    "phase": "read-only Cloudflare baseline",
-    "error": "Cloudflare baseline read returned HTTP 403.",
-    "secretAvailableToJob": true,
-    "publicationAttempted": false,
-    "productionDataWrites": 0
+    ],
+    "retainedSuccessfulChecksOnCredentialRetry": true
   },
   "credentialCheck": {
     "runId": 39758249662,
-    "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
-    "jobId": 119755639452,
-    "conclusion": "failure",
-    "pages": {
-      "method": "GET",
-      "project": "shadowgarden",
-      "status": 403,
-      "code": 10000,
-      "message": "Authentication error"
-    },
-    "d1": {
-      "method": "POST",
-      "sql": "SELECT revision FROM library_state WHERE id=1;",
-      "status": 200,
-      "success": true,
-      "rowsWritten": 0
-    },
-    "verificationJob": "318 Node tests and build checks passed",
-    "browserMatrix": "in progress at this checkpoint"
+    "jobId": 119761173038,
+    "conclusion": "success",
+    "pagesProjectRead": "OK",
+    "d1CatalogSelect": "OK",
+    "rowsWritten": 0
   },
-  "activation": "workflow installed; configured token passes D1 but Pages authorization is rejected",
+  "productionJob": {
+    "id": 119761235484,
+    "conclusion": "success",
+    "publicationAttempted": true,
+    "productionDataWrites": 0
+  },
+  "productionVerification": {
+    "checkedAt": "2026-10-22T10:01:48.905Z",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "deploymentId": "2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d",
+    "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+    "version": "2.18.1",
+    "baselineCheckedAt": "2026-10-22T10:01:48.904Z",
+    "revision": 9,
+    "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+    "snapshots": 9,
+    "preservationChecked": true,
+    "databaseWrites": 0,
+    "checks": [
+      {
+        "path": "/data/version.json",
+        "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+        "version": "2.18.1"
+      },
+      {
+        "path": "/media/shadow-garden/data/catalog.json",
+        "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/media/shadow-garden/data/adult-catalog.json",
+        "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/assets/js/data-source.js",
+        "sha256": "6faf962014ef8025af3ed7b820848ec7871d2eeebaea714465bbe13853c34493",
+        "bytes": 3378
+      },
+      {
+        "path": "/assets/js/library-mobile-filter.js",
+        "sha256": "d4a86796d0d308e26bfb1c051d7a4fd0365cf84cbe2b3cafb1e6f4b79e13b2d4",
+        "bytes": 3948
+      },
+      {
+        "path": "/assets/js/library.js",
+        "sha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+        "bytes": 22002
+      },
+      {
+        "path": "/assets/js/nav-pinned.js",
+        "sha256": "df19abe05861ac6d1888c5e44ebc39e3927b94f45d6239fe4630f824828ef02e",
+        "bytes": 4339
+      },
+      {
+        "path": "/assets/js/public/garden-pass.js",
+        "sha256": "ea80b4def5bd94d4af318aafc5a2f5c541abc72ed1f4f3391c2ffdaaad49a41d",
+        "bytes": 4838
+      },
+      {
+        "path": "/assets/js/public/turnstile.js",
+        "sha256": "9166d184865e14902570bba264739110c14dfd7f51a8a07e9156b6faea5143df",
+        "bytes": 1432
+      },
+      {
+        "path": "/assets/js/series.js",
+        "sha256": "4bdcb218995142e7bbc40e738b5d87c3bee319bd5321c6d6bf9d8b329a9c8663",
+        "bytes": 5089
+      }
+    ],
+    "rollbackDeploymentId": "8c87a0ed-acf5-4083-a305-c9f5988f8da1"
+  },
+  "independentPublicHttpCheck": {
+    "checkedAt": "2026-10-22T10:03:48.307271+00:00",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.1",
+      "releaseVersion": "2.18.1",
+      "commit": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+      "shortCommit": "a3f1b95",
+      "branch": "main",
+      "builtAt": "2026-10-22T10:01:37.020Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "assets/js/data-source.js",
+        "bytes": 3378,
+        "gitBlobSha1": "d35dfadddb6069382a35fc49877896ef7b6e4f9a",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/library-mobile-filter.js",
+        "bytes": 3948,
+        "gitBlobSha1": "5d31102d15cf0cc42544fbe8c3a0010c1dc471f2",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/library.js",
+        "bytes": 22002,
+        "gitBlobSha1": "61a7acf8e96b0b2d0a6079879b3858056a1d855e",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/nav-pinned.js",
+        "bytes": 4339,
+        "gitBlobSha1": "81991424d4b42e00430119d2c1d8ceb9163a33f7",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/public/garden-pass.js",
+        "bytes": 4838,
+        "gitBlobSha1": "2a7b8006dca61a1cf086427601b9cfe706b1ba44",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/public/turnstile.js",
+        "bytes": 1432,
+        "gitBlobSha1": "be50491d3c79a23c17e4c3df8635771c3ab87412",
+        "matchesSource": true
+      },
+      {
+        "path": "assets/js/series.js",
+        "bytes": 5089,
+        "gitBlobSha1": "577d26f5b7265a902a1588adbbfb4269de936dd1",
+        "matchesSource": true
+      }
+    ]
+  },
   "requiredCredential": {
     "name": "CLOUDFLARE_API_TOKEN",
     "destination": "skypie0102/ShadowGarden repository Actions secrets",
@@ -95,28 +205,59 @@
       "D1 Read"
     ]
   },
-  "knownProduction": {
-    "version": "2.18.0",
-    "source": "8e34cedee712385103ee0116ca21f365b1c7e72d",
-    "deploymentId": "8c87a0ed-acf5-4083-a305-c9f5988f8da1",
-    "revision": 9,
-    "snapshots": 9,
-    "pluginProjectReadConfirmed": true
+  "artifact": {
+    "id": 12417841251,
+    "name": "production-verification",
+    "expiresAt": "2026-11-21T10:01:50Z",
+    "digest": "sha256:96ff5f74232dbd446221b0897b72b8ecece3f2587153cd9b45766467510dc7c1"
   },
-  "initialCredentialPreflight": {
-    "runId": 39593282242,
-    "id": 119204235900,
-    "conclusion": "failure",
-    "phase": "credential preflight",
-    "error": "Set the production CLOUDFLARE_API_TOKEN Actions secret before deployment.",
-    "secretAvailableToJob": false,
-    "cloudflareApiRequests": 0,
-    "publicationAttempted": false,
-    "productionWrites": 0
-  },
-  "oldRunRetry": {
-    "runId": 39593282242,
-    "jobId": 119745571054,
-    "outcome": "skipped superseded workflow source"
+  "resolvedAttempts": {
+    "initialCredentialPreflight": {
+      "runId": 39593282242,
+      "id": 119204235900,
+      "conclusion": "failure",
+      "phase": "credential preflight",
+      "error": "Set the production CLOUDFLARE_API_TOKEN Actions secret before deployment.",
+      "secretAvailableToJob": false,
+      "cloudflareApiRequests": 0,
+      "publicationAttempted": false,
+      "productionWrites": 0
+    },
+    "oldRunRetry": {
+      "runId": 39593282242,
+      "jobId": 119745571054,
+      "outcome": "skipped superseded workflow source"
+    },
+    "baselineDenied": {
+      "id": 119753596353,
+      "conclusion": "failure",
+      "phase": "read-only Cloudflare baseline",
+      "error": "Cloudflare baseline read returned HTTP 403.",
+      "secretAvailableToJob": true,
+      "publicationAttempted": false,
+      "productionDataWrites": 0
+    },
+    "pagesDeniedD1Allowed": {
+      "runId": 39758249662,
+      "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+      "jobId": 119755639452,
+      "conclusion": "failure",
+      "pages": {
+        "method": "GET",
+        "project": "shadowgarden",
+        "status": 403,
+        "code": 10000,
+        "message": "Authentication error"
+      },
+      "d1": {
+        "method": "POST",
+        "sql": "SELECT revision FROM library_state WHERE id=1;",
+        "status": 200,
+        "success": true,
+        "rowsWritten": 0
+      },
+      "verificationJob": "318 Node tests and build checks passed",
+      "browserMatrix": "in progress at this checkpoint"
+    }
   }
 }

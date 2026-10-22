@@ -1,25 +1,32 @@
 # ShadowGarden production operations
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is installed but publication is
-blocked by the configured Actions token's Pages authorization. The 2026-10-22
-read-only access job passes D1 SELECT; the existing Pages project GET returns
-HTTP 403, error 10000. The earlier missing-secret blocker is resolved.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is **active** as of 2026-10-22.
+Checked pushes to current `main` publish to the existing `shadowgarden` project
+at `shadowgarden-bon.pages.dev` after access, verification and all five browser
+profiles pass. The separate test-project preview remains independent.
 
-**Source update awaiting deployment — 2026-10-22:** v2.18.1 includes PR #39's
-seven public-module readability changes and PR #40's automatic release workflow.
-Fresh main run [39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)
-passes 318 Node tests and 541 browser cases, with nine documented skips and no
-retries, then stops during the read-only baseline. No Wrangler publication runs.
-The subsequent main-only access job identifies Pages as the rejected resource;
-its workflow-only browser matrix was still running at this checkpoint.
+**Current production release — 2026-10-22:** v2.18.1, deployment
+`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`, source `a3f1b95` from the
+[successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662). The corrected-credential retry passes both Pages/D1
+reads and the guarded production job, retaining 318 passing Node tests and 541
+passing browser cases, nine documented skips and no test retries.
 
-The connected Cloudflare plugin's reads recovered and confirm canonical
-v2.18.0 / `8e34ced` at deployment `8c87a0ed`. Read-only D1 checks still show
-revision 9 and nine snapshots. The token needs Cloudflare Pages Edit plus its
-working D1 Read scope on the existing account. See [activation steps](AUTO_DEPLOYMENT.md)
-and [sanitized evidence](automatic-deployment-verification.json).
+The live verifier checks canonical source/version, both D1-derived catalogs and
+exact bytes of all seven changed JavaScript assets. The revision-9 document,
+all nine snapshot documents/checksums and saved/runtime production settings are
+unchanged. Independent public HTTP checks confirm the same source and reviewed
+asset identities. No migration, catalog/book-object mutation or runtime-secret
+change ran. The retained rollback is v2.18.0,
+`8c87a0ed-acf5-4083-a305-c9f5988f8da1`.
+See [sanitized verification](automatic-deployment-verification.json).
 
-**Last verified production release — 2026-10-20:** v2.18.0, deployment
+PR #39's public readability batch is included. The missing-secret and Pages
+403 failures are resolved historical attempts. The production project's old
+native Git integration remains disabled; the trusted-main Actions job owns live
+publication. Keep the existing scoped Actions token configured as described in
+the activation guide; no B2 or runtime secret is copied into GitHub.
+
+**Previous production release — 2026-10-20:** v2.18.0, deployment
 `8c87a0ed-acf5-4083-a305-c9f5988f8da1`, source `8e34ced` from PR #38.
 Native Garden Pass modality/focus restoration and parallel/canonical public
 imports pass 305 Node tests and 541 browser cases with nine documented skips.

@@ -1,6 +1,27 @@
 # ShadowGarden project audit
 
-## Live-deployment credential diagnosis — 2026-10-22
+## Automatic live deployment activated — 2026-10-22
+
+The saved token's Pages authorization is corrected. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+(attempt 2) passes both resource-access checks and the guarded production job,
+retaining successful 318-Node and 541-browser results with nine documented
+platform skips and no test retries. Live production is **v2.18.1**, source
+`a3f1b95`, deployment `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
+
+The verifier confirms both D1-derived catalogs, all seven changed JavaScript
+assets and exact catalog/snapshot/settings preservation. Revision 9 and all nine
+snapshots are unchanged, with zero database writes. Independent public HTTP
+checks confirm the release version/source and all seven reviewed Git blob
+identities. The retained rollback is v2.18.0, `8c87a0ed`.
+
+Checked main pushes now publish automatically to the existing live Pages project.
+No migration, catalog/book-object mutation or runtime-secret change was needed.
+[The activation guide](AUTO_DEPLOYMENT.md) and
+[sanitized evidence](automatic-deployment-verification.json) preserve the exact
+run, profile counts, deployment, rollback and earlier resolved authorization
+failures. The older entries below retain their dated checkpoints.
+
+## Earlier live-deployment credential diagnosis — 2026-10-22
 
 The repository Actions token is now configured. Fresh main activation run
 [39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)

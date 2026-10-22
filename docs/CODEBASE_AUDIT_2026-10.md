@@ -110,9 +110,8 @@ live database/size errors is also removed without changing error codes or contra
    modules in small, reviewable batches. The [public-controller batch](PUBLIC_READABILITY.md)
    is merged for v2.18.1 through PR #39 with seven formatted modules, equivalent
    executable syntax trees, 305 Node tests and 541 browser passes (nine existing
-   documented skips). Deployment now awaits the configured Actions token's
-   Pages authorization: D1 SELECT passes, but the Pages project GET returns 403.
-   Production remains v2.18.0; see [activation status](AUTO_DEPLOYMENT.md). See [public boundaries](PUBLIC_BOUNDARIES.md) for the
+   documented skips). The batch is deployed in v2.18.1 through the checked
+   [automatic production workflow](AUTO_DEPLOYMENT.md), activated on 2026-10-22. See [public boundaries](PUBLIC_BOUNDARIES.md) for the
    accessibility release.
 8. **Website module startup — completed in v2.18.0:** five independent Library
    imports start together, with controller initialization order retained and
@@ -133,12 +132,14 @@ unknown-length/concurrent upload budget and broader Keeper fixture variants rema
 deferred as described above; provider/physical-device acceptance retains its
 recorded scope.
 
-The latest release is v2.18.0 through [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38),
-merged as `8e34ced`, with 305 Node tests, 541 browser passes and nine skips.
-The [release record](PUBLIC_BOUNDARIES.md#validation-and-production) identifies the
-tested tree, deployment, rollback and dated data/configuration preservation result.
-Public version/assets were rechecked on 2026-10-21; Cloudflare connector internal
-errors blocked a new D1/configuration comparison that day.
+The latest release is **v2.18.1**, source `a3f1b95`, deployed on 2026-10-22 by
+the [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662). Its corrected-credential retry passes Pages/D1 access and
+publication, retaining 318 passing Node tests and 541 browser cases, with nine
+documented skips and no test retries. Automatic checked-main publication to the
+existing live Pages project is active. Both catalogs, all seven changed assets
+and exact catalog/snapshot/settings preservation pass. The retained rollback is
+v2.18.0. See [activation procedure](AUTO_DEPLOYMENT.md) and
+[sanitized evidence](automatic-deployment-verification.json).
 
 ## Validation and release
 

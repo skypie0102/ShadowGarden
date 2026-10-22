@@ -2,28 +2,22 @@
 
 ## Activation state
 
-Merged on 2026-10-21 through [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40)
-as `aed4f06`. The repository Actions credential was configured on 2026-10-22.
-Its D1 access works, but the live Pages project read returns **HTTP 403, error
-10000: Authentication error**. Publication remains blocked by Pages authorization;
-production remains **v2.18.0**, source `8e34ced`.
+Automatic live deployment was activated on 2026-10-22. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+(attempt 2) passes both Pages/D1 credential checks and the guarded production job,
+retaining successful verification and all five browser profiles. Production is
+**v2.18.1**, source `a3f1b958ba4249f4766446b2206ec1cf048ebbf4`, deployment
+`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
 
-[Activation run 39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)
-on clean source `d8776e1` passes 318 Node tests and 541 browser cases, with nine
-documented skips and no retries. Its production job sees the saved token but
-stops during the read-only baseline, before Wrangler publication.
+The workflow was introduced through [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40).
+Its first empty-secret attempt and the subsequent Pages HTTP 403 are historical.
+The configured token's Pages authorization was corrected; the same run's failed
+access check and dependent production job were retried. Successful 318-Node and
+541-browser results were retained, with nine documented platform skips and no
+test retries. The credential value was not printed or copied into the repository.
 
-The [early credential-check run](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662) then tests each resource separately:
-
-| Resource | Result |
-|---|---|
-| Existing Pages project GET | HTTP 403, Cloudflare error 10000 |
-| D1 catalog revision SELECT | Success; no rows written |
-
-The first main run's empty-secret failure is historical and resolved. Retrying
-that older workflow correctly skipped its superseded source; the fresh main run
-above exercised the configured credential. [Sanitized evidence](automatic-deployment-verification.json)
-records the exact checked source, profile counts and current authorization blocker.
+[Sanitized verification evidence](automatic-deployment-verification.json) records
+the successful run, exact release source, served-file comparisons, preserved
+production state and the retained v2.18.0 rollback.
 
 The existing production Pages project is **`shadowgarden`**, in account
 `fa95f62f96a0ff3b92a45175d94a48b6`. Its original Git integration retained the
@@ -92,7 +86,7 @@ and [D1 query permissions](https://developers.cloudflare.com/api/resources/d1/su
 The D1 query API accepts D1 Read; the collector still validates zero rows written
 and exact expected results.
 
-## Verification and remaining authorization
+## Activation verification and credential maintenance
 
 Thirteen operational regression cases cover trusted-main admission, token routing,
 read-only request confinement, malformed/failed API responses, live-project and
@@ -100,26 +94,31 @@ branch identity, changed-asset selection, canonical-deployment waits, failed upl
 preservation failures and wrong served bytes. They use disposable responses and
 do not access the live account or catalog.
 
-Fresh activation run 39755380834 passes the asset/build/binding checks, all 318
-Node tests and all 541 browser cases, with nine documented skips and no retries.
-The subsequent early-check workflow change has valid YAML and embedded JavaScript
-syntax; its verification job also passes 318 Node tests. Its read-only check
-identifies Pages access as denied while D1 SELECT succeeds. The five browser jobs
-for this workflow-only follow-up were still running at the evidence checkpoint;
-no success is claimed for that unfinished run.
+Run 39758249662 passes 318 Node tests and 541 browser cases across five profiles,
+with nine documented skips and no test retries. After the Pages permission was
+corrected, workflow attempt 2 retained those successful checks and reran the
+failed access check plus dependent production job. Both resource reads pass;
+the binding-aware package, pinned Wrangler upload, canonical-deployment wait
+and post-release verifier all complete successfully.
 
-The connected Cloudflare plugin's read requests recovered on 2026-10-22 and
-confirm the existing v2.18.0 deployment. The Actions job uses its own saved token;
-its Pages authorization failure is distinct from the earlier connector errors.
+The live verifier checks source/version, both D1-derived catalogs and exact
+bytes of all seven changed JavaScript assets. The exact catalog document,
+all nine snapshot documents/checksums and saved/runtime settings are unchanged.
+Revision 9 is retained, with zero database writes. Independent public HTTP checks
+also confirm v2.18.1/source `a3f1b95` and all seven reviewed Git blob identities.
+The sanitized `production-verification` artifact is retained by Actions for 30
+days; the repository evidence preserves its report beyond that artifact lifetime.
 
-To finish activation, edit the Cloudflare token used by repository Actions so it
-has two permission rows: **Account → Cloudflare Pages → Edit** and
-**Account → D1 → Read**, including account `fa95f62f96a0ff3b92a45175d94a48b6`.
-Editing permissions on the same token retains its value. If creating a replacement
-token, update the existing `CLOUDFLARE_API_TOKEN` repository Actions secret with
-that new value. Do not put token values in chat or Git.
+Future checked pushes to `main` publish automatically. To start a manual checked
+release, use **Actions → ShadowGarden checks → Run workflow**, selecting `main`.
+If replacing an expired/revoked token, update the existing repository Actions
+secret in **Settings → Secrets and variables → Actions**. Keep two permission
+rows on the existing account: **Cloudflare Pages Edit** and **D1 Read**. Editing
+permissions on the same token retains its value; a replacement token requires
+updating the GitHub secret. Keep token values out of chat and Git.
 
-Retry the failed access/production jobs after the current check run finishes, or
-use **Actions → ShadowGarden checks → Run workflow**, selecting `main`. Automatic
-publication is not considered activated until the production job passes its
-baseline, upload, canonical-source and preservation checks.
+The early access job identifies the rejected resource before publication.
+After correcting authorization, retry failed jobs once the current run finishes
+or start a fresh checked main run. Do not treat an access check alone as a live
+release: the production baseline, upload, canonical-source and preservation
+checks must also complete successfully.

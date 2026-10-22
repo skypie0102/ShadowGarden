@@ -1,26 +1,29 @@
 # ShadowGarden documentation
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is installed for the existing
-`shadowgarden` project. The repository Actions token is configured; the early
-read-only credential check passes D1 but Pages rejects the project GET with HTTP
-403 / Cloudflare error 10000. Pages authorization remains the activation blocker.
-[Sanitized evidence](automatic-deployment-verification.json) records the full
-318-Node/541-browser activation run and the separate resource-access diagnosis.
-Production remains v2.18.0; the test project's main preview is independent.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is active. Checked `main` pushes
+publish to the existing `shadowgarden` live project after access, verification
+and all five browser profiles pass. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+retains 318 passing Node tests and 541 passing browser cases, with nine documented
+skips; its corrected-credential retry publishes and verifies **v2.18.1**.
+The test project's automatic main preview is a separate deployment.
 
-[Public controller readability](PUBLIC_READABILITY.md) is merged for v2.18.1:
-seven formatted modules, matching executable syntax trees, preserved comment
-text and [source hashes](public-readability-equivalence.json). Its
-[original review checkpoint](public-readability-verification.json) remains dated;
-current deployment authorization is recorded in the activation guide above.
+[Sanitized activation evidence](automatic-deployment-verification.json) records
+the canonical source, both catalogs, all seven changed asset comparisons and
+exact catalog/snapshot/settings preservation. The earlier missing-secret and
+Pages-authorization blockers are resolved; v2.18.0 is the retained rollback.
 
-The latest deployed release is **v2.18.0**. [Public boundaries](PUBLIC_BOUNDARIES.md)
-records native Garden Pass modality/focus restoration and the measured Library
-startup change: 29 → 26 scripts and no duplicate module paths. CI passes 305 Node
-tests and 541 browser cases, with nine documented skips. [Release evidence](public-boundaries-verification-2.18.0.json)
-separates the 2026-10-20 data/configuration preservation checks from the fresh
-2026-10-21 public HTTP checks and blocked Cloudflare metadata refresh. The
-[raw profile](library-startup-profile-2.18.0.json) retains all 24 samples and hashes.
+[Public controller readability](PUBLIC_READABILITY.md) is included in live
+v2.18.1: seven formatted modules, matching executable syntax trees and preserved
+comment text. Its [source hashes](public-readability-equivalence.json) and
+[original pre-release checkpoint](public-readability-verification.json) retain
+review provenance separately from the successful live release.
+
+The preceding **v2.18.0** [public-boundary release](PUBLIC_BOUNDARIES.md) added
+native Garden Pass modality/focus restoration and measured Library startup
+changes: 29 → 26 scripts and no duplicate module paths. Its
+[dated release evidence](public-boundaries-verification-2.18.0.json) and
+[raw profile](library-startup-profile-2.18.0.json) preserve measurement scope,
+24 samples and the controlled Firefox frame-traversal limitation.
 
 The [read-only production verifier](PRODUCTION_VERIFIER.md) now checks fresh D1
 baselines, actual/saved settings, canonical catalogs/version and reviewed served
