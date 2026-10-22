@@ -23,7 +23,21 @@
   "ci": {
     "status": "pending",
     "newBrowserCases": 2,
-    "requiredProfiles": 5
+    "requiredProfiles": 5,
+    "earlierInfrastructureCancellation": {
+      "runId": 39764137065,
+      "jobId": 119775420932,
+      "profile": "desktop-webkit",
+      "conclusion": "cancelled at overall job time limit",
+      "dependencyInstallSeconds": 583,
+      "completedCaseIndex": 101,
+      "totalCases": 112,
+      "newBannerCasesPassed": 2,
+      "assertionFailuresBeforeCancellation": 0,
+      "previousJobLimitMinutes": 20,
+      "jobLimitMinutes": 30,
+      "perTestTimeoutsUnchanged": true
+    }
   },
   "production": {
     "status": "pending",

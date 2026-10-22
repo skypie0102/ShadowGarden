@@ -72,7 +72,12 @@ The existing browser matrix retains upload retries, locking, revision conflicts,
 history, recovery, purge and reader coverage.
 
 The local browser archive download is unavailable in this host, so browser
-validation is delegated to GitHub CI. v2.18.2 is prepared for that matrix; live
+validation is delegated to GitHub CI. The first desktop WebKit job spent 9m43s
+installing dependencies and hit its 20-minute overall limit after reaching case
+101 of 112. Both new banner cases passed and no assertion failed before the
+cancellation. The browser job now allows 30 minutes for installation plus the
+complete suite; individual test timeouts, cases and assertions are unchanged.
+v2.18.2 is prepared for the fresh matrix; live
 production remains v2.18.1 until the checked main workflow publishes and verifies
 the release. [Verification evidence](keeper-workflow-verification.json) records
 the final CI and deployment state as it becomes available.
