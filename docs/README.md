@@ -1,23 +1,28 @@
 # ShadowGarden documentation
 
-[Keeper workflow cleanup](KEEPER_WORKFLOWS.md) prepares v2.18.2: seven expanded
-controllers with [formatting-stage equivalence](keeper-readability-equivalence.json),
-a reproduced banner-editor ownership correction, seven focused regressions and
-325 passing local Node tests. Browser/release verification is pending.
+[Keeper workflow cleanup](KEEPER_WORKFLOWS.md) is deployed in **v2.18.2**
+through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41), source
+`c4f697b`. Seven expanded controllers retain
+[formatting-stage equivalence](keeper-readability-equivalence.json), with the
+reproduced banner-editor ownership correction recorded separately. Final PR and
+main CI pass 325 Node tests and 551 browser cases, with nine documented skips
+and zero test retries.
 
 [Automatic live deployment](AUTO_DEPLOYMENT.md) is active. Checked `main` pushes
 publish to the existing `shadowgarden` live project after access, verification
-and all five browser profiles pass. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
-retains 318 passing Node tests and 541 passing browser cases, with nine documented
-skips; its corrected-credential retry publishes and verifies **v2.18.1**.
+and all five browser profiles pass. The [current main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346)
+verifies both catalogs, all seven changed assets and exact catalog/snapshot/
+settings preservation. Revision 9 and all
+9 snapshots are unchanged. The retained rollback is v2.18.1.
+See [current sanitized verification](keeper-workflow-verification.json).
 The test project's automatic main preview is a separate deployment.
 
-[Sanitized activation evidence](automatic-deployment-verification.json) records
-the canonical source, both catalogs, all seven changed asset comparisons and
-exact catalog/snapshot/settings preservation. The earlier missing-secret and
-Pages-authorization blockers are resolved; v2.18.0 is the retained rollback.
+The [activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+published v2.18.1 after the missing-secret and Pages-authorization blockers were
+resolved. Its [dated activation evidence](automatic-deployment-verification.json)
+remains available separately from this release.
 
-[Public controller readability](PUBLIC_READABILITY.md) is included in live
+[Public controller readability](PUBLIC_READABILITY.md) shipped in
 v2.18.1: seven formatted modules, matching executable syntax trees and preserved
 comment text. Its [source hashes](public-readability-equivalence.json) and
 [original pre-release checkpoint](public-readability-verification.json) retain

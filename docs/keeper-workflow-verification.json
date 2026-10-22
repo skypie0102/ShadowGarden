@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-10-22T10:31:54.005890+00:00",
+  "recordedAt": "2026-10-22T11:52:22.097Z",
   "version": "2.18.2",
   "baseline": "fc5dfca2e66f4686fbd0b2b048138d7b411d795a",
   "baselineControls": {
@@ -21,7 +21,7 @@
     "browser": "not run; browser archive download unavailable"
   },
   "ci": {
-    "status": "pending",
+    "status": "success",
     "newBrowserCases": 2,
     "requiredProfiles": 5,
     "earlierInfrastructureCancellation": {
@@ -37,17 +37,346 @@
       "previousJobLimitMinutes": 20,
       "jobLimitMinutes": 30,
       "perTestTimeoutsUnchanged": true
+    },
+    "pullRequest": {
+      "runId": 39767009459,
+      "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39767009459",
+      "source": "4df6e36e801f732b31af7a383325c46599ead799",
+      "tree": "336f55fa5c5330c22e46f1bace69af781139fef8",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "nodePassed": 325,
+      "browserPassed": 551,
+      "browserSkipped": 9,
+      "testRetries": 0,
+      "profiles": [
+        {
+          "jobId": 119785000374,
+          "name": "browser (desktop-firefox, firefox)",
+          "conclusion": "success",
+          "passed": 109,
+          "skipped": 3,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "skippedCases": [
+            "-    7 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+            "-   52 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+            "-   53 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+          ]
+        },
+        {
+          "jobId": 119785000380,
+          "name": "browser (desktop-webkit, webkit)",
+          "conclusion": "success",
+          "passed": 110,
+          "skipped": 2,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "skippedCases": [
+            "-   52 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+            "-   53 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+          ]
+        },
+        {
+          "jobId": 119785000458,
+          "name": "browser (desktop-chromium, chromium)",
+          "conclusion": "success",
+          "passed": 112,
+          "skipped": 0,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "startupProfile": {
+            "conclusion": "passed",
+            "testPasses": 1
+          },
+          "skippedCases": []
+        },
+        {
+          "jobId": 119785000540,
+          "name": "browser (mobile-webkit, webkit)",
+          "conclusion": "success",
+          "passed": 108,
+          "skipped": 4,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "skippedCases": [
+            "-   52 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+            "-   53 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:265:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+            "-   73 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+            "-   79 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
+          ]
+        },
+        {
+          "jobId": 119785000591,
+          "name": "browser (mobile-chromium, chromium)",
+          "conclusion": "success",
+          "passed": 112,
+          "skipped": 0,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "skippedCases": []
+        }
+      ]
+    },
+    "main": {
+      "runId": 39768639346,
+      "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346",
+      "source": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+      "tree": "336f55fa5c5330c22e46f1bace69af781139fef8",
+      "conclusion": "success",
+      "runAttempt": 2,
+      "nodePassed": 325,
+      "nodeOriginalJobId": 119790303172,
+      "productionAccessOriginalJobId": 119790303316,
+      "successfulChecksRetainedFromAttempt": 1,
+      "browserPassed": 551,
+      "browserSkipped": 9,
+      "testRetries": 0,
+      "profiles": [
+        {
+          "jobId": 119803590026,
+          "name": "browser (desktop-webkit, webkit)",
+          "conclusion": "success",
+          "passed": 110,
+          "skipped": 2,
+          "retries": 0,
+          "bannerCasesPassed": 2
+        },
+        {
+          "jobId": 119790453696,
+          "name": "browser (desktop-chromium, chromium)",
+          "conclusion": "success",
+          "passed": 112,
+          "skipped": 0,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "retainedInAttempt2AsJobId": 119803591688,
+          "originalAttempt": 1
+        },
+        {
+          "jobId": 119790453661,
+          "name": "browser (mobile-webkit, webkit)",
+          "conclusion": "success",
+          "passed": 108,
+          "skipped": 4,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "retainedInAttempt2AsJobId": 119803591838,
+          "originalAttempt": 1
+        },
+        {
+          "jobId": 119790453818,
+          "name": "browser (desktop-firefox, firefox)",
+          "conclusion": "success",
+          "passed": 109,
+          "skipped": 3,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "retainedInAttempt2AsJobId": 119803591935,
+          "originalAttempt": 1
+        },
+        {
+          "jobId": 119790453945,
+          "name": "browser (mobile-chromium, chromium)",
+          "conclusion": "success",
+          "passed": 112,
+          "skipped": 0,
+          "retries": 0,
+          "bannerCasesPassed": 2,
+          "retainedInAttempt2AsJobId": 119803592185,
+          "originalAttempt": 1
+        }
+      ]
+    },
+    "mainInfrastructureRetry": {
+      "runId": 39768639346,
+      "jobId": 119790453746,
+      "profile": "desktop-webkit",
+      "conclusion": "cancelled at 30-minute overall job limit",
+      "dependencyInstallSeconds": 1305,
+      "completedCaseIndex": 96,
+      "totalCases": 112,
+      "newBannerCasesPassed": 2,
+      "assertionFailuresBeforeCancellation": 0,
+      "jobLimitMinutes": 30,
+      "perTestTimeoutsUnchanged": true,
+      "cause": "Slow Ubuntu archive dependency downloads; no assertion failed.",
+      "retryJobId": 119803590026,
+      "retryInstallationSeconds": 31,
+      "applicationSourceUnchanged": true,
+      "successfulChecksRetained": true,
+      "retryConclusion": "success"
     }
   },
   "production": {
-    "status": "pending",
-    "knownVersion": "2.18.1",
-    "publicationAttempted": false
+    "status": "verified",
+    "publicationAttempted": true,
+    "jobId": 119807210788,
+    "report": {
+      "checkedAt": "2026-10-22T11:51:23.990Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "85a31e3a-43d3-4044-b7cf-026452b00c1e",
+      "source": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+      "version": "2.18.2",
+      "baselineCheckedAt": "2026-10-22T11:51:23.989Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+          "version": "2.18.2"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/admin/abuse-workflow.js",
+          "sha256": "309f51bb6026fde889b7b27b7a7eada2c42456f36b58b82479de86fbe5eaf757",
+          "bytes": 7351
+        },
+        {
+          "path": "/assets/js/admin/history-workflow.js",
+          "sha256": "97d96a014e07c3132397a9e258b61f4f9dabc1cebbd741477ce3a7017865ae69",
+          "bytes": 9718
+        },
+        {
+          "path": "/assets/js/admin/library-workflow.js",
+          "sha256": "69700128c555dc69d5debee0471a802cffb32d608940388af612cd43a4d3c6b4",
+          "bytes": 23023
+        },
+        {
+          "path": "/assets/js/admin/maintenance-workflow.js",
+          "sha256": "fa8cbeb47501d334c11260c430b8f5d9b89e2108480d012b7140db240ec82630",
+          "bytes": 24542
+        },
+        {
+          "path": "/assets/js/admin/recovery-readiness-workflow.js",
+          "sha256": "1fe8b0e8303c00898374011cdb88b2388df2f033cc92f3ff287b274e44262d7f",
+          "bytes": 10559
+        },
+        {
+          "path": "/assets/js/admin/translation-workflow.js",
+          "sha256": "21e25fcf765a4710a49d81e4e8c4275e9dadd53bff2220df10d1d1af76a4e340",
+          "bytes": 7376
+        },
+        {
+          "path": "/assets/js/admin/trash-workflow.js",
+          "sha256": "f949196efa9cde937cc752426fc24982c4ef8c245041e503e9dacf79e7ba70c3",
+          "bytes": 7326
+        }
+      ],
+      "rollbackDeploymentId": "2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d"
+    },
+    "artifact": {
+      "id": 12423532619,
+      "name": "production-verification",
+      "size_in_bytes": 1072,
+      "url": "https://api.github.com/repos/skypie0102/ShadowGarden/actions/artifacts/12423532619",
+      "archive_download_url": "https://api.github.com/repos/skypie0102/ShadowGarden/actions/artifacts/12423532619/zip",
+      "expired": false,
+      "created_at": "2026-10-22T11:51:26Z",
+      "expires_at": "2026-11-21T11:51:25Z",
+      "updated_at": "2026-10-22T11:51:26Z",
+      "digest": "sha256:d46163e76560a255599fa60ca991e14bce2512714e08120acbdcaa97cf76862b",
+      "workflow_run": {
+        "id": 39768639346,
+        "repository_id": 1382831207,
+        "head_repository_id": 1382831207,
+        "head_branch": "main",
+        "head_sha": "c4f697bad405ca36c72160c4534ec66906aa2c72"
+      }
+    },
+    "project": {
+      "checkedAt": "2026-10-22T11:52:07.723Z",
+      "project": "shadowgarden",
+      "domain": "shadowgarden-bon.pages.dev",
+      "productionBranch": "main",
+      "nativeAutomaticDeployment": false,
+      "deployment": {
+        "id": "85a31e3a-43d3-4044-b7cf-026452b00c1e",
+        "source": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+        "status": "success"
+      }
+    },
+    "publicHttp": {
+      "checkedAt": "2026-10-22T11:52:14.734806+00:00",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "version": {
+        "name": "Shadow Garden",
+        "version": "2.18.2",
+        "releaseVersion": "2.18.2",
+        "commit": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+        "shortCommit": "c4f697b",
+        "branch": "main",
+        "builtAt": "2026-10-22T11:51:15.593Z",
+        "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+      },
+      "assets": [
+        {
+          "path": "/assets/js/admin/library-workflow.js",
+          "bytes": 23023,
+          "sha256": "69700128c555dc69d5debee0471a802cffb32d608940388af612cd43a4d3c6b4",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/maintenance-workflow.js",
+          "bytes": 24542,
+          "sha256": "fa8cbeb47501d334c11260c430b8f5d9b89e2108480d012b7140db240ec82630",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/history-workflow.js",
+          "bytes": 9718,
+          "sha256": "97d96a014e07c3132397a9e258b61f4f9dabc1cebbd741477ce3a7017865ae69",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/recovery-readiness-workflow.js",
+          "bytes": 10559,
+          "sha256": "1fe8b0e8303c00898374011cdb88b2388df2f033cc92f3ff287b274e44262d7f",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/trash-workflow.js",
+          "bytes": 7326,
+          "sha256": "f949196efa9cde937cc752426fc24982c4ef8c245041e503e9dacf79e7ba70c3",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/translation-workflow.js",
+          "bytes": 7376,
+          "sha256": "21e25fcf765a4710a49d81e4e8c4275e9dadd53bff2220df10d1d1af76a4e340",
+          "matchesReviewedSource": true
+        },
+        {
+          "path": "/assets/js/admin/abuse-workflow.js",
+          "bytes": 7351,
+          "sha256": "309f51bb6026fde889b7b27b7a7eada2c42456f36b58b82479de86fbe5eaf757",
+          "matchesReviewedSource": true
+        }
+      ]
+    }
   },
   "equivalence": "keeper-readability-equivalence.json",
   "limitations": [
     "No new physical Android/Soul or live credential/CAPTCHA acceptance.",
     "Mechanical formatting equivalence excludes the separately recorded Library banner correction.",
     "Broader Keeper fixtures, core/upload readability and unknown-length/concurrent upload budgeting remain open."
-  ]
+  ],
+  "releaseSource": "c4f697bad405ca36c72160c4534ec66906aa2c72",
+  "releaseTree": "336f55fa5c5330c22e46f1bace69af781139fef8",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/41"
 }

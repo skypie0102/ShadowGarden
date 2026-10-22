@@ -1,30 +1,51 @@
 # ShadowGarden project audit
 
-## Keeper workflow cleanup candidate — 2026-10-22
+## Keeper workflows released — 2026-10-22
+
+[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41) merges as `c4f697b`
+and the [automatic main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) publishes **v2.18.2**,
+deployment `85a31e3a-43d3-4044-b7cf-026452b00c1e`. The merged tree exactly matches the
+reviewed PR tree. Both final PR and main CI pass 325 Node tests and 551 browser
+cases, nine documented platform skips and zero test retries. Both new banner
+cases pass in every profile; the separate PR startup profile also passes.
 
 Seven data/maintenance controllers have expanded statements. All seven mechanical
 formatting steps retain their Babel ASTs and ordered normalized comments; six
-final modules remain formatting-only. Lines over 180 columns decrease from 114
-to 30. The final Library module additionally fixes a reproduced banner race.
+final files remain formatting-only. Library additionally fixes a reproduced
+banner-editor race: a late save from series A could reset shared identity and
+send series B's next banner write to A. Per-opening contexts guard reads, writes,
+failure restoration and cleanup across close/reopen and locking. Six baseline
+controls fail; all seven focused controls pass with the correction.
 
-An older banner save could overwrite another editor and retarget its next write
-to the previous series. Each opening now owns its banner identity and async
-results; close/lock invalidate that ownership. Six controls fail against baseline
-source; all seven focused controls and all 325 Node tests pass after correction.
-The asset audit, static build and binding/compatibility-aware package pass.
+The first desktop WebKit attempt hit the overall 20-minute job limit after a
+9m43s dependency installation, with both new cases passing and no assertion
+failure. The fresh 30-minute-budget matrix passes in full; per-test timeouts,
+cases and assertions are unchanged. Local browser download remains unavailable;
+browser results above are from CI.
 
-Two disposable browser cases await the full five-profile CI matrix. Local browser
-archive download failed; no local browser pass is claimed. v2.18.2 is prepared;
-production remains v2.18.1 until the guarded automatic release succeeds. See
-[scope and contracts](KEEPER_WORKFLOWS.md), [source equivalence](keeper-readability-equivalence.json)
-and [verification](keeper-workflow-verification.json).
+The first main WebKit job spent 21m45s downloading/installing dependencies,
+including slow Ubuntu archive responses. It hit the 30-minute job limit after
+case 96/112, with both banner regressions passing and
+no assertion failures. A retry of that job and its dependent deployment succeeds;
+the Node/access checks and four successful browser profiles are retained. The
+application source, job budget and per-test timeouts are unchanged by the retry.
+This infrastructure retry is separate from the zero test retries reported above.
+
+Source/version, both catalogs and all seven changed assets verify live. Exact
+catalog serialization, all 9 snapshots and saved/runtime
+settings are preserved at revision 9, with zero database
+writes. Independent HTTP checks confirm all seven reviewed assets. The retained
+rollback is v2.18.1, `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`. See
+[scope and contracts](KEEPER_WORKFLOWS.md),
+[source equivalence](keeper-readability-equivalence.json) and
+[sanitized verification](keeper-workflow-verification.json).
 
 ## Automatic live deployment activated — 2026-10-22
 
 The saved token's Pages authorization is corrected. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
 (attempt 2) passes both resource-access checks and the guarded production job,
 retaining successful 318-Node and 541-browser results with nine documented
-platform skips and no test retries. Live production is **v2.18.1**, source
+platform skips and no test retries. That activation published **v2.18.1**, source
 `a3f1b95`, deployment `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
 
 The verifier confirms both D1-derived catalogs, all seven changed JavaScript

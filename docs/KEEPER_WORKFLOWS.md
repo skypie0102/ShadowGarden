@@ -77,10 +77,35 @@ installing dependencies and hit its 20-minute overall limit after reaching case
 101 of 112. Both new banner cases passed and no assertion failed before the
 cancellation. The browser job now allows 30 minutes for installation plus the
 complete suite; individual test timeouts, cases and assertions are unchanged.
-v2.18.2 is prepared for the fresh matrix; live
-production remains v2.18.1 until the checked main workflow publishes and verifies
-the release. [Verification evidence](keeper-workflow-verification.json) records
-the final CI and deployment state as it becomes available.
+
+[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41) merged as
+`c4f697bad405ca36c72160c4534ec66906aa2c72`, with reviewed tree
+`336f55fa5c5330c22e46f1bace69af781139fef8`. The [final PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39767009459)
+and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) both pass **325 Node tests** and
+**551 browser cases** across all five profiles, with nine documented platform
+skips and zero test retries. Both new banner cases pass in every profile. The
+separate Chromium Library-startup profile passes on the PR; it is not counted
+among the 551 browser cases.
+
+The automatic workflow publishes **v2.18.2**, source `c4f697b`, deployment
+`85a31e3a-43d3-4044-b7cf-026452b00c1e`, to
+[live ShadowGarden](https://shadowgarden-bon.pages.dev). The release verifier
+checks source/version, both D1-derived catalogs, all seven changed JavaScript
+assets and exact catalog/snapshot/settings preservation. Revision
+9 and all 9 snapshots are unchanged; the
+release performs zero database writes. Independent public HTTP checks confirm
+the version/source and all seven reviewed asset identities. The retained rollback
+is v2.18.1, deployment `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
+[Sanitized verification](keeper-workflow-verification.json) records the CI jobs,
+production report, artifact identity and independent checks.
+
+The first main WebKit job spent 21m45s downloading/installing dependencies,
+including slow Ubuntu archive responses. It hit the 30-minute job limit after
+case 96/112, with both banner regressions passing and
+no assertion failures. A retry of that job and its dependent deployment succeeds;
+the Node/access checks and four successful browser profiles are retained. The
+application source, job budget and per-test timeouts are unchanged by the retry.
+This infrastructure retry is separate from the zero test retries reported above.
 
 Remaining audit work includes readability review of Keeper's shared core/upload
 layers, broader editor/maintenance failure fixtures and the separately deferred

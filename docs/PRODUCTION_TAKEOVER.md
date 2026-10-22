@@ -5,26 +5,35 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-22:** v2.18.1, deployment
-`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`, source `a3f1b95` from the
-[successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662). The corrected-credential retry passes both Pages/D1
-reads and the guarded production job, retaining 318 passing Node tests and 541
-passing browser cases, nine documented skips and no test retries.
+**Current production release — 2026-10-22:** v2.18.2, deployment
+`85a31e3a-43d3-4044-b7cf-026452b00c1e`, source `c4f697b` from
+[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41). The
+[successful automatic release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) passes Pages/D1 access,
+325 Node tests and 551 browser cases, with nine documented platform skips and
+no test retries, before publishing the existing live project.
 
 The live verifier checks canonical source/version, both D1-derived catalogs and
-exact bytes of all seven changed JavaScript assets. The revision-9 document,
-all nine snapshot documents/checksums and saved/runtime production settings are
-unchanged. Independent public HTTP checks confirm the same source and reviewed
-asset identities. No migration, catalog/book-object mutation or runtime-secret
-change ran. The retained rollback is v2.18.0,
-`8c87a0ed-acf5-4083-a305-c9f5988f8da1`.
-See [sanitized verification](automatic-deployment-verification.json).
+exact bytes of all seven changed Keeper JavaScript assets. The document at
+revision 9, all 9 snapshot documents/
+checksums and saved/runtime production settings are unchanged. Independent
+public HTTP checks confirm the same source and reviewed asset identities.
+The release performs zero database writes. The retained rollback is v2.18.1,
+`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
+See [current sanitized verification](keeper-workflow-verification.json).
 
-PR #39's public readability batch is included. The missing-secret and Pages
-403 failures are resolved historical attempts. The production project's old
-native Git integration remains disabled; the trusted-main Actions job owns live
-publication. Keep the existing scoped Actions token configured as described in
-the activation guide; no B2 or runtime secret is copied into GitHub.
+The production project's old native Git integration remains disabled; the
+trusted-main Actions job owns live publication. Keep the existing scoped
+Actions token configured as described in the activation guide; no B2 or runtime
+secret is copied into GitHub.
+
+**Previous production release — 2026-10-22:** v2.18.1, deployment
+`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`, source `a3f1b95`. The
+[activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
+publishes after the credential correction, retaining 318 passing Node tests and
+541 browser cases, with nine documented skips and no test retries. It verifies
+both catalogs, all seven public readability assets and exact catalog/snapshot/
+settings preservation. See [activation evidence](automatic-deployment-verification.json).
+The missing-secret and Pages-authorization failures remain historical attempts.
 
 **Previous production release — 2026-10-20:** v2.18.0, deployment
 `8c87a0ed-acf5-4083-a305-c9f5988f8da1`, source `8e34ced` from PR #38.

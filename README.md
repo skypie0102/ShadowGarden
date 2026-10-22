@@ -24,30 +24,30 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next audit increment, [Keeper workflow cleanup](docs/KEEPER_WORKFLOWS.md),
-prepares **v2.18.2**: seven readable data/maintenance controllers and a reproduced
-late-banner response fix. Six baseline controls fail before the correction; all
-seven focused cases and all 325 Node tests now pass locally. The browser matrix
-and guarded release remain pending; the current live release is recorded below.
+The latest production release is **v2.18.2**, deployed on 2026-10-22 from
+`c4f697b` through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41).
+[Keeper workflow cleanup](docs/KEEPER_WORKFLOWS.md) expands seven
+data/maintenance controllers and fixes a late banner response that could send
+the next write from a new series editor to the previous series. Six focused
+controls reproduce the old behavior; all seven controls pass after correction.
 
-The latest production release is **v2.18.1**, deployed on 2026-10-22 from
-`a3f1b95`. [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is **active**:
-checked pushes to `main` publish to the existing `shadowgarden` project at
-`shadowgarden-bon.pages.dev` after access, verification and all five browser
-profiles pass. The [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
-retains 318 passing Node tests and 541 passing browser cases, with nine documented
-platform skips and no test retries. Its corrected-credential retry passes both
-Pages/D1 access checks and the guarded production job.
+The [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) passes **325 Node tests** and
+**551 browser cases** across five profiles, with nine documented platform skips
+and no test retries. [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is
+active: checked pushes to `main` publish to the existing `shadowgarden` project
+at `shadowgarden-bon.pages.dev` after access, verification and all browser
+profiles pass.
 
 The release verifies both catalogs, all seven changed JavaScript assets and
-exact catalog/snapshot/settings preservation. Revision 9 and all nine snapshots
-remain unchanged. See [sanitized evidence](docs/automatic-deployment-verification.json).
-The retained rollback is the previous v2.18.0 production deployment.
+exact catalog/snapshot/settings preservation. Revision 9 and
+all 9 snapshots remain unchanged, with zero database writes.
+See [sanitized evidence](docs/keeper-workflow-verification.json). The retained
+rollback is v2.18.1, deployment `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
 
 [Public controller readability](docs/PUBLIC_READABILITY.md), merged through
-[PR #39](https://github.com/skypie0102/ShadowGarden/pull/39), is included in live
-v2.18.1: seven modules have expanded statements and matching executable syntax
-trees. The earlier missing-secret and Pages-authorization blockers are resolved.
+[PR #39](https://github.com/skypie0102/ShadowGarden/pull/39), shipped in v2.18.1:
+seven modules have expanded statements and matching executable syntax trees.
+The earlier missing-secret and Pages-authorization blockers are resolved.
 
 The preceding **v2.18.0** release, merged through
 [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38), added native Garden Pass

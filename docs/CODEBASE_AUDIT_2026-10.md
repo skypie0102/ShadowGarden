@@ -126,22 +126,23 @@ These are scoped engineering follow-ups, not demonstrated current production
 outages. Avoid broad rewrites, arbitrary sleeps and replacing accepted EPUB.js
 compatibility behavior without a failing reproduction.
 
-The [Keeper data/maintenance readability batch](KEEPER_WORKFLOWS.md) prepares
-v2.18.2: seven expanded controllers and a reproduced banner-editor race corrected
-with per-opening ownership. Six baseline controls fail; all seven focused cases
-and 325 Node tests pass locally. Full browser and release validation remain pending.
-Keeper's shared core/upload readability review, unknown-length/concurrent upload
-budget and broader Keeper fixture variants remain follow-ups; provider/physical-
-device acceptance retains its recorded scope.
+The [Keeper data/maintenance readability batch](KEEPER_WORKFLOWS.md) ships
+in **v2.18.2** through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41):
+seven expanded controllers and a reproduced banner-editor race corrected with
+per-opening ownership. Six baseline controls fail; all seven focused cases pass.
+Final PR and main CI pass 325 Node tests and 551 browser cases across five
+profiles, with nine documented skips and zero test retries. Keeper's shared
+core/upload readability review, unknown-length/concurrent upload budget and
+broader Keeper fixture variants remain follow-ups; provider/physical-device
+acceptance retains its recorded scope.
 
-The latest release is **v2.18.1**, source `a3f1b95`, deployed on 2026-10-22 by
-the [successful activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662). Its corrected-credential retry passes Pages/D1 access and
-publication, retaining 318 passing Node tests and 541 browser cases, with nine
-documented skips and no test retries. Automatic checked-main publication to the
-existing live Pages project is active. Both catalogs, all seven changed assets
-and exact catalog/snapshot/settings preservation pass. The retained rollback is
-v2.18.0. See [activation procedure](AUTO_DEPLOYMENT.md) and
-[sanitized evidence](automatic-deployment-verification.json).
+The latest release is **v2.18.2**, source `c4f697b`, deployed on 2026-10-22 by
+the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346). Automatic checked-main publication
+to the existing live Pages project is active. Both catalogs, all seven changed
+assets and exact catalog/snapshot/settings preservation pass. The retained
+rollback is v2.18.1, `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`. See
+[deployment procedure](AUTO_DEPLOYMENT.md) and
+[sanitized evidence](keeper-workflow-verification.json).
 
 ## Validation and release
 
