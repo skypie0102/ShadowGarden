@@ -110,8 +110,9 @@ live database/size errors is also removed without changing error codes or contra
    modules in small, reviewable batches. The [public-controller batch](PUBLIC_READABILITY.md)
    is merged for v2.18.1 through PR #39 with seven formatted modules, equivalent
    executable syntax trees, 305 Node tests and 541 browser passes (nine existing
-   documented skips). Deployment is pending on Cloudflare connector availability;
-   production remains v2.18.0. See [public boundaries](PUBLIC_BOUNDARIES.md) for the
+   documented skips). Deployment now awaits the configured Actions token's
+   Pages authorization: D1 SELECT passes, but the Pages project GET returns 403.
+   Production remains v2.18.0; see [activation status](AUTO_DEPLOYMENT.md). See [public boundaries](PUBLIC_BOUNDARIES.md) for the
    accessibility release.
 8. **Website module startup — completed in v2.18.0:** five independent Library
    imports start together, with controller initialization order retained and

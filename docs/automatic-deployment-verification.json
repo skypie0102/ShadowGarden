@@ -1,66 +1,91 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-10-21T11:51:48.038Z",
+  "recordedAt": "2026-10-22T09:51:21.283Z",
   "pullRequest": 40,
   "mergedSource": "aed4f065e9c901a759350d908d5f3b0a66ac982f",
-  "testedHead": "359d313c3473e3af0faf9c9c9723989825d8f661",
-  "testedTree": "4835efb361d7c636f514cc24f367750da76e943c",
   "target": {
     "project": "shadowgarden",
     "branch": "main",
     "origin": "https://shadowgarden-bon.pages.dev"
   },
   "checks": {
-    "prRunId": 39549548617,
-    "mainRunId": 39593282242,
+    "mainRunId": 39755380834,
+    "mainSource": "d8776e1af4d82442f93d8d16e3a55072412b936a",
+    "tree": "bd4291fbd7ba13d0b540eefe2e7398459aa6f9ec",
     "nodePassed": 318,
     "browserPassed": 541,
     "browserSkipped": 9,
     "testRetries": 0,
     "profiles": [
       {
+        "name": "browser (mobile-chromium, chromium)",
+        "jobId": 119746084771,
+        "passed": 110,
+        "skipped": 0,
+        "retries": 0
+      },
+      {
         "name": "browser (mobile-webkit, webkit)",
-        "jobId": 119199412034,
+        "jobId": 119746084817,
         "passed": 106,
-        "skipped": 4
+        "skipped": 4,
+        "retries": 0
       },
       {
         "name": "browser (desktop-webkit, webkit)",
-        "jobId": 119199412048,
+        "jobId": 119746084829,
         "passed": 108,
-        "skipped": 2
+        "skipped": 2,
+        "retries": 0
       },
       {
         "name": "browser (desktop-firefox, firefox)",
-        "jobId": 119199412211,
+        "jobId": 119746084839,
         "passed": 107,
-        "skipped": 3
-      },
-      {
-        "name": "browser (mobile-chromium, chromium)",
-        "jobId": 119199412242,
-        "passed": 110,
-        "skipped": 0
+        "skipped": 3,
+        "retries": 0
       },
       {
         "name": "browser (desktop-chromium, chromium)",
-        "jobId": 119199412369,
+        "jobId": 119746085011,
         "passed": 110,
-        "skipped": 0
+        "skipped": 0,
+        "retries": 0
       }
     ]
   },
   "productionJob": {
-    "id": 119204235900,
+    "id": 119753596353,
     "conclusion": "failure",
-    "phase": "credential preflight",
-    "error": "Set the production CLOUDFLARE_API_TOKEN Actions secret before deployment.",
-    "secretAvailableToJob": false,
-    "cloudflareApiRequests": 0,
+    "phase": "read-only Cloudflare baseline",
+    "error": "Cloudflare baseline read returned HTTP 403.",
+    "secretAvailableToJob": true,
     "publicationAttempted": false,
-    "productionWrites": 0
+    "productionDataWrites": 0
   },
-  "activation": "workflow merged; publication blocked until repository Actions credential is configured",
+  "credentialCheck": {
+    "runId": 39758249662,
+    "source": "a3f1b958ba4249f4766446b2206ec1cf048ebbf4",
+    "jobId": 119755639452,
+    "conclusion": "failure",
+    "pages": {
+      "method": "GET",
+      "project": "shadowgarden",
+      "status": 403,
+      "code": 10000,
+      "message": "Authentication error"
+    },
+    "d1": {
+      "method": "POST",
+      "sql": "SELECT revision FROM library_state WHERE id=1;",
+      "status": 200,
+      "success": true,
+      "rowsWritten": 0
+    },
+    "verificationJob": "318 Node tests and build checks passed",
+    "browserMatrix": "in progress at this checkpoint"
+  },
+  "activation": "workflow installed; configured token passes D1 but Pages authorization is rejected",
   "requiredCredential": {
     "name": "CLOUDFLARE_API_TOKEN",
     "destination": "skypie0102/ShadowGarden repository Actions secrets",
@@ -73,12 +98,25 @@
   "knownProduction": {
     "version": "2.18.0",
     "source": "8e34cedee712385103ee0116ca21f365b1c7e72d",
-    "publicCheck": {
-      "checkedAt": "2026-10-21T11:50:47.313Z",
-      "status": 200,
-      "version": "2.18.0",
-      "source": "8e34cedee712385103ee0116ca21f365b1c7e72d",
-      "branch": "main"
-    }
+    "deploymentId": "8c87a0ed-acf5-4083-a305-c9f5988f8da1",
+    "revision": 9,
+    "snapshots": 9,
+    "pluginProjectReadConfirmed": true
+  },
+  "initialCredentialPreflight": {
+    "runId": 39593282242,
+    "id": 119204235900,
+    "conclusion": "failure",
+    "phase": "credential preflight",
+    "error": "Set the production CLOUDFLARE_API_TOKEN Actions secret before deployment.",
+    "secretAvailableToJob": false,
+    "cloudflareApiRequests": 0,
+    "publicationAttempted": false,
+    "productionWrites": 0
+  },
+  "oldRunRetry": {
+    "runId": 39593282242,
+    "jobId": 119745571054,
+    "outcome": "skipped superseded workflow source"
   }
 }

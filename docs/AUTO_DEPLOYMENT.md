@@ -3,24 +3,27 @@
 ## Activation state
 
 Merged on 2026-10-21 through [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40)
-as `aed4f065e9c901a759350d908d5f3b0a66ac982f`. Main pushes now start the checked
-live-deployment workflow. Publication is **blocked by a missing repository Actions
-secret**, `CLOUDFLARE_API_TOKEN`. Production remains v2.18.0; the successful main
-build in the `shadowgarden-test` project is a separate preview.
+as `aed4f06`. The repository Actions credential was configured on 2026-10-22.
+Its D1 access works, but the live Pages project read returns **HTTP 403, error
+10000: Authentication error**. Publication remains blocked by Pages authorization;
+production remains **v2.18.0**, source `8e34ced`.
 
-The [first main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39593282242)
-passed the asset audit, all 318 Node tests, all 541 browser cases (nine documented
-skips), static build and binding/compatibility-aware Functions package. The
-production job then stopped with:
+[Activation run 39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)
+on clean source `d8776e1` passes 318 Node tests and 541 browser cases, with nine
+documented skips and no retries. Its production job sees the saved token but
+stops during the read-only baseline, before Wrangler publication.
 
-> Set the production CLOUDFLARE_API_TOKEN Actions secret before deployment.
+The [early credential-check run](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662) then tests each resource separately:
 
-[Sanitized verification evidence](automatic-deployment-verification.json) records
-the checked source/tree, profile counts, preflight failure and current live version.
+| Resource | Result |
+|---|---|
+| Existing Pages project GET | HTTP 403, Cloudflare error 10000 |
+| D1 catalog revision SELECT | Success; no rows written |
 
-The Actions environment showed that secret empty. This guard runs before baseline
-HTTP requests or Wrangler publication, so the failed attempt made no Cloudflare,
-catalog, snapshot, book-object, migration or credential writes.
+The first main run's empty-secret failure is historical and resolved. Retrying
+that older workflow correctly skipped its superseded source; the fresh main run
+above exercised the configured credential. [Sanitized evidence](automatic-deployment-verification.json)
+records the exact checked source, profile counts and current authorization blocker.
 
 The existing production Pages project is **`shadowgarden`**, in account
 `fa95f62f96a0ff3b92a45175d94a48b6`. Its original Git integration retained the
@@ -32,7 +35,10 @@ encrypted settings.
 ## Trigger and checks
 
 `.github/workflows/ci.yml` adds **Deploy live ShadowGarden** after the verification
-job and all five browser jobs succeed. It runs only for this repository's `main`
+job, all five browser jobs and the main-only **Check production access** job succeed.
+The early access job issues only the fixed project GET and catalog-revision SELECT;
+it prints sanitized status/error details without token values, project settings or
+catalog documents. The full guarded production baseline remains required. It runs only for this repository's `main`
 pushes or an explicit main workflow retry. PRs and other branches cannot run the
 production job. Existing `[skip ci]` documentation commits do not start a new run.
 
@@ -86,7 +92,7 @@ and [D1 query permissions](https://developers.cloudflare.com/api/resources/d1/su
 The D1 query API accepts D1 Read; the collector still validates zero rows written
 and exact expected results.
 
-## Verification and remaining setup
+## Verification and remaining authorization
 
 Thirteen operational regression cases cover trusted-main admission, token routing,
 read-only request confinement, malformed/failed API responses, live-project and
@@ -94,21 +100,26 @@ branch identity, changed-asset selection, canonical-deployment waits, failed upl
 preservation failures and wrong served bytes. They use disposable responses and
 do not access the live account or catalog.
 
-The local and CI provenance audit, all 318 Node tests, static build and binding-aware
-Functions package pass. PR CI run 39549548617 also passes all 541 browser cases
-with nine skips and no retries. The tested/merged tree is
-`4835efb361d7c636f514cc24f367750da76e943c`. The main run separately passes the
-same checks before its credential preflight stops publication.
+Fresh activation run 39755380834 passes the asset/build/binding checks, all 318
+Node tests and all 541 browser cases, with nine documented skips and no retries.
+The subsequent early-check workflow change has valid YAML and embedded JavaScript
+syntax; its verification job also passes 318 Node tests. Its read-only check
+identifies Pages access as denied while D1 SELECT succeeds. The five browser jobs
+for this workflow-only follow-up were still running at the evidence checkpoint;
+no success is claimed for that unfinished run.
 
-Cloudflare connector calls currently return `MCP error -32603: Internal error`,
-including a runtime request with no API calls. The browser fallback reaches a
-Cloudflare sign-in page; the secure sign-in request was interrupted and no
-successful authenticated dashboard state was observed. The GitHub browser was
-also signed out, and its connected plugin does not expose Actions secret setup.
+The connected Cloudflare plugin's read requests recovered on 2026-10-22 and
+confirm the existing v2.18.0 deployment. The Actions job uses its own saved token;
+its Pages authorization failure is distinct from the earlier connector errors.
 
-To finish activation, configure the scoped token above in this repository's
-**Settings → Secrets and variables → Actions** as `CLOUDFLARE_API_TOKEN`, then use
-**Actions → ShadowGarden checks → Run workflow**, selecting `main`. This starts
-a fresh checked run using the configured credential. Do not paste the token into
-chat or put it in Git. Automatic publication is not considered verified until the
-production job completes its baseline, publish and served-source checks.
+To finish activation, edit the Cloudflare token used by repository Actions so it
+has two permission rows: **Account → Cloudflare Pages → Edit** and
+**Account → D1 → Read**, including account `fa95f62f96a0ff3b92a45175d94a48b6`.
+Editing permissions on the same token retains its value. If creating a replacement
+token, update the existing `CLOUDFLARE_API_TOKEN` repository Actions secret with
+that new value. Do not put token values in chat or Git.
+
+Retry the failed access/production jobs after the current check run finishes, or
+use **Actions → ShadowGarden checks → Run workflow**, selecting `main`. Automatic
+publication is not considered activated until the production job passes its
+baseline, upload, canonical-source and preservation checks.

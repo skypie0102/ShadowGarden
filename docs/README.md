@@ -1,18 +1,18 @@
 # ShadowGarden documentation
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is merged through PR #40, targeting
-the existing `shadowgarden` production project. The first main run passes 318 Node
-tests and 541 browser cases, then stops before production writes because the
-`CLOUDFLARE_API_TOKEN` repository Actions secret is empty. The guide records the
-scoped credential and fresh main workflow run needed to finish activation. The
-test project's automatic main preview is a separate deployment.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is installed for the existing
+`shadowgarden` project. The repository Actions token is configured; the early
+read-only credential check passes D1 but Pages rejects the project GET with HTTP
+403 / Cloudflare error 10000. Pages authorization remains the activation blocker.
+[Sanitized evidence](automatic-deployment-verification.json) records the full
+318-Node/541-browser activation run and the separate resource-access diagnosis.
+Production remains v2.18.0; the test project's main preview is independent.
 
 [Public controller readability](PUBLIC_READABILITY.md) is merged for v2.18.1:
 seven formatted modules, matching executable syntax trees, preserved comment
-text and [source hashes](public-readability-equivalence.json). All 305 Node tests
-and 541 browser cases pass with the same nine skips. [Verification](public-readability-verification.json)
-records the tested/merged tree and pending deployment: production remains v2.18.0
-while the Cloudflare connector returns internal errors.
+text and [source hashes](public-readability-equivalence.json). Its
+[original review checkpoint](public-readability-verification.json) remains dated;
+current deployment authorization is recorded in the activation guide above.
 
 The latest deployed release is **v2.18.0**. [Public boundaries](PUBLIC_BOUNDARIES.md)
 records native Garden Pass modality/focus restoration and the measured Library

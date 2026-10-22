@@ -26,18 +26,19 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is merged through
 [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40), targeting the existing
-production project after the full check matrix. Its first main run passes 318
-Node tests and 541 browser cases, then stops before any production write because
-the repository Actions secret `CLOUDFLARE_API_TOKEN` is empty. Configure that scoped
-credential and run the main workflow to finish activation. Production remains
-v2.18.0 until live publication is verified.
+live project after the full check matrix. The Actions credential is now present:
+the 2026-10-22 read-only check passes D1 access but Cloudflare rejects the Pages
+project read with HTTP 403 / error 10000. Publication remains blocked by Pages
+authorization. Ensure the saved token has both **Cloudflare Pages Edit** and
+**D1 Read** on the existing account. The early access-check job reports these
+resources separately; see [sanitized evidence](docs/automatic-deployment-verification.json).
 
 [Public controller readability](docs/PUBLIC_READABILITY.md) for v2.18.1 is merged
 through [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39): seven modules
-have expanded statements and matching executable syntax trees. All 305 Node tests
-and 541 browser cases pass, with the same nine documented skips. Deployment is
-pending while the Cloudflare connector returns internal errors; production is
-the v2.18.0 release below.
+have expanded statements and matching executable syntax trees. The fresh main
+activation run passes all 318 Node tests and 541 browser cases, with nine
+documented skips and no retries, before Pages authorization blocks the guarded
+production read. No publication or production data write occurred.
 
 The latest production release is **v2.18.0**, merged through
 [PR #38](https://github.com/skypie0102/ShadowGarden/pull/38) and deployed on 2026-10-20.

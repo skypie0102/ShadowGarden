@@ -69,3 +69,13 @@ snapshot, book-object, migration or credential writes were performed.
 The next readability batch is Keeper's dense data/maintenance workflows. The
 unknown-length/concurrent upload-memory budget and broader Keeper fixture variants
 remain separate follow-ups in the [whole-codebase audit](CODEBASE_AUDIT_2026-10.md).
+
+### Deployment follow-up — 2026-10-22
+
+Fresh main run 39755380834 passes 318 Node tests and all 541 browser cases, with
+nine documented skips and no retries. The Actions credential is now configured;
+the read-only resource check confirms D1 access but Pages project access returns
+HTTP 403 / Cloudflare error 10000. No publication occurred and production remains
+v2.18.0. [Automatic deployment status](AUTO_DEPLOYMENT.md) and
+[current evidence](automatic-deployment-verification.json) identify the remaining
+Pages authorization blocker separately from the historical connector failure.

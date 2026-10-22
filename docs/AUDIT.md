@@ -1,5 +1,27 @@
 # ShadowGarden project audit
 
+## Live-deployment credential diagnosis — 2026-10-22
+
+The repository Actions token is now configured. Fresh main activation run
+[39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)
+passes 318 Node tests and all 541 browser cases with nine documented skips and
+no retries, then stops at a Cloudflare baseline HTTP 403 before publication.
+
+A main-only read-only access job now checks Pages and D1 separately before
+production can run. Its [first check](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662) confirms D1 SELECT succeeds but the existing
+Pages project GET returns HTTP 403, Cloudflare error 10000 (Authentication error).
+The token value is never printed. The workflow YAML/embedded JavaScript parse,
+and its verification job passes 318 Node tests; its browser matrix was still
+running at this checkpoint. The original successful full matrix remains recorded
+against its exact source.
+
+The live site remains v2.18.0 / `8e34ced`. Plugin reads recovered and confirm the
+same canonical deployment; read-only D1 checks show revision 9 and nine snapshots.
+No deployment, migration, catalog/book-object mutation or runtime-secret change
+was attempted. [The setup guide](AUTO_DEPLOYMENT.md) and
+[sanitized evidence](automatic-deployment-verification.json) record the Pages
+authorization change required before activation can finish.
+
 ## Automatic live-deployment workflow — 2026-10-21
 
 [PR #40](https://github.com/skypie0102/ShadowGarden/pull/40) merged as `aed4f06`.

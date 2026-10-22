@@ -1,20 +1,23 @@
 # ShadowGarden production operations
 
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is merged through PR #40 as
-`aed4f06`. Its first main run passes 318 Node tests and 541 browser cases, then
-stops before publication because `CLOUDFLARE_API_TOKEN` is empty in repository
-Actions secrets. No Cloudflare request or production write was made by that
-failed preflight. Configure its scoped credential and start a fresh main workflow
-to finish activation; the verified production deployment below remains unchanged.
+[Automatic live deployment](AUTO_DEPLOYMENT.md) is installed but publication is
+blocked by the configured Actions token's Pages authorization. The 2026-10-22
+read-only access job passes D1 SELECT; the existing Pages project GET returns
+HTTP 403, error 10000. The earlier missing-secret blocker is resolved.
 
-**Source update awaiting deployment — 2026-10-21:** v2.18.1, merged source
-`ba71f00` from PR #39, formats seven public modules with matching executable
-syntax trees. CI passes 305 Node tests and 541 browser cases with the same nine
-documented skips. Cloudflare connector internal errors block fresh baseline
-capture and guarded publication. Ten public HTTP checks still confirm v2.18.0,
-both catalogs and seven previous-release module hashes. See [readability validation](PUBLIC_READABILITY.md)
-and [evidence](public-readability-verification.json). This pending source update
-does not change the last verified production deployment or rollback below.
+**Source update awaiting deployment — 2026-10-22:** v2.18.1 includes PR #39's
+seven public-module readability changes and PR #40's automatic release workflow.
+Fresh main run [39755380834](https://github.com/skypie0102/ShadowGarden/actions/runs/39755380834)
+passes 318 Node tests and 541 browser cases, with nine documented skips and no
+retries, then stops during the read-only baseline. No Wrangler publication runs.
+The subsequent main-only access job identifies Pages as the rejected resource;
+its workflow-only browser matrix was still running at this checkpoint.
+
+The connected Cloudflare plugin's reads recovered and confirm canonical
+v2.18.0 / `8e34ced` at deployment `8c87a0ed`. Read-only D1 checks still show
+revision 9 and nine snapshots. The token needs Cloudflare Pages Edit plus its
+working D1 Read scope on the existing account. See [activation steps](AUTO_DEPLOYMENT.md)
+and [sanitized evidence](automatic-deployment-verification.json).
 
 **Last verified production release — 2026-10-20:** v2.18.0, deployment
 `8c87a0ed-acf5-4083-a305-c9f5988f8da1`, source `8e34ced` from PR #38.
