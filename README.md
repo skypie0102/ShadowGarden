@@ -24,6 +24,11 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+The next batch, [Keeper core and Upload](docs/KEEPER_CORE_UPLOAD.md), prepares
+**v2.18.3**: eight expanded modules and a reproduced explicit-Skip queue fix.
+Three baseline controls fail; all seven focused cases and all 332 Node tests
+pass locally. The five-profile browser matrix and checked release remain pending.
+
 The latest production release is **v2.18.2**, deployed on 2026-10-22 from
 `c4f697b` through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41).
 [Keeper workflow cleanup](docs/KEEPER_WORKFLOWS.md) expands seven

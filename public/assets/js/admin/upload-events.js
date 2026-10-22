@@ -1,11 +1,32 @@
 /* Shadow Garden R5 — Upload workflow lifecycle bridge. */
-(()=>{
-  const keeper=window.ShadowGardenKeeper;if(!keeper)return;
-  const state=document.querySelector("#uploadState"),q=keeper.state.batch;if(!state||!q)return;
-  let last="";
-  function publish(){const next=String(keeper.state.uploadStatus?.label||state.textContent||"").trim().toUpperCase();if(next!==last&&next.startsWith("COMPLETE")){keeper.state.management=null;keeper.events.dispatchEvent(new CustomEvent("upload:completed",{detail:{status:next}}))}last=next}
-  function syncLibrarySnapshot(){const data=keeper.state.management;if(!data)return;q.library={main:keeper.util.arr(data.main),adult:keeper.util.arr(data.adult)}}
-  keeper.events.addEventListener("library:changed",syncLibrarySnapshot);
-  keeper.events.addEventListener("session:locked",()=>{q.library=null});
-  keeper.events.addEventListener("upload:state",()=>queueMicrotask(publish));publish();
+(() => {
+  const keeper = window.ShadowGardenKeeper;
+  if (!keeper) return;
+  const state = document.querySelector("#uploadState"),
+    q = keeper.state.batch;
+  if (!state || !q) return;
+  let last = "";
+  function publish() {
+    const next = String(keeper.state.uploadStatus?.label || state.textContent || "")
+      .trim()
+      .toUpperCase();
+    if (next !== last && next.startsWith("COMPLETE")) {
+      keeper.state.management = null;
+      keeper.events.dispatchEvent(
+        new CustomEvent("upload:completed", { detail: { status: next } })
+      );
+    }
+    last = next;
+  }
+  function syncLibrarySnapshot() {
+    const data = keeper.state.management;
+    if (!data) return;
+    q.library = { main: keeper.util.arr(data.main), adult: keeper.util.arr(data.adult) };
+  }
+  keeper.events.addEventListener("library:changed", syncLibrarySnapshot);
+  keeper.events.addEventListener("session:locked", () => {
+    q.library = null;
+  });
+  keeper.events.addEventListener("upload:state", () => queueMicrotask(publish));
+  publish();
 })();

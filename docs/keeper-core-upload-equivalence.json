@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-22T12:39:20.340Z",
+  "base": "78456d84bdfabf4a135066cc4c92ee8dd4664428",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "babel",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": true,
+      "singleQuote": false,
+      "quoteProps": "preserve",
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "embeddedLanguageFormatting": "off"
+    }
+  },
+  "comparison": "Mechanical formatting stage only: Babel AST equality excludes positions, extra raw/parenthesis metadata and comments; ordered normalized comment text is checked separately. Subsequent functional changes are recorded separately.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/core.js",
+      "beforeSha256": "8957646550c8424d50011aded67a27a9f0abc907e48791569b45c4b6aa547ba2",
+      "formattedSha256": "f269ed57e68640e551f32a63f0d71aa5442aa156da031aca5a324a1f8f73b531",
+      "normalizedAstSha256": "1a29f7d112ab68d53d598a415825f60f0f7c4873fb628bc22bff8ac3302f1606",
+      "commentsSha256": "54c578c058181d5fdceeb320e913ea4079ae80c0ec9f24760ac8cd5cd86c64e1",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 16372,
+        "lines": 246,
+        "longestLine": 404,
+        "linesOver180": 15
+      },
+      "formatted": {
+        "bytes": 19819,
+        "lines": 574,
+        "longestLine": 117,
+        "linesOver180": 0
+      },
+      "finalSha256": "f269ed57e68640e551f32a63f0d71aa5442aa156da031aca5a324a1f8f73b531",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/upload-fields.js",
+      "beforeSha256": "35d7a9de835fe8f099ea9c1f2e5557e95e19f1679f78f754cf17cfe72c296781",
+      "formattedSha256": "f57428e8aa0e6af66ac62cad03e8f7ae4a5ee2c0a65141b643fb042ecb44b83a",
+      "normalizedAstSha256": "18026532201d9b976dfe878a36d42c0fda67f520eda8af4c262949413740851f",
+      "commentsSha256": "909b02dde077085fa59e5caa36e1adf2feb52bf2c6f05d05f5962594da65c9d6",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 1638,
+        "lines": 21,
+        "longestLine": 693,
+        "linesOver180": 2
+      },
+      "formatted": {
+        "bytes": 1870,
+        "lines": 39,
+        "longestLine": 208,
+        "linesOver180": 2
+      },
+      "finalSha256": "f57428e8aa0e6af66ac62cad03e8f7ae4a5ee2c0a65141b643fb042ecb44b83a",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "beforeSha256": "4e34e9532c1456cdae5645a27a0424943075c3fc32403406d0e29ff0981f438b",
+      "formattedSha256": "caacd77de890b45e9e60c2dcca952c4662cda27551b511a04cb339806c276356",
+      "normalizedAstSha256": "8a8dee8a12dfcb19375fc8a11a12c4daa8cd5183828199fa05882f36761b86a1",
+      "commentsSha256": "f0632225f3e3e62454cea269832dff6e50416d2e431d20ccf0c72a007a0d49a6",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 23759,
+        "lines": 349,
+        "longestLine": 393,
+        "linesOver180": 21
+      },
+      "formatted": {
+        "bytes": 27976,
+        "lines": 717,
+        "longestLine": 325,
+        "linesOver180": 9
+      },
+      "finalSha256": "caacd77de890b45e9e60c2dcca952c4662cda27551b511a04cb339806c276356",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin-batch-editor.js",
+      "beforeSha256": "7f792dc0a05c2a0fa87318ac48e877bd5fd44d63f61a5de77eacd5ee574131b4",
+      "formattedSha256": "5cba4f0398c0efbb4da27154712c23673ed627bf8c8bbf08c112b048998be1d4",
+      "normalizedAstSha256": "1f1af01b5335b23851a45363156415f9383481d5b7b8f76042661670b09fbfe3",
+      "commentsSha256": "8c850acf10044f67c3c6f06069cc7235c0b5966673b8fe9e1e4f6acecfbf6d53",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 2761,
+        "lines": 62,
+        "longestLine": 259,
+        "linesOver180": 1
+      },
+      "formatted": {
+        "bytes": 2991,
+        "lines": 71,
+        "longestLine": 244,
+        "linesOver180": 1
+      },
+      "finalSha256": "5cba4f0398c0efbb4da27154712c23673ed627bf8c8bbf08c112b048998be1d4",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin-upload-workflow.js",
+      "beforeSha256": "4f0cd58d8a02af621ad5461525ad348354a906998c16330cebcd9374bf361723",
+      "formattedSha256": "bdd49392daabd5c223ec6b991d6cfdf30953cd5c26b9c0cc4e24bd9c49b046d7",
+      "normalizedAstSha256": "b4d591cdb73d53f3b7f38214e853bfadc0ee981de8856cca906f559263c6d388",
+      "commentsSha256": "e92466744a84c66f269cac374b782e42335dc12cbda74d676185440343e0c636",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 16025,
+        "lines": 165,
+        "longestLine": 928,
+        "linesOver180": 24
+      },
+      "formatted": {
+        "bytes": 18690,
+        "lines": 448,
+        "longestLine": 964,
+        "linesOver180": 7
+      },
+      "finalSha256": "8fcfc1adee1d1ff860b6c48bfd7b577a5dbb24227124822c16385b4ac970c316",
+      "finalMatchesFormattingStage": false
+    },
+    {
+      "path": "public/assets/js/admin-upload-presentation.js",
+      "beforeSha256": "c175be682a83ed7bc940af4777ed2067e7585427bae4556523b0ecaddcb0da4a",
+      "formattedSha256": "4031a8baee47766829eb3c7d6c105abafadaf340215a7b30a1482c221f207c0e",
+      "normalizedAstSha256": "e781229a29b570ca644cfa3e3c55879bb85a07c83897eb379b8b4a55621b3a3e",
+      "commentsSha256": "9d4970d69223278fae03bf3204b9157fad7d4c2701b11bd029a450f60902bf05",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 4038,
+        "lines": 91,
+        "longestLine": 184,
+        "linesOver180": 1
+      },
+      "formatted": {
+        "bytes": 4392,
+        "lines": 111,
+        "longestLine": 102,
+        "linesOver180": 0
+      },
+      "finalSha256": "4031a8baee47766829eb3c7d6c105abafadaf340215a7b30a1482c221f207c0e",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/upload-safety.js",
+      "beforeSha256": "3925270ffc3545cbe3f9b06bf175eaf25c036c6338beeee8097414974301bf90",
+      "formattedSha256": "5dcf3796181310b57f58a05ba7b1ce6337c1ab14db9485aeaea6e4a335e1bb0e",
+      "normalizedAstSha256": "5aec7db721560ebc647aa10937dadfa46a526c95bbd50084b9810396501d416c",
+      "commentsSha256": "22b0137db532150556ba3ffcc1c680a385698548800d486c006ffdcaefa1329e",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 4471,
+        "lines": 46,
+        "longestLine": 336,
+        "linesOver180": 6
+      },
+      "formatted": {
+        "bytes": 5509,
+        "lines": 157,
+        "longestLine": 159,
+        "linesOver180": 0
+      },
+      "finalSha256": "5dcf3796181310b57f58a05ba7b1ce6337c1ab14db9485aeaea6e4a335e1bb0e",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/upload-events.js",
+      "beforeSha256": "a208b687dce6e961e1d696e791d6b446adb0c63cdd3b40e3a3ee320442309dc6",
+      "formattedSha256": "9fac4c490309a8e824ca48e8c700b49ff5630e9a6432e196adeb50dd34220ef0",
+      "normalizedAstSha256": "9d5b18c35f4866c970edf3c88ac490de719ee0f33018d3de20c86072e03efbf0",
+      "commentsSha256": "6fb451076d07fc7e02904657f90757f2ff21852b434dcc3e13db4597d4204672",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 932,
+        "lines": 12,
+        "longestLine": 289,
+        "linesOver180": 1
+      },
+      "formatted": {
+        "bytes": 1104,
+        "lines": 33,
+        "longestLine": 89,
+        "linesOver180": 0
+      },
+      "finalSha256": "9fac4c490309a8e824ca48e8c700b49ff5630e9a6432e196adeb50dd34220ef0",
+      "finalMatchesFormattingStage": true
+    }
+  ],
+  "functionalChanges": [
+    {
+      "path": "public/assets/js/admin-upload-workflow.js",
+      "reason": "Preserve an explicit userChoseSkip when removing another queued EPUB clears a duplicate. An automatic duplicate Skip can still become uploadable when its matching EPUB is removed.",
+      "baselineControls": {
+        "tests": 7,
+        "passed": 4,
+        "failed": 3
+      },
+      "correctedControls": {
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      }
+    }
+  ]
+}

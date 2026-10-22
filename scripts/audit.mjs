@@ -59,6 +59,8 @@ const deliberate=new Set([
   'public/nsfw.html',
   'public/assets/js/library-footer-version.js',
   'public/assets/js/admin/core.js',
+  // v2.18.3: syntax-equivalent shared Keeper/Upload readability batch.
+  'public/assets/js/admin/upload-fields.js',
   'public/assets/js/admin/trash-workflow.js',
   'public/assets/js/admin/recovery-readiness-workflow.js',
   'public/assets/js/admin/library-workflow.js',
