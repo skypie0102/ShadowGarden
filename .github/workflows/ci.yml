@@ -19,6 +19,64 @@ jobs:
       - run: npm ci
       - run: npm run check
 
+  production-access:
+    name: Check production access
+    if: github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      # Read-only checks identify the rejected resource without logging secrets,
+      # project settings or catalog documents. Full release guards still run.
+      - name: Check Pages and D1 credential access
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          node --input-type=module <<'NODE'
+          const token = process.env.CLOUDFLARE_API_TOKEN;
+          if (!token || /\s/.test(token)) {
+            throw new Error('Set a valid CLOUDFLARE_API_TOKEN repository Actions secret.');
+          }
+          const account = 'fa95f62f96a0ff3b92a45175d94a48b6';
+          const resources = [
+            { label: 'Pages project read', path: `/accounts/${account}/pages/projects/shadowgarden`, method: 'GET' },
+            { label: 'D1 catalog SELECT', path: `/accounts/${account}/d1/database/1a9d28bf-fe1b-46d5-afbf-47ae9e0ffb86/query`, method: 'POST', body: { sql: 'SELECT revision FROM library_state WHERE id=1;' } }
+          ];
+          let failed = false;
+          for (const resource of resources) {
+            try {
+              const response = await fetch('https://api.cloudflare.com/client/v4' + resource.path, {
+                method: resource.method,
+                redirect: 'manual',
+                signal: AbortSignal.timeout(20000),
+                headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+                ...(resource.body ? { body: JSON.stringify(resource.body) } : {})
+              });
+              const payload = await response.json();
+              if (response.status !== 200 || payload.success !== true) {
+                const details = (payload.errors || []).map(error =>
+                  String(error.code) + ': ' + String(error.message || '')
+                    .split(token).join('[redacted]').replace(/[\r\n]/g, ' ').slice(0, 200)
+                ).join('; ');
+                console.error(`${resource.label}: HTTP ${response.status}; ${details || 'unsuccessful API response'}`);
+                failed = true;
+              } else if (resource.body && (!Array.isArray(payload.result) ||
+                  payload.result.some(result => result.success !== true || result.meta?.rows_written !== 0))) {
+                console.error(`${resource.label}: read-only query validation failed`);
+                failed = true;
+              } else {
+                console.log(`${resource.label}: OK`);
+              }
+            } catch {
+              console.error(`${resource.label}: request failed without a valid API response`);
+              failed = true;
+            }
+          }
+          if (failed) process.exitCode = 1;
+          NODE
+
   browser:
     needs: verify
     runs-on: ubuntu-latest
@@ -78,7 +136,7 @@ jobs:
 
   production:
     name: Deploy live ShadowGarden
-    needs: [verify, browser]
+    needs: [verify, browser, production-access]
     if: github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
