@@ -24,30 +24,34 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next batch, [Keeper core and Upload](docs/KEEPER_CORE_UPLOAD.md), prepares
-**v2.18.3**: eight expanded modules and a reproduced explicit-Skip queue fix.
-Three baseline controls fail; all seven focused cases and all 332 Node tests
-pass locally. The five-profile browser matrix and checked release remain pending.
+The latest production release is **v2.18.3**, deployed on 2026-10-23 from
+`2fa066f`. [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42) supplies
+the application changes; [PR #43](https://github.com/skypie0102/ShadowGarden/pull/43)
+adds the pinned browser CI runtime that resolves dependency-install stalls
+and corrects an image visibility check for WebKit’s deliberate hit surface.
+[Keeper core and Upload](docs/KEEPER_CORE_UPLOAD.md) expands eight modules and
+preserves explicit Skip choices when removing another queued EPUB clears a
+duplicate. Three controls reproduce the old behavior; all seven focused
+controls pass after correction.
 
-The latest production release is **v2.18.2**, deployed on 2026-10-22 from
-`c4f697b` through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41).
-[Keeper workflow cleanup](docs/KEEPER_WORKFLOWS.md) expands seven
-data/maintenance controllers and fixes a late banner response that could send
-the next write from a new series editor to the previous series. Six focused
-controls reproduce the old behavior; all seven controls pass after correction.
-
-The [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) passes **325 Node tests** and
-**551 browser cases** across five profiles, with nine documented platform skips
+The [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733) passes **332 Node tests** and
+**556 browser cases** across five profiles, with nine documented platform skips
 and no test retries. [Automatic live deployment](docs/AUTO_DEPLOYMENT.md) is
 active: checked pushes to `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all browser
 profiles pass.
 
-The release verifies both catalogs, all seven changed JavaScript assets and
+The release verifies both catalogs, all eight changed JavaScript assets and
 exact catalog/snapshot/settings preservation. Revision 9 and
 all 9 snapshots remain unchanged, with zero database writes.
-See [sanitized evidence](docs/keeper-workflow-verification.json). The retained
-rollback is v2.18.1, deployment `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
+See [sanitized evidence](docs/keeper-core-upload-verification.json). The retained
+rollback is v2.18.2, deployment `85a31e3a-43d3-4044-b7cf-026452b00c1e`.
+
+The preceding [Keeper data/maintenance cleanup](docs/KEEPER_WORKFLOWS.md) shipped
+in v2.18.2 through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/41):
+seven expanded controllers and a fix for late banner saves targeting a different
+series. Its [dated verification](docs/keeper-workflow-verification.json) remains
+available separately from this release.
 
 [Public controller readability](docs/PUBLIC_READABILITY.md), merged through
 [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39), shipped in v2.18.1:

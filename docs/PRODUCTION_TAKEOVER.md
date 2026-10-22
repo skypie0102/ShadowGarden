@@ -5,26 +5,33 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-22:** v2.18.2, deployment
-`85a31e3a-43d3-4044-b7cf-026452b00c1e`, source `c4f697b` from
-[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41). The
-[successful automatic release](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346) passes Pages/D1 access,
-325 Node tests and 551 browser cases, with nine documented platform skips and
-no test retries, before publishing the existing live project.
+**Current production release — 2026-10-23:** v2.18.3, deployment
+`c327c36c-fe9d-4c48-becd-9199a2f18057`, source `2fa066f` after application
+[PR #42](https://github.com/skypie0102/ShadowGarden/pull/42) and runtime
+[PR #43](https://github.com/skypie0102/ShadowGarden/pull/43). The
+[successful automatic release](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733) passes Pages/D1 access, 332
+Node tests and 556 browser cases, with nine documented platform skips and zero
+test retries, before publication.
 
-The live verifier checks canonical source/version, both D1-derived catalogs and
-exact bytes of all seven changed Keeper JavaScript assets. The document at
-revision 9, all 9 snapshot documents/
-checksums and saved/runtime production settings are unchanged. Independent
-public HTTP checks confirm the same source and reviewed asset identities.
-The release performs zero database writes. The retained rollback is v2.18.1,
-`2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`.
-See [current sanitized verification](keeper-workflow-verification.json).
+The verifier checks canonical source/version, both D1-derived catalogs and exact
+bytes of all eight changed Keeper core/Upload assets. The document at revision
+9, all 9 snapshot documents/checksums and
+saved/runtime production settings remain unchanged, with zero database writes.
+Independent HTTP checks confirm the same source and reviewed asset identities.
+The retained rollback is v2.18.2, `85a31e3a-43d3-4044-b7cf-026452b00c1e`.
+See [current sanitized verification](keeper-core-upload-verification.json).
 
 The production project's old native Git integration remains disabled; the
-trusted-main Actions job owns live publication. Keep the existing scoped
-Actions token configured as described in the activation guide; no B2 or runtime
-secret is copied into GitHub.
+trusted-main Actions job owns live publication. Keep the existing scoped Actions
+token configured as described in the activation guide.
+
+**Previous production release — 2026-10-22:** v2.18.2, deployment
+`85a31e3a-43d3-4044-b7cf-026452b00c1e`, source `c4f697b` from
+[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41). Its main run passes
+325 Node tests and 551 browser cases after a WebKit infrastructure retry, with
+nine documented skips and zero test retries. It verifies both catalogs, seven
+changed assets and exact catalog/snapshot/settings preservation. See
+[dated verification](keeper-workflow-verification.json).
 
 **Previous production release — 2026-10-22:** v2.18.1, deployment
 `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`, source `a3f1b95`. The

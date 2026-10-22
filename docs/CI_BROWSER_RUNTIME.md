@@ -25,7 +25,7 @@ The job uses user 1001, process initialization and shared IPC, following the
 reads the image's `/ms-playwright` directory and retains the existing archive
 layout. No app data is included in that opt-in export.
 
-All five browser profiles, test cases/assertions, worker settings, test timeouts,
+All five browser profiles, test cases, worker settings, test timeouts,
 30-minute browser-job budget, startup profiling and artifact retention remain.
 Node 24, verification/access jobs, production dependencies and the guarded
 existing-project deployment remain. Application code and package versions do not
@@ -46,6 +46,16 @@ iframe is directly beneath the surface. Text, clipping and unrelated overlays
 retain their original checks. No reader implementation or test timeout changes.
 
 Local validation checks browser-test syntax, the YAML structure, runtime guard
-syntax and exact image pin. Complete PR/main browser validation and production verification remain
-pending. This change removes per-job Ubuntu package downloads; it does not claim
-a universal CI speedup or eliminate registry/network failures.
+syntax and exact image pin. The [runtime PR](https://github.com/skypie0102/ShadowGarden/actions/runs/39844638581) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733) both pass 332 Node tests and 556 browser
+cases, with nine documented platform skips and zero test retries. All five
+profiles pass the runtime alignment/executable guard and the explicit-Skip
+regression. The separate PR startup profile passes too.
+
+The guarded main workflow publishes v2.18.3, source `2fa066f`, deployment
+`c327c36c-fe9d-4c48-becd-9199a2f18057`. Version/source, both catalogs and all eight changed
+assets verify live. Exact catalog/snapshot/settings preservation passes, with
+zero database writes. See [release evidence](keeper-core-upload-verification.json).
+
+This change removes per-job Ubuntu package downloads; it does not claim a universal
+CI speedup or eliminate registry/network failures.

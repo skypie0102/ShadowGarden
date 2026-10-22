@@ -1,21 +1,38 @@
 # ShadowGarden project audit
 
-## Keeper core/Upload candidate — 2026-10-22
+## Keeper core/Upload released — 2026-10-23
 
-Eight shared core/Upload modules have expanded statements. All eight mechanical
-formatting stages preserve Babel ASTs and ordered normalized comments; seven
-final files remain formatting-only. Lines over 180 columns decrease from 71 to 19.
-The final Upload workflow separately preserves explicit `userChoseSkip` decisions
-when removing another queued EPUB clears a duplicate. Automatic duplicate
-Skip defaults still clear when appropriate.
+[PR #42](https://github.com/skypie0102/ShadowGarden/pull/42) merges the application
+changes as `05a22d2`. [PR #43](https://github.com/skypie0102/ShadowGarden/pull/43)
+adds the pinned browser runtime and corrects its WebKit image visibility helper.
+The [automatic main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733)
+publishes **v2.18.3**, source `2fa066f`, deployment
+`c327c36c-fe9d-4c48-becd-9199a2f18057`. Its tree matches the reviewed runtime PR tree;
+application modules match PR #42. Final PR and main CI pass 332 Node tests and 556 browser cases across
+five profiles, with nine documented platform skips and zero test retries. The
+new queue case passes in every profile; the separate PR startup profile also
+passes.
 
-Three controls fail against baseline; all seven focused controls and all 332
-Node tests pass after correction. Asset/provenance, static build and binding/
-compatibility packaging pass. One disposable real-Keeper browser regression
-awaits the full matrix. v2.18.3 is prepared; live production remains v2.18.2.
-See [scope and contracts](KEEPER_CORE_UPLOAD.md),
+The original main mobile WebKit job and its fresh-runner retry both exhausted the 30-minute job
+window while installing Ubuntu dependencies; browser tests never started in either job. PR #43
+replaces per-job OS/browser installation with a version- and digest-pinned Playwright runtime; the
+final PR and main runs pass all five profiles.
+
+Eight core/Upload modules have expanded statements. All eight mechanical stages
+preserve Babel ASTs and ordered normalized comments; seven final files remain
+formatting-only. Lines over 180 columns decrease from 71 to 19. The final Upload
+workflow separately preserves explicit `userChoseSkip` decisions when removal
+clears another queued EPUB's duplicate. Automatic duplicate defaults still clear
+when appropriate. Three baseline controls fail; all seven focused controls pass.
+
+Live source/version, both catalogs and all eight changed assets verify. Exact
+catalog serialization, all 9 snapshots and saved/runtime
+settings are preserved at revision 9, with zero database
+writes. Independent HTTP checks confirm all eight reviewed assets. The retained
+rollback is v2.18.2, `85a31e3a-43d3-4044-b7cf-026452b00c1e`. See
+[scope and contracts](KEEPER_CORE_UPLOAD.md),
 [source equivalence](keeper-core-upload-equivalence.json) and
-[verification](keeper-core-upload-verification.json).
+[sanitized verification](keeper-core-upload-verification.json).
 
 ## Keeper workflows released — 2026-10-22
 

@@ -131,25 +131,25 @@ in **v2.18.2** through [PR #41](https://github.com/skypie0102/ShadowGarden/pull/
 seven expanded controllers and a reproduced banner-editor race corrected with
 per-opening ownership. Six baseline controls fail; all seven focused cases pass.
 Final PR and main CI pass 325 Node tests and 551 browser cases across five
-profiles, with nine documented skips and zero test retries. Keeper's shared
-core/upload readability review, unknown-length/concurrent upload budget and
-broader Keeper fixture variants remain follow-ups; provider/physical-device
+profiles, with nine documented skips and zero test retries. The shared core/upload follow-up is recorded below; provider/physical-device
 acceptance retains its recorded scope.
 
-The next [Keeper core/Upload batch](KEEPER_CORE_UPLOAD.md) prepares v2.18.3:
-eight expanded modules, equivalent mechanical formatting stages and a reproduced
-explicit-Skip queue correction. Three baseline controls fail; all seven focused
-controls and 332 Node tests pass locally. Full browser/release validation remains
-pending. The separate memory design and broader asynchronous queue/session
-fixtures remain follow-ups.
+The [Keeper core/Upload batch](KEEPER_CORE_UPLOAD.md) ships in **v2.18.3**
+through [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42): eight
+expanded modules and a reproduced explicit-Skip queue correction. Three baseline
+controls fail; all seven focused controls pass. Final PR and main CI pass 332
+Node tests and 556 browser cases across five profiles, with nine documented
+skips and zero test retries. Remaining Keeper UI/session helpers, broader
+asynchronous queue/session fixtures and unknown-length/concurrent upload memory
+budgeting remain follow-ups.
 
-The latest release is **v2.18.2**, source `c4f697b`, deployed on 2026-10-22 by
-the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39768639346). Automatic checked-main publication
-to the existing live Pages project is active. Both catalogs, all seven changed
-assets and exact catalog/snapshot/settings preservation pass. The retained
-rollback is v2.18.1, `2fed005d-bdb3-4a5f-a6c7-6e34ad7f578d`. See
+The latest release is **v2.18.3**, source `2fa066f`, deployed on 2026-10-23 by
+the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733). Automatic checked-main publication
+to the existing live project verifies both catalogs, all eight changed assets
+and exact catalog/snapshot/settings preservation. The retained rollback is
+v2.18.2, `85a31e3a-43d3-4044-b7cf-026452b00c1e`. See
 [deployment procedure](AUTO_DEPLOYMENT.md) and
-[sanitized evidence](keeper-workflow-verification.json).
+[sanitized evidence](keeper-core-upload-verification.json).
 
 ## Validation and release
 
