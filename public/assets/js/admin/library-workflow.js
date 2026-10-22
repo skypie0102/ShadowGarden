@@ -10,8 +10,13 @@
     const list = $("#seriesManagerList"),
       dialog = $("#seriesEditor");
     if (!list || !dialog) return {};
-    let bannerContext = null;
+    let bannerContext = null,
+      editorContext = null;
     const currentBanner = context => context === bannerContext && dialog.open;
+    const currentEditor = context =>
+      context === editorContext && dialog.open && state.activeSeriesId === context.id;
+    const saveButton = $("#saveSeries"),
+      saveLabel = saveButton?.textContent || "Save series";
 
     function installEditorFields() {
       const status = $("#manageStatus");
@@ -274,6 +279,11 @@
     async function openSeriesEditor(id) {
       const item = findManagedSeries(id);
       if (!item) return;
+      editorContext = { id, saving: false };
+      if (saveButton) {
+        saveButton.textContent = saveLabel;
+        saveButton.disabled = false;
+      }
       state.activeSeriesId = id;
       client.beginEdit(id, state.management.revision);
       const { series, scope } = item;
@@ -297,7 +307,9 @@
     }
 
     async function saveSeries() {
-      if (!state.activeSeriesId) return;
+      const context = editorContext;
+      if (!context || !currentEditor(context) || context.saving) return;
+      context.saving = true;
       const button = $("#saveSeries"),
         old = button.textContent,
         title = $("#manageTitle").value.trim() || "Series";
@@ -311,7 +323,7 @@
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             action: "update-series",
-            id: state.activeSeriesId,
+            id: context.id,
             title: $("#manageTitle").value,
             author: $("#manageAuthor").value,
             year: $("#manageYear").value,
@@ -330,15 +342,22 @@
             ...translationPayload
           })
         });
+        if (!currentEditor(context)) return;
         updateManagement(result);
         state.activeSeriesId = null;
         dialog.close();
         keeper.ui.toast(`Saved “${title}”.`);
       } catch (error) {
-        alert(error.message);
+        if (currentEditor(context)) {
+          keeper.events.dispatchEvent(new Event("series:save-failed"));
+          alert(error.message);
+        }
       } finally {
-        button.disabled = false;
-        button.textContent = old;
+        if (currentEditor(context)) {
+          context.saving = false;
+          button.disabled = false;
+          button.textContent = old;
+        }
       }
     }
 
@@ -485,11 +504,15 @@
       if (event.target === dialog) dialog.close();
     });
     dialog.addEventListener("close", () => {
-      if (!dialog.open) bannerContext = null;
+      if (!dialog.open) {
+        bannerContext = null;
+        editorContext = null;
+      }
     });
     keeper.events.addEventListener("session:unlocked", () => void loadLibrary());
     keeper.events.addEventListener("session:locked", () => {
       bannerContext = null;
+      editorContext = null;
       state.management = null;
       list.innerHTML = "";
     });

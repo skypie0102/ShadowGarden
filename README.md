@@ -24,6 +24,11 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+The next [Keeper UI/session batch](docs/KEEPER_UI_SESSION.md) prepares **v2.18.4**:
+five expanded modules and reproduced early-edit, late-save and lock/reopen upload
+corrections. Nine baseline controls fail; all 21 focused controls pass after the
+fixes. Full validation and release are pending.
+
 The latest production release is **v2.18.3**, deployed on 2026-10-23 from
 `2fa066f`. [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42) supplies
 the application changes; [PR #43](https://github.com/skypie0102/ShadowGarden/pull/43)

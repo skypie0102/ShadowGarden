@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Keeper UI/session ownership](KEEPER_UI_SESSION.md) prepares v2.18.4 with five
+expanded modules and reproduced editor/upload continuation corrections.
+[Source proof](keeper-ui-session-equivalence.json) and
+[verification](keeper-ui-session-verification.json) retain scope and release state.
+
 [Browser CI runtime](CI_BROWSER_RUNTIME.md) documents the pinned dependency image
 and its validation.
 

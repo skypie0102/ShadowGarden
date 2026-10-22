@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "version": "2.18.4",
+  "baseline": "35ece1ecf8c5859af9362d1e43e7989fa53afc81",
+  "baselineControls": {
+    "tests": 21,
+    "passed": 12,
+    "failed": 9
+  },
+  "correctedControls": {
+    "tests": 21,
+    "passed": 21,
+    "failed": 0
+  },
+  "local": {
+    "status": "success",
+    "nodePassed": 346,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingCompatibilityBuild": "passed",
+    "browser": "not run; local browser runtime unavailable"
+  },
+  "ci": {
+    "status": "pending",
+    "newBrowserCases": 5,
+    "requiredProfiles": 5
+  },
+  "production": {
+    "status": "pending",
+    "knownVersion": "2.18.3",
+    "publicationAttempted": false
+  },
+  "equivalence": "keeper-ui-session-equivalence.json",
+  "limitations": [
+    "No new physical Android/Soul or live credential acceptance.",
+    "Mechanical formatting equivalence excludes the separately recorded functional corrections.",
+    "Already committed provider/catalog writes are not rolled back by presentation cancellation.",
+    "Unknown-length/concurrent upload buffering and broader volume/translation-editor fixtures remain follow-ups."
+  ]
+}

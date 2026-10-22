@@ -53,6 +53,10 @@ test('removing a duplicate partner preserves explicit Skip and uploads only the 
   await page.locator(`[data-batch-id="${ids['removed.epub']}"]`).getByRole('button', { name: 'Remove EPUB from upload queue' }).click();
   await expect(page.locator('#batchList .batch-item')).toHaveCount(2);
   await expect.poll(() => page.evaluate(id => window.ShadowGardenKeeper.state.batch.items.find(item => item.id === id).action, ids['skipped.epub'])).toBe('skip');
+  await skipped.locator('[data-batch-action]').selectOption('new');
+  await expect(page.locator('#uploadButton')).toHaveText('Upload 2 Books');
+  await expect.poll(() => page.evaluate(id => window.ShadowGardenKeeper.state.batch.items.find(item => item.id === id).userChoseSkip, ids['skipped.epub'])).toBe(false);
+  await skipped.locator('[data-batch-action]').selectOption('skip');
   await expect(page.locator('#batchSummary')).toContainText('2 selected · 1 upload');
   await expect(page.locator('#uploadReviewSummary')).toContainText('1 skipped');
   await expect(page.locator('#uploadButton')).toHaveText('Upload 1 Book');

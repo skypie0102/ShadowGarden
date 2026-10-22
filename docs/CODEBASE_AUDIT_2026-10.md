@@ -151,6 +151,12 @@ v2.18.2, `85a31e3a-43d3-4044-b7cf-026452b00c1e`. See
 [deployment procedure](AUTO_DEPLOYMENT.md) and
 [sanitized evidence](keeper-core-upload-verification.json).
 
+The next [Keeper UI/session batch](KEEPER_UI_SESSION.md) prepares v2.18.4 with
+five expanded modules and reproduced editor/upload ownership corrections. Nine
+baseline controls fail; all 21 focused controls pass. Full validation is pending.
+Unknown-length/concurrent upload-memory design and broader editor fixtures remain
+separate follow-ups.
+
 ## Validation and release
 
 Merged through [PR #32](https://github.com/skypie0102/ShadowGarden/pull/32) as

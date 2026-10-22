@@ -45,6 +45,10 @@
   pickerCard?.appendChild(panel);
 
   const batchUpload = $("#uploadButton");
+  let uploadGeneration = 0;
+  window.ShadowGardenKeeper.events.addEventListener("session:locked", () => {
+    uploadGeneration++;
+  });
 
   function safeDecode(v) {
     try {
@@ -494,7 +498,8 @@
       throw new Error("This EPUB failed structural preflight.");
   }
 
-  async function uploadOne(item, index, total) {
+  async function uploadOne(item, index, total, assertCurrent) {
+    assertCurrent();
     validateItem(item);
     item.status = "uploading";
     item.progress = 5;
@@ -514,7 +519,9 @@
     item.progress = 18;
     item.progressLabel = `${index}/${total} · Uploading EPUB`;
     renderQueue();
+    assertCurrent();
     await uploadObject(epubKey, item.file, "application/epub+zip");
+    assertCurrent();
 
     let coverKey = "",
       coverThumbKey = "";
@@ -522,15 +529,19 @@
       item.progress = 55;
       item.progressLabel = `${index}/${total} · Optimizing cover`;
       renderQueue();
-      const variants = await optimizedCoverSet(item.coverBlob),
-        h = await hash8(item.coverBlob),
+      const variants = await optimizedCoverSet(item.coverBlob);
+      assertCurrent();
+      const h = await hash8(item.coverBlob),
         vol = String(item.number).replace(".", "-");
+      assertCurrent();
       const detailExt = variants.detail.type === "image/webp" ? ".webp" : item.coverExt;
       coverKey = `shadow-garden/covers/${sid}-${vol}-${h}-detail${detailExt}`;
       await uploadObject(coverKey, variants.detail, variants.detail.type || mimeForExt(detailExt));
+      assertCurrent();
       if (variants.thumb) {
         coverThumbKey = `shadow-garden/covers/${sid}-${vol}-${h}-thumb.webp`;
         await uploadObject(coverThumbKey, variants.thumb, "image/webp");
+        assertCurrent();
       }
     }
 
@@ -539,6 +550,7 @@
     renderQueue();
     const replaceTargetFile =
       item.action === "replace" && !item.duplicate?.batch ? item.duplicate.volume.file : "";
+    assertCurrent();
     const result = await api("/admin-api/catalog", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -573,6 +585,7 @@
         replaceTargetFile
       })
     });
+    assertCurrent();
     item.status = "done";
     item.progress = 100;
     item.progressLabel = "Uploaded successfully";
@@ -598,6 +611,15 @@
       }
     }
     q.running = true;
+    const generation = uploadGeneration;
+    const current = () => generation === uploadGeneration && state.unlocked;
+    const assertCurrent = () => {
+      if (!current())
+        throw new DOMException(
+          "Keeper was locked. Review the queue and retry the stopped upload.",
+          "AbortError"
+        );
+    };
     state.uploading = true;
     batchUpload.disabled = true;
     $("#openSeries").classList.add("hidden");
@@ -614,7 +636,7 @@
         const item = items[i];
         setStatus(`Uploading ${i + 1} of ${items.length}`, item.title || item.file.name, "↑");
         try {
-          lastResult = await uploadOne(item, i + 1, items.length);
+          lastResult = await uploadOne(item, i + 1, items.length, assertCurrent);
           succeeded++;
         } catch (error) {
           console.error(error);
@@ -622,10 +644,20 @@
           item.error = error.message;
           item.progressLabel = error.message;
           failedCount++;
+          if (!current()) {
+            for (const remaining of items.slice(i + 1)) {
+              remaining.status = "failed";
+              remaining.error = remaining.progressLabel =
+                "Keeper was locked. Review the queue and retry the stopped upload.";
+              failedCount++;
+            }
+            renderQueue();
+            break;
+          }
           renderQueue();
         }
       }
-      state.management = null;
+      if (current()) state.management = null;
       q.library = null;
       setStatus(
         failedCount ? "Batch finished with errors" : "Batch upload complete",
@@ -637,11 +669,11 @@
         $("#openSeries").classList.remove("hidden");
       }
     } finally {
-      q.running = false;
-      state.uploading = false;
       try {
         await wakeLock?.release();
       } catch {}
+      q.running = false;
+      state.uploading = false;
       renderQueue();
     }
     setUploadState(

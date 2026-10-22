@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-22T22:22:42.236Z",
+  "base": "35ece1ecf8c5859af9362d1e43e7989fa53afc81",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "babel",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": true,
+      "singleQuote": false,
+      "quoteProps": "preserve",
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "embeddedLanguageFormatting": "off"
+    }
+  },
+  "comparison": "Mechanical formatting stage only: Babel AST equality excludes positions, extra raw/parenthesis metadata and comments; ordered normalized comment text is checked separately. Subsequent functional changes are recorded separately.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/app.js",
+      "beforeSha256": "cd852490457348f86ef77889982c097dbc599031c93c9f5420412d5b0cbfff06",
+      "formattedSha256": "e8060a0b9a708d519594f75ac264b816ae77a72b65e4f63c76051ad179f29126",
+      "normalizedAstSha256": "93a2c325a272fb3e0fe2cf2830d557956fd0ad0fe8fe15ba490bef22b8277245",
+      "commentsSha256": "8acf2094186e63042d26bdd21b9fa1a3ab3e801c91d7261d84dfdf522e0363b2",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 3648,
+        "lines": 63,
+        "longestLine": 333,
+        "linesOver180": 3
+      },
+      "formatted": {
+        "bytes": 4091,
+        "lines": 109,
+        "longestLine": 98,
+        "linesOver180": 0
+      },
+      "finalSha256": "e8060a0b9a708d519594f75ac264b816ae77a72b65e4f63c76051ad179f29126",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/auth-session.js",
+      "beforeSha256": "3e5914fb0f4aa2a3b517bacf892eb01ccb1555d0fce40fc20f52acb908688910",
+      "formattedSha256": "366b175ccefae6a984ba3351030602136d6a9c1ea1bdb0a8c6bdc07c44a839fa",
+      "normalizedAstSha256": "90cf7bc53a394375cfc2e90cccfc09b872ea1bc4765388716b410e45120845ce",
+      "commentsSha256": "9b454856c642f4ad1979dfb86fbf3adf3e3757cc3ab2792b01423ff5d5c4899e",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 7335,
+        "lines": 84,
+        "longestLine": 579,
+        "linesOver180": 13
+      },
+      "formatted": {
+        "bytes": 9414,
+        "lines": 271,
+        "longestLine": 215,
+        "linesOver180": 1
+      },
+      "finalSha256": "366b175ccefae6a984ba3351030602136d6a9c1ea1bdb0a8c6bdc07c44a839fa",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/shell.js",
+      "beforeSha256": "6ebe6283845590cb2226d6dabd8358aae1f5dc1b16c7f32f866087e9185df1fd",
+      "formattedSha256": "2a430183685aaccc81473ed60f556afb8cf0c59f2de81c145f5daa005c72935b",
+      "normalizedAstSha256": "b0d6295db1f188c0fac14d1b19f6e9a7c765a30575fd81d1462d2aa9d231880f",
+      "commentsSha256": "cb3505f00d113cba9c47124898a8c2b664caec012c32f492e39e592ae6868d97",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 7945,
+        "lines": 102,
+        "longestLine": 269,
+        "linesOver180": 7
+      },
+      "formatted": {
+        "bytes": 9447,
+        "lines": 243,
+        "longestLine": 162,
+        "linesOver180": 0
+      },
+      "finalSha256": "2a430183685aaccc81473ed60f556afb8cf0c59f2de81c145f5daa005c72935b",
+      "finalMatchesFormattingStage": true
+    },
+    {
+      "path": "public/assets/js/admin/editor-interactions.js",
+      "beforeSha256": "8538e8f269139eef20eef66903d509e654e9762ba48e0e264a53c97f8d2e5eda",
+      "formattedSha256": "c7c6f902bc28762766dfc09e4205ab3a094be81d840b50a03254f7d41768349b",
+      "normalizedAstSha256": "b79a13ada28cdef8d27e6e223806b8e7effc1bbea051e6117ab53c2504aa275f",
+      "commentsSha256": "e25923641f4e4ad953b93d817317a6b4747a5e7555926ca6fbe430a9609a4b98",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 12175,
+        "lines": 166,
+        "longestLine": 813,
+        "linesOver180": 10
+      },
+      "formatted": {
+        "bytes": 14587,
+        "lines": 376,
+        "longestLine": 855,
+        "linesOver180": 2
+      },
+      "finalSha256": "5c17f47e8ceb003f56cc8dc1fb5cb4531b4aef1b3cda750c5f024dfd55395601",
+      "finalMatchesFormattingStage": false
+    },
+    {
+      "path": "public/assets/js/admin/motion.js",
+      "beforeSha256": "571dce186cabb8d65cac849d93676fc2d4e1b046aad57e5685481d92b3be8360",
+      "formattedSha256": "2bc10e653d238508690da7492ea370d24389e6fa0e85af8be0315d93c458db36",
+      "normalizedAstSha256": "1e9dbeb58f3779ed29c50870cdc7cc9b256f18dc46a0780d614dbea19c59964b",
+      "commentsSha256": "7bab3f57dc42a799b73c31787239d1191862e50043f64769e12d4f6884ca81cb",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 4144,
+        "lines": 78,
+        "longestLine": 171,
+        "linesOver180": 0
+      },
+      "formatted": {
+        "bytes": 4885,
+        "lines": 149,
+        "longestLine": 131,
+        "linesOver180": 0
+      },
+      "finalSha256": "2bc10e653d238508690da7492ea370d24389e6fa0e85af8be0315d93c458db36",
+      "finalMatchesFormattingStage": true
+    }
+  ],
+  "functionalFiles": [
+    {
+      "path": "public/assets/js/admin/editor-interactions.js",
+      "finalSha256": "5c17f47e8ceb003f56cc8dc1fb5cb4531b4aef1b3cda750c5f024dfd55395601"
+    },
+    {
+      "path": "public/assets/js/admin/library-workflow.js",
+      "finalSha256": "e69ea5300a9975a2f267798108fcf42d334b8c9bc591964c6701ca7f1ee7af68"
+    },
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "finalSha256": "2c21c5e58eaa45f102fa4a885ee5182e5424c137b81e38d87810348a2fed61bb"
+    }
+  ]
+}
