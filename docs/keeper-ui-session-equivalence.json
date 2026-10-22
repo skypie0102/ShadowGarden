@@ -148,6 +148,10 @@
     {
       "path": "public/assets/js/admin-batch.js",
       "finalSha256": "2c21c5e58eaa45f102fa4a885ee5182e5424c137b81e38d87810348a2fed61bb"
+    },
+    {
+      "path": "public/assets/js/admin-upload-workflow.js",
+      "finalSha256": "24b3357e9c45d5695d80ec1dc1427e70a63f2c09920f54c2384109e8203b0b48"
     }
   ]
 }

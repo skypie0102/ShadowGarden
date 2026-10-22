@@ -4,8 +4,8 @@
 
 [Scope and contracts](KEEPER_UI_SESSION.md) cover five expanded UI/session modules
 and corrections for early edits, obsolete series-save responses and uploads
-continuing across lock/reopen. The 21-control baseline passes 12 and fails 9;
-all 21 controls pass after correction. Full validation and release are pending.
+continuing across lock/reopen. The 30-control baseline passes 19 and fails 11;
+all 30 controls pass after correction. Full validation and release are pending.
 See [source evidence](keeper-ui-session-equivalence.json) and
 [verification](keeper-ui-session-verification.json).
 

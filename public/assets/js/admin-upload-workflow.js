@@ -145,7 +145,9 @@
     if (!block) return;
     if (!item.duplicate) {
       article.classList.remove("has-duplicate");
-      block.hidden = true;
+      block.hidden = !item.metaReady || item.status === "done";
+      if (!block.hidden)
+        block.innerHTML = `<label>Queue action<select data-batch-action="${esc(item.id)}" ${q.running ? "disabled" : ""}><option value="new"${item.action !== "skip" ? " selected" : ""}>Upload</option><option value="skip"${item.action === "skip" ? " selected" : ""}>Skip</option></select></label>`;
       return;
     }
     article.classList.add("has-duplicate");

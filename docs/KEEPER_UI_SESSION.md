@@ -20,7 +20,7 @@ normalized comments. Lines over 180 columns decrease from 33 to 3. Four final
 files remain formatting-only; the editor interaction module includes the separate
 dirty-state correction. Pinned Prettier 3.6.2 runs outside the app dependencies.
 [Source evidence](keeper-ui-session-equivalence.json) records the stages and
-final hashes, including the two already-expanded functional owners below.
+final hashes, including the three already-expanded functional owners below.
 
 ## Reproduced corrections
 
@@ -47,11 +47,18 @@ failed/reviewable, and an explicit retry can start in the new session. Completed
 objects are not automatically deleted or rolled back. EPUB, cover and catalog
 writes keep their existing serial order and immutable-key rules.
 
+A retained Skip previously had no visible action control after its duplicate
+partner was removed: the presentation workflow hid the entire selector when
+there was no duplicate. Ordinary prepared entries now keep their Queue action
+selector, allowing a later user choice of Upload or Skip. Unprepared/completed
+entries keep their existing hidden presentation, and active uploads disable
+these controls.
+
 ## Validation and release state
 
-Twenty-one focused controls run the real editor, Library owner and upload engine
-against disposable DOM/client/preparation fixtures. Baseline `35ece1e` passes 12
-and fails 9; the corrected sources pass all 21. Comparisons retain ordinary
+Thirty focused controls run the real editor, Library owner and upload engine
+against disposable DOM/client/preparation fixtures. Baseline `35ece1e` passes 19
+and fails 11; the corrected sources pass all 30. Comparisons retain ordinary
 successful/failed saves, the existing banner races, unchanged/reverted fields,
 banner exclusion and uninterrupted serial uploads.
 
@@ -62,7 +69,7 @@ existing duplicate-removal case also changes a retained Skip back to Upload and
 back again, verifying that the user's later choice remains effective. No live
 credentials, catalog writes or provider writes are used by these fixtures.
 
-Local validation passes the asset/provenance audit, all **346 Node tests**, static
+Local validation passes the asset/provenance audit, all **348 Node tests**, static
 build and binding/compatibility-aware Functions package. The complete five-profile
 browser matrix remains pending.
 v2.18.4 is prepared; production remains v2.18.3 until checked main CI publishes

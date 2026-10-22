@@ -3,18 +3,18 @@
   "version": "2.18.4",
   "baseline": "35ece1ecf8c5859af9362d1e43e7989fa53afc81",
   "baselineControls": {
-    "tests": 21,
-    "passed": 12,
-    "failed": 9
+    "tests": 30,
+    "passed": 19,
+    "failed": 11
   },
   "correctedControls": {
-    "tests": 21,
-    "passed": 21,
+    "tests": 30,
+    "passed": 30,
     "failed": 0
   },
   "local": {
     "status": "success",
-    "nodePassed": 346,
+    "nodePassed": 348,
     "assetAudit": "passed",
     "staticBuild": "passed",
     "bindingCompatibilityBuild": "passed",
@@ -23,7 +23,16 @@
   "ci": {
     "status": "pending",
     "newBrowserCases": 5,
-    "requiredProfiles": 5
+    "requiredProfiles": 5,
+    "supersededRuns": [
+      {
+        "runId": 39865250132,
+        "source": "4215eaf8352a324575f29e4011ba9abc8c9eb5f4",
+        "conclusion": "failure",
+        "newCasesPassedPerProfile": 5,
+        "reason": "The enhanced Skip-choice case could not operate a selector hidden after duplicate removal. Inspection confirmed a real UI gap: retained Skip had no visible action control. The workflow now retains an ordinary queue-action selector; no forced interaction, timeout change or skip was added."
+      }
+    ]
   },
   "production": {
     "status": "pending",
