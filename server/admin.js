@@ -12,6 +12,7 @@ import {validateEpub} from './epub.js';
 import {createPurge,continuePurge,purgeJobs} from './purge.js';
 import {CANONICAL_GENRES, normalizeSeriesTaxonomy, taxonomyDiff} from '../public/assets/js/domain/catalog-taxonomy.js';
 import {normalizeTranslations, normalizeTranslationStatus} from '../public/assets/js/domain/translations.js';
+import {withUploadBuffer} from './upload-buffer.js';
 
 const allSeries=doc=>[...doc.main,...doc.adult];
 const slug=value=>text(value).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -86,24 +87,50 @@ export async function library(context) {
   const saved=await saveState(context.env,row,doc,p.action);return json(adminLibrary(saved));
 }
 export async function upload(context) {
-  method(context.request,['POST']);await requireAdmin(context);
-  const key=objectKey(new URL(context.request.url).searchParams.get('key'));
-  const bytes=await boundedBytes(context.request,key.endsWith('.epub')?50*1024*1024:10*1024*1024);
-  const signature=String.fromCharCode(...bytes.slice(0,12));
-  const valid=key.endsWith('.epub') ? signature.startsWith('PK\u0003\u0004') : /\.webp$/i.test(key) ? signature.startsWith('RIFF')&&signature.slice(8)==='WEBP' : /\.png$/i.test(key) ? bytes[0]===137&&signature.slice(1,4)==='PNG' : /\.gif$/i.test(key) ? /^GIF8[79]a/.test(signature) : bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
-  if (!valid) fail(415,'invalid_media','The file signature does not match the media extension.');
-  if(key.endsWith('.epub'))validateEpub(bytes);
-  // No object overwrite: old snapshots must continue to refer to their original bytes.
-  const existing=await getObject(context.env,key,{head:true});
-  if (existing) fail(409,'object_exists','This object key already exists. Upload using a new key.');
-  const db=database(context.env),token=crypto.randomUUID();
-  const reserved=await db.batch([
-    db.prepare('INSERT OR IGNORE INTO media_uploads(object_key,created_at,reservation_id) VALUES(?,?,?)').bind(key,new Date().toISOString(),token),
-    db.prepare('INSERT INTO media_upload_activity(object_key,token,expires_at) SELECT object_key,?,? FROM media_uploads WHERE object_key=? AND reservation_id=?').bind(token,now()+90,key,token)
-  ]);
-  if(reserved[0].meta.changes!==1)fail(409,'object_reserved','This upload key has already been used. Retry with a new key.');
-  try {return json({ok:true,...await uploadObject(context.env,key,bytes)});}
-  finally {await db.prepare('DELETE FROM media_upload_activity WHERE object_key=? AND token=?').bind(key,token).run();}
+  const {request, env} = context;
+  method(request, ['POST']);
+  await requireAdmin(context);
+  const key = objectKey(new URL(request.url).searchParams.get('key'));
+  const limit = key.endsWith('.epub') ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+  return withUploadBuffer(request, limit, async () => {
+    const signal = AbortSignal.any([request.signal, AbortSignal.timeout(180000)]);
+    let bytes;
+    try {
+      bytes = await boundedBytes(request, limit, {signal});
+    } catch (error) {
+      if (signal.aborted) {
+        const timedOut = signal.reason?.name === 'TimeoutError';
+        fail(408, timedOut ? 'upload_timeout' : 'upload_interrupted',
+          timedOut ? 'Upload timed out. Try again.' : 'Upload was interrupted. Try again.');
+      }
+      throw error;
+    }
+    const signature = String.fromCharCode(...bytes.slice(0, 12));
+    const valid = key.endsWith('.epub') ? signature.startsWith('PK\u0003\u0004')
+      : /\.webp$/i.test(key) ? signature.startsWith('RIFF') && signature.slice(8) === 'WEBP'
+      : /\.png$/i.test(key) ? bytes[0] === 137 && signature.slice(1, 4) === 'PNG'
+      : /\.gif$/i.test(key) ? /^GIF8[79]a/.test(signature)
+      : bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+    if (!valid) fail(415, 'invalid_media', 'The file signature does not match the media extension.');
+    if (key.endsWith('.epub')) validateEpub(bytes);
+    // Immutable coordinates preserve the bytes referenced by existing snapshots.
+    const existing = await getObject(env, key, {head: true});
+    if (existing) fail(409, 'object_exists', 'This object key already exists. Upload using a new key.');
+    const db = database(env), token = crypto.randomUUID();
+    const reserved = await db.batch([
+      db.prepare('INSERT OR IGNORE INTO media_uploads(object_key,created_at,reservation_id) VALUES(?,?,?)')
+        .bind(key, new Date().toISOString(), token),
+      db.prepare('INSERT INTO media_upload_activity(object_key,token,expires_at) SELECT object_key,?,? FROM media_uploads WHERE object_key=? AND reservation_id=?')
+        .bind(token, now() + 90, key, token)
+    ]);
+    if (reserved[0].meta.changes !== 1)
+      fail(409, 'object_reserved', 'This upload key has already been used. Retry with a new key.');
+    try {
+      return json({ok: true, ...await uploadObject(env, key, bytes)});
+    } finally {
+      await db.prepare('DELETE FROM media_upload_activity WHERE object_key=? AND token=?').bind(key, token).run();
+    }
+  });
 }
 async function requireObject(env,key,kind) {
   objectKey(key,kind);const found=await getObject(env,key,{head:true});

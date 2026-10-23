@@ -33,34 +33,46 @@ export function sameOrigin(request) {
     fail(403, 'cross_origin', 'Cross-origin requests are not allowed.');
   }
 }
-export async function boundedBytes(request, limit) {
+export function declaredBodyLength(request, limit) {
   const length = request.headers.get('content-length');
   if (length && (!/^\d+$/.test(length) || Number(length) > limit)) fail(413, 'body_too_large', 'Request body is too large.');
+  return length ? Number(length) : null;
+}
+export async function boundedBytes(request, limit, {signal=request.signal} = {}) {
+  const length = declaredBodyLength(request, limit);
+  signal?.throwIfAborted();
   if (!request.body) return new Uint8Array();
-  // HTTP supplies the size for ordinary browser uploads. Copy straight into one
-  // destination instead of retaining a second file's worth of incoming chunks.
-  // Streams without a declared length retain their bounded collection path.
-  const bytes = length ? new Uint8Array(Number(length)) : null;
-  const reader = request.body.getReader(), chunks = []; let size = 0;
+  // Grow unknown-length input without keeping every source chunk or allocating
+  // a second file-sized concatenation. Return fixed storage for Web Crypto.
+  const buffer = length === null ? new ArrayBuffer(0, {maxByteLength:limit}) : new ArrayBuffer(length);
+  const bytes = new Uint8Array(buffer), reader = request.body.getReader();
+  const abort = () => { void reader.cancel(signal.reason).catch(() => {}); };
+  signal?.addEventListener('abort', abort, {once:true});
+  let size = 0;
   try {
     while (true) {
-      const {done, value} = await reader.read(); if (done) break;
+      const {done, value} = await reader.read();
+      signal?.throwIfAborted();
+      if (done) break;
       const next = size + value.byteLength;
-      if (next > limit) { await reader.cancel(); fail(413, 'body_too_large', 'Request body is too large.'); }
-      if (bytes) {
-        if (next > bytes.length) { await reader.cancel(); fail(400, 'invalid_body_length', 'Request body does not match Content-Length.'); }
-        bytes.set(value, size);
-      } else chunks.push(value);
+      if (next > limit) { void reader.cancel().catch(() => {}); fail(413, 'body_too_large', 'Request body is too large.'); }
+      if (length !== null && next > length) { void reader.cancel().catch(() => {}); fail(400, 'invalid_body_length', 'Request body does not match Content-Length.'); }
+      if (length === null) buffer.resize(next);
+      bytes.set(value, size);
       size = next;
     }
-  } finally { reader.releaseLock(); }
-  if (bytes) {
-    if (size !== bytes.length) fail(400, 'invalid_body_length', 'Request body does not match Content-Length.');
-    return bytes;
+    if (length !== null) {
+      if (size !== length) fail(400, 'invalid_body_length', 'Request body does not match Content-Length.');
+      return bytes;
+    }
+    return new Uint8Array(buffer.transferToFixedLength());
+  } catch (error) {
+    if (!buffer.detached) buffer.transferToFixedLength(0);
+    throw error;
+  } finally {
+    signal?.removeEventListener('abort', abort);
+    reader.releaseLock();
   }
-  const collected = new Uint8Array(size); let offset = 0;
-  for (const chunk of chunks) { collected.set(chunk, offset); offset += chunk.length; }
-  return collected;
 }
 export async function bodyJson(request, limit = 1024 * 1024) {
   if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type') || '')) fail(415, 'invalid_content_type', 'Expected application/json.');

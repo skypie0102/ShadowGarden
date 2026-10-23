@@ -72,8 +72,12 @@ live database/size errors is also removed without changing error codes or contra
    the limit before provider access/reservation. Declared-length input now copies
    into one destination, reducing sampled 50 MiB backing storage from about
    100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
-   design follow-up; the supported limits are unchanged. See [measurements and
-   limitations](UPLOAD_MEMORY.md).
+   design follow-up in that release; the supported limits are unchanged. The
+   [v2.18.8 continuation](UPLOAD_BUFFER_BUDGET.md) adds a growable unknown-length
+   reader, a 64 MiB per-isolate admission budget and input cancellation/deadline
+   handling. Twelve controls reproduce nine failures before correction; all
+   424 Node tests pass locally. Release CI and production verification are pending.
+   Historical [measurements and limitations](UPLOAD_MEMORY.md) are retained.
 3. **Browser persistence — deployed in v2.17.0:** progress/bookmark aliases, Finished
    map/markers and settings use checked grouped writes with conditional rollback.
    Public/startup Read Again resets progress and Finished state together. Eight

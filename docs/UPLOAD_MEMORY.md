@@ -1,5 +1,9 @@
 # Large-upload memory
 
+Historical v2.16.1 measurements follow. The v2.18.8 continuation addresses the
+unknown-length and concurrent-upload follow-up with a growable reader and
+per-isolate admission accounting; see [current measurements](UPLOAD_BUFFER_BUDGET.md).
+
 Baseline: v2.16.0, main `4143089`. Follow-up to the
 [whole-codebase audit](CODEBASE_AUDIT_2026-10.md), measured on 2026-10-20
 (Asia/Manila). Merged for v2.16.1 through

@@ -153,6 +153,27 @@ separate Deep B2 contract remains unchanged. See [maintenance budgets](MAINTENAN
 - No automatic expiry of media objects or snapshots. Only explicitly requested
   Trash cleanup deletes media. Uncataloged orphan uploads are not swept.
 
+## Upload buffer admission
+
+`POST /admin-api/upload` accepts at most 50 MiB per EPUB or 10 MiB per cover.
+Declared Content-Length must match the bytes read; a mismatch returns 400
+`invalid_body_length`, and exceeding the endpoint limit returns 413
+`body_too_large`. Unknown-length input is counted against the same limit.
+
+Each isolate admits at most 64 MiB of application upload buffers at once.
+Declared requests charge their length; unknown-length requests charge the
+endpoint maximum. Capacity is held through provider transfer and activity
+cleanup. Excess admission returns 503 `upload_busy` with `Retry-After: 5`, before
+reading input, reserving the object key or calling B2. Keeper's existing Retry
+action can submit a fresh attempt; the server does not queue requests.
+
+Input reading has a 180-second deadline. Timeout returns 408 `upload_timeout`;
+client interruption returns 408 `upload_interrupted`. Both cancel the reader and
+release capacity without reserving a key or contacting B2. Provider failures
+retain their existing errors and immutable reservation rules. See
+[measurements and limitations](UPLOAD_BUFFER_BUDGET.md): the admission budget is
+per isolate and does not bound total runtime/native memory.
+
 ## Deployment configuration compatibility
 
 `ADMIN_TOKEN`, `BOOK_SIGNING_SECRET`, `TURNSTILE_SITE_KEY` and
