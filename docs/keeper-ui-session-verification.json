@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "version": "2.18.4",
+  "baseline": "35ece1ecf8c5859af9362d1e43e7989fa53afc81",
+  "baselineControls": {
+    "tests": 30,
+    "passed": 19,
+    "failed": 11
+  },
+  "correctedControls": {
+    "tests": 30,
+    "passed": 30,
+    "failed": 0
+  },
+  "local": {
+    "status": "success",
+    "nodePassed": 348,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingCompatibilityBuild": "passed",
+    "browser": "not run; local browser runtime unavailable"
+  },
+  "ci": {
+    "status": "pending",
+    "newBrowserCases": 5,
+    "requiredProfiles": 5,
+    "supersededRuns": [
+      {
+        "runId": 39865250132,
+        "source": "4215eaf8352a324575f29e4011ba9abc8c9eb5f4",
+        "conclusion": "failure",
+        "newCasesPassedPerProfile": 5,
+        "reason": "The enhanced Skip-choice case could not operate a selector hidden after duplicate removal. Inspection confirmed a real UI gap: retained Skip had no visible action control. The workflow now retains an ordinary queue-action selector; no forced interaction, timeout change or skip was added."
+      },
+      {
+        "runId": 39866475231,
+        "source": "73868c3fa9a7072288d1767866615c713433c948",
+        "conclusion": "failure",
+        "reason": "JavaScript restored the ordinary selector, but the existing CSS still forced nonduplicate rows to display:none. The CSS now follows the owner\u2019s explicit hidden attribute. The real UI interaction and all assertions/timeouts remain unchanged."
+      },
+      {
+        "runId": 39867204838,
+        "source": "ecfd44fd5fccd64f0472030055955a8bb476da5c",
+        "conclusion": "failure",
+        "successfulProfiles": 4,
+        "reason": "The complete suite and enhanced Skip-choice case passed in four profiles. Desktop WebKit never opened the first editor after the early-edit fixture froze the entire page clock; the trace shows the action completed but the editor remained closed. The fixture now holds only the former named 80 ms baseline callback, leaving normal UI timing active, explicitly asserts the dialog opens, and checks Save stays enabled before and after releasing any held baseline callback. Assertions remain active, with no forced interaction, timeout increase, retry or skip."
+      }
+    ]
+  },
+  "production": {
+    "status": "pending",
+    "knownVersion": "2.18.3",
+    "publicationAttempted": false
+  },
+  "equivalence": "keeper-ui-session-equivalence.json",
+  "limitations": [
+    "No new physical Android/Soul or live credential acceptance.",
+    "Mechanical formatting equivalence excludes the separately recorded functional corrections.",
+    "Already committed provider/catalog writes are not rolled back by presentation cancellation.",
+    "Unknown-length/concurrent upload buffering and broader volume/translation-editor fixtures remain follow-ups."
+  ]
+}

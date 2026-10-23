@@ -63,8 +63,44 @@ function fixture({ getBanner } = {}) {
   initialize();
   const open = async id => { await window.openSeriesEditor(id); await settle(); };
   const save = value => { node('#manageBanner').value = value; node('#manageBanner').dispatchEvent(new Event('change')); };
-  return { node, keeper, open, save, writes, pending, messages, choices };
+  return { node, keeper, open, save, writes, pending, messages, choices, main };
 }
+
+for (const outcome of ['success', 'failure']) for (const nextId of ['a', 'b']) {
+  test(`a late series save ${outcome} cannot change the ${nextId === 'a' ? 'reopened' : 'different'} editor`, async () => {
+    const f = fixture();
+    await f.open('a');
+    f.node('#saveSeries').dispatchEvent(new Event('click'));
+    assert.equal(f.writes[0].id, 'a');
+    f.node('#seriesEditor').close();
+    await f.open(nextId);
+    f.node('#manageTitle').value = 'New unsaved edit';
+    f.node('#saveSeries').disabled = true; // Another save now owns this shared control.
+    const management = f.keeper.state.management;
+    if (outcome === 'success') f.pending[0].resolve({ main: f.main, adult: [], revision: 6 });
+    else f.pending[0].reject(new Error('Obsolete save failed'));
+    await settle();
+    assert.equal(f.node('#seriesEditor').open, true);
+    assert.equal(f.keeper.state.activeSeriesId, nextId);
+    assert.equal(f.node('#manageTitle').value, 'New unsaved edit');
+    assert.equal(f.node('#saveSeries').disabled, true);
+    assert.equal(f.keeper.state.management, management);
+    assert.deepEqual(f.messages, []);
+  });
+}
+
+for (const outcome of ['success', 'failure']) test(`the active series save still handles ${outcome}`, async () => {
+  const f = fixture();
+  await f.open('a');
+  f.node('#saveSeries').dispatchEvent(new Event('click'));
+  if (outcome === 'success') f.pending[0].resolve({ main: f.main, adult: [], revision: 6 });
+  else f.pending[0].reject(new Error('Current save failed'));
+  await settle();
+  assert.equal(f.node('#seriesEditor').open, outcome === 'failure');
+  assert.equal(f.messages.length, 1);
+  assert.match(f.messages[0], outcome === 'success' ? /Saved/ : /Current save failed/);
+  if (outcome === 'failure') assert.equal(f.node('#saveSeries').disabled, false);
+});
 
 for (const outcome of ['success', 'failure']) {
   for (const nextId of ['b', 'a']) {

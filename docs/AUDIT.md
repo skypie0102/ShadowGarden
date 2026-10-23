@@ -1,5 +1,14 @@
 # ShadowGarden project audit
 
+## Keeper UI/session candidate — 2026-10-23
+
+[Scope and contracts](KEEPER_UI_SESSION.md) cover five expanded UI/session modules
+and corrections for early edits, obsolete series-save responses and uploads
+continuing across lock/reopen. The 30-control baseline passes 19 and fails 11;
+all 30 controls pass after correction. Full validation and release are pending.
+See [source evidence](keeper-ui-session-equivalence.json) and
+[verification](keeper-ui-session-verification.json).
+
 ## Keeper core/Upload released — 2026-10-23
 
 [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42) merges the application

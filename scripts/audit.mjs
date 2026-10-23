@@ -71,6 +71,10 @@ const deliberate=new Set([
   'public/assets/js/admin/app.js',
   'public/assets/js/admin/auth-session.js',
   'public/assets/js/admin/shell.js',
+  // v2.18.4: syntax-equivalent Keeper UI/session readability batch.
+  'public/assets/js/admin/motion.js',
+  // v2.18.4: queue visibility follows its owner's explicit hidden state.
+  'public/assets/css/admin-components.css',
   'public/assets/js/admin-batch.js',
   'public/assets/js/admin-upload-workflow.js',
   'public/assets/js/admin/abuse-workflow.js',

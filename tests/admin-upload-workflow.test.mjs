@@ -29,7 +29,7 @@ const item = (id, extra = {}) => ({
   metaReady: true, status: 'queued', validation: { status: 'pass' }, action: 'new', ...extra
 });
 
-function fixture(items, { running = false } = {}) {
+function fixture(items, { running = false, showRows = false } = {}) {
   const nodes = new Map();
   const node = selector => {
     if (!nodes.has(selector)) nodes.set(selector, new Element());
@@ -38,6 +38,15 @@ function fixture(items, { running = false } = {}) {
   const queue = { items, running, activeId: null, objectUrl: '' };
   const state = { batch: queue };
   const events = new EventTarget();
+  const blocks = items.map(() => new Element());
+  if (showRows) {
+    const articles = items.map((item, index) => {
+      const article = new Element(); article.dataset.batchId = item.id;
+      article.querySelector = selector => selector === '.batch-duplicate' ? blocks[index] : null;
+      return article;
+    });
+    node('#batchList').querySelectorAll = () => articles;
+  }
   runInNewContext(source, {
     state, window: { ShadowGardenKeeper: { state, events } },
     document: { querySelector: node, createElement: () => new Element() },
@@ -53,8 +62,16 @@ function fixture(items, { running = false } = {}) {
     for (const listener of node('#batchList').listeners.get('click') || []) listener(event);
     await new Promise(resolve => setImmediate(resolve));
   };
-  return { queue, node, remove };
+  return { queue, node, remove, blocks };
 }
+
+for (const action of ['skip', 'new']) test(`a nonduplicate ${action} entry keeps its user queue-action control visible`, () => {
+  const f = fixture([item('review', { action, userChoseSkip: action === 'skip' })], { showRows: true });
+  assert.equal(f.blocks[0].hidden, false);
+  assert.match(f.blocks[0].innerHTML, /Queue action/);
+  assert.match(f.blocks[0].innerHTML, /value="new"/);
+  assert.match(f.blocks[0].innerHTML, /value="skip"/);
+});
 
 test('removing another EPUB preserves an explicit Skip and keeps upload disabled', async () => {
   const skipped = item('skipped', { action: 'skip', userChoseSkip: true });
