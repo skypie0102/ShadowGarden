@@ -149,19 +149,27 @@ and reproduced editor/upload ownership corrections. Eleven baseline controls fai
 all 30 focused controls pass. Final PR and main CI pass 348 Node tests and 581
 browser cases, with nine documented platform skips and zero test retries.
 
-The latest release is **v2.18.4**, source `9ccfa89`, deployed on 2026-10-23 by
-the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092). Canonical source/version, both
-catalogs, all nine changed assets and preservation of the catalog, snapshots and
-recorded settings pass. The retained rollback is v2.18.3,
-`c327c36c-fe9d-4c48-becd-9199a2f18057`. See [evidence](keeper-ui-session-verification.json).
-Unknown-length/concurrent upload-memory design, broader volume/translation-editor
-fixtures and remaining dense upload presentation helpers remain follow-ups.
+The [Keeper volume/translation batch](KEEPER_VOLUME_OWNERSHIP.md) ships in
+**v2.18.5** through [PR #45](https://github.com/skypie0102/ShadowGarden/pull/45).
+It corrects late volume/translation/Trash responses and series-draft replacement.
+Thirty-two baseline controls fail; all 41 focused controls pass.
 
-The next [Keeper volume/translation batch](KEEPER_VOLUME_OWNERSHIP.md) prepares
-v2.18.5 with captured editor/card ownership and series-draft preservation. Its
-41-control baseline fails 32 cases; corrected controls and all 389 Node tests
-pass. Browser validation and release remain pending. Volume deletion's list
-rebuild and the separate upload-memory/readability follow-ups retain their scope.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
+
+The latest release is **v2.18.5**, source `cfcbcb4`, deployed on 2026-10-23 by
+the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272). Canonical source/version, both
+catalogs, all four changed assets and preservation of the catalog, snapshots and
+recorded settings pass. The retained rollback is v2.18.4,
+`1367c2ab-0daa-4ab0-8083-534d71edd611`. See
+[evidence](keeper-volume-ownership-verification.json).
+Bounded waiting for served-version convergence is the next release-tooling
+follow-up after the documented deployment-job retry. Volume deletion's list
+rebuild, unknown-length/concurrent upload memory and remaining dense upload
+presentation also retain their separate scopes.
 
 ## Validation and release
 

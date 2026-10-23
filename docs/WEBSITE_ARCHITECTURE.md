@@ -27,6 +27,14 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.5 volume/translation batch](KEEPER_VOLUME_OWNERSHIP.md) shares the
+Library owner's opening context with translation actions. Volume results also
+require their original card to remain attached. Current volume saves update the
+catalog and card summary without replacing series drafts; credits load once per
+opening, and translation writes apply their returned catalog through the Library
+owner. The shared client retains revision and session ownership. Keeper layout
+and unlock scrolling follow the same automatic root-scroll policy.
+
 The [v2.18.4 UI/session batch](KEEPER_UI_SESSION.md) makes each series save belong
 to its editor opening and records dirty-state baselines after composed-field
 microtasks. Upload continuations also retain their starting session generation;

@@ -5,29 +5,40 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-23:** v2.18.4, deployment
+**Current production release — 2026-10-23:** v2.18.5, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, source `cfcbcb4` through
+[PR #45](https://github.com/skypie0102/ShadowGarden/pull/45).
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
+
+The automatic workflow publishes **v2.18.5**, source `cfcbcb4`, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The workflow verifies canonical source/version and both D1-derived catalogs.
+Independent public HTTP checks confirm the same source/version and all four
+changed assets (three JavaScript modules and the Keeper layout stylesheet)
+against the reviewed source. The catalog, all nine snapshots and recorded
+settings match the pre-release baseline at revision 9, with zero database writes.
+The retained rollback is v2.18.4, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`.
+The retained artifact matches the logged report and GitHub's archive digest.
+See [current evidence](keeper-volume-ownership-verification.json).
+The trusted-main Actions job owns publication on the existing project; native
+Git production deployment remains disabled.
+
+The deployment job needed one retry after an immediate version-probe mismatch;
+the passed test jobs were retained. The release guide records both attempts and
+the distinction between the retry baseline and the retained v2.18.4 rollback.
+
+**Previous production release — 2026-10-23:** v2.18.4, deployment
 `1367c2ab-0daa-4ab0-8083-534d71edd611`, source `9ccfa89` through
-[PR #44](https://github.com/skypie0102/ShadowGarden/pull/44).
-
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39900413507) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092)
-both pass **348 Node tests** and **581 browser cases** across five profiles,
-with nine documented platform skips and zero test retries. All five new Keeper
-cases and the enhanced Skip-choice case pass in every profile. The separate
-Chromium Library-startup profile also passes on the PR and is excluded from the
-581 browser cases.
-
-The automatic workflow publishes **v2.18.4**, source `9ccfa89`, deployment
-`1367c2ab-0daa-4ab0-8083-534d71edd611`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
-The verifier checks canonical source/version, both D1-derived catalogs and all
-nine changed assets (eight JavaScript modules and the queue-control stylesheet).
-The catalog, all nine snapshots and recorded settings match the pre-release
-baseline at revision 9, with zero database writes. Independent public HTTP checks confirm source/version
-and all nine reviewed asset hashes. The retained rollback is v2.18.3, deployment
-`c327c36c-fe9d-4c48-becd-9199a2f18057`.
-The retained verification artifact matches the successful log. See
-[current sanitized evidence](keeper-ui-session-verification.json).
-The trusted-main Actions job retains the existing scoped credential and owns
-publication; native Git production deployment remains disabled.
+[PR #44](https://github.com/skypie0102/ShadowGarden/pull/44). Its main run passes
+348 Node tests and 581 browser cases, with nine documented skips and zero test
+retries. Both catalogs, nine changed assets and revision-9 data/snapshots/recorded
+settings are verified. See [dated evidence](keeper-ui-session-verification.json).
 
 **Previous production release — 2026-10-23:** v2.18.3, deployment
 `c327c36c-fe9d-4c48-becd-9199a2f18057`, source `2fa066f` after application

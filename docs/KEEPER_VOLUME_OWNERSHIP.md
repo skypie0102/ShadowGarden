@@ -64,14 +64,46 @@ disposable unlock and intercepted APIs. Eight hold success/failure for the four
 write actions while switching editors. Three cover volume draft preservation,
 translation failure/retry plus refresh, and volume removal/reindexing/last-volume
 closure. Subsequent series writes must carry the advanced revision and original
-draft payload. No forced interaction, global clock freeze, added skip or timeout
-increase is used.
+draft payload. No forced interaction or global clock freeze is used; existing
+assertions, timeouts and skips are not relaxed.
 
-Local asset/provenance audit, all 389 Node tests, static build and the
-binding/compatibility-aware Functions package pass. The complete browser matrix
-and release remain pending. Production remains v2.18.4 until the checked main
-workflow publishes and verifies v2.18.5. See
-[verification](keeper-volume-ownership-verification.json).
+Local audit, all 389 Node tests, static build and the binding/compatibility-aware
+Functions package pass. Browser results come from GitHub CI because the local
+browser runtime is unavailable.
+[PR #45](https://github.com/skypie0102/ShadowGarden/pull/45) merges as `cfcbcb4036a1f4ee0284e34083b2500d96e901cc`;
+release tree `7a1349fd13eb320014ed9f1807515a199e30cf87` matches the tested PR tree.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
+
+The automatic workflow publishes **v2.18.5**, source `cfcbcb4`, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The workflow verifies canonical source/version and both D1-derived catalogs.
+Independent public HTTP checks confirm the same source/version and all four
+changed assets (three JavaScript modules and the Keeper layout stylesheet)
+against the reviewed source. The catalog, all nine snapshots and recorded
+settings match the pre-release baseline at revision 9, with zero database writes.
+The retained rollback is v2.18.4, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`.
+The downloaded production artifact matches GitHub's archive digest and the
+successful logged report. See [sanitized evidence](keeper-volume-ownership-verification.json).
+
+The first publication completed, but its immediate served-version check mismatched.
+A later independent HTTP probe confirmed the expected version/source and all four
+assets. Only the deployment job was retried; all passed test jobs were retained.
+The successful retry report compares its own before/after baselines. Its immediate
+pre-retry deployment is the first v2.18.5 publication; the retained rollback remains
+the separately verified v2.18.4 deployment. The first attempt reached the version
+check after its data/settings-preservation assertions, as established by the
+reviewed verifier's execution order. No first-attempt report artifact was written.
+Because the retry starts from the same application source, its automatic asset
+selection checks the stable footer module; the four changed assets are verified
+by the separate HTTP/source-hash check. This deployment-job retry is separate
+from the zero browser test retries.
+Bounded waiting for served-version convergence remains a release-tooling follow-up.
 
 Volume deletion still rebuilds the list because indices change; preserving other
 unsaved volume forms remains a separate follow-up. Unknown-length/concurrent

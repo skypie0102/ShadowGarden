@@ -1,32 +1,38 @@
 # ShadowGarden documentation
 
-[Keeper volume/translation ownership](KEEPER_VOLUME_OWNERSHIP.md) prepares
-v2.18.5. [Source hashes](keeper-volume-ownership-source.json) and
-[verification](keeper-volume-ownership-verification.json) record the reproduced
-races, draft-preservation contract and pending full validation/release.
+[Keeper volume/translation ownership](KEEPER_VOLUME_OWNERSHIP.md) is deployed in
+**v2.18.5**, source `cfcbcb4`, through
+[PR #45](https://github.com/skypie0102/ShadowGarden/pull/45).
+[Source hashes](keeper-volume-ownership-source.json) record the functional
+workflow and stylesheet changes and [verification](keeper-volume-ownership-verification.json)
+records the 41 controls, complete CI and production checks.
 
-[Keeper UI/session ownership](KEEPER_UI_SESSION.md) is deployed in **v2.18.4**
-through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44), source
-`9ccfa89`. Five expanded modules and the reproduced editor/upload continuation
-corrections retain [source evidence](keeper-ui-session-equivalence.json).
-Final PR and main CI pass 348 Node tests and 581 browser cases, with nine
-documented platform skips and zero test retries.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
 
-The [current checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092) verifies source/version,
-both catalogs, all nine changed assets and preservation of the catalog, snapshots
-and recorded settings. Revision 9 and all 9 snapshots remain
-unchanged. The retained rollback is v2.18.3. See
-[current evidence](keeper-ui-session-verification.json) and
-[automatic publication](AUTO_DEPLOYMENT.md). The test-project preview remains
-separate.
+The automatic workflow publishes **v2.18.5**, source `cfcbcb4`, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The workflow verifies canonical source/version and both D1-derived catalogs.
+Independent public HTTP checks confirm the same source/version and all four
+changed assets (three JavaScript modules and the Keeper layout stylesheet)
+against the reviewed source. The catalog, all nine snapshots and recorded
+settings match the pre-release baseline at revision 9, with zero database writes.
+The retained rollback is v2.18.4, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`.
+[Automatic publication](AUTO_DEPLOYMENT.md) remains on the existing live project;
+the test-project preview is separate.
 
-[Browser CI runtime](CI_BROWSER_RUNTIME.md) records the pinned dependency image
-and the original v2.18.3 installation/assertion diagnosis. The preceding
-[Keeper core/Upload batch](KEEPER_CORE_UPLOAD.md) shipped in v2.18.3;
-[dated verification](keeper-core-upload-verification.json) retains its eight
-module hashes and explicit-Skip correction. The earlier
-[Keeper data/maintenance cleanup](KEEPER_WORKFLOWS.md) shipped in v2.18.2 with
-its [dated verification](keeper-workflow-verification.json).
+The preceding [Keeper UI/session batch](KEEPER_UI_SESSION.md) shipped in
+v2.18.4 through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44),
+source `9ccfa89`. Its five expanded modules, editor/upload continuation and
+Upload/Skip fixes retain their [dated evidence](keeper-ui-session-verification.json).
+The [core/Upload batch](KEEPER_CORE_UPLOAD.md) shipped in v2.18.3 and the
+[data/maintenance batch](KEEPER_WORKFLOWS.md) in v2.18.2.
+[Browser CI runtime](CI_BROWSER_RUNTIME.md) retains the pinned dependency-image
+contract and original v2.18.3 provisioning diagnosis.
 
 The [activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
 published v2.18.1 after the missing-secret and Pages-authorization blockers were

@@ -1,12 +1,31 @@
 # ShadowGarden project audit
 
-## Keeper volume/translation candidate — 2026-10-23
+## Keeper volume/translation released — 2026-10-23
 
-[Scope](KEEPER_VOLUME_OWNERSHIP.md) covers late volume/translation/Trash responses
-and draft replacement during current volume writes or catalog refreshes. Baseline
-`4f91de3` passes nine of 41 controls and fails 32; all 41 corrected controls and
-389 Node tests pass. Complete browser validation and release remain pending.
-See [source hashes](keeper-volume-ownership-source.json) and
+[PR #45](https://github.com/skypie0102/ShadowGarden/pull/45) merges as `cfcbcb4`.
+Two already-expanded workflows share per-opening ownership; Keeper form
+scrolling also settles immediately. Volume operations
+also retain their original card; current volume writes preserve series drafts,
+and refreshes cannot redraw current series credits. The 41-control baseline
+passes nine and fails 32; all 41 pass after correction.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
+
+The automatic workflow publishes **v2.18.5**, source `cfcbcb4`, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The workflow verifies canonical source/version and both D1-derived catalogs.
+Independent public HTTP checks confirm the same source/version and all four
+changed assets (three JavaScript modules and the Keeper layout stylesheet)
+against the reviewed source. The catalog, all nine snapshots and recorded
+settings match the pre-release baseline at revision 9, with zero database writes.
+The retained rollback is v2.18.4, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`.
+See [contracts and limits](KEEPER_VOLUME_OWNERSHIP.md),
+[source hashes](keeper-volume-ownership-source.json) and
 [verification](keeper-volume-ownership-verification.json).
 
 ## Keeper UI/session released — 2026-10-23

@@ -24,43 +24,42 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The next [Keeper volume/translation batch](docs/KEEPER_VOLUME_OWNERSHIP.md) prepares
-**v2.18.5** with per-opening write ownership and series-draft preservation. The
-41-control baseline fails 32 cases; corrected controls and all 389 Node tests
-pass. Full browser validation and release are pending.
+The latest production release is **v2.18.5**, deployed on 2026-10-23 from
+`cfcbcb4` through [PR #45](https://github.com/skypie0102/ShadowGarden/pull/45).
+[Keeper volume/translation ownership](docs/KEEPER_VOLUME_OWNERSHIP.md) keeps
+late volume, translation and Trash responses within their editor opening and
+preserves series drafts during volume writes and catalog refreshes. Thirty-two
+baseline controls fail; all 41 focused controls pass after correction. Keeper
+form navigation also avoids inherited animated root scrolling.
 
-The latest production release is **v2.18.4**, deployed on 2026-10-23 from
-`9ccfa89` through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44).
-[Keeper UI/session ownership](docs/KEEPER_UI_SESSION.md) expands five modules and
-keeps quick edits dirty, confines save results to their editor, stops old upload
-continuations after locking, and restores Upload/Skip controls. Eleven baseline controls fail; all 30 focused controls pass.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39905484804) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272)
+both pass **389 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All eleven new Keeper
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 636 browser cases.
 
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39900413507) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092)
-both pass **348 Node tests** and **581 browser cases** across five profiles,
-with nine documented platform skips and zero test retries. All five new Keeper
-cases and the enhanced Skip-choice case pass in every profile. The separate
-Chromium Library-startup profile also passes on the PR and is excluded from the
-581 browser cases.
+The automatic workflow publishes **v2.18.5**, source `cfcbcb4`, deployment
+`ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The workflow verifies canonical source/version and both D1-derived catalogs.
+Independent public HTTP checks confirm the same source/version and all four
+changed assets (three JavaScript modules and the Keeper layout stylesheet)
+against the reviewed source. The catalog, all nine snapshots and recorded
+settings match the pre-release baseline at revision 9, with zero database writes.
+The retained rollback is v2.18.4, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`.
+See [automatic publication](docs/AUTO_DEPLOYMENT.md) and
+[sanitized evidence](docs/keeper-volume-ownership-verification.json).
 
-The automatic workflow publishes **v2.18.4**, source `9ccfa89`, deployment
-`1367c2ab-0daa-4ab0-8083-534d71edd611`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
-The verifier checks canonical source/version, both D1-derived catalogs and all
-nine changed assets (eight JavaScript modules and the queue-control stylesheet).
-The catalog, all nine snapshots and recorded settings match the pre-release
-baseline at revision 9, with zero database writes. Independent public HTTP checks confirm source/version
-and all nine reviewed asset hashes. The retained rollback is v2.18.3, deployment
-`c327c36c-fe9d-4c48-becd-9199a2f18057`.
-[Automatic checked-main publication](docs/AUTO_DEPLOYMENT.md) remains active on
-the existing `shadowgarden` project. See
-[sanitized evidence](docs/keeper-ui-session-verification.json).
+The deployment job needed one retry after an immediate version-probe mismatch;
+the passed test jobs were retained. The release guide records both attempts and
+the distinction between the retry baseline and the retained v2.18.4 rollback.
 
-The preceding [Keeper core/Upload batch](docs/KEEPER_CORE_UPLOAD.md) shipped in
-v2.18.3 through [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42), with
-[PR #43](https://github.com/skypie0102/ShadowGarden/pull/43) correcting browser CI
-provisioning and an image visibility helper. Its eight expanded modules,
-explicit-Skip correction and [dated evidence](docs/keeper-core-upload-verification.json)
-retain their original scope. The earlier
-[Keeper data/maintenance batch](docs/KEEPER_WORKFLOWS.md) shipped in v2.18.2.
+The preceding [Keeper UI/session batch](docs/KEEPER_UI_SESSION.md) shipped in
+v2.18.4 through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44),
+source `9ccfa89`. Its five expanded modules, editor/upload continuation and
+Upload/Skip fixes retain their [dated evidence](docs/keeper-ui-session-verification.json).
+The [core/Upload batch](docs/KEEPER_CORE_UPLOAD.md) shipped in v2.18.3 and the
+[data/maintenance batch](docs/KEEPER_WORKFLOWS.md) in v2.18.2.
 
 [Public controller readability](docs/PUBLIC_READABILITY.md), merged through
 [PR #39](https://github.com/skypie0102/ShadowGarden/pull/39), shipped in v2.18.1:
