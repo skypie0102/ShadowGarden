@@ -19,7 +19,7 @@ the asset selection or reruns catalog/asset verification.
 A version response is retryable only when all these conditions hold:
 
 - HTTP 200, JSON content type and valid UTF-8/JSON.
-- A semantic release version equal to `releaseVersion`, a full lowercase source,
+- A numeric X.Y.Z release version equal to `releaseVersion`, a full lowercase source,
   its matching short source and branch `main`.
 - That source equals the captured previous canonical production source and
   differs from the release being verified.
@@ -62,4 +62,32 @@ bounded exhaustion, a late matching response, invalid release metadata,
 HTTP/transport/JSON errors, stream cancellation, preservation/local-build failure
 before polling and catalog/asset failure after convergence.
 
-Release CI and production evidence will be recorded after the checked merge.
+## Checked release — 2026-10-23
+
+PR #46 tested source `9127cc05b6ec5fedf7a61c5d218da59181597e78` and tree
+`5a86be525f1326001597620dcf687de914e142d2`. The squash merge `e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b`
+has that exact tested tree. No application, configuration, dependency or database
+schema changes are included in this tooling release.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39920449667) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39921815223)
+both pass **402 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate
+Chromium Library-startup profile passes on the PR and is excluded from the
+636 browser cases.
+
+The automatic workflow publishes **v2.18.6**, source `e2d3d00`, deployment
+`9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The original pre-publication baseline and rollback are retained in one deployment
+attempt. The version check completes in one request (361 ms), recorded in the sanitized report.
+Canonical version/source, both D1-derived catalogs and the stable footer module
+pass verification. Independent public HTTP checks confirm version/source and the
+footer bytes. The exact revision-9 catalog document, all nine snapshots and
+recorded settings remain unchanged, with zero database writes. The retained
+rollback is v2.18.5, deployment `ee0503a8-826c-46d6-9fc5-3536c70e6b9a`.
+See [verification evidence](production-version-convergence-verification.json).
+
+The live check exercised the normal immediate-success path.
+Deterministic fixtures establish stale-version polling, deadline handling and
+failure behavior.
+A successful release does not establish that production lag occurred on this run.

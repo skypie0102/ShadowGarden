@@ -5,7 +5,32 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-23:** v2.18.5, deployment
+**Current production release — 2026-10-23:** v2.18.6, deployment
+`9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`, source `e2d3d00` through
+[PR #46](https://github.com/skypie0102/ShadowGarden/pull/46).
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39920449667) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39921815223)
+both pass **402 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate
+Chromium Library-startup profile passes on the PR and is excluded from the
+636 browser cases.
+
+The automatic workflow publishes **v2.18.6**, source `e2d3d00`, deployment
+`9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The original pre-publication baseline and rollback are retained in one deployment
+attempt. The version check completes in one request (361 ms), recorded in the sanitized report.
+Canonical version/source, both D1-derived catalogs and the stable footer module
+pass verification. Independent public HTTP checks confirm version/source and the
+footer bytes. The exact revision-9 catalog document, all nine snapshots and
+recorded settings remain unchanged, with zero database writes. The retained
+rollback is v2.18.5, deployment `ee0503a8-826c-46d6-9fc5-3536c70e6b9a`.
+See [verification evidence](production-version-convergence-verification.json).
+The retained artifact matches the logged report and GitHub's archive digest.
+The trusted-main Actions job owns publication on the existing project; native
+Git production deployment remains disabled.
+
+**Previous production release — 2026-10-23:** v2.18.5, deployment
 `ee0503a8-826c-46d6-9fc5-3536c70e6b9a`, source `cfcbcb4` through
 [PR #45](https://github.com/skypie0102/ShadowGarden/pull/45).
 

@@ -160,16 +160,36 @@ with nine documented platform skips and zero test retries. All eleven new Keeper
 cases pass in every profile. The separate Chromium Library-startup profile passes
 on the PR and is excluded from the 636 browser cases.
 
-The latest release is **v2.18.5**, source `cfcbcb4`, deployed on 2026-10-23 by
-the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39906804272). Canonical source/version, both
-catalogs, all four changed assets and preservation of the catalog, snapshots and
-recorded settings pass. The retained rollback is v2.18.4,
-`1367c2ab-0daa-4ab0-8083-534d71edd611`. See
-[evidence](keeper-volume-ownership-verification.json).
-Bounded waiting for served-version convergence is the next release-tooling
-follow-up after the documented deployment-job retry. Volume deletion's list
-rebuild, unknown-length/concurrent upload memory and remaining dense upload
-presentation also retain their separate scopes.
+The latest production release is **v2.18.6**, deployed on 2026-10-23 from
+`e2d3d00` through [PR #46](https://github.com/skypie0102/ShadowGarden/pull/46).
+[Served-version convergence](PRODUCTION_VERSION_CONVERGENCE.md) waits within the
+same publication attempt when valid version JSON identifies the captured previous
+production source. It retains the original baseline, selected assets and rollback
+identity. Other verification errors remain immediate. Seven baseline controls
+fail; all thirteen final convergence controls pass.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39920449667) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39921815223)
+both pass **402 Node tests** and **636 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate
+Chromium Library-startup profile passes on the PR and is excluded from the
+636 browser cases.
+
+The automatic workflow publishes **v2.18.6**, source `e2d3d00`, deployment
+`9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The original pre-publication baseline and rollback are retained in one deployment
+attempt. The version check completes in one request (361 ms), recorded in the sanitized report.
+Canonical version/source, both D1-derived catalogs and the stable footer module
+pass verification. Independent public HTTP checks confirm version/source and the
+footer bytes. The exact revision-9 catalog document, all nine snapshots and
+recorded settings remain unchanged, with zero database writes. The retained
+rollback is v2.18.5, deployment `ee0503a8-826c-46d6-9fc5-3536c70e6b9a`.
+See [verification evidence](production-version-convergence-verification.json).
+
+Bounded served-version convergence is complete. Volume deletion's list rebuild,
+unknown-length/concurrent upload memory and remaining dense upload presentation
+retain their separate scopes. The v2.18.5 report remains a dated record of its
+publication retry; this release does not rewrite its baseline history.
 
 ## Validation and release
 

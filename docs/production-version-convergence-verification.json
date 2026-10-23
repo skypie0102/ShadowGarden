@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.18.6",
+  "recordedAt": "2026-10-23T09:44:29.143129+00:00",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/46",
+  "scope": "Bounded public version convergence retaining the original pre-publication baseline, reviewed assets and rollback identity. No application behavior, production configuration, dependency graph, schema, catalog or provider writes changed.",
+  "baseSource": "7618e8c2d5a888a51c7bffae42d22a7c03cfdaf4",
+  "candidate": "9127cc05b6ec5fedf7a61c5d218da59181597e78",
+  "mergeSource": "e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b",
+  "testedTree": "5a86be525f1326001597620dcf687de914e142d2",
+  "mergeTreeMatchesTested": true,
+  "baselineControls": {
+    "source": "7618e8c2d5a888a51c7bffae42d22a7c03cfdaf4",
+    "total": 12,
+    "passed": 5,
+    "failed": 7,
+    "testRetries": 0,
+    "logSha256": "3a70841d0d423ea0bcad0824a6fceef93883abcc0569ac205122a5c2b6575779",
+    "note": "The thirteen final cases include a supplementary remaining-request-budget control added after the twelve-case baseline reproduction."
+  },
+  "finalControls": {
+    "total": 13,
+    "passed": 13,
+    "focusedDeploymentVerifierTotal": 36,
+    "focusedPassed": 36,
+    "testRetries": 0,
+    "logSha256": "998739409e53c9923e7c86175d05057d6ef1e3a73d5b9867b521c89db68b8e69",
+    "fixtureOnly": true,
+    "realSleeps": 0,
+    "liveWrites": 0
+  },
+  "localChecks": {
+    "assetAudit": "passed",
+    "nodePassed": 402,
+    "staticBuild": "passed",
+    "bindingAwareFunctionsBuild": "passed",
+    "logSha256": "7f2b8084962c007d23fc392246f8db63d65fec8fcd9f63a12936f9646b5afb20"
+  },
+  "reviewedSources": [
+    {
+      "path": "scripts/deploy-production.mjs",
+      "sha256": "bf5be37969f05c37bd51303cf2ee2a9c3e2a5c8ec5cce1c7bb790ba74f64bb8b",
+      "gitBlob": "01cd35a2be57c2279c9a99de635d7c2a3e0e12ea"
+    },
+    {
+      "path": "scripts/verify-production.mjs",
+      "sha256": "79b59555c697e36b183e49fd310a479803a2aa4bb29a6d82ba6a52f89738f41a",
+      "gitBlob": "97a90ea8d9f825f70e5affa883d31f3931aabfeb"
+    },
+    {
+      "path": "scripts/served-version.mjs",
+      "sha256": "0119ae5de6a748cd3be058b211d666c210127edb8e62740fe4570d124aa2d9fb",
+      "gitBlob": "5704b45a1033f2d2bf96886d0ad1f9f3c177feff"
+    },
+    {
+      "path": "tests/production-version-convergence.test.mjs",
+      "sha256": "df40a74e1c0bde7d2d8e9ddea9bf5de0111a4771b40636d348f1d800a3ac25cf",
+      "gitBlob": "2efa1d5ea46960753b1d4b8a34015a599b3ee1fc"
+    },
+    {
+      "path": "package.json",
+      "sha256": "2a317478b44f6f8e20db09f5edf4e1ecf90eb5be96d4a7bde01b8d28eff5ddbe",
+      "gitBlob": "c97ff7248c56fa3c8bc198ede2d53bc46ee58d7b"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2cc42b54faab17fb053cac30c5005a624b88310475ec737d6fbfdec7ec9b6551",
+      "gitBlob": "d1ed99fa4f6d800b23f231178ee479073de34afb"
+    }
+  ],
+  "contract": {
+    "maxVersionChecks": 12,
+    "overallDeadlineMs": 120000,
+    "intervalMs": 5000,
+    "maxRequestMs": 15000,
+    "versionMaxBytes": 65536,
+    "otherResponseMaxBytes": 4194304,
+    "retryable": "Valid coherent version metadata for the captured previous canonical source only.",
+    "standaloneCli": "Single version check.",
+    "notRetried": [
+      "HTTP failures/redirects",
+      "transport/timeouts",
+      "malformed UTF-8/JSON/content type",
+      "excessive response bodies",
+      "unexpected source or inconsistent release metadata",
+      "preservation/configuration drift",
+      "local build/path failures",
+      "catalog/asset mismatch"
+    ]
+  },
+  "prCi": {
+    "runId": 39920449667,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39920449667",
+    "source": "9127cc05b6ec5fedf7a61c5d218da59181597e78",
+    "tree": "5a86be525f1326001597620dcf687de914e142d2",
+    "conclusion": "success",
+    "verifyJobId": 120304132569,
+    "nodePassed": 402,
+    "browserPassed": 636,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "jobId": 120304280425,
+        "conclusion": "success",
+        "passed": 129,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": true,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 120304280482,
+        "conclusion": "success",
+        "passed": 126,
+        "skipped": 3,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-    7 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-   69 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 120304280516,
+        "conclusion": "success",
+        "passed": 129,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 120304280553,
+        "conclusion": "success",
+        "passed": 127,
+        "skipped": 2,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   69 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 120304280599,
+        "conclusion": "success",
+        "passed": 125,
+        "skipped": 4,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   69 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-   90 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-   96 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "mainCi": {
+    "runId": 39921815223,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/39921815223",
+    "source": "e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b",
+    "tree": "5a86be525f1326001597620dcf687de914e142d2",
+    "conclusion": "success",
+    "verifyJobId": 120308590370,
+    "nodePassed": 402,
+    "browserPassed": 636,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "jobId": 120308720169,
+        "conclusion": "success",
+        "passed": 129,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 120308720242,
+        "conclusion": "success",
+        "passed": 125,
+        "skipped": 4,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   69 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-   90 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-   96 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 120308720272,
+        "conclusion": "success",
+        "passed": 129,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 120308720286,
+        "conclusion": "success",
+        "passed": 126,
+        "skipped": 3,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-    7 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-   69 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 120308720354,
+        "conclusion": "success",
+        "passed": 127,
+        "skipped": 2,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   69 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   70 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "production": {
+    "id": 12488037903,
+    "name": "production-verification",
+    "archiveSha256": "b1295c4b9e756222822f76ed2832af1996af2e6a796044de20abbdcbfb7ccc6a",
+    "reportSha256": "44acbec9e537f8b8a169e7c250a766ff00b899416b989297b8f8ff33395c57a9",
+    "matchesLoggedReport": true,
+    "digestVerified": true,
+    "members": [
+      "production-verification.json"
+    ],
+    "report": {
+      "checkedAt": "2026-10-23T08:14:43.658Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "9ba29d34-3d73-401f-8dd3-d4abb5c15fc4",
+      "source": "e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b",
+      "version": "2.18.6",
+      "baselineCheckedAt": "2026-10-23T08:14:42.794Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 361
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b",
+          "version": "2.18.6"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/library-footer-version.js",
+          "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+          "bytes": 1042
+        }
+      ],
+      "rollbackDeploymentId": "ee0503a8-826c-46d6-9fc5-3536c70e6b9a",
+      "rollbackSource": "cfcbcb4036a1f4ee0284e34083b2500d96e901cc",
+      "beforeCheckedAt": "2026-10-23T08:14:34.397Z"
+    },
+    "workflowRunId": 39921815223,
+    "workflowRunAttempt": 1,
+    "jobId": 120313252650,
+    "publicationAttempts": 1,
+    "canonicalMetadataSource": "Authenticated project and D1 captures in the successful trusted-main workflow; not an independent connector resource GET.",
+    "access": {
+      "jobId": 120308590046,
+      "pagesRead": true,
+      "d1Select": true
+    }
+  },
+  "independentHttpBefore": {
+    "checkedAt": "2026-10-23T07:53:52.595612+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.5",
+      "releaseVersion": "2.18.5",
+      "commit": "cfcbcb4036a1f4ee0284e34083b2500d96e901cc",
+      "shortCommit": "cfcbcb4",
+      "branch": "main",
+      "builtAt": "2026-10-23T05:54:51.776Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "asset": {
+      "path": "/assets/js/library-footer-version.js",
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "bytes": 1042,
+      "contentType": "application/javascript",
+      "matchesSource": true
+    }
+  },
+  "independentHttpAfter": {
+    "checkedAt": "2026-10-23T09:43:25.654420+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.6",
+      "releaseVersion": "2.18.6",
+      "commit": "e2d3d0030f213fcf3b2cb096b5599bcbdfdd424b",
+      "shortCommit": "e2d3d00",
+      "branch": "main",
+      "builtAt": "2026-10-23T08:14:32.001Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "asset": {
+      "path": "/assets/js/library-footer-version.js",
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "bytes": 1042,
+      "contentType": "application/javascript",
+      "matchesSource": true
+    }
+  },
+  "limits": [
+    "This live release exercised immediate convergence (one version GET); deterministic fixtures establish polling and deadline behavior.",
+    "Authenticated capture and public HTTP checks are separate reads, not an atomic transaction or guarantee against later edits.",
+    "Private baselines remain ignored and were not uploaded; the artifact contains only the sanitized report.",
+    "No new physical-device, real credential/CAPTCHA, book-opening or provider-write acceptance is claimed."
+  ]
+}
