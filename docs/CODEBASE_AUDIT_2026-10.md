@@ -139,23 +139,23 @@ through [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42): eight
 expanded modules and a reproduced explicit-Skip queue correction. Three baseline
 controls fail; all seven focused controls pass. Final PR and main CI pass 332
 Node tests and 556 browser cases across five profiles, with nine documented
-skips and zero test retries. Remaining Keeper UI/session helpers, broader
-asynchronous queue/session fixtures and unknown-length/concurrent upload memory
-budgeting remain follow-ups.
+skips and zero test retries. The UI/session follow-up is recorded below;
+unknown-length/concurrent upload memory budgeting remains a separate design
+follow-up.
 
-The latest release is **v2.18.3**, source `2fa066f`, deployed on 2026-10-23 by
-the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733). Automatic checked-main publication
-to the existing live project verifies both catalogs, all eight changed assets
-and exact catalog/snapshot/settings preservation. The retained rollback is
-v2.18.2, `85a31e3a-43d3-4044-b7cf-026452b00c1e`. See
-[deployment procedure](AUTO_DEPLOYMENT.md) and
-[sanitized evidence](keeper-core-upload-verification.json).
+The [Keeper UI/session batch](KEEPER_UI_SESSION.md) ships in **v2.18.4** through
+[PR #44](https://github.com/skypie0102/ShadowGarden/pull/44): five expanded modules
+and reproduced editor/upload ownership corrections. Eleven baseline controls fail;
+all 30 focused controls pass. Final PR and main CI pass 348 Node tests and 581
+browser cases, with nine documented platform skips and zero test retries.
 
-The next [Keeper UI/session batch](KEEPER_UI_SESSION.md) prepares v2.18.4 with
-five expanded modules and reproduced editor/upload ownership corrections. Eleven
-baseline controls fail; all 30 focused controls pass. Full validation is pending.
-Unknown-length/concurrent upload-memory design and broader editor fixtures remain
-separate follow-ups.
+The latest release is **v2.18.4**, source `9ccfa89`, deployed on 2026-10-23 by
+the [successful main run](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092). Canonical source/version, both
+catalogs, all nine changed assets and preservation of the catalog, snapshots and
+recorded settings pass. The retained rollback is v2.18.3,
+`c327c36c-fe9d-4c48-becd-9199a2f18057`. See [evidence](keeper-ui-session-verification.json).
+Unknown-length/concurrent upload-memory design, broader volume/translation-editor
+fixtures and remaining dense upload presentation helpers remain follow-ups.
 
 ## Validation and release
 

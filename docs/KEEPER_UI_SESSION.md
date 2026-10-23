@@ -73,12 +73,29 @@ early-edit case holds only the former named 80 ms baseline callback; UI timers
 and animation frames run normally, and Save must remain enabled both before and
 after releasing any held baseline callback.
 
-Local validation passes the asset/provenance audit, all **348 Node tests**, static
-build and binding/compatibility-aware Functions package. The complete five-profile
-browser matrix remains pending.
-v2.18.4 is prepared; production remains v2.18.3 until checked main CI publishes
-and verifies the release. [Verification](keeper-ui-session-verification.json)
-records the final outcome.
+Local validation passes the asset/provenance audit, all 348 Node tests, static
+build and binding/compatibility-aware Functions package. Browser results come
+from GitHub CI because the local browser runtime is unavailable.
+[PR #44](https://github.com/skypie0102/ShadowGarden/pull/44) merges as `9ccfa8981d9d44530001dff2a5ea123e8bd097e8`;
+its release tree `d2422ea958093a9d95d7d2f3a4ed6dad982cfd1c` matches the tested PR tree.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39900413507) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092)
+both pass **348 Node tests** and **581 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All five new Keeper
+cases and the enhanced Skip-choice case pass in every profile. The separate
+Chromium Library-startup profile also passes on the PR and is excluded from the
+581 browser cases.
+
+The automatic workflow publishes **v2.18.4**, source `9ccfa89`, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The verifier checks canonical source/version, both D1-derived catalogs and all
+nine changed assets (eight JavaScript modules and the queue-control stylesheet).
+The catalog, all nine snapshots and recorded settings match the pre-release
+baseline at revision 9, with zero database writes. Independent public HTTP checks confirm source/version
+and all nine reviewed asset hashes. The retained rollback is v2.18.3, deployment
+`c327c36c-fe9d-4c48-becd-9199a2f18057`.
+The retained production artifact matches the successful log. See
+[sanitized evidence](keeper-ui-session-verification.json).
 
 The separate unknown-length/concurrent upload-memory design, broader volume and
 translation editor races, and remaining dense upload presentation helpers remain

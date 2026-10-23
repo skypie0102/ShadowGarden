@@ -1,12 +1,31 @@
 # ShadowGarden project audit
 
-## Keeper UI/session candidate — 2026-10-23
+## Keeper UI/session released — 2026-10-23
 
-[Scope and contracts](KEEPER_UI_SESSION.md) cover five expanded UI/session modules
-and corrections for early edits, obsolete series-save responses and uploads
-continuing across lock/reopen. The 30-control baseline passes 19 and fails 11;
-all 30 controls pass after correction. Full validation and release are pending.
-See [source evidence](keeper-ui-session-equivalence.json) and
+[PR #44](https://github.com/skypie0102/ShadowGarden/pull/44) merges as `9ccfa89`.
+Five mechanical formatting stages retain normalized Babel ASTs/comments; four
+final modules remain formatting-only. Lines over 180 columns decrease from 33
+to 3. Dirty-state baseline timing, failed-save presentation, per-opening series
+save ownership, upload session generation and queue-action visibility are recorded
+separately. The 30-control baseline passes 19 and fails 11; all 30 pass after correction.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39900413507) and [checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092)
+both pass **348 Node tests** and **581 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All five new Keeper
+cases and the enhanced Skip-choice case pass in every profile. The separate
+Chromium Library-startup profile also passes on the PR and is excluded from the
+581 browser cases.
+
+The automatic workflow publishes **v2.18.4**, source `9ccfa89`, deployment
+`1367c2ab-0daa-4ab0-8083-534d71edd611`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The verifier checks canonical source/version, both D1-derived catalogs and all
+nine changed assets (eight JavaScript modules and the queue-control stylesheet).
+The catalog, all nine snapshots and recorded settings match the pre-release
+baseline at revision 9, with zero database writes. Independent public HTTP checks confirm source/version
+and all nine reviewed asset hashes. The retained rollback is v2.18.3, deployment
+`c327c36c-fe9d-4c48-becd-9199a2f18057`.
+See [scope and contracts](KEEPER_UI_SESSION.md),
+[source evidence](keeper-ui-session-equivalence.json) and
 [verification](keeper-ui-session-verification.json).
 
 ## Keeper core/Upload released — 2026-10-23

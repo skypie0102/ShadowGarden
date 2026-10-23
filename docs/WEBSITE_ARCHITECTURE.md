@@ -27,6 +27,12 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.4 UI/session batch](KEEPER_UI_SESSION.md) makes each series save belong
+to its editor opening and records dirty-state baselines after composed-field
+microtasks. Upload continuations also retain their starting session generation;
+locking/reopening cannot authorize the old batch's next write. The existing
+shared client still owns authorization, revision and immutable-key contracts.
+
 The [v2.18.3 core/Upload batch](KEEPER_CORE_UPLOAD.md) expands shared runtime,
 queue and presentation modules. The shared client remains the only API transport;
 the engine retains serial EPUB, cover and catalog writes. Queue reconciliation

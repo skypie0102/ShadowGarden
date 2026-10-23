@@ -1,35 +1,27 @@
 # ShadowGarden documentation
 
-[Keeper UI/session ownership](KEEPER_UI_SESSION.md) prepares v2.18.4 with five
-expanded modules and reproduced editor/upload continuation corrections.
-[Source proof](keeper-ui-session-equivalence.json) and
-[verification](keeper-ui-session-verification.json) retain scope and release state.
+[Keeper UI/session ownership](KEEPER_UI_SESSION.md) is deployed in **v2.18.4**
+through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44), source
+`9ccfa89`. Five expanded modules and the reproduced editor/upload continuation
+corrections retain [source evidence](keeper-ui-session-equivalence.json).
+Final PR and main CI pass 348 Node tests and 581 browser cases, with nine
+documented platform skips and zero test retries.
 
-[Browser CI runtime](CI_BROWSER_RUNTIME.md) documents the pinned dependency image
-and its validation.
+The [current checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39901498092) verifies source/version,
+both catalogs, all nine changed assets and preservation of the catalog, snapshots
+and recorded settings. Revision 9 and all 9 snapshots remain
+unchanged. The retained rollback is v2.18.3. See
+[current evidence](keeper-ui-session-verification.json) and
+[automatic publication](AUTO_DEPLOYMENT.md). The test-project preview remains
+separate.
 
-[Keeper core and Upload](KEEPER_CORE_UPLOAD.md) is deployed in **v2.18.3**
-through [PR #42](https://github.com/skypie0102/ShadowGarden/pull/42), with
-[PR #43](https://github.com/skypie0102/ShadowGarden/pull/43) supplying the pinned
-browser CI runtime. Production source is `2fa066f`. Eight expanded modules retain
-[formatting-stage equivalence](keeper-core-upload-equivalence.json), with the
-explicit-Skip queue correction recorded separately. Final PR and main CI pass
-332 Node tests and 556 browser cases, with nine documented skips and zero test
-retries.
-
-[Automatic live deployment](AUTO_DEPLOYMENT.md) is active. The
-[current main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39846590733) verifies source/version, both catalogs,
-all eight changed assets and exact catalog/snapshot/settings preservation.
-Revision 9 and all 9 snapshots are
-unchanged. The retained rollback is v2.18.2. See
-[current sanitized verification](keeper-core-upload-verification.json).
-The test project's automatic main preview remains a separate deployment.
-
-[Keeper data/maintenance cleanup](KEEPER_WORKFLOWS.md) shipped in v2.18.2 through
-[PR #41](https://github.com/skypie0102/ShadowGarden/pull/41), with seven expanded
-controllers and the banner-editor ownership fix. Its
-[source proof](keeper-readability-equivalence.json) and
-[dated verification](keeper-workflow-verification.json) remain available.
+[Browser CI runtime](CI_BROWSER_RUNTIME.md) records the pinned dependency image
+and the original v2.18.3 installation/assertion diagnosis. The preceding
+[Keeper core/Upload batch](KEEPER_CORE_UPLOAD.md) shipped in v2.18.3;
+[dated verification](keeper-core-upload-verification.json) retains its eight
+module hashes and explicit-Skip correction. The earlier
+[Keeper data/maintenance cleanup](KEEPER_WORKFLOWS.md) shipped in v2.18.2 with
+its [dated verification](keeper-workflow-verification.json).
 
 The [activation run 39758249662](https://github.com/skypie0102/ShadowGarden/actions/runs/39758249662)
 published v2.18.1 after the missing-secret and Pages-authorization blockers were
