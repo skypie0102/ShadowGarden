@@ -37,6 +37,13 @@
         "source": "73868c3fa9a7072288d1767866615c713433c948",
         "conclusion": "failure",
         "reason": "JavaScript restored the ordinary selector, but the existing CSS still forced nonduplicate rows to display:none. The CSS now follows the owner\u2019s explicit hidden attribute. The real UI interaction and all assertions/timeouts remain unchanged."
+      },
+      {
+        "runId": 39867204838,
+        "source": "ecfd44fd5fccd64f0472030055955a8bb476da5c",
+        "conclusion": "failure",
+        "successfulProfiles": 4,
+        "reason": "The complete suite and enhanced Skip-choice case passed in four profiles. Desktop WebKit never opened the first editor after the early-edit fixture froze the entire page clock; the trace shows the action completed but the editor remained closed. The fixture now holds only the former named 80 ms baseline callback, leaving normal UI timing active, explicitly asserts the dialog opens, and checks Save stays enabled before and after releasing any held baseline callback. Assertions remain active, with no forced interaction, timeout increase, retry or skip."
       }
     ]
   },

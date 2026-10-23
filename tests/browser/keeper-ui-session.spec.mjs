@@ -49,13 +49,30 @@ test('an immediate edit stays dirty and a failed save returns to a retryable for
     writes.push(route.request().postDataJSON());
     return route.fulfill(writes.length === 1 ? { status: 503, json: { error: 'Disposable save failure' } } : { json: { ...catalog, revision: 6 } });
   });
-  // Freeze wall-clock callbacks before opening. A first edit must not depend on
-  // waiting 80 ms; the composed form's microtasks still run normally.
-  await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
-  await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));
+  // Hold only the former baseline callback. Freezing the entire page clock also
+  // interferes with WebKit's UI timing before the editor can open.
+  await page.evaluate(() => {
+    const schedule = window.setTimeout.bind(window), cancel = window.clearTimeout.bind(window);
+    const held = new Map(); let nextId = -1;
+    window.setTimeout = (callback, delay, ...args) => {
+      if (delay === 80 && callback?.name === 'captureBaseline') {
+        const id = nextId--; held.set(id, () => callback(...args)); return id;
+      }
+      return schedule(callback, delay, ...args);
+    };
+    window.clearTimeout = id => { if (!held.delete(id)) cancel(id); };
+    window.releaseEditorBaselineTimers = () => {
+      window.setTimeout = schedule; window.clearTimeout = cancel;
+      for (const callback of held.values()) callback();
+      held.clear();
+    };
+  });
   await page.locator('[data-manager-open="a"]').click();
+  await expect(page.locator('#seriesEditor')).toHaveAttribute('open');
   await expect(page.locator('#saveSeries')).toBeDisabled();
   await page.locator('#manageTitle').fill('Quickly edited title');
+  await expect(page.locator('#saveSeries')).toBeEnabled();
+  await page.evaluate(() => window.releaseEditorBaselineTimers());
   await expect(page.locator('#saveSeries')).toBeEnabled();
   await page.locator('#saveSeries').click();
   await expect(page.locator('#seriesSaveState')).toHaveText('Unsaved changes');

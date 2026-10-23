@@ -68,7 +68,10 @@ an immediate edit and failed-save retry, late save success/failure, and lock/reo
 during wake-lock/cover preparation followed by an explicit upload retry. The
 existing duplicate-removal case also changes a retained Skip back to Upload and
 back again, verifying that the user's later choice remains effective. No live
-credentials, catalog writes or provider writes are used by these fixtures.
+credentials, catalog writes or provider writes are used by these fixtures. The
+early-edit case holds only the former named 80 ms baseline callback; UI timers
+and animation frames run normally, and Save must remain enabled both before and
+after releasing any held baseline callback.
 
 Local validation passes the asset/provenance audit, all **348 Node tests**, static
 build and binding/compatibility-aware Functions package. The complete five-profile
