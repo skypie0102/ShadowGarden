@@ -5,6 +5,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {inspectCatalog} from '../server/catalog-document.js';
 import {publicCatalog} from '../server/state.js';
 import {assertDeployedBindings,assertCatalogUnchanged} from './pages-release-guard.mjs';
+import {verifyServedVersion} from './served-version.mjs';
 
 export const PRODUCTION_ORIGIN='https://shadowgarden-bon.pages.dev';
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
@@ -49,8 +50,8 @@ export function assertProductionPreserved(before,after,config,options){
   requireValue(equal(state(before),state(after)),'Production data, snapshots or configuration changed; inspect before accepting the release.');
 }
 
-async function getBytes(fetchImpl,path){
-  const response=await fetchImpl(PRODUCTION_ORIGIN+path,{method:'GET',redirect:'manual',cache:'no-store',headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(15_000)});
+async function getBytes(fetchImpl,path,{timeoutMs=15_000,maxBytes=4*1024*1024}={}){
+  const response=await fetchImpl(PRODUCTION_ORIGIN+path,{method:'GET',redirect:'manual',cache:'no-store',headers:{'cache-control':'no-cache'},signal:AbortSignal.timeout(Math.ceil(timeoutMs))});
   if(response.status!==200){await response.body?.cancel();throw Error(`Production GET ${path} returned HTTP ${response.status}.`);}
   const chunks=[];let size=0;
   if(response.body){
@@ -59,7 +60,7 @@ async function getBytes(fetchImpl,path){
       while(true){
         const {done,value}=await reader.read();if(done)break;
         size+=value.byteLength;
-        if(size>4*1024*1024){await reader.cancel();throw Error(`Production response exceeds verification limit: ${path}`);}
+        if(size>maxBytes){await reader.cancel();throw Error(`Production response exceeds verification limit: ${path}`);}
         chunks.push(Buffer.from(value));
       }
     }finally{reader.releaseLock();}
@@ -67,9 +68,11 @@ async function getBytes(fetchImpl,path){
   return {bytes:Buffer.concat(chunks),contentType:response.headers.get('content-type')||''};
 }
 
-export async function verifyProduction({baseline,before,config,distDir,version,source,files,fetchImpl=fetch,now=Date.now()}){
-  const catalogs=validateProductionBaseline(baseline,config,{now});
-  if(before)assertProductionPreserved(before,baseline,config,{now});
+export async function verifyProduction({baseline,before,config,distDir,version,source,files,fetchImpl=fetch,now=Date.now,waitForPreviousVersion=false,sleep,clock}){
+  const currentTime=()=>typeof now==='function'?now():now;
+  const checkedAt=currentTime();
+  const catalogs=validateProductionBaseline(baseline,config,{now:checkedAt});
+  if(before)assertProductionPreserved(before,baseline,config,{now:checkedAt});
   requireValue(typeof version==='string'&&/^\d+\.\d+\.\d+$/.test(version)&&source===baseline.deployment.source,'Expected version/source is invalid or differs from canonical production.');
   requireValue(Array.isArray(files)&&files.length>0&&files.length<=100&&new Set(files).size===files.length,'Provide 1–100 unique reviewed asset paths.');
   const root=await realpath(distDir),assets=[];
@@ -82,14 +85,16 @@ export async function verifyProduction({baseline,before,config,distDir,version,s
   const localVersion=JSON.parse(await readFile(resolve(root,'data/version.json'),'utf8'));
   requireValue(localVersion.version===version&&localVersion.releaseVersion===version&&localVersion.commit===source&&localVersion.branch==='main','Local dist version does not match the reviewed production source.');
   const checks=[];
-  const getJson=async path=>{
-    const result=await getBytes(fetchImpl,path);
+  const getJson=async(path,options)=>{
+    const result=await getBytes(fetchImpl,path,options);
     requireValue(/^application\/json(?:\s*;|$)/i.test(result.contentType),`Production JSON content type is invalid: ${path}`);
     let value;try{value=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(result.bytes));}catch{throw Error(`Production JSON is invalid: ${path}`);}
     return value;
   };
-  const served=await getJson('/data/version.json');
-  requireValue(served?.version===version&&served.releaseVersion===version&&served.commit===source&&served.shortCommit===source.slice(0,7)&&served.branch==='main','Served version does not match canonical production source.');
+  const versionCheck=await verifyServedVersion(
+    timeoutMs=>getJson('/data/version.json',{timeoutMs,maxBytes:64*1024}),
+    {version,source,previousSource:before?.deployment.source,waitForPreviousVersion,sleep,clock}
+  );
   checks.push({path:'/data/version.json',source,version});
   for(const [scope,path] of [['main','/media/shadow-garden/data/catalog.json'],['adult','/media/shadow-garden/data/adult-catalog.json']]){
     const value=await getJson(path);assertCatalogUnchanged(catalogs[scope],value);
@@ -101,7 +106,7 @@ export async function verifyProduction({baseline,before,config,distDir,version,s
     requireValue(expectedType.test(result.contentType)&&result.bytes.equals(asset.bytes),`Served asset differs from the reviewed build: ${path}`);
     checks.push({path,sha256:sha(result.bytes),bytes:result.bytes.length});
   }
-  return {checkedAt:new Date(now).toISOString(),origin:PRODUCTION_ORIGIN,deploymentId:baseline.deployment.id,source,version,baselineCheckedAt:baseline.checkedAt,revision:baseline.database.revision,documentSha256:baseline.database.documentSha256,snapshots:baseline.database.snapshots.length,preservationChecked:Boolean(before),databaseWrites:0,checks};
+  return {checkedAt:new Date(currentTime()).toISOString(),origin:PRODUCTION_ORIGIN,deploymentId:baseline.deployment.id,source,version,baselineCheckedAt:baseline.checkedAt,revision:baseline.database.revision,documentSha256:baseline.database.documentSha256,snapshots:baseline.database.snapshots.length,preservationChecked:Boolean(before),databaseWrites:0,versionCheck,checks};
 }
 
 export async function main(args){
