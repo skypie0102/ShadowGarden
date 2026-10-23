@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-23T12:38:52.446Z",
+  "base": "6dea3a77dbc62508a70ca6c203185fd3d8e4d0d3",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "babel",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": true,
+      "singleQuote": false,
+      "quoteProps": "preserve",
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "embeddedLanguageFormatting": "off"
+    }
+  },
+  "comparison": "Mechanical formatting stage only: Babel AST equality excludes positions, extra raw/parenthesis metadata and comments; ordered normalized comment text is checked separately. Subsequent functional changes are recorded separately.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/epub-inspection.js",
+      "beforeSha256": "76af9e848355a2dc3b8aa32baba2f87c5c94d87800923b7c4666da42551d3006",
+      "formattedSha256": "f9de4baf6649779661c3ef00ae8a86285b4f4ae94a0efbfb787507e44ad80bec",
+      "normalizedAstSha256": "9837af62fcceda33ae574fed77051b573c687b096d48ed55a6d3e373c3abced1",
+      "commentsSha256": "0f6625ee99a4c6af8f28f88eada142e566f5ef832eea66609186e69d8a0ccb6e",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 12200,
+        "lines": 182,
+        "longestLine": 315,
+        "linesOver180": 6
+      },
+      "formatted": {
+        "bytes": 14698,
+        "lines": 414,
+        "longestLine": 100,
+        "linesOver180": 0
+      },
+      "finalSha256": "825bebf97338add2acdbd1d91efab8b6ff7c8d52f4766d56336774949b606077",
+      "finalMatchesFormattingStage": false
+    }
+  ]
+}
