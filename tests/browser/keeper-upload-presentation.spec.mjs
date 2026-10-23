@@ -41,7 +41,7 @@ test('similar-volume guidance survives queue edits and clears when the match or 
   await page.locator('#seriesInput').fill('Fixture story');
   await expect(note).toContainText('Possible similar volume');
   await expect(f.report).toContainText('Possible similar volume');
-  await page.locator('#adultInput').check();
+  await page.locator('label').filter({ has: page.locator('#adultInput') }).click();
   await expect.poll(() => page.evaluate(() => window.ShadowGardenKeeper.state.batch.items[0].adult)).toBe(true);
   await expect(note).toHaveCount(0);
   await expect(f.report).not.toContainText('Possible similar volume');
