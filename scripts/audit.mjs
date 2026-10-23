@@ -75,6 +75,8 @@ const deliberate=new Set([
   'public/assets/js/admin/motion.js',
   // v2.18.4: queue visibility follows its owner's explicit hidden state.
   'public/assets/css/admin-components.css',
+  // Keeper form navigation: avoid inherited animated root scrolling.
+  'public/assets/css/admin-layout.css',
   'public/assets/js/admin-batch.js',
   'public/assets/js/admin-upload-workflow.js',
   'public/assets/js/admin/abuse-workflow.js',

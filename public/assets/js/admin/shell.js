@@ -228,7 +228,7 @@
 
     keeper.events.addEventListener("session:unlocked", () => {
       manageView.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     });
     return {
       openNewBooks,

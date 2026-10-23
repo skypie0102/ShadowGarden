@@ -24,7 +24,19 @@
     "status": "pending",
     "newBrowserCases": 11,
     "requiredProfiles": 5,
-    "supersededRuns": []
+    "supersededRuns": [
+      {
+        "runId": 39904626315,
+        "source": "662dbb64e3d059625395c7f7c8f6a197c7a06245",
+        "conclusion": "failure",
+        "reason": "Desktop Firefox stopped in the existing late-series-save failure case before any write or new volume case. The trace records a successful pointer action while root scrolling advances from 0 to 29 and then 308 pixels, leaving the editor closed. Keeper inherited site.css html smooth scrolling. The Keeper-only layout stylesheet now uses automatic root scrolling so focus/form navigation settles immediately. No assertion, timeout, click forcing, retry or skip was changed. The earlier whole-clock hypothesis is not treated as a complete explanation because this case uses no clock override. The shell unlock reset also follows automatic scrolling instead of explicitly requesting a smooth animation.",
+        "artifact": {
+          "id": 12479814845,
+          "name": "browser-report-desktop-firefox",
+          "sha256": "3adc94ff821cf35f5b00f4a12e18f544f8c459ecbad13ce1fa514c09cd0b08da"
+        }
+      }
+    ]
   },
   "production": {
     "status": "pending",

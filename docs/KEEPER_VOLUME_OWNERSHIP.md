@@ -1,10 +1,21 @@
 # Keeper volume and translation ownership — v2.18.5
 
 This batch corrects reproduced editor races in the already-expanded Library and
-translation workflows. It changes two frontend modules, with no backend, schema,
+translation workflows. It changes two workflows, one shell scroll call and the Keeper layout stylesheet,
+with no backend, schema,
 dependency, reader, credential or runtime-configuration change.
 [Source evidence](keeper-volume-ownership-source.json) records the functional
 before/after hashes; this batch makes no formatting-equivalence claim.
+
+The first candidate also exposed a missed editor-opening click in an existing
+Firefox case, before any write was sent. Its trace shows inherited root smooth
+scrolling continuing during the pointer action. Keeper now uses automatic root
+scrolling for focus and form navigation, and its unlock reset follows that rule.
+The rule is in its own layout stylesheet;
+public-page and reader styles retain their existing behavior. The
+[CSSOM scrolling contract](https://drafts.csswg.org/cssom-view-1/#scrolling) describes
+the automatic/smooth distinction. The failed run and trace identity remain in
+the verification record.
 
 ## Ownership and drafts
 
