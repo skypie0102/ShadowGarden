@@ -124,7 +124,9 @@ It does not check compiled server source bytes, encrypted secret values,
 real CAPTCHA/credential flows, B2 writes/deletes, EPUB opening or physical device
 acceptance. Use the existing CI and separately scoped live acceptance for those
 behaviors. The current production verification record is
-[`upload-buffer-verification-2.18.8.json`](upload-buffer-verification-2.18.8.json).
+[`keeper-upload-presentation-verification.json`](keeper-upload-presentation-verification.json).
+The preceding [upload-buffer release](upload-buffer-verification-2.18.8.json)
+retains its separate dated evidence.
 The preceding [volume-removal release](keeper-volume-removal-verification.json)
 retains its separate dated evidence.
 The preceding [version-convergence release](production-version-convergence-verification.json)
