@@ -1,5 +1,10 @@
 # ShadowGarden documentation
 
+[Keeper volume/translation ownership](KEEPER_VOLUME_OWNERSHIP.md) prepares
+v2.18.5. [Source hashes](keeper-volume-ownership-source.json) and
+[verification](keeper-volume-ownership-verification.json) record the reproduced
+races, draft-preservation contract and pending full validation/release.
+
 [Keeper UI/session ownership](KEEPER_UI_SESSION.md) is deployed in **v2.18.4**
 through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44), source
 `9ccfa89`. Five expanded modules and the reproduced editor/upload continuation

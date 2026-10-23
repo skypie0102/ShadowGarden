@@ -1,5 +1,14 @@
 # ShadowGarden project audit
 
+## Keeper volume/translation candidate — 2026-10-23
+
+[Scope](KEEPER_VOLUME_OWNERSHIP.md) covers late volume/translation/Trash responses
+and draft replacement during current volume writes or catalog refreshes. Baseline
+`4f91de3` passes nine of 41 controls and fails 32; all 41 corrected controls and
+389 Node tests pass. Complete browser validation and release remain pending.
+See [source hashes](keeper-volume-ownership-source.json) and
+[verification](keeper-volume-ownership-verification.json).
+
 ## Keeper UI/session released — 2026-10-23
 
 [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44) merges as `9ccfa89`.

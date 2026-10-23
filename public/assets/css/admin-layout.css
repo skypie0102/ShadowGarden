@@ -1,4 +1,6 @@
 /* Shadow Garden R7 — Garden Keeper workspace, tool layout, dialogs, and add-to-series context. */
+/* Focus and form navigation must settle before controls can be activated. */
+html{scroll-behavior:auto}
 #dashboardView{display:block}
 #dashboardView.hidden{display:none!important}
 .manage-home-head{display:grid;grid-template-columns:150px minmax(0,1fr) auto;align-items:start;gap:22px;margin-bottom:24px}

@@ -14,9 +14,13 @@
       editorContext = null;
     const currentBanner = context => context === bannerContext && dialog.open;
     const currentEditor = context =>
-      context === editorContext && dialog.open && state.activeSeriesId === context.id;
+      Boolean(context && context === editorContext && dialog.open && state.activeSeriesId === context.id);
+    const currentVolume = (context, card) =>
+      currentEditor(context) && $("#manageVolumes").contains(card);
     const saveButton = $("#saveSeries"),
-      saveLabel = saveButton?.textContent || "Save series";
+      saveLabel = saveButton?.textContent || "Save series",
+      trashButton = $("#deleteSeries"),
+      trashLabel = trashButton?.textContent || "Move series to Trash";
 
     function installEditorFields() {
       const status = $("#manageStatus");
@@ -279,10 +283,14 @@
     async function openSeriesEditor(id) {
       const item = findManagedSeries(id);
       if (!item) return;
-      editorContext = { id, saving: false };
+      editorContext = { id, saving: false, deleting: false };
       if (saveButton) {
         saveButton.textContent = saveLabel;
         saveButton.disabled = false;
+      }
+      if (trashButton) {
+        trashButton.textContent = trashLabel;
+        trashButton.disabled = false;
       }
       state.activeSeriesId = id;
       client.beginEdit(id, state.management.revision);
@@ -362,7 +370,9 @@
     }
 
     async function trashSeries() {
-      const item = findManagedSeries(state.activeSeriesId);
+      const context = editorContext;
+      if (!currentEditor(context) || context.deleting) return;
+      const item = findManagedSeries(context.id);
       if (!item) return;
       const title = item.series.title || "Series";
       if (
@@ -371,6 +381,7 @@
         )
       )
         return;
+      context.deleting = true;
       const button = $("#deleteSeries"),
         old = button.textContent;
       button.disabled = true;
@@ -379,26 +390,33 @@
         const result = await client.request("/admin-api/library", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ action: "delete-series", id: state.activeSeriesId })
+          body: JSON.stringify({ action: "delete-series", id: context.id })
         });
+        if (!currentEditor(context)) return;
         updateManagement(result);
         state.activeSeriesId = null;
         dialog.close();
         keeper.ui.toast(`Moved “${title}” to Trash.`);
         keeper.events.dispatchEvent(new Event("trash:changed"));
       } catch (error) {
-        alert(error.message);
+        if (currentEditor(context)) alert(error.message);
       } finally {
-        button.disabled = false;
-        button.textContent = old;
+        if (currentEditor(context)) {
+          context.deleting = false;
+          button.disabled = false;
+          button.textContent = old;
+        }
       }
     }
 
     async function saveVolume(card) {
+      const context = editorContext;
+      if (!currentVolume(context, card)) return;
       const index = Number(card.dataset.volumeIndex);
-      if (!findManagedSeries(state.activeSeriesId)) return;
+      if (!findManagedSeries(context.id)) return;
       const button = card.querySelector("[data-volume-save]"),
         old = button.textContent;
+      if (button.disabled) return;
       button.disabled = true;
       button.textContent = "Saving…";
       try {
@@ -407,7 +425,7 @@
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             action: "update-volume",
-            id: state.activeSeriesId,
+            id: context.id,
             volumeIndex: index,
             title: card.querySelector("[data-v-title]").value,
             number: card.querySelector("[data-v-number]").value,
@@ -416,19 +434,30 @@
             description: card.querySelector("[data-v-description]").value
           })
         });
+        if (!currentVolume(context, card)) return;
         updateManagement(result);
-        openSeriesEditor(state.activeSeriesId);
+        const volume = arr(findManagedSeries(context.id)?.series.volumes)[index];
+        if (volume) {
+          card.querySelector(".volume-summary-copy strong").textContent = volume.title || `Volume ${index + 1}`;
+          card.querySelector(".volume-summary-copy span").textContent =
+            [volume.date || "", fmtSize(volume.size)].filter(Boolean).join(" · ") || "No extra metadata";
+          card.querySelector(".volume-number").textContent = volume.number ?? index + 1;
+        }
       } catch (error) {
-        alert(error.message);
-        button.textContent = old;
+        if (currentVolume(context, card)) alert(error.message);
       } finally {
-        button.disabled = false;
+        if (currentVolume(context, card)) {
+          button.disabled = false;
+          button.textContent = old;
+        }
       }
     }
 
     async function trashVolume(card) {
+      const context = editorContext;
+      if (!currentVolume(context, card)) return;
       const index = Number(card.dataset.volumeIndex),
-        item = findManagedSeries(state.activeSeriesId),
+        item = findManagedSeries(context.id),
         volume = arr(item?.series?.volumes)[index];
       if (!volume) return;
       if (
@@ -438,6 +467,7 @@
       )
         return;
       const button = card.querySelector("[data-volume-delete]");
+      if (button.disabled) return;
       button.disabled = true;
       button.textContent = "Moving…";
       try {
@@ -446,22 +476,28 @@
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             action: "delete-volume",
-            id: state.activeSeriesId,
+            id: context.id,
             volumeIndex: index
           })
         });
+        if (!currentVolume(context, card)) return;
         updateManagement(result);
         keeper.events.dispatchEvent(new Event("trash:changed"));
-        const still = findManagedSeries(state.activeSeriesId);
-        if (still) openSeriesEditor(state.activeSeriesId);
+        const still = findManagedSeries(context.id);
+        if (still) {
+          renderManagedVolumes(still.series);
+          void loadBannerChoices(context.id);
+        }
         else {
           dialog.close();
           state.activeSeriesId = null;
         }
       } catch (error) {
-        alert(error.message);
-        button.disabled = false;
-        button.textContent = "Move to Trash";
+        if (currentVolume(context, card)) {
+          alert(error.message);
+          button.disabled = false;
+          button.textContent = "Move to Trash";
+        }
       }
     }
 
@@ -534,7 +570,10 @@
       load: loadLibrary,
       refresh: () => loadLibrary(true),
       findSeries: findManagedSeries,
-      openSeries: openSeriesEditor
+      openSeries: openSeriesEditor,
+      update: updateManagement,
+      editorContext: () => currentEditor(editorContext) ? editorContext : null,
+      isCurrentEditor: currentEditor
     };
   });
 })();

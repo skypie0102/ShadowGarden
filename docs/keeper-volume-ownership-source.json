@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-23T05:21:33.447388+00:00",
+  "base": "4f91de38030dc21ce9183c96c032a0b3ade98b9a",
+  "scope": "Functional ownership/draft-preservation changes to two already-expanded workflows, plus Keeper-only layout and unlock scroll behavior; no formatting equivalence is claimed.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/library-workflow.js",
+      "beforeSha256": "e69ea5300a9975a2f267798108fcf42d334b8c9bc591964c6701ca7f1ee7af68",
+      "finalSha256": "70ec42783f232c735c5429f580ea7ef3d09186c8a96a7bcdc51a34f24116d150"
+    },
+    {
+      "path": "public/assets/js/admin/translation-workflow.js",
+      "beforeSha256": "21e25fcf765a4710a49d81e4e8c4275e9dadd53bff2220df10d1d1af76a4e340",
+      "finalSha256": "e001adbff4b969361b99d212717eeca4f1f25879b9e909fb170795e0e5331208"
+    },
+    {
+      "path": "public/assets/css/admin-layout.css",
+      "beforeSha256": "b34ff755bb47c109ab8c390e13733bc72d1f350e662843b39d6d6dae53a29240",
+      "finalSha256": "3137a6e1c75b888a73bede3eb015977952c96f436ad3581c1026c5b1a2f9ce0f"
+    },
+    {
+      "path": "public/assets/js/admin/shell.js",
+      "beforeSha256": "2a430183685aaccc81473ed60f556afb8cf0c59f2de81c145f5daa005c72935b",
+      "finalSha256": "a9b5594c45f675d056eddaae4a1fbfa646776ad04d2716f47341190e14244907"
+    }
+  ]
+}
