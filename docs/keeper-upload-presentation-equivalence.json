@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-23T11:48:30.624Z",
+  "base": "ece9309e25ad853c4b1182149e2f17061249024b",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "babel",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "semi": true,
+      "singleQuote": false,
+      "quoteProps": "preserve",
+      "trailingComma": "none",
+      "arrowParens": "avoid",
+      "embeddedLanguageFormatting": "off"
+    }
+  },
+  "comparison": "Mechanical formatting stage only: Babel AST equality excludes positions, extra raw/parenthesis metadata and comments; ordered normalized comment text is checked separately. Subsequent functional changes are recorded separately.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/upload-preflight-report.js",
+      "beforeSha256": "9b89e7bc9e8c03db18915bc57e28ec9b1ecf5362ace5f163b42141ec6a055387",
+      "formattedSha256": "67c9be5f462f2fcd016f1669fa4c7f9d4d42991259b45631399963be8eef98ca",
+      "normalizedAstSha256": "ceb28656ab36b6f65913a5954ee63f18240ad93faef4c2321d62cda19d9917ff",
+      "commentsSha256": "3de64003c2d3ba3c8ea0dd6d43ff2abcf6639aec65006c8ef3aeb324f5688098",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 9849,
+        "lines": 120,
+        "longestLine": 824,
+        "linesOver180": 13
+      },
+      "formatted": {
+        "bytes": 11755,
+        "lines": 247,
+        "longestLine": 864,
+        "linesOver180": 3
+      },
+      "finalSha256": "357d958ea7857a1ca22de0996ee158b8e2b4cdaf01ebfc16dde97a52d0aa98c9",
+      "finalMatchesFormattingStage": false
+    },
+    {
+      "path": "public/assets/js/admin/upload-similar-volume.js",
+      "beforeSha256": "0e70b4785194c9627b320b461311954c0376f12bec5f6f68ba16dded4bf628ab",
+      "formattedSha256": "f2a2bea97e2c54bf0b0532905f4b061d9063ada8a4674aaef55ef49ce0bd66d0",
+      "normalizedAstSha256": "0e1b4f5a8112d1e32b6260ec863617d4e093f0240315c12b961364fd0967a750",
+      "commentsSha256": "68ea8a822676d33577d939e8cb665b077e6c33ba86d294d9d0736d0a7279c6bf",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 6127,
+        "lines": 124,
+        "longestLine": 289,
+        "linesOver180": 4
+      },
+      "formatted": {
+        "bytes": 6971,
+        "lines": 190,
+        "longestLine": 153,
+        "linesOver180": 0
+      },
+      "finalSha256": "1870f0ca708f96379b49d64d880a806074188e570bd339dc2fb05984a0adb25d",
+      "finalMatchesFormattingStage": false
+    }
+  ]
+}
