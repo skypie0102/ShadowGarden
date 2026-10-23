@@ -1,0 +1,250 @@
+{
+  "ref": "working-tree",
+  "httpSourceSha256": "fae636caa5246a72725496b9a84c99af7c18e43ba06c5c589b9033b307b716c0",
+  "node": "v24.19.0",
+  "workerd": "1.20261012.1",
+  "compatibilityDate": "2026-09-23",
+  "chunkBytes": 65536,
+  "overlap": 2,
+  "primaryFileMiB": 50,
+  "results": [
+    {
+      "knownLength": true,
+      "knownLengths": [
+        true,
+        true
+      ],
+      "sizesMiB": [
+        50,
+        50
+      ],
+      "statuses": [
+        200,
+        503
+      ],
+      "received": [
+        52428800
+      ],
+      "providerCalls": 5,
+      "buffered": 1,
+      "peakBackingMiB": 52.9768648147583,
+      "samples": [
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "complete",
+          "usedSize": 3131268,
+          "totalSize": 6291456,
+          "embedderHeapUsedSize": 1418616,
+          "backingStorageSize": 53379369
+        },
+        {
+          "phase": "buffered",
+          "usedSize": 1539696,
+          "totalSize": 7864320,
+          "embedderHeapUsedSize": 311360,
+          "backingStorageSize": 55550249
+        },
+        {
+          "phase": "provider-start",
+          "usedSize": 1612512,
+          "totalSize": 7864320,
+          "embedderHeapUsedSize": 311360,
+          "backingStorageSize": 55550269
+        },
+        {
+          "phase": "provider-drained",
+          "usedSize": 1612512,
+          "totalSize": 7864320,
+          "embedderHeapUsedSize": 311360,
+          "backingStorageSize": 55550269
+        },
+        {
+          "phase": "complete",
+          "usedSize": 1624720,
+          "totalSize": 7864320,
+          "embedderHeapUsedSize": 311360,
+          "backingStorageSize": 55550269
+        }
+      ]
+    },
+    {
+      "knownLength": false,
+      "knownLengths": [
+        false,
+        false
+      ],
+      "sizesMiB": [
+        50,
+        50
+      ],
+      "statuses": [
+        200,
+        503
+      ],
+      "received": [
+        52428800
+      ],
+      "providerCalls": 5,
+      "buffered": 1,
+      "peakBackingMiB": 57.5588960647583,
+      "samples": [
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "complete",
+          "usedSize": 9921280,
+          "totalSize": 13369344,
+          "embedderHeapUsedSize": 4384768,
+          "backingStorageSize": 44385367
+        },
+        {
+          "phase": "buffered",
+          "usedSize": 3126776,
+          "totalSize": 8126464,
+          "embedderHeapUsedSize": 879888,
+          "backingStorageSize": 60354857
+        },
+        {
+          "phase": "provider-start",
+          "usedSize": 3196624,
+          "totalSize": 8126464,
+          "embedderHeapUsedSize": 879888,
+          "backingStorageSize": 60354877
+        },
+        {
+          "phase": "provider-drained",
+          "usedSize": 3196624,
+          "totalSize": 8126464,
+          "embedderHeapUsedSize": 879888,
+          "backingStorageSize": 60354877
+        },
+        {
+          "phase": "complete",
+          "usedSize": 3208744,
+          "totalSize": 8126464,
+          "embedderHeapUsedSize": 879888,
+          "backingStorageSize": 60354877
+        }
+      ]
+    },
+    {
+      "knownLength": null,
+      "knownLengths": [
+        false,
+        true
+      ],
+      "sizesMiB": [
+        50,
+        14
+      ],
+      "statuses": [
+        200,
+        200
+      ],
+      "received": [
+        14680064,
+        52428800
+      ],
+      "providerCalls": 10,
+      "buffered": 2,
+      "peakBackingMiB": 70.52375888824463,
+      "samples": [
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "start",
+          "usedSize": 846184,
+          "totalSize": 1572864,
+          "embedderHeapUsedSize": 515872,
+          "backingStorageSize": 258345
+        },
+        {
+          "phase": "buffered",
+          "usedSize": 2771564,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949481
+        },
+        {
+          "phase": "buffered",
+          "usedSize": 2771564,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949481
+        },
+        {
+          "phase": "provider-start",
+          "usedSize": 2958016,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        },
+        {
+          "phase": "provider-start",
+          "usedSize": 2958016,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        },
+        {
+          "phase": "provider-drained",
+          "usedSize": 2958016,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        },
+        {
+          "phase": "complete",
+          "usedSize": 2978420,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        },
+        {
+          "phase": "provider-drained",
+          "usedSize": 2979276,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        },
+        {
+          "phase": "complete",
+          "usedSize": 2988552,
+          "totalSize": 6815744,
+          "embedderHeapUsedSize": 715712,
+          "backingStorageSize": 73949521
+        }
+      ]
+    }
+  ]
+}

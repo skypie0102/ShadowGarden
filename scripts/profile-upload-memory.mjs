@@ -1,50 +1,19 @@
 // Local workerd measurement; all provider calls are intercepted and D1 is ephemeral.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {crc32} from 'node:zlib';
 import {execFileSync} from 'node:child_process';
 import {readFile,readdir,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {build} from 'esbuild';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {ADMIN_COOKIE,signed} from '../server/security.js';
+import {epub,inspector} from './upload-profile-support.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const ref=process.argv[2]||'working-tree';
 const output=process.argv[3];
 const MiB=1024*1024;
 const source=async path=>ref==='working-tree'?readFile(new URL(path,`file://${root}`),'utf8'):execFileSync('git',['show',`${ref}:${path}`],{cwd:root,encoding:'utf8'});
-
-// A stored ZIP containing only generated technical content. No real books.
-function epub(size){
-  const entries=[['mimetype',Buffer.from('application/epub+zip')],['META-INF/container.xml',Buffer.from('<container/>')],['book.opf',Buffer.from('<package/>')],['padding.bin',Buffer.alloc(0)]];
-  const overhead=entries.reduce((n,[name,bytes])=>n+76+2*Buffer.byteLength(name)+bytes.length,22);
-  entries[3][1]=Buffer.alloc(size-overhead,97);
-  const local=[],central=[];let offset=0;
-  for(const [name,bytes] of entries){
-    const filename=Buffer.from(name),header=Buffer.alloc(30),directory=Buffer.alloc(46);
-    const checksum=crc32(bytes);
-    header.writeUInt32LE(0x04034b50);header.writeUInt16LE(20,4);header.writeUInt32LE(checksum,14);header.writeUInt32LE(bytes.length,18);header.writeUInt32LE(bytes.length,22);header.writeUInt16LE(filename.length,26);
-    directory.writeUInt32LE(0x02014b50);directory.writeUInt16LE(20,4);directory.writeUInt16LE(20,6);directory.writeUInt32LE(checksum,16);directory.writeUInt32LE(bytes.length,20);directory.writeUInt32LE(bytes.length,24);directory.writeUInt16LE(filename.length,28);directory.writeUInt32LE(offset,42);
-    local.push(header,filename,bytes);central.push(directory,filename);offset+=30+filename.length+bytes.length;
-  }
-  const directory=Buffer.concat(central),end=Buffer.alloc(22);
-  end.writeUInt32LE(0x06054b50);end.writeUInt16LE(entries.length,8);end.writeUInt16LE(entries.length,10);end.writeUInt32LE(directory.length,12);end.writeUInt32LE(offset,16);
-  return Buffer.concat([...local,directory,end]);
-}
-
-async function inspector(mf){
-  const base=await mf.getInspectorURL();base.protocol='http:';
-  const targets=await (await fetch(new URL('/json/list',base))).json();
-  const target=targets.find(t=>t.id==='core:user:upload-profile');assert.ok(target,'Upload worker inspector target');
-  const ws=new WebSocket(target.webSocketDebuggerUrl),pending=new Map();let sequence=0;
-  await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject});
-  ws.onmessage=({data})=>{const message=JSON.parse(data),call=pending.get(message.id);if(call){pending.delete(message.id);message.error?call.reject(new Error(JSON.stringify(message.error))):call.resolve(message.result)}};
-  return {
-    call(method){return new Promise((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method}));})},
-    async close(){const closed=new Promise(resolve=>ws.addEventListener('close',resolve,{once:true}));ws.close();await closed;}
-  };
-}
 
 const bundle=await build({stdin:{contents:`
   import {upload} from './server/admin.js';
@@ -59,7 +28,8 @@ const bundle=await build({stdin:{contents:`
       .replace('const bytes = new Uint8Array(size);',"await globalThis.__sgMemory('collected'); const bytes = new Uint8Array(size);")
       .replace('const collected = new Uint8Array(size);',"await globalThis.__sgMemory('collected'); const collected = new Uint8Array(size);")
       .replace('return bytes;',"await globalThis.__sgMemory('buffered'); return bytes;")
-      .replace('return collected;',"await globalThis.__sgMemory('buffered'); return collected;");
+      .replace('return collected;',"await globalThis.__sgMemory('buffered'); return collected;")
+      .replace('return new Uint8Array(buffer.transferToFixedLength());',"const collected=new Uint8Array(buffer.transferToFixedLength()); await globalThis.__sgMemory('buffered'); return collected;");
     return {contents,loader:'js'};
   })}
 }]});
