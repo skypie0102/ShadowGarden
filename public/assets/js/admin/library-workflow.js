@@ -146,11 +146,15 @@
         .join("");
     }
 
-    function renderManagedVolumes(series) {
-      const volumes = arr(series.volumes);
+    function updateVolumeLabel(count) {
       if ($("#manageVolumeLabel"))
         $("#manageVolumeLabel").textContent =
-          `${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"}`;
+          `${count} ${count === 1 ? "volume" : "volumes"}`;
+    }
+
+    function renderManagedVolumes(series) {
+      const volumes = arr(series.volumes);
+      updateVolumeLabel(volumes.length);
       $("#manageVolumes").innerHTML = volumes
         .map(
           (volume, index) =>
@@ -485,7 +489,13 @@
         keeper.events.dispatchEvent(new Event("trash:changed"));
         const still = findManagedSeries(context.id);
         if (still) {
-          renderManagedVolumes(still.series);
+          // Keep sibling forms and translation editors alive, including drafts
+          // typed while this request was pending. Only their API indices shift.
+          card.remove();
+          [...$("#manageVolumes").querySelectorAll(".manage-volume")].forEach(
+            (remaining, index) => { remaining.dataset.volumeIndex = String(index); }
+          );
+          updateVolumeLabel(arr(still.series.volumes).length);
           void loadBannerChoices(context.id);
         }
         else {

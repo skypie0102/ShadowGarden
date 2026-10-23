@@ -21,7 +21,8 @@ class Element extends EventTarget {
   querySelectorAll(selector) { return selector === '.manage-volume' ? this.children : []; }
   closest(selector) { return this.ancestors.get(selector) || null; }
   contains(child) { return this.children.includes(child); }
-  append(child) { this.children.push(child); }
+  append(child) { this.children.push(child); child.parent = this; }
+  remove() { if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this); }
   replaceChildren() { this.children = []; }
   removeAttribute(name) { delete this[name]; }
   showModal() { this.open = true; }
@@ -151,4 +152,92 @@ test('removing the last volume still closes the removed series editor', async ()
   f.pending[0].resolve(result); await settle();
   assert.equal(f.node('#seriesEditor').open, false); assert.equal(f.keeper.state.activeSeriesId, null);
   assert.ok(f.notifications.includes('trash:changed'));
+});
+
+for (const removed of [0, 1, 2]) test(`removing volume ${removed} preserves sibling cards, drafts and translation editors`, async () => {
+  const f = await fixture();
+  f.result().main[0].volumes.push({ bookId: 'a-3', number: 3, title: 'Book a-3' });
+  await f.open('a');
+  const cards = [f.card(0), f.card(1), f.card(2)];
+  const fields = ['[data-v-title]', '[data-v-number]', '[data-v-date]', '[data-v-publisher]', '[data-v-description]'];
+  for (const [index, card] of cards.entries()) {
+    for (const field of fields) card.querySelector(field).value = `${index}: draft ${field}`;
+    card.querySelector('[data-volume-translations]').innerHTML = `Unpublished translator ${index}`;
+  }
+  f.start('volume-trash', cards[removed]);
+  const result = structuredClone(f.result()); result.main[0].volumes.splice(removed, 1);
+  f.pending[0].resolve(result); await settle();
+  const remaining = cards.filter((card, index) => index !== removed);
+  assert.deepEqual(f.node('#manageVolumes').children, remaining);
+  for (const [index, card] of remaining.entries()) {
+    const original = cards.indexOf(card);
+    assert.equal(card.dataset.volumeIndex, String(index));
+    for (const field of fields) assert.equal(card.querySelector(field).value, `${original}: draft ${field}`);
+    assert.equal(card.querySelector('[data-volume-translations]').innerHTML, `Unpublished translator ${original}`);
+  }
+  assert.equal(f.node('#manageVolumeLabel').textContent, '2 volumes');
+  assert.equal(f.node('#seriesEditor').open, true);
+  assert.deepEqual(f.messages, []);
+});
+
+for (const action of ['volume-save', 'volume-trash', 'translation']) test(`after removal ${action} uses the surviving card's new index`, async () => {
+  const f = await fixture(); await f.open('a');
+  const removed = f.card(0), remaining = f.card(1);
+  f.start('volume-trash', removed);
+  const result = structuredClone(f.result()); result.main[0].volumes.splice(0, 1);
+  f.pending[0].resolve(result); await settle();
+  f.start(action, remaining);
+  assert.equal(f.requests.length, 2);
+  assert.equal(f.requests[1].payload.volumeIndex, 0);
+  assert.equal(f.requests[1].payload.id, 'a');
+  const final = structuredClone(result); final.revision++;
+  if (action === 'volume-trash') final.main.shift();
+  f.pending[1].resolve(final); await settle();
+  assert.deepEqual(f.messages, action === 'translation' ? ['Volume 2 translation override saved.'] : []);
+  assert.equal(f.node('#seriesEditor').open, action !== 'volume-trash');
+});
+
+test('drafts typed during removal remain in the original surviving card', async () => {
+  const f = await fixture(); await f.open('a');
+  const removed = f.card(0), remaining = f.card(1);
+  f.start('volume-trash', removed);
+  remaining.querySelector('[data-v-title]').value = 'Typed while the other volume was moving';
+  remaining.querySelector('[data-volume-translations]').innerHTML = 'Next translator draft';
+  const result = structuredClone(f.result()); result.main[0].volumes.splice(0, 1);
+  f.pending[0].resolve(result); await settle();
+  assert.equal(f.node('#manageVolumes').contains(remaining), true);
+  assert.equal(remaining.querySelector('[data-v-title]').value, 'Typed while the other volume was moving');
+  assert.equal(remaining.querySelector('[data-volume-translations]').innerHTML, 'Next translator draft');
+  assert.equal(remaining.querySelector('[data-volume-save]').disabled, false);
+});
+
+for (const action of ['volume-save', 'translation']) test(`an in-flight sibling ${action} conflict restores its surviving control without discarding the draft`, async () => {
+  const f = await fixture(); await f.open('a');
+  const removed = f.card(0), remaining = f.card(1);
+  f.start(action, remaining); f.start('volume-trash', removed);
+  const result = structuredClone(f.result()); result.main[0].volumes.splice(0, 1);
+  f.pending[1].resolve(result); await settle();
+  remaining.querySelector('[data-v-title]').value = 'Retain this draft after the conflict';
+  f.pending[0].reject(new Error('The catalog changed. Reload before saving.')); await settle();
+  assert.equal(f.node('#manageVolumes').contains(remaining), true);
+  assert.equal(remaining.dataset.volumeIndex, '0');
+  assert.equal(remaining.querySelector('[data-v-title]').value, 'Retain this draft after the conflict');
+  assert.equal(remaining.querySelector(action === 'volume-save' ? '[data-volume-save]' : '[data-save-volume-translation]').disabled, false);
+  assert.deepEqual(f.messages, ['The catalog changed. Reload before saving.']);
+});
+
+test('failed removal retains every card and draft and permits a retry', async () => {
+  const f = await fixture(); await f.open('a');
+  const removed = f.card(0), remaining = f.card(1);
+  remaining.querySelector('[data-v-description]').value = 'Unpublished sibling description';
+  f.start('volume-trash', removed); f.pending[0].reject(new Error('Disposable removal failure')); await settle();
+  assert.deepEqual(f.node('#manageVolumes').children, [removed, remaining]);
+  assert.equal(remaining.dataset.volumeIndex, '1');
+  assert.equal(remaining.querySelector('[data-v-description]').value, 'Unpublished sibling description');
+  assert.equal(removed.querySelector('[data-volume-delete]').disabled, false);
+  f.start('volume-trash', removed); assert.equal(f.requests[1].payload.volumeIndex, 0);
+  const result = structuredClone(f.result()); result.main[0].volumes.splice(0, 1);
+  f.pending[1].resolve(result); await settle();
+  assert.deepEqual(f.node('#manageVolumes').children, [remaining]);
+  assert.deepEqual(f.messages, ['Disposable removal failure']);
 });
