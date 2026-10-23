@@ -27,6 +27,12 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.7 volume-removal increment](KEEPER_VOLUME_REMOVAL.md) detaches only
+the trashed card and updates the surviving cards' API indices. Sibling metadata
+and translation forms retain their nodes, drafts, expansion and focus. The
+shared client and backend continue to enforce revisions; a sibling conflict
+returns its surviving control to a retryable state without discarding the draft.
+
 The [v2.18.5 volume/translation batch](KEEPER_VOLUME_OWNERSHIP.md) shares the
 Library owner's opening context with translation actions. Volume results also
 require their original card to remain attached. Current volume saves update the

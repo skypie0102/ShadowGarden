@@ -1,5 +1,38 @@
 # ShadowGarden project audit
 
+## Keeper sibling volume drafts released — 2026-10-23
+
+The latest production release is **v2.18.7**, deployed on 2026-10-23 from
+`85f72c0` through [PR #47](https://github.com/skypie0102/ShadowGarden/pull/47).
+[Keeper volume removal](KEEPER_VOLUME_REMOVAL.md) keeps sibling forms alive when
+one volume moves to Trash. Metadata and translation drafts, expanded editors,
+focus and text selection are preserved; subsequent writes use updated indices.
+All ten baseline controls fail and all 64 final focused Keeper cases pass.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39935879782) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39937777426)
+both pass **412 Node tests** and **666 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All six new removal
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 666 browser cases.
+
+The automatic workflow publishes **v2.18.7**, source `85f72c0`, deployment
+`359ab672-1d56-4439-86f2-ea80d8b0cc75`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.6 rollback. The version check uses 2 requests.
+Canonical source/version, both D1-derived catalogs and the changed Library
+workflow bytes pass verification. Independent public HTTP checks match the same
+version/source and asset bytes. The exact revision-9 catalog document, all nine
+snapshots and recorded settings remain unchanged, with zero database writes.
+The retained rollback is `9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`.
+See [verification evidence](keeper-volume-removal-verification.json).
+
+The preceding [v2.18.6 release](PRODUCTION_VERSION_CONVERGENCE.md) added bounded
+served-version polling within one publication attempt, retaining the original
+baseline, reviewed assets and rollback. Its
+[dated evidence](production-version-convergence-verification.json) records
+402 Node tests, 636 browser passes and unchanged production state.
+
 ## Production version convergence released — 2026-10-23
 
 The latest production release is **v2.18.6**, deployed on 2026-10-23 from

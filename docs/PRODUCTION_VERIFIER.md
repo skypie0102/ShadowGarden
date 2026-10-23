@@ -124,7 +124,9 @@ It does not check compiled server source bytes, encrypted secret values,
 real CAPTCHA/credential flows, B2 writes/deletes, EPUB opening or physical device
 acceptance. Use the existing CI and separately scoped live acceptance for those
 behaviors. The current production verification record is
-[`production-version-convergence-verification.json`](production-version-convergence-verification.json).
+[`keeper-volume-removal-verification.json`](keeper-volume-removal-verification.json).
+The preceding [version-convergence release](production-version-convergence-verification.json)
+retains its separate dated evidence.
 The original tooling-only validation remains in
 [`production-tooling-verification.json`](production-tooling-verification.json).
 
