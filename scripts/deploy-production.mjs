@@ -133,6 +133,8 @@ export async function deployAndVerify({
   waitForCanonical,
   saveBaseline = async () => {},
   fetchImpl = fetch,
+  sleep,
+  clock,
   now = () => Date.now()
 }) {
   const before = await capture();
@@ -152,9 +154,17 @@ export async function deployAndVerify({
     source,
     files: selectedFiles,
     fetchImpl,
-    now: now()
+    now,
+    waitForPreviousVersion: true,
+    sleep,
+    clock
   });
-  return { ...report, rollbackDeploymentId: before.deployment.id };
+  return {
+    ...report,
+    rollbackDeploymentId: before.deployment.id,
+    rollbackSource: before.deployment.source,
+    beforeCheckedAt: before.checkedAt
+  };
 }
 
 export async function main() {

@@ -58,8 +58,12 @@ Functions binding/compatibility metadata. `scripts/deploy-production.mjs` then:
 5. Waits for the checked source to become successful canonical production.
 6. Captures production again and runs the maintained verifier: exact document,
    snapshot/configuration preservation, both D1-derived catalogs, version/source
-   and reviewed served JS/CSS bytes. The previous deployment ID is retained in
-   the verification result for rollback.
+   and reviewed served JS/CSS bytes. A coherent public version for the captured
+   previous source may wait within bounded read-only polling; the original
+   baseline, asset selection and rollback identity are retained. The report
+   records version-check attempts/time and the previous deployment/source.
+   See [served-version convergence](PRODUCTION_VERSION_CONVERGENCE.md) for
+   exact retry conditions and failure limits.
 
 Only the sanitized `.wrangler/production-verification.json` report is uploaded as
 a CI artifact. Hidden-file inclusion is enabled only for that exact report path;

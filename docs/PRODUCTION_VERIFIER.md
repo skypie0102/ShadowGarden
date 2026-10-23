@@ -5,7 +5,8 @@
 uploads, deletes or changes settings. The collector makes a project GET and a D1
 query containing only two fixed SELECT statements; it rejects query results
 that report writes. The HTTP verifier makes only GET requests with redirects
-disabled, a 15-second timeout per request and a 4 MiB response limit.
+disabled and a 15-second timeout per request. Version JSON has a 64 KiB
+response limit; catalogs/assets retain a 4 MiB limit.
 
 ## Capture current production through the connected plugin
 
@@ -89,6 +90,12 @@ HTTP verification requires status 200 and the expected content type. It checks:
   update timestamp. Object key order is ignored; array order remains significant.
 - Each selected asset: exact bytes and JS/CSS content type against the reviewed
   local release. HTML fallback pages cannot masquerade as successful source.
+
+The automatic deployment path can wait only for a coherent response identifying
+the original previous source: at most twelve version GETs and two minutes,
+with five-second intervals and each request shortened to the remaining budget.
+Other failures remain immediate, and the standalone CLI keeps one-shot version
+verification. See [convergence contracts and tests](PRODUCTION_VERSION_CONVERGENCE.md).
 
 Archived `/data/catalog.json` files and `/version.json` are not production probes.
 A successful JSON response with the wrong/empty catalog is a failure.
