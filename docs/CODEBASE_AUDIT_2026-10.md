@@ -67,17 +67,19 @@ live database/size errors is also removed without changing error codes or contra
    The 205-snapshot fixture reads 95% fewer first-page document bytes, and stalled
    provider/authentication tests preserve unverified outcomes. See [measurements
    and release](MAINTENANCE_BUDGETS.md).
-2. **Large-upload memory — profiled; v2.16.1 increment deployed in v2.17.0:** the real workerd upload
+2. **Large-upload memory — v2.18.8 continuation deployed:** the real workerd upload
    pipeline validates/transfers exact 50 MiB fixtures and rejects one byte above
-   the limit before provider access/reservation. Declared-length input now copies
-   into one destination, reducing sampled 50 MiB backing storage from about
-   100.27 MiB to 52.21 MiB (47.9%). Unknown-length/concurrent buffering remains a separate
-   design follow-up in that release; the supported limits are unchanged. The
+   the limit before provider access/reservation. The original v2.16.1 correction
+   copied declared-length input into one destination. The
    [v2.18.8 continuation](UPLOAD_BUFFER_BUDGET.md) adds a growable unknown-length
    reader, a 64 MiB per-isolate admission budget and input cancellation/deadline
-   handling. Twelve controls reproduce nine failures before correction; all
-   424 Node tests pass locally. Release CI and production verification are pending.
-   Historical [measurements and limitations](UPLOAD_MEMORY.md) are retained.
+   handling. Single unknown-length 50 MiB input samples 104.01 → 57.08 MiB of
+   backing storage. A second large input receives retryable 503; unknown 50 MiB
+   plus declared 14 MiB still succeeds together. File-size limits remain unchanged.
+   Twelve controls reproduce nine failures before correction; all 424 Node tests
+   and 666 browser cases pass in PR/main CI. Production preservation is verified.
+   These samples do not bound total runtime/native memory or establish unchanged
+   concurrent throughput. Historical [measurements](UPLOAD_MEMORY.md) are retained.
 3. **Browser persistence — deployed in v2.17.0:** progress/bookmark aliases, Finished
    map/markers and settings use checked grouped writes with conditional rollback.
    Public/startup Read Again resets progress and Finished state together. Eight
@@ -164,41 +166,42 @@ with nine documented platform skips and zero test retries. All eleven new Keeper
 cases pass in every profile. The separate Chromium Library-startup profile passes
 on the PR and is excluded from the 636 browser cases.
 
-The latest production release is **v2.18.7**, deployed on 2026-10-23 from
-`85f72c0` through [PR #47](https://github.com/skypie0102/ShadowGarden/pull/47).
-[Keeper volume removal](KEEPER_VOLUME_REMOVAL.md) keeps sibling forms alive when
-one volume moves to Trash. Metadata and translation drafts, expanded editors,
-focus and text selection are preserved; subsequent writes use updated indices.
-All ten baseline controls fail and all 64 final focused Keeper cases pass.
+The latest production release is **v2.18.8**, deployed on 2026-10-23 from
+`2f81371` through [PR #48](https://github.com/skypie0102/ShadowGarden/pull/48).
+[Upload buffer admission](UPLOAD_BUFFER_BUDGET.md) reduces retained unknown-length
+input and prevents overlapping large uploads from consuming unbounded application
+buffer capacity in one isolate. Excess requests receive a retryable busy response;
+input interruption/deadline and provider failures release capacity. The 50 MiB
+EPUB and 10 MiB cover limits remain. Twelve controls give three passes/nine failures
+before correction and all 28 focused cases pass afterwards.
 
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39935879782) and
-[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39937777426)
-both pass **412 Node tests** and **666 browser cases** across five profiles,
-with nine documented platform skips and zero test retries. All six new removal
-cases pass in every profile. The separate Chromium Library-startup profile passes
-on the PR and is excluded from the 666 browser cases.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39943827702) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39945575580)
+both pass **424 Node tests** and **666 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate Chromium
+Library-startup profile passes on the PR and is excluded from the 666 cases.
 
-The automatic workflow publishes **v2.18.7**, source `85f72c0`, deployment
-`359ab672-1d56-4439-86f2-ea80d8b0cc75`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The automatic workflow publishes **v2.18.8**, source `2f81371`, deployment
+`6cd6fd46-9892-43e1-98b0-be14dd9f387a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
 The release completes in one publication attempt, retaining the original
-pre-publication baseline and v2.18.6 rollback. The version check uses 2 requests.
-Canonical source/version, both D1-derived catalogs and the changed Library
-workflow bytes pass verification. Independent public HTTP checks match the same
-version/source and asset bytes. The exact revision-9 catalog document, all nine
-snapshots and recorded settings remain unchanged, with zero database writes.
-The retained rollback is `9ba29d34-3d73-401f-8dd3-d4abb5c15fc4`.
-See [verification evidence](keeper-volume-removal-verification.json).
+pre-publication baseline and v2.18.7 rollback. The version check uses one request
+over 165 ms. Canonical source/version, both D1-derived
+catalogs and the stable footer module pass verification. Independent public HTTP
+checks match the same version/source and footer bytes. The exact revision-9
+catalog document, all nine snapshots and recorded settings remain unchanged,
+with zero database writes. The retained rollback is
+`359ab672-1d56-4439-86f2-ea80d8b0cc75`. See
+[verification evidence](upload-buffer-verification-2.18.8.json).
 
-The preceding [v2.18.6 release](PRODUCTION_VERSION_CONVERGENCE.md) added bounded
-served-version polling within one publication attempt, retaining the original
-baseline, reviewed assets and rollback. Its
-[dated evidence](production-version-convergence-verification.json) records
-402 Node tests, 636 browser passes and unchanged production state.
+The preceding [v2.18.7 volume-removal release](KEEPER_VOLUME_REMOVAL.md)
+preserves sibling metadata/translation drafts, expanded editors, focus and text
+selection when another volume moves to Trash. Its
+[dated evidence](keeper-volume-removal-verification.json) retains the checked
+source, 412 Node tests, 666 browser passes and unchanged production state.
 
-Volume deletion's sibling-form follow-up is complete in v2.18.7. Unknown-length/
-concurrent upload memory and remaining dense upload presentation retain their
-separate scopes. Earlier release records remain dated evidence of their original
-checks and publication attempts.
+The unknown-length/concurrent upload follow-up ships in v2.18.8 with sampled
+memory limitations retained. Remaining dense upload presentation helpers are a
+separate readability batch. Earlier release records retain their original scope.
 
 ## Validation and release
 

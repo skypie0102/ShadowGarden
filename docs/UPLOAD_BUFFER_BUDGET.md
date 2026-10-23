@@ -89,6 +89,29 @@ input interruption/deadline, invalid media, provider failure, reused source
 arrays and cancellation failures.
 
 Local `npm run check` passes the asset/provenance audit, all 424 Node tests,
-static build and binding-aware Pages Functions package. Release CI and
-production verification are pending. There is no new live
-authenticated-upload, CAPTCHA/provider-write or physical-device acceptance claim.
+static build and binding-aware Pages Functions package. The tested candidate is
+`88eb79ec4f6a79f4fa74c7dd138eba4ad3910e4e` with tree
+`db1cddc049eee7a51e2ed7875e3de1945ac69b6f`. Squash merge
+`2f81371d8c37ec7fff4e748c3fc77a13aad21812`
+has exactly that tested tree.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39943827702) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39945575580)
+both pass **424 Node tests** and **666 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate Chromium
+Library-startup profile passes on the PR and is excluded from the 666 cases.
+
+The automatic workflow publishes **v2.18.8**, source `2f81371`, deployment
+`6cd6fd46-9892-43e1-98b0-be14dd9f387a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.7 rollback. The version check uses one request
+over 165 ms. Canonical source/version, both D1-derived
+catalogs and the stable footer module pass verification. Independent public HTTP
+checks match the same version/source and footer bytes. The exact revision-9
+catalog document, all nine snapshots and recorded settings remain unchanged,
+with zero database writes. The retained rollback is
+`359ab672-1d56-4439-86f2-ea80d8b0cc75`. See
+[verification evidence](upload-buffer-verification-2.18.8.json).
+
+There is no new live authenticated-upload, CAPTCHA/provider-write or
+physical-device acceptance claim.

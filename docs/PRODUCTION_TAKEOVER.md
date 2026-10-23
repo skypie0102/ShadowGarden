@@ -5,7 +5,32 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-23:** v2.18.7, deployment
+**Current production release — 2026-10-23:** v2.18.8, deployment
+`6cd6fd46-9892-43e1-98b0-be14dd9f387a`, source `2f81371` through
+[PR #48](https://github.com/skypie0102/ShadowGarden/pull/48).
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39943827702) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39945575580)
+both pass **424 Node tests** and **666 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. The separate Chromium
+Library-startup profile passes on the PR and is excluded from the 666 cases.
+
+The automatic workflow publishes **v2.18.8**, source `2f81371`, deployment
+`6cd6fd46-9892-43e1-98b0-be14dd9f387a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.7 rollback. The version check uses one request
+over 165 ms. Canonical source/version, both D1-derived
+catalogs and the stable footer module pass verification. Independent public HTTP
+checks match the same version/source and footer bytes. The exact revision-9
+catalog document, all nine snapshots and recorded settings remain unchanged,
+with zero database writes. The retained rollback is
+`359ab672-1d56-4439-86f2-ea80d8b0cc75`. See
+[verification evidence](upload-buffer-verification-2.18.8.json).
+The artifact matches the logged report and GitHub's archive digest. Trusted-main
+Actions owns publication on the existing project; native Git production
+publication remains disabled.
+
+**Previous production release — 2026-10-23:** v2.18.7, deployment
 `359ab672-1d56-4439-86f2-ea80d8b0cc75`, source `85f72c0` through
 [PR #47](https://github.com/skypie0102/ShadowGarden/pull/47).
 

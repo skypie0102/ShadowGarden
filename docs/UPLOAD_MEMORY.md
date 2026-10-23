@@ -1,6 +1,6 @@
 # Large-upload memory
 
-Historical v2.16.1 measurements follow. The v2.18.8 continuation addresses the
+Historical v2.16.1 measurements follow. The deployed v2.18.8 continuation addresses the
 unknown-length and concurrent-upload follow-up with a growable reader and
 per-isolate admission accounting; see [current measurements](UPLOAD_BUFFER_BUDGET.md).
 
