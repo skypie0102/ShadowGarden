@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "version": "2.18.5",
+  "baseline": "4f91de38030dc21ce9183c96c032a0b3ade98b9a",
+  "baselineControls": {
+    "tests": 41,
+    "passed": 9,
+    "failed": 32
+  },
+  "correctedControls": {
+    "tests": 41,
+    "passed": 41,
+    "failed": 0
+  },
+  "local": {
+    "status": "success",
+    "nodePassed": 389,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingCompatibilityBuild": "passed",
+    "browser": "not run; local browser runtime unavailable"
+  },
+  "ci": {
+    "status": "pending",
+    "newBrowserCases": 11,
+    "requiredProfiles": 5,
+    "supersededRuns": []
+  },
+  "production": {
+    "status": "pending",
+    "knownVersion": "2.18.4",
+    "publicationAttempted": false
+  },
+  "sourceEvidence": "keeper-volume-ownership-source.json",
+  "limitations": [
+    "No new physical Android/Soul or live credential acceptance.",
+    "Already committed server writes are not rolled back by ignoring an obsolete response.",
+    "Volume deletion still rebuilds the volume list to update indices; preserving other unsaved volume forms is outside this change.",
+    "Unknown-length/concurrent upload buffering and remaining dense upload presentation remain follow-ups."
+  ]
+}

@@ -11,6 +11,8 @@
       volumeRoot = $("#manageVolumes");
     if (!dialog || !volumeRoot) return {};
     const statuses = ["", "Complete", "Ongoing", "Stalled", "Partial"];
+    const library = keeper.workflows.get("library").instance;
+    let renderedEditor = null;
 
     function managementSeries() {
       if (!state.management) return [];
@@ -86,8 +88,13 @@
     }
 
     function sync() {
-      if (!dialog.open) return;
-      renderSeriesCredits();
+      const context = library.editorContext();
+      if (!context) return;
+      // Catalog refreshes must not replace credits being edited in this opening.
+      if (context !== renderedEditor) {
+        renderSeriesCredits();
+        renderedEditor = context;
+      }
       renderVolumeEditors();
     }
     new MutationObserver(() => queueMicrotask(sync)).observe(dialog, {
@@ -124,34 +131,39 @@
 
     volumeRoot.addEventListener("click", async event => {
       const button = event.target.closest("[data-save-volume-translation]");
-      if (!button) return;
+      if (!button || button.disabled) return;
+      const context = library.editorContext();
       const card = button.closest(".manage-volume"),
         series = currentSeries();
-      if (!card || !series) return;
+      if (!context || !card || !series || !volumeRoot.contains(card)) return;
+      const current = () => library.isCurrentEditor(context) && volumeRoot.contains(card);
       const index = Number(card.dataset.volumeIndex),
         old = button.textContent;
       button.disabled = true;
       button.textContent = "Saving…";
       try {
-        await client.request("/admin-api/translations", {
+        const result = await client.request("/admin-api/translations", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            id: series.id,
+            id: context.id,
             target: "volume",
             volumeIndex: index,
             translations: serialize(card.querySelector("[data-volume-translations]"))
           })
         });
+        if (!current()) return;
+        library.update(result);
         keeper.ui.toast(
           `Volume ${series.volumes?.[index]?.number ?? index + 1} translation override saved.`
         );
-        keeper.events.dispatchEvent(new Event("library:invalidate"));
       } catch (error) {
-        alert(error.message);
+        if (current()) alert(error.message);
       } finally {
-        button.disabled = false;
-        button.textContent = old;
+        if (current()) {
+          button.disabled = false;
+          button.textContent = old;
+        }
       }
     });
 

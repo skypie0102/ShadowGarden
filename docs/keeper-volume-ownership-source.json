@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-23T05:12:18.557740+00:00",
+  "base": "4f91de38030dc21ce9183c96c032a0b3ade98b9a",
+  "scope": "Functional ownership and draft-preservation changes to two already-expanded workflows; no formatting equivalence is claimed.",
+  "files": [
+    {
+      "path": "public/assets/js/admin/library-workflow.js",
+      "beforeSha256": "e69ea5300a9975a2f267798108fcf42d334b8c9bc591964c6701ca7f1ee7af68",
+      "finalSha256": "70ec42783f232c735c5429f580ea7ef3d09186c8a96a7bcdc51a34f24116d150"
+    },
+    {
+      "path": "public/assets/js/admin/translation-workflow.js",
+      "beforeSha256": "21e25fcf765a4710a49d81e4e8c4275e9dadd53bff2220df10d1d1af76a4e340",
+      "finalSha256": "e001adbff4b969361b99d212717eeca4f1f25879b9e909fb170795e0e5331208"
+    }
+  ]
+}

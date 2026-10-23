@@ -157,6 +157,12 @@ recorded settings pass. The retained rollback is v2.18.3,
 Unknown-length/concurrent upload-memory design, broader volume/translation-editor
 fixtures and remaining dense upload presentation helpers remain follow-ups.
 
+The next [Keeper volume/translation batch](KEEPER_VOLUME_OWNERSHIP.md) prepares
+v2.18.5 with captured editor/card ownership and series-draft preservation. Its
+41-control baseline fails 32 cases; corrected controls and all 389 Node tests
+pass. Browser validation and release remain pending. Volume deletion's list
+rebuild and the separate upload-memory/readability follow-ups retain their scope.
+
 ## Validation and release
 
 Merged through [PR #32](https://github.com/skypie0102/ShadowGarden/pull/32) as

@@ -24,6 +24,11 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
+The next [Keeper volume/translation batch](docs/KEEPER_VOLUME_OWNERSHIP.md) prepares
+**v2.18.5** with per-opening write ownership and series-draft preservation. The
+41-control baseline fails 32 cases; corrected controls and all 389 Node tests
+pass. Full browser validation and release are pending.
+
 The latest production release is **v2.18.4**, deployed on 2026-10-23 from
 `9ccfa89` through [PR #44](https://github.com/skypie0102/ShadowGarden/pull/44).
 [Keeper UI/session ownership](docs/KEEPER_UI_SESSION.md) expands five modules and
