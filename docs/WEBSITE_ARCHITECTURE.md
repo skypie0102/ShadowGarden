@@ -27,6 +27,11 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.10 local EPUB inspection batch](EPUB_INSPECTION.md) expands the
+data-only ZIP/XML service. Its resolver separates URI components before decoding
+archive filename data once; decoded traversal checks still apply. It performs no
+queue rendering, remote fetch or upload and does not replace backend validation.
+
 The [v2.18.9 Upload presentation batch](KEEPER_UPLOAD_PRESENTATION.md) annotates
 similar-volume warnings after the stateful Upload view renders its rows and
 summary. The aggregate report observes the same completed view and compares its

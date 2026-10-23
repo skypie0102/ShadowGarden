@@ -24,33 +24,39 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.18.9**, deployed on 2026-10-23 from
-`7c54e89` through [PR #49](https://github.com/skypie0102/ShadowGarden/pull/49).
-[Upload presentation](docs/KEEPER_UPLOAD_PRESENTATION.md) expands the two remaining
-dense helpers, keeps similar-volume guidance/counts after queue renders, and
-refreshes aggregate labels when catalog data changes. Unchanged report output
-preserves the Review control and focus. Similarity remains non-blocking, and
-matching rules and upload decisions retain their existing behavior. Six baseline
-controls fail; all 24 focused Upload/session cases pass after correction.
+The latest production release is **v2.18.10**, deployed on 2026-10-24 from
+`5ab2822` through [PR #50](https://github.com/skypie0102/ShadowGarden/pull/50).
+[Local EPUB inspection](docs/EPUB_INSPECTION.md) expands the inspection service and
+corrects false missing-file results for percent-encoded names. Literal query and
+fragment delimiters are separated before decoding filename data, so an encoded
+`#` remains part of the archive path. Existing missing-spine rejection, decoded
+traversal checks and upload limits remain. Five baseline controls fail; all 35
+focused inspection/Upload controls pass after correction.
 
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39949717155) and
-[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/39951611512)
-both pass **436 Node tests** and **681 browser cases** across five profiles,
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/39955586173) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40034070015)
+both pass **448 Node tests** and **696 browser cases** across five profiles,
 with nine documented platform skips and zero test retries. All three new
-presentation cases pass in every profile. The separate Chromium Library-startup
-profile passes on the PR and is excluded from the 681 cases.
+inspection cases pass in every profile. The separate Chromium Library-startup
+profile passes on the PR and is excluded from the 696 cases.
 
-The automatic workflow publishes **v2.18.9**, source `7c54e89`, deployment
-`e5178997-51bf-4597-872b-181ba415e04a`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The automatic workflow publishes **v2.18.10**, source `5ab2822`, deployment
+`a9acfe26-d51f-4fc6-821e-6b972234cafe`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
 The release completes in one publication attempt, retaining the original
-pre-publication baseline and v2.18.8 rollback. The version check uses one request
-over 216 ms. Canonical source/version, both D1-derived
-catalogs and both changed presentation modules pass verification. Independent
-public HTTP checks match the same version/source and both module hashes.
-The exact revision-9 catalog document, all nine snapshots and recorded settings
-remain unchanged, with zero database writes. The retained rollback is
-`6cd6fd46-9892-43e1-98b0-be14dd9f387a`. See
-[verification evidence](docs/keeper-upload-presentation-verification.json).
+pre-publication baseline and v2.18.9 rollback. The version check uses one request
+over 96 ms. Canonical source/version, both D1-derived
+catalogs and the changed inspection module pass verification. Independent public
+HTTP checks match the same version/source and exact module bytes. The exact
+revision-9 catalog document, all nine snapshots and recorded settings remain
+unchanged, with zero database writes. The retained rollback is
+`e5178997-51bf-4597-872b-181ba415e04a`. See
+[verification evidence](docs/epub-inspection-verification.json).
+
+The preceding [v2.18.9 Upload presentation release](docs/KEEPER_UPLOAD_PRESENTATION.md)
+preserves similar-volume guidance after queue renders, refreshes aggregate labels
+after catalog changes and keeps Review focus when report output is unchanged. Its
+[dated evidence](docs/keeper-upload-presentation-verification.json) retains 436 Node
+tests, 681 browser passes and the production preservation checks.
 
 The preceding [v2.18.8 upload-buffer release](docs/UPLOAD_BUFFER_BUDGET.md)
 reduces retained unknown-length input and adds a conservative per-isolate
