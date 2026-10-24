@@ -142,7 +142,7 @@ for (const adult of [false, true]) {
       JSON.stringify({ percentage: 0.42, page: 12, updatedAt: Date.now() })), bookId);
     await page.reload();
     await expect(page.locator('#seriesRoot')).toHaveAttribute('aria-busy', 'false');
-    await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in_progress');
+    await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in-progress');
     const savedLayout = await layout(page);
     expect(savedLayout.controls[0].y - savedLayout.metadata.bottom).toBeLessThanOrEqual(20);
     expect(savedLayout.overflow).toBe(false);
