@@ -324,11 +324,26 @@
   min-width: 44px;
   min-height: 44px;
   padding: 0;
-  font-size: 1.15rem;
+  color: var(--muted);
   line-height: 1;
 }
+.series-pin-button svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.series-actions .series-pin-button:hover,
+.series-actions .series-pin-button:focus-visible,
 .series-actions .series-pin-button.pinned {
-  background: rgba(182, 154, 104, 0.14);
+  color: var(--leaf2);
+  border-color: color-mix(in srgb, var(--leaf2) 45%, transparent);
+}
+.series-actions .series-pin-button.pinned {
+  background: color-mix(in srgb, var(--leaf2) 12%, transparent);
+}
+.series-pin-button.pinned .pin-head {
+  fill: currentColor;
+  fill-opacity: 0.2;
 }
 .series-actions .primary-button {
   min-height: 46px;
