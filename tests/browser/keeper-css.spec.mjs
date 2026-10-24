@@ -54,6 +54,9 @@ async function replaceStyles(page, files) {
 }
 
 async function capture(page) {
+  // Scrolling a row beneath the last click can change :hover on the next style
+  // recalculation. Keep pointer state identical in every comparison frame.
+  await page.mouse.move(0, 0);
   const styles = await page.evaluate(async properties => {
     await window.keeperCssReveal;
     await document.fonts.ready;
@@ -74,7 +77,10 @@ async function capture(page) {
           before: { content: getComputedStyle(element, '::before').content, style: computed(element, '::before') },
           after: { content: getComputedStyle(element, '::after').content, style: computed(element, '::after') } };
       });
-    return { viewport: [innerWidth, innerHeight], scroll: [scrollX, scrollY], elements };
+    const identity = element => element ? { tag: element.tagName, id: element.id } : null;
+    return { viewport: [innerWidth, innerHeight], scroll: [scrollX, scrollY],
+      interaction: { focused: identity(document.activeElement), hovered: [...document.querySelectorAll(':hover')].map(identity) },
+      elements };
   }, properties);
   const png = await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' });
   // Use the browser's public PNG decoder/Canvas API, as in reader color tests.

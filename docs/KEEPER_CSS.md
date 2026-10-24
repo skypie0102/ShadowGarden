@@ -69,6 +69,13 @@ attached to each browser report for review. Inputs retain their real read-only,
 scope, checked and editable behavior. No upload action or live catalog/provider
 write is performed by these cases.
 
+The initial Firefox control detected a hover-state change between the served and
+reinserted candidate: scrolling placed a translation-row remove button under the
+last click position, and style recalculation activated its hover colors. The
+fixture now parks the pointer at a neutral location before every capture and
+records focus/hover state. Application CSS is unchanged by this fixture correction.
+The initial run and trace artifact are retained in the release evidence.
+
 Local `npm run check` passes all 463 Node tests, asset/provenance audit, static
 build and binding/compatibility-aware Functions build. Full PR/main CI and
 production verification are pending. The release still requires source/version,
