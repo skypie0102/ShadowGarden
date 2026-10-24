@@ -70,7 +70,7 @@ for(const flow of ['paginated','scrolled-doc'])test(`${flow}: paragraph alignmen
   await chapter(page,0);await painted(page,'default');
   const original=await mapReady(page,'default'),fingerprints=new Set([original]);
   await openSettings(page);
-  const select=page.getByLabel('Paragraph alignment',{exact:true});
+  const select=page.getByRole('combobox',{name:'Paragraph alignment',exact:true});
   await expect(select).toHaveValue('default');
   expect(await select.locator('option').allTextContents()).toEqual(['Default','Left','Justify','Right']);
   for(const alignment of ['left','justify','right','default']){
