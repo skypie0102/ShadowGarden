@@ -183,6 +183,11 @@ export function createCssComparison(baseline) {
   }
 
   return async function compare(page, label) {
+    // Garden Pass and the Upload report can add stylesheets after navigation.
+    // Compare loaded CSS in every frame rather than racing a pending link.
+    await page.waitForFunction(() =>
+      [...document.querySelectorAll('link[rel="stylesheet"]')].every(link => link.sheet)
+    );
     const activePaths = await page.evaluate(() =>
       [...document.querySelectorAll('link[rel="stylesheet"],style[data-css-comparison]')].map(
         (n) => n.dataset.cssComparison || new URL(n.href).pathname,
