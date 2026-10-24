@@ -5,11 +5,12 @@ export const series = id => ({ id, title: `Series ${id}`, author: 'Disposable fi
 export const initial = () => ({ ok: true, revision: 5, main: [series('a'), series('b')], adult: [], counts: { series: 2, volumes: 4 } });
 export function changed(catalog, payload) {
   const result = structuredClone(catalog); result.revision++;
-  const item = result.main.find(item => item.id === payload.id);
-  if (payload.action === 'delete-series') result.main = result.main.filter(other => other !== item);
+  const scope = result.main.some(item => item.id === payload.id) ? 'main' : 'adult';
+  const item = result[scope].find(item => item.id === payload.id);
+  if (payload.action === 'delete-series') result[scope] = result[scope].filter(other => other !== item);
   else if (payload.action === 'delete-volume') {
     item.volumes.splice(payload.volumeIndex, 1);
-    if (!item.volumes.length) result.main = result.main.filter(other => other !== item);
+    if (!item.volumes.length) result[scope] = result[scope].filter(other => other !== item);
   }
   else if (payload.action === 'update-volume') Object.assign(item.volumes[payload.volumeIndex], {
     title: payload.title, number: Number(payload.number), date: payload.date,
