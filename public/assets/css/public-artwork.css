@@ -113,7 +113,7 @@ body[data-library-scope] {
 .library-intro > .intro-banner-art {
   position: absolute;
   z-index: 0;
-  top: -58px;
+  top: calc(-1 * var(--library-top-space));
   right: calc(50% - 50vw);
   bottom: 0;
   width: min(64vw, 920px);
@@ -300,7 +300,6 @@ a.tag:focus-visible {
     height: 63px;
   }
   .library-intro > .intro-banner-art {
-    top: -38px;
     right: calc(50% - 50vw);
     width: 92vw;
     opacity: 0.18;
@@ -329,7 +328,7 @@ a.tag:focus-visible {
     padding: 0 2px;
   }
   .mobile-collapsed-tags button {
-    min-height: 28px;
+    min-height: 44px;
   }
   .mobile-collapsed-tags button span {
     font-weight: 800;

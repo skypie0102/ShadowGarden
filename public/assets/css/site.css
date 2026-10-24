@@ -113,16 +113,17 @@ select {
   color: var(--leaf2);
 }
 .library-shell {
+  --library-top-space: 32px;
   width: min(var(--max), calc(100% - 40px));
   margin: 0 auto;
-  padding: 58px 0 70px;
+  padding: var(--library-top-space) 0 70px;
 }
 .library-intro {
   display: grid;
   grid-template-columns: 1fr minmax(280px, 450px);
-  gap: 28px;
-  align-items: end;
-  padding-bottom: 38px;
+  gap: 24px;
+  align-items: center;
+  padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
 }
 .kicker {
@@ -134,24 +135,25 @@ select {
 }
 .library-intro h1 {
   margin: 0;
-  font: 500 clamp(3.4rem,7vw,6.7rem)/.95 var(--serif);
+  font: 500 clamp(3.4rem,6vw,5rem)/.95 var(--serif);
   letter-spacing: -0.055em;
 }
 .intro-copy {
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   color: var(--muted);
 }
 .continue-panel {
   padding: 16px;
   display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 12px;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 8px 12px;
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.02);
 }
 .continue-mark {
+  grid-row: 1 / span 2;
   width: 48px;
   height: 64px;
   display: grid;
@@ -173,12 +175,15 @@ select {
   font-size: 0.76rem;
 }
 .continue-panel a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   padding: 8px 10px;
   border: 1px solid var(--line2);
   border-radius: 9px;
   text-decoration: none;
   color: var(--leaf2);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
 }
 .catalog-layout {
   display: grid;
@@ -191,7 +196,7 @@ select {
   top: 98px;
   align-self: start;
   display: grid;
-  gap: 22px;
+  gap: 16px;
 }
 .filter-head {
   display: flex;
@@ -204,6 +209,7 @@ select {
   font: 500 1.05rem var(--serif);
 }
 .filter-head button {
+  min-height: 44px;
   border: 0;
   color: var(--dim);
   background: transparent;
@@ -214,7 +220,7 @@ select {
   color: var(--leaf2);
 }
 .search-field {
-  height: 44px;
+  height: 48px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -232,14 +238,14 @@ select {
   outline: 0;
   color: var(--text);
   background: transparent;
-  font-size: 0.84rem;
+  font-size: 1rem;
 }
 .filter-group {
   display: grid;
   gap: 8px;
 }
 .filter-group label {
-  color: var(--dim);
+  color: var(--muted);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -247,7 +253,7 @@ select {
 }
 .filter-group select {
   width: 100%;
-  height: 40px;
+  height: 44px;
   padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -738,11 +744,11 @@ footer {
     display: none;
   }
   .library-shell {
+    --library-top-space: 24px;
     width: calc(100% - 20px);
-    padding-top: 38px;
   }
   .library-intro h1 {
-    font-size: 4rem;
+    font-size: 3.25rem;
   }
   .filters {
     grid-template-columns: 1fr;

@@ -61,11 +61,6 @@
 .search-field input {
   min-width: 0;
 }
-.filter-toggle {
-  min-width: 40px;
-  width: 40px;
-  height: 40px;
-}
 .catalog-bar [role="group"] button[aria-pressed="true"] {
   color: var(--text);
   background: rgba(255, 255, 255, 0.05);
@@ -84,7 +79,6 @@
 .continue-panel {
   min-width: 0;
   overflow: hidden;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
 }
 .continue-panel > div:nth-child(2) {
   min-width: 0;
@@ -382,11 +376,6 @@ body.adult-library .volume-cover {
     top: 6px;
     left: 8px;
   }
-  .filter-toggle {
-    min-width: 42px;
-    width: 42px;
-    height: 42px;
-  }
   .header-actions .header-stat {
     display: none;
   }
@@ -417,7 +406,7 @@ body.adult-library .volume-cover {
     font-size: 0.69rem;
   }
   .continue-panel {
-    grid-template-columns: 42px minmax(0, 1fr) auto;
+    grid-template-columns: 42px minmax(0, 1fr);
     gap: 9px;
     padding: 12px;
   }
@@ -429,7 +418,7 @@ body.adult-library .volume-cover {
     padding: 7px 8px;
   }
   .mobile-filter-toggle {
-    display: grid !important;
+    display: inline-flex !important;
   }
   .filters.filters-collapsed {
     display: block !important;
@@ -499,7 +488,7 @@ body.adult-library .volume-cover {
   }
   body.adult-library .adult-intro h1 {
     max-width: 100%;
-    font-size: clamp(2.7rem, 15vw, 4rem);
+    font-size: clamp(2.5rem, 12vw, 3.25rem);
     line-height: 0.94;
     letter-spacing: -0.045em;
     overflow-wrap: anywhere;

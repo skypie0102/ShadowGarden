@@ -181,9 +181,9 @@
 }
 .search-hint {
   margin: 0 2px;
-  color: var(--dim);
-  font-size: 0.62rem;
-  line-height: 1.35;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 .catalog-layout,
 .catalog-main,
@@ -222,17 +222,33 @@
   max-width: 100%;
 }
 .filter-toggle {
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 0;
   border-left: 1px solid var(--line);
-  color: var(--dim);
+  color: var(--muted);
   background: transparent;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+}
+.filter-toggle span {
+  color: inherit;
+}
+.filter-toggle-count:not([hidden]) {
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  color: var(--leaf2);
+  background: var(--panel2);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.filter-toggle-icon {
+  font-size: 0.6rem;
 }
 .filter-toggle:hover,
 .filter-toggle:focus-visible {
@@ -277,6 +293,7 @@
   display: none;
 }
 .active-filter-tags button {
+  min-height: 44px;
   display: inline-flex;
   min-width: 0;
   max-width: 100%;
@@ -316,8 +333,8 @@
 }
 .filter-sub-label {
   margin-top: 3px;
-  color: var(--dim);
-  font-size: 0.61rem;
+  color: var(--muted);
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -587,6 +604,7 @@
   transform: translateY(3px);
 }
 .continue-actions {
+  grid-column: 2;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -595,9 +613,30 @@
 .continue-actions > a {
   white-space: nowrap;
 }
+.continue-eyebrow {
+  margin: 0 0 5px;
+  color: var(--leaf2);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.continue-copy strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.continue-copy .continue-context {
+  color: var(--muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
 .another-suggestion {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   display: grid;
   place-items: center;

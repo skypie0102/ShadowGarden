@@ -59,9 +59,9 @@
     </section>
 
     <section id="catalogSection" class="catalog-layout" aria-label="Library catalog">
-      <aside class="filters filters-mobile-initial-collapsed" aria-label="Library filters">
+      <aside id="libraryFilters" class="filters filters-mobile-initial-collapsed" aria-label="Library filters">
         <div class="filter-head"><strong>Filter archive</strong><button id="clearFilters" type="button">Reset</button></div>
-        <div class="search-stack"><div class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Title, author, tag, volume…" autocomplete="off" aria-label="Search library"><button id="filterToggle" class="filter-toggle mobile-filter-toggle" type="button" aria-expanded="false" aria-label="Expand library filters" title="Expand filters">▼</button></div><div id="activeTags" class="active-filter-tags" aria-label="Active library filters"></div><p class="search-hint">Follow any thread—title, author, tag, or volume. Each added word narrows the path.</p></div>
+        <div class="search-stack"><div class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Title, author, tag, volume…" autocomplete="off" aria-label="Search library"><button id="filterToggle" class="filter-toggle mobile-filter-toggle" type="button" aria-expanded="false" aria-controls="libraryFilters" title="Expand filters"><span class="filter-toggle-label">Filters</span><span class="filter-toggle-count" hidden></span><span class="filter-toggle-icon" aria-hidden="true">▼</span></button></div><div id="activeTags" class="active-filter-tags" aria-label="Active library filters"></div><p class="search-hint">Search title, author, tag or volume. Add words to narrow the results.</p></div>
         <div class="filter-group"><label for="authorSelect">Author</label><select id="authorSelect"><option value="">Any author</option></select></div>
         <div class="filter-group"><label for="translatorSelect">Fan translator</label><select id="translatorSelect"><option value="">Any translator</option></select></div>
         <div class="filter-group"><label for="genreSelect">Genre</label><select id="genreSelect"><option value="">Any genre</option></select></div>

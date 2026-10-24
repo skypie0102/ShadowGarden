@@ -103,15 +103,17 @@ export function renderReadingBanner(panel, intro, current, { readingState, forma
   const cover = volumeCover(series, volume);
   const title = String(volume?.title || `Volume ${volume?.number ?? index + 1}`);
   const number = String(volume?.number ?? index + 1);
-  const percent = Math.round((Number(progress?.percentage) || 0) * 100);
+  const percent = Math.max(0, Math.min(100, Math.round((Number(progress?.percentage) || 0) * 100)));
   const mode = current.mode === "suggestion" ? "suggestion" : "continue";
-  const context = mode === "continue"
-    ? `${series?.title || "Untitled series"} · Volume ${number} · ${percent}%`
-    : `${current.suggestion === "next" ? "Next in series" : "Read suggestion"} · ${series?.title || "Untitled series"} · Volume ${number}`;
+  const next = mode === "suggestion" && current.suggestion === "next";
+  const heading = mode === "continue" ? "Continue reading" : next ? "Next in series" : "Reading suggestion";
+  const seriesContext = series?.title && series.title !== title ? `${series.title} · ` : "";
+  const context = `${seriesContext}Volume ${number}${mode === "continue" ? ` · ${percent}% complete` : ""}`;
+  const label = mode === "continue" ? "Continue reading" : next ? "Read next volume" : state === readingState.STATES.FINISHED ? "Read again" : "Start reading";
   panel.dataset.readingState = state;
   panel.dataset.readingMode = mode;
-  const reroll = mode === "suggestion" && current.suggestion === "random" ? `<button class="another-suggestion" type="button" data-another-suggestion aria-label="Show another reading suggestion" title="Another suggestion">↻</button>` : "";
-  panel.innerHTML = `<div class="continue-mark${cover ? " continue-cover" : ""}">${cover ? `<img src="${esc(cover)}" alt="" loading="eager" decoding="async">` : "✦"}</div><div><strong>${esc(title)}</strong><span>${esc(context)}</span></div><div class="continue-actions"><a ${attrs(action, esc)} href="${action.href}">${esc(action.label)}</a>${reroll}</div>`;
+  const reroll = mode === "suggestion" && current.suggestion === "random" && current.suggestionCount > 1 ? `<button class="another-suggestion" type="button" data-another-suggestion aria-label="Show another reading suggestion" title="Another suggestion">↻</button>` : "";
+  panel.innerHTML = `<div class="continue-mark${cover ? " continue-cover" : ""}">${cover ? `<img src="${esc(cover)}" alt="" loading="eager" decoding="async">` : "✦"}</div><div class="continue-copy"><p class="continue-eyebrow">${heading}</p><strong title="${esc(title)}">${esc(title)}</strong><span class="continue-context">${esc(context)}</span></div><div class="continue-actions"><a ${attrs(action, esc)} href="${action.href}">${label}</a>${reroll}</div>`;
   panel.classList.remove("hidden");
 
   if (intro && cover) {

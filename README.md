@@ -7,6 +7,7 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 [Open ShadowGarden](https://shadowgarden-bon.pages.dev/) ·
 [Documentation](docs/README.md) ·
 [Codebase audit](docs/CODEBASE_AUDIT_2026-10.md) ·
+[UI/UX roadmap](docs/UI_UX_ROADMAP.md) ·
 [Website refactor](docs/WEBSITE_REFACTOR_ROADMAP.md) ·
 [Reader maintenance](docs/READER_MAINTENANCE.md)
 
