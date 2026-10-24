@@ -52,7 +52,9 @@ unchanged by this fixture correction.
 the baseline and correction. Local `npm run check` passes 471 Node tests,
 asset/provenance audit, static build and binding-aware Functions build.
 
-The changes are confined to `admin-batch.js` and `admin/shell.js`; the accompanying
+The Upload changes are confined to `admin-batch.js` and `admin/shell.js`; the accompanying
 [stylesheet batch](STYLESHEET_OWNERSHIP.md) preserves its ordered CSS syntax.
+Its new public checks also reproduce and correct the separate
+[Library loading state](LIBRARY_READINESS.md).
 No backend/API/schema/dependency/storage-format/reader-logic/upload-limit change
 or performance improvement is claimed.

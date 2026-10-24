@@ -14,7 +14,7 @@
     "assetAudit": "passed",
     "staticBuild": "passed",
     "bindingAwareFunctionsBuild": "passed",
-    "logSha256": "2f6332e6c5547a26588c57646713e20703906e871a62d7c61f5ffd4978e023a0"
+    "logSha256": "32831fb070c16dd7aba82d881eccaffef799367cd990ae7bbd5c6d688ca737f4"
   },
   "files": [
     {
@@ -26,6 +26,25 @@
       "path": "public/assets/js/admin/shell.js",
       "beforeSha256": "a9b5594c45f675d056eddaae4a1fbfa646776ad04d2716f47341190e14244907",
       "finalSha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+    },
+    {
+      "path": "public/assets/js/library.js",
+      "beforeSha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+      "finalSha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49"
     }
-  ]
+  ],
+  "libraryReadiness": {
+    "datedController": "tests/browser/fixtures/library-readiness-2.18.12.js",
+    "browserControls": 6,
+    "outcomes": [
+      "populated",
+      "empty",
+      "failure"
+    ],
+    "scopes": [
+      "Main",
+      "Adult"
+    ],
+    "purpose": "Execute dated actual controller and candidate with independent held catalog responses; verify pending/settled busy and absence of stale loading placeholders."
+  }
 }

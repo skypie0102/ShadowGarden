@@ -66,3 +66,9 @@ These controls do not establish exhaustive viewport/animation-frame equivalence
 or physical-device/provider acceptance. No real CAPTCHA, upload or live catalog
 mutation is performed. Full CI, artifact review and production verification are
 pending for this release.
+
+The public readiness assertion also exposed the existing Library grid's busy
+state never being cleared after load. The assertion is retained and the
+[loading-state correction](LIBRARY_READINESS.md) has independent dated-controller
+controls for populated, empty and failed catalogs. This changes the public
+controller's loading semantics without altering the CSS preservation proof.
