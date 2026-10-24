@@ -68,12 +68,11 @@ unchanged, with zero database writes. The retained v2.18.12 rollback is
 `f75b7696-25f3-4ce4-8a3a-4b54846e340e`, source `e531786`.
 See [verification evidence](keeper-target-stylesheets-verification.json).
 
-The sanitized report is checked from the successful workflow's logs; GitHub's
-production-artifact digest matches the upload log. The local execution
-environment became unavailable after PR artifact review, so separate
-post-deployment asset GETs and raw production-archive verification were not
-completed. The workflow itself performed the 27 live checks; the evidence
-records this verification limit.
+The interrupted independent checks were completed after the workspace was
+restored. Public HTTP reads confirm v2.18.13/source `8d500eb` and exact bytes for
+all 24 changed assets. The downloaded production artifact matches the sanitized
+logged report and GitHub's SHA-256 archive digest. The follow-up results and the
+original publication/rollback records are retained in the verification evidence.
 
 The first browser run correctly blocked the fresh targeted EPUB because that
 disposable series already contained volume 1. The new fixture now verifies

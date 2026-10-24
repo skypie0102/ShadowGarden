@@ -938,9 +938,9 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-   12 [desktop-firefox] › tests/browser/garden-pass.spec.mjs:73:1 › closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
-          "-  106 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+          "-   12 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-  106 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
         ]
       },
       {
@@ -984,8 +984,8 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-  106 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+          "-  106 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
         ]
       },
       {
@@ -1001,10 +1001,10 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-  106 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper",
-          "-  127 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:21:3 › Continuous scroll stability › fast upward scrolling does not reverse when earlier chapters render",
-          "-  133 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:241:3 › Continuous scroll stability › native scrolling wins over a suspended-position restore waiting for access"
+          "-  106 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-  127 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-  133 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
         ]
       }
     ],
@@ -1064,9 +1064,9 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-   12 [desktop-firefox] › tests/browser/garden-pass.spec.mjs:73:1 › closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
-          "-  106 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+          "-   12 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-  106 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
         ]
       },
       {
@@ -1082,10 +1082,10 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-  106 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper",
-          "-  127 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:21:3 › Continuous scroll stability › fast upward scrolling does not reverse when earlier chapters render",
-          "-  133 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:241:3 › Continuous scroll stability › native scrolling wins over a suspended-position restore waiting for access"
+          "-  106 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-  127 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-  133 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
         ]
       },
       {
@@ -1101,8 +1101,8 @@
         "runtimeGuardPassed": true,
         "startupProfilePassed": null,
         "skippedCases": [
-          "-  106 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
-          "-  107 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+          "-  106 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
         ]
       }
     ],
@@ -1425,10 +1425,18 @@
       "workflowSource": "8d500eb163edad0f8e2d4639e365504e1bddee51",
       "uploadDigestMatchesGitHubMetadata": true,
       "loggedReportSerializedSha256": "f1fd43d38e9c770d6239b9b8a8a4b2ba56b4a5b4f034bcbc17e31f1cd4fae6e7",
-      "archiveIndependentlyDownloadedAndChecked": false,
-      "retentionDays": 30
+      "archiveIndependentlyDownloadedAndChecked": true,
+      "retentionDays": 30,
+      "archiveSha256": "44da09fdfdfe54b19e7dfa23d77f85ded0c2aa17e2b36bd25eed30c6a801df86",
+      "digestVerified": true,
+      "reportSha256": "f1fd43d38e9c770d6239b9b8a8a4b2ba56b4a5b4f034bcbc17e31f1cd4fae6e7",
+      "matchesLoggedReport": true,
+      "members": [
+        "production-verification.json"
+      ],
+      "independentCheckAt": "2026-10-24T08:10:50.460031+00:00"
     },
-    "verificationMethod": "The successful workflow verifies canonical source/version, both D1-derived catalogs and all 24 changed source asset bytes after publication, with preservation checks and zero database writes. The sanitized job-log report and upload digest were checked against GitHub run/job/artifact metadata."
+    "verificationMethod": "The successful workflow verified canonical source/version, both D1-derived catalogs and all 24 changed assets with zero database writes and preservation checks. After the workspace was restored, independent public HTTP reads matched the version/source and every changed asset byte. The downloaded production archive matched GitHub's SHA-256 digest; its sole report member matched the sanitized logged report and its recorded serialized hash."
   },
   "independentHttpBefore": {
     "origin": "https://shadowgarden-bon.pages.dev",
@@ -1440,8 +1448,190 @@
     "fullLocalRecordUnavailableAfterEnvironmentLoss": true
   },
   "independentHttpAfter": {
-    "status": "unavailable",
-    "reason": "The local execution environment became unavailable before separate post-deployment curl/archive checks; the web retrieval tool could not access the public version endpoint. Production HTTP verification still passed inside the successful trusted-main job."
+    "checkedAt": "2026-10-24T08:11:49.006912+00:00",
+    "status": "passed",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.13",
+      "releaseVersion": "2.18.13",
+      "commit": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+      "shortCommit": "8d500eb",
+      "branch": "main",
+      "builtAt": "2026-10-24T05:54:59.775Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "/assets/css/admin-batch.css",
+        "bytes": 4847,
+        "sha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-import-report.css",
+        "bytes": 5289,
+        "sha256": "6b5d99c3377130f5d93db23f0501cbc03e8f65c20c9b2dd2f3e5ed99540a17e0",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-maintenance.css",
+        "bytes": 5456,
+        "sha256": "2d8b6425638ed5452ab75761bbbd154496c005d0db1ad63b5fb10765ab564650",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-motion.css",
+        "bytes": 3411,
+        "sha256": "727030c78224738bd7fb860152b2b02a1ef971ab0e055a8346230e6d86ccba4b",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-preflight.css",
+        "bytes": 4402,
+        "sha256": "8695674f76b7a06079a94949b2ae1e408df0b483309f20b081b065b74bd475cc",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-security.css",
+        "bytes": 996,
+        "sha256": "b04b28b4a23508cbf5470dedc79dfbc6f3b43029d5d64eb2af71d81c7010326a",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-series-editor.css",
+        "bytes": 2992,
+        "sha256": "4050ce60d151bca136165f1b713797096e92aae1c7c625e3e0fa52de74894bd3",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/garden-pass.css",
+        "bytes": 2926,
+        "sha256": "60448aa6ce259cc3be4fe795f628e9b960f905bd837623b351b904953ba665c2",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/library-features.css",
+        "bytes": 15530,
+        "sha256": "8b66826f11ab639e456563d260249ee0a595a0315cc69e127d91358d0aa5356b",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/library-layout.css",
+        "bytes": 9097,
+        "sha256": "f0d6fbea920b3956b89ceaf80fb5e97a33fe3ff785b0123fb7be06d435d74fc3",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/library-motion.css",
+        "bytes": 6127,
+        "sha256": "5fed3b9d2afa19763c83ae509ef6c8bff73c33c1db6d69c9438183beaa49cfe9",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/nav.css",
+        "bytes": 5427,
+        "sha256": "a747fa3de5ba9dc82d345df8236d8d89e8c93061045058e0b77028dc5730e568",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/public-artwork.css",
+        "bytes": 8582,
+        "sha256": "9198db635a87df1562f7846465b052b1a6d5f013f36342c6c8b4229793799586",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/public-components.css",
+        "bytes": 13058,
+        "sha256": "a56c54d1344e9fc1926f1d73af515b0fc2d7eb5f38f74277b7eade574fae709a",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/reading-status.css",
+        "bytes": 4205,
+        "sha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/series-extra.css",
+        "bytes": 11744,
+        "sha256": "cc14d0e88bcd666ee3fb4f05b286076e62d66b09bc2c04a10e62ce0fbf6ef903",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/series-motion.css",
+        "bytes": 3029,
+        "sha256": "f5d9d137b0c6a86012140ef8629ea866bf2d7d9b8ef653d9f204ee02eebefb85",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/site-theme.css",
+        "bytes": 3720,
+        "sha256": "883030bd8780dcabe2e451c3110de8d287342484d18e830cb057a292ffdfb340",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/site.css",
+        "bytes": 18486,
+        "sha256": "8970dfb7dd454cfb4083639a4ac1f042fcdf3abea922d571bd6da5ad49bcbaa0",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/ui-symbols.css",
+        "bytes": 721,
+        "sha256": "b6e193481adaddc1c1f91c830a8f10ef51fb26e7add26b17f6bb3465a230d511",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/volume-actions.css",
+        "bytes": 3082,
+        "sha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc",
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/js/admin-batch.js",
+        "bytes": 31686,
+        "sha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304",
+        "contentType": "application/javascript",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/js/admin/shell.js",
+        "bytes": 8376,
+        "sha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f",
+        "contentType": "application/javascript",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/js/library.js",
+        "bytes": 22117,
+        "sha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49",
+        "contentType": "application/javascript",
+        "matchesSource": true
+      }
+    ],
+    "matchingAssetCount": 24
   },
   "limits": [
     "CSS syntax/comment equivalence covers formatting only; separately documented JavaScript owners change Upload target and Library loading behavior.",
@@ -1452,7 +1642,18 @@
     "Tests use disposable APIs/generated technical EPUBs. No live upload/catalog/provider write, real credential/CAPTCHA or new physical-device acceptance is claimed.",
     "Target changes invalidate continuations without forcibly interrupting ZIP/XML work already underway. Active uploads still block context changes.",
     "Browser artifacts retain full records/captures for seven days; production-verification retention is 30 days. Dated CSS/controller fixtures, hashes and pinned CI runtime support reproduction.",
-    "After the local environment became unavailable, final release verification and documentation used connected GitHub APIs. Production archive digest matches its upload log; raw archive bytes and separate post-deployment asset GETs were not independently rechecked. The production job itself passed all 27 checks.",
+    "A local workspace interruption delayed the initial independent follow-up checks. After restoration, public version/source and all 24 changed asset bytes matched, and the downloaded production archive/report passed independent checks. These later reads do not provide an atomic guarantee against intervening catalog edits.",
     "Production captures are separate reads, not an atomic transaction or a guarantee against later edits. Private baselines remain ignored and uploaded reports are sanitized."
-  ]
+  ],
+  "verificationFollowUp": {
+    "initialStatus": {
+      "status": "unavailable",
+      "reason": "The local execution environment became unavailable before separate post-deployment curl/archive checks; the web retrieval tool could not access the public version endpoint. Production HTTP verification still passed inside the successful trusted-main job."
+    },
+    "completedAt": "2026-10-24T08:11:49.006912+00:00",
+    "independentHttpPassed": true,
+    "productionArchivePassed": true,
+    "applicationChanges": false,
+    "additionalPublicationAttempts": 0
+  }
 }
