@@ -27,6 +27,16 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.13 target-context correction](KEEPER_TARGET_CONTEXT.md) makes the
+Upload engine the reset/cancellation owner for Clear and confirmed shell target
+changes. Closing retains its queue target; reopening it continues the queue,
+and another target requires confirmation before reset. The
+[remaining stylesheet batch](STYLESHEET_OWNERSHIP.md) expands 21 dense Keeper/
+shared/public sheets with their existing syntax, order and ownership preserved.
+No CSS rule or declaration is removed. The separate
+[Library loading correction](LIBRARY_READINESS.md) settles busy state after
+catalog initialization and removes error placeholders.
+
 The [v2.18.12 CSS batch](KEEPER_CSS.md) documents the existing stylesheet
 owners: base defaults, workspace/dialog layout, Upload/translation components and
 banner/editor/review presentation. Their order and intentional overrides remain.

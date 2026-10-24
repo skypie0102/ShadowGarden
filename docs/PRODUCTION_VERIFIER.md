@@ -124,7 +124,9 @@ It does not check compiled server source bytes, encrypted secret values,
 real CAPTCHA/credential flows, B2 writes/deletes, EPUB opening or physical device
 acceptance. Use the existing CI and separately scoped live acceptance for those
 behaviors. The current production verification record is
-[`keeper-css-verification.json`](keeper-css-verification.json).
+[`keeper-target-stylesheets-verification.json`](keeper-target-stylesheets-verification.json).
+The preceding [first CSS release](keeper-css-verification.json) retains its
+separate dated evidence.
 The preceding [queue lifecycle release](keeper-queue-lifecycle-verification.json)
 retains its separate dated evidence.
 The preceding [EPUB inspection release](epub-inspection-verification.json)

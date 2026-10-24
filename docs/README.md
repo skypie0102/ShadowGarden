@@ -1,38 +1,52 @@
 # ShadowGarden documentation
 
-The latest production release is **v2.18.12**, deployed on 2026-10-24 from
-`e531786` through [PR #52](https://github.com/skypie0102/ShadowGarden/pull/52).
-[Keeper CSS ownership](KEEPER_CSS.md) expands four stylesheets and removes one
-superseded checkbox rule with two declarations. Formatting-stage parsed CSS and
-comments retain their order; lines over 180 columns decrease from 21 to zero.
-The winning checkbox rules, existing appearance and intentional cascade overrides
-remain. The audit now separates completed work, remaining CSS, retained contracts
-and a separate target-switching reproduction lead.
+The latest production release is **v2.18.13**, deployed on 2026-10-24 from
+`8d500eb` through [PR #53](https://github.com/skypie0102/ShadowGarden/pull/53).
+[Upload target ownership](KEEPER_TARGET_CONTEXT.md) uses the engine's reset/
+cancellation owner and retains the queue's target while its dialog is closed.
+Six baseline controls fail; all 23 corrected queue controls pass.
+[Stylesheet ownership](STYLESHEET_OWNERSHIP.md) expands 21 remaining dense Keeper/
+shared/public sheets with ordered parsed CSS/comments preserved and no removals.
+Long lines decrease from 147 to one intact SVG URL.
+[Library readiness](LIBRARY_READINESS.md) clears busy after populated, empty or
+failed catalog loads and removes stale failure placeholders.
 
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40057285978) and
-[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40058525055)
-both pass **463 Node tests** and **746 browser cases** across five profiles,
-with nine documented platform skips and zero test retries. All four new CSS
-cases pass in every profile. The separate Chromium Library-startup profile passes
-on the PR and is excluded from the 746 cases.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40065545158) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40066899682) both pass
+**471 Node tests** and **821 browser cases** across five profiles, with nine
+documented platform skips and zero test retries. All five new CSS cases, ten
+queue-lifecycle cases and six Library readiness cases pass in every profile.
+The separate Chromium Library-startup profile passes on the PR and is excluded
+from the 821 cases.
 
-All **45 same-DOM comparisons** in the PR artifacts match decoded RGBA pixels,
-computed-style/geometry hashes and the served/restored candidate control.
-Representative desktop/mobile captures were also visually reviewed. Settled-frame
-comparisons cover the profile defaults and widths 349/600/761; they do not claim
-animation-frame or exhaustive viewport equivalence.
+All **95 new same-DOM comparisons** match decoded RGBA pixels and computed-style/
+geometry hashes, including the served/restored candidate control. All 21 changed
+sheets are loaded across each profile's compared states. Six representative
+desktop/mobile captures were visually reviewed. Settled frames and the recorded
+default/349/761 widths define this scope; no exhaustive viewport, animation-frame
+or resize-transition equivalence is claimed.
 
-The automatic workflow publishes **v2.18.12**, source `e531786`, deployment
-`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
-The release completes in one publication attempt, retaining the original
-pre-publication baseline and v2.18.11 rollback. The version check uses one request
-over 205 ms. Canonical source/version, both D1-derived
-catalogs and all four changed CSS files pass verification. Independent public
-HTTP checks match the same version/source and exact CSS bytes. The exact
-revision-9 catalog document, all nine snapshots and recorded settings remain
-unchanged, with zero database writes. The retained rollback is
-`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`. See
-[verification evidence](keeper-css-verification.json).
+The workflow publishes **v2.18.13**, source `8d500eb`, deployment
+`828bb91c-d3b1-450d-91db-27b199c9b5af`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+Publication completes in one attempt; the version check uses one request over
+204 ms. All **27 production checks** pass: canonical source/version,
+both D1-derived catalogs and all 24 changed CSS/JavaScript assets. The exact
+revision-9 catalog document, all 9 snapshots and recorded settings remain
+unchanged, with zero database writes. The retained v2.18.12 rollback is
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, source `e531786`.
+See [verification evidence](keeper-target-stylesheets-verification.json).
+
+The sanitized report is checked from the successful workflow's logs; GitHub's
+production-artifact digest matches the upload log. The local execution
+environment became unavailable after PR artifact review, so separate
+post-deployment asset GETs and raw production-archive verification were not
+completed. The workflow itself performed the 27 live checks; the evidence
+records this verification limit.
+
+The preceding [v2.18.12 CSS release](KEEPER_CSS.md) expands four base/layout/
+component/presentation sheets and removes two superseded checkbox declarations.
+Its [dated evidence](keeper-css-verification.json) retains 463 Node tests, 746
+browser passes, 45 visual comparisons and production preservation.
 
 The preceding [v2.18.11 queue lifecycle release](KEEPER_QUEUE_LIFECYCLE.md)
 owns pending file selections across Clear/lock, serializes preparation, gates

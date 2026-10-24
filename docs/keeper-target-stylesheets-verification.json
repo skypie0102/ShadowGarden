@@ -1,0 +1,1458 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.18.13",
+  "recordedAt": "2026-10-24T05:58:33.797Z",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/53",
+  "scope": "Engine-owned Upload target reset/cancellation, retained target across dialog close, settled public Library busy/placeholder state, and ordered syntax/comment-equivalent expansion of 21 remaining dense Keeper/shared/public stylesheets. No backend/HTTP API/schema/configuration/dependency/storage-format/reader-logic/upload-limit changes.",
+  "baseSource": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+  "candidate": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+  "mergeSource": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+  "testedTree": "b001b1aee4080a0cba250e0d79fb403b3c0e8059",
+  "mergeTreeMatchesTested": true,
+  "sourceEvidence": {
+    "target": {
+      "schemaVersion": 1,
+      "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+      "nodeControls": {
+        "total": 23,
+        "new": 8,
+        "baselinePassed": 17,
+        "baselineFailed": 6,
+        "correctedPassed": 23,
+        "baselineLogSha256": "67a6eba02c0587ea5e1b6ae4ba405420ff955b2155ea40874fbf49167e3830e8"
+      },
+      "localCheck": {
+        "nodePassed": 471,
+        "assetAudit": "passed",
+        "staticBuild": "passed",
+        "bindingAwareFunctionsBuild": "passed",
+        "logSha256": "32831fb070c16dd7aba82d881eccaffef799367cd990ae7bbd5c6d688ca737f4"
+      },
+      "files": [
+        {
+          "path": "public/assets/js/admin-batch.js",
+          "beforeSha256": "c5bb1aef8e75dcc8a552299ed3c0e81ffabe85200eddaf5d8326746183e04633",
+          "finalSha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304"
+        },
+        {
+          "path": "public/assets/js/admin/shell.js",
+          "beforeSha256": "a9b5594c45f675d056eddaae4a1fbfa646776ad04d2716f47341190e14244907",
+          "finalSha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+        },
+        {
+          "path": "public/assets/js/library.js",
+          "beforeSha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+          "finalSha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49"
+        }
+      ],
+      "libraryReadiness": {
+        "datedController": "tests/browser/fixtures/library-readiness-2.18.12.js",
+        "browserControls": 6,
+        "outcomes": [
+          "populated",
+          "empty",
+          "failure"
+        ],
+        "scopes": [
+          "Main",
+          "Adult"
+        ],
+        "purpose": "Execute dated actual controller and candidate with independent held catalog responses; verify pending/settled busy and absence of stale loading placeholders."
+      }
+    },
+    "stylesheets": {
+      "schemaVersion": 1,
+      "checkedAt": "2026-10-24T04:44:43.298Z",
+      "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+      "formatter": {
+        "name": "prettier",
+        "version": "3.6.2",
+        "options": {
+          "parser": "css",
+          "printWidth": 100,
+          "tabWidth": 2,
+          "useTabs": false,
+          "singleQuote": false
+        },
+        "postprocess": "Retain original font shorthand value text to avoid parser tokenization differences at compact unit/line-height boundaries."
+      },
+      "comparison": "Ordered parsed CSS equality excludes positions, whitespace metadata and duplicate raw aggregate copies; numeric tokens use canonical numeric text. Selector/value tokens, declarations, priorities, rules, media-query child order and ordered comments remain. No rule or declaration removals.",
+      "inventory": [
+        {
+          "path": "public/assets/css/admin-batch.css",
+          "before": {
+            "bytes": 3904,
+            "lines": 1,
+            "longestLine": 3904,
+            "linesOver180": 1
+          }
+        },
+        {
+          "path": "public/assets/css/admin-components.css",
+          "before": {
+            "bytes": 11320,
+            "lines": 477,
+            "longestLine": 104,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-import-report.css",
+          "before": {
+            "bytes": 4395,
+            "lines": 37,
+            "longestLine": 330,
+            "linesOver180": 9
+          }
+        },
+        {
+          "path": "public/assets/css/admin-layout.css",
+          "before": {
+            "bytes": 5003,
+            "lines": 246,
+            "longestLine": 98,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-maintenance.css",
+          "before": {
+            "bytes": 4465,
+            "lines": 3,
+            "longestLine": 4415,
+            "linesOver180": 1
+          }
+        },
+        {
+          "path": "public/assets/css/admin-motion.css",
+          "before": {
+            "bytes": 3029,
+            "lines": 79,
+            "longestLine": 292,
+            "linesOver180": 1
+          }
+        },
+        {
+          "path": "public/assets/css/admin-preflight.css",
+          "before": {
+            "bytes": 3601,
+            "lines": 9,
+            "longestLine": 1272,
+            "linesOver180": 5
+          }
+        },
+        {
+          "path": "public/assets/css/admin-presentation.css",
+          "before": {
+            "bytes": 5856,
+            "lines": 261,
+            "longestLine": 79,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-security.css",
+          "before": {
+            "bytes": 824,
+            "lines": 7,
+            "longestLine": 191,
+            "linesOver180": 2
+          }
+        },
+        {
+          "path": "public/assets/css/admin-series-editor.css",
+          "before": {
+            "bytes": 2476,
+            "lines": 24,
+            "longestLine": 266,
+            "linesOver180": 3
+          }
+        },
+        {
+          "path": "public/assets/css/admin-version.css",
+          "before": {
+            "bytes": 473,
+            "lines": 5,
+            "longestLine": 166,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin.css",
+          "before": {
+            "bytes": 15473,
+            "lines": 787,
+            "longestLine": 86,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/adult.css",
+          "before": {
+            "bytes": 3899,
+            "lines": 164,
+            "longestLine": 137,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/garden-pass.css",
+          "before": {
+            "bytes": 2399,
+            "lines": 22,
+            "longestLine": 310,
+            "linesOver180": 3
+          }
+        },
+        {
+          "path": "public/assets/css/library-features.css",
+          "before": {
+            "bytes": 13079,
+            "lines": 75,
+            "longestLine": 741,
+            "linesOver180": 27
+          }
+        },
+        {
+          "path": "public/assets/css/library-layout.css",
+          "before": {
+            "bytes": 8194,
+            "lines": 176,
+            "longestLine": 290,
+            "linesOver180": 10
+          }
+        },
+        {
+          "path": "public/assets/css/library-motion.css",
+          "before": {
+            "bytes": 5414,
+            "lines": 64,
+            "longestLine": 488,
+            "linesOver180": 4
+          }
+        },
+        {
+          "path": "public/assets/css/motion.css",
+          "before": {
+            "bytes": 3358,
+            "lines": 57,
+            "longestLine": 152,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/nav.css",
+          "before": {
+            "bytes": 4616,
+            "lines": 28,
+            "longestLine": 791,
+            "linesOver180": 8
+          }
+        },
+        {
+          "path": "public/assets/css/public-artwork.css",
+          "before": {
+            "bytes": 7032,
+            "lines": 63,
+            "longestLine": 579,
+            "linesOver180": 9
+          }
+        },
+        {
+          "path": "public/assets/css/public-components.css",
+          "before": {
+            "bytes": 10882,
+            "lines": 111,
+            "longestLine": 382,
+            "linesOver180": 12
+          }
+        },
+        {
+          "path": "public/assets/css/reading-status.css",
+          "before": {
+            "bytes": 3495,
+            "lines": 22,
+            "longestLine": 985,
+            "linesOver180": 5
+          }
+        },
+        {
+          "path": "public/assets/css/series-extra.css",
+          "before": {
+            "bytes": 9801,
+            "lines": 78,
+            "longestLine": 1758,
+            "linesOver180": 9
+          }
+        },
+        {
+          "path": "public/assets/css/series-motion.css",
+          "before": {
+            "bytes": 2640,
+            "lines": 34,
+            "longestLine": 315,
+            "linesOver180": 4
+          }
+        },
+        {
+          "path": "public/assets/css/site-theme.css",
+          "before": {
+            "bytes": 3262,
+            "lines": 32,
+            "longestLine": 361,
+            "linesOver180": 2
+          }
+        },
+        {
+          "path": "public/assets/css/site.css",
+          "before": {
+            "bytes": 14997,
+            "lines": 58,
+            "longestLine": 1078,
+            "linesOver180": 29
+          }
+        },
+        {
+          "path": "public/assets/css/ui-symbols.css",
+          "before": {
+            "bytes": 682,
+            "lines": 14,
+            "longestLine": 196,
+            "linesOver180": 1
+          }
+        },
+        {
+          "path": "public/assets/css/volume-actions.css",
+          "before": {
+            "bytes": 2615,
+            "lines": 25,
+            "longestLine": 214,
+            "linesOver180": 2
+          }
+        }
+      ],
+      "files": [
+        {
+          "path": "public/assets/css/admin-batch.css",
+          "beforeSha256": "25596d2a6f34246e16922e4e6339326f8007e90aa0ac4d27e4f4de247c61e94c",
+          "finalSha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a",
+          "normalizedAstSha256": "41970b3efc97eb53da06923574b0f8cd5ff145de841bf517604e2bfaa9c2789a",
+          "commentsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 3904,
+            "lines": 1,
+            "longestLine": 3904,
+            "linesOver180": 1
+          },
+          "final": {
+            "bytes": 4847,
+            "lines": 256,
+            "longestLine": 56,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-import-report.css",
+          "beforeSha256": "e762fb2f3a195c5df79e11f72cff24a9e3db1b94587386d41fa745c4b45e2c65",
+          "finalSha256": "6b5d99c3377130f5d93db23f0501cbc03e8f65c20c9b2dd2f3e5ed99540a17e0",
+          "normalizedAstSha256": "ffd8a55ceb95235850e732d24a0e251eefe43bbccfa85247a8827fdf48786d92",
+          "commentsSha256": "48373e0fab44fa04eeb91015dfbd3e6aec8a3161e9e874eb56f13cb8a525d479",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 4395,
+            "lines": 37,
+            "longestLine": 330,
+            "linesOver180": 9
+          },
+          "final": {
+            "bytes": 5289,
+            "lines": 234,
+            "longestLine": 74,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-maintenance.css",
+          "beforeSha256": "153085026bf60efe16d9ad8618cd2548ae86afbc5d94ac4f96e611f234fd2732",
+          "finalSha256": "2d8b6425638ed5452ab75761bbbd154496c005d0db1ad63b5fb10765ab564650",
+          "normalizedAstSha256": "b7618c8b021c71a2222ae1debc12b71912d9cdad5e74730daef668f118f77781",
+          "commentsSha256": "f7a05a63b7b5e81df5d45f397970dafbfeb6130ca9be8712453a8a56c39ac4a7",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 4465,
+            "lines": 3,
+            "longestLine": 4415,
+            "linesOver180": 1
+          },
+          "final": {
+            "bytes": 5456,
+            "lines": 263,
+            "longestLine": 62,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-motion.css",
+          "beforeSha256": "96cf2965f722e5da72846753a1aade61e07102339bebf53072809b04a1c0c18a",
+          "finalSha256": "727030c78224738bd7fb860152b2b02a1ef971ab0e055a8346230e6d86ccba4b",
+          "normalizedAstSha256": "758bbb92b931f387975ec0cf895286d8660445a3a32c66963063971c00af383c",
+          "commentsSha256": "2d5b9abefeca3c8522188ce38570c8310b34ff73dc2d265855a1d8aafb672277",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 3029,
+            "lines": 79,
+            "longestLine": 292,
+            "linesOver180": 1
+          },
+          "final": {
+            "bytes": 3411,
+            "lines": 142,
+            "longestLine": 101,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-preflight.css",
+          "beforeSha256": "a19e64f9b584a33925c2d8ae50bfb7b84658837f128b1e4d9768fbcd83c133e4",
+          "finalSha256": "8695674f76b7a06079a94949b2ae1e408df0b483309f20b081b065b74bd475cc",
+          "normalizedAstSha256": "e5854c5418da2438c159ebda2e2982816cc98f6587f934bb2abe61b525791bec",
+          "commentsSha256": "6ee9c979bb2cef2a8cdc04303996feaded4e7451f361a1012ba1d68850f08154",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 3601,
+            "lines": 9,
+            "longestLine": 1272,
+            "linesOver180": 5
+          },
+          "final": {
+            "bytes": 4402,
+            "lines": 210,
+            "longestLine": 56,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-security.css",
+          "beforeSha256": "1ae85016b9b9546ca85e28e11a2c2010b205b4b571756374345459aa4e6f0518",
+          "finalSha256": "b04b28b4a23508cbf5470dedc79dfbc6f3b43029d5d64eb2af71d81c7010326a",
+          "normalizedAstSha256": "4d9b54d9050bc2f322be5d702894dcc074646f9fc3708f35ffc92f75b22ede6e",
+          "commentsSha256": "e2273294892a2b289169852bf31cf9e740298d5e0035a2992f0b09151076698b",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 824,
+            "lines": 7,
+            "longestLine": 191,
+            "linesOver180": 2
+          },
+          "final": {
+            "bytes": 996,
+            "lines": 48,
+            "longestLine": 46,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/admin-series-editor.css",
+          "beforeSha256": "f6d3377c87e14a05631513a7995260aa6aaf6f2e4db86257c1813da4cd9ae9f2",
+          "finalSha256": "4050ce60d151bca136165f1b713797096e92aae1c7c625e3e0fa52de74894bd3",
+          "normalizedAstSha256": "0914570fbaeee2b17bfb342afc7bbb2f586a5d49bb357812aa55a58f92499777",
+          "commentsSha256": "62b97dc87d33c03bfb0293c2d45161cc48871e6ebaebda5ae6a0f599eeef3381",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 2476,
+            "lines": 24,
+            "longestLine": 266,
+            "linesOver180": 3
+          },
+          "final": {
+            "bytes": 2992,
+            "lines": 137,
+            "longestLine": 117,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/garden-pass.css",
+          "beforeSha256": "bc0054a0cd7d6945be99ef7f9b6a72236bf00051a0f2e6b587a14934075f2385",
+          "finalSha256": "60448aa6ce259cc3be4fe795f628e9b960f905bd837623b351b904953ba665c2",
+          "normalizedAstSha256": "d10a9c824ae69c9266dee9093564dc3e0cca961537efe1eb64635e6c0585d39e",
+          "commentsSha256": "af6c93e4aa25f407d175a57b490b98423455752cd7951d3d05a1cf92bd87ea08",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 2399,
+            "lines": 22,
+            "longestLine": 310,
+            "linesOver180": 3
+          },
+          "final": {
+            "bytes": 2926,
+            "lines": 138,
+            "longestLine": 85,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/library-features.css",
+          "beforeSha256": "188964db7bb6ae7058ac67a91ad892b72e6a4be6eb0d459728da80a4d3e6a897",
+          "finalSha256": "8b66826f11ab639e456563d260249ee0a595a0315cc69e127d91358d0aa5356b",
+          "normalizedAstSha256": "96ce200bc739df64c2865dc144be7684b316508ef53eacfd7dbff7ac4dbdd591",
+          "commentsSha256": "6691a982c8dd6aec24f147596d2fc1d1e215e126b08764570df7979a8466a6f8",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 13079,
+            "lines": 75,
+            "longestLine": 741,
+            "linesOver180": 27
+          },
+          "final": {
+            "bytes": 15530,
+            "lines": 688,
+            "longestLine": 94,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/library-layout.css",
+          "beforeSha256": "9be0e19c4e95eaa18ffd1ad58e8187f7c00ed41d8e9d69cd1b59ad7c35e91867",
+          "finalSha256": "f0d6fbea920b3956b89ceaf80fb5e97a33fe3ff785b0123fb7be06d435d74fc3",
+          "normalizedAstSha256": "db50a8aabe883b9b6be4f3a05260099134039b571b07a8e9c21b7476e88f924b",
+          "commentsSha256": "2b8028579e07eb833b1ae5f172441ef0f6d15d68ec8c9bdc14038d3f7fa3c936",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 8194,
+            "lines": 176,
+            "longestLine": 290,
+            "linesOver180": 10
+          },
+          "final": {
+            "bytes": 9097,
+            "lines": 325,
+            "longestLine": 93,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/library-motion.css",
+          "beforeSha256": "e763ba07b6db70e7edb166265adf0c7ed68242aa0a2479c7fd1780bc6e743d6f",
+          "finalSha256": "5fed3b9d2afa19763c83ae509ef6c8bff73c33c1db6d69c9438183beaa49cfe9",
+          "normalizedAstSha256": "148f9a80b025cf97fd7e2ad060793a425610782e656144a11336c7c8b0f6343f",
+          "commentsSha256": "d7c597be73af937d62f2ffd3584aff272e9c78a09b80aec304bd8d92eabecb63",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 5414,
+            "lines": 64,
+            "longestLine": 488,
+            "linesOver180": 4
+          },
+          "final": {
+            "bytes": 6127,
+            "lines": 216,
+            "longestLine": 97,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/nav.css",
+          "beforeSha256": "b1410be51b715da0d59146b002b3312e741bade4a4fd921593818fb63cdfee7a",
+          "finalSha256": "a747fa3de5ba9dc82d345df8236d8d89e8c93061045058e0b77028dc5730e568",
+          "normalizedAstSha256": "72c5a51c5a44ea830ef36204719e2ef0833d1070f40436f88f79c06b856201ba",
+          "commentsSha256": "9b54e8579e3a4e2cf1e5b6cf5c6c2bc1fc88f20411308fc2b7e861c959ae96d7",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 4616,
+            "lines": 28,
+            "longestLine": 791,
+            "linesOver180": 8
+          },
+          "final": {
+            "bytes": 5427,
+            "lines": 215,
+            "longestLine": 95,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/public-artwork.css",
+          "beforeSha256": "12117756814189639f807cd925fa8a6bd96f6ee1fd9eb984b336f927eea3af54",
+          "finalSha256": "9198db635a87df1562f7846465b052b1a6d5f013f36342c6c8b4229793799586",
+          "normalizedAstSha256": "edb51af70e2c5d19c431f927aeb4f7a4d3d03258e444fd2e1908382b5aec15e1",
+          "commentsSha256": "f3a0e103d24aecf0be59ed0f8a47be722d450b1327886cffdcb6c879de54b45d",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 7032,
+            "lines": 63,
+            "longestLine": 579,
+            "linesOver180": 9
+          },
+          "final": {
+            "bytes": 8582,
+            "lines": 353,
+            "longestLine": 98,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/public-components.css",
+          "beforeSha256": "4fada2a999b98ea09e92cda020e7c12dd9093b8d529811e50e277d5bf1456dde",
+          "finalSha256": "a56c54d1344e9fc1926f1d73af515b0fc2d7eb5f38f74277b7eade574fae709a",
+          "normalizedAstSha256": "b4a8b84bc83a5f59b15566b2b67c7464d920f6fb70dc4ab70a17d9eaba53c9a2",
+          "commentsSha256": "075d290eb0ebdc7cf8d83e28297e1e7b253a582edd0f49d40a0c36f4a3e2e6d4",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 10882,
+            "lines": 111,
+            "longestLine": 382,
+            "linesOver180": 12
+          },
+          "final": {
+            "bytes": 13058,
+            "lines": 580,
+            "longestLine": 130,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/reading-status.css",
+          "beforeSha256": "77f0c2856ab3b9635db9f7a4a763e6139e2da605ec6a9130999dd06aa414c17a",
+          "finalSha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f",
+          "normalizedAstSha256": "e6154c825f79cd3f215fbf4337f24de832c5451f87d43a47531a6c010ca2eaa7",
+          "commentsSha256": "9f96ddcb1be32e603ecc0effd9a4b7342de782ec2f5a250791ca56506c4969f2",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 3495,
+            "lines": 22,
+            "longestLine": 985,
+            "linesOver180": 5
+          },
+          "final": {
+            "bytes": 4205,
+            "lines": 184,
+            "longestLine": 70,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/series-extra.css",
+          "beforeSha256": "5e013d66cacfecbcf70898a2c3223596922ec26b9b94624c173153df9adbc9ed",
+          "finalSha256": "cc14d0e88bcd666ee3fb4f05b286076e62d66b09bc2c04a10e62ce0fbf6ef903",
+          "normalizedAstSha256": "a15614452ab632ffb31952eb8838b6711706f46b8216fcf74c432b53c54de80e",
+          "commentsSha256": "0ee3a7f07f06073252ac643087b9065efabca51d114befa49a2d1d6044abee1d",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 9801,
+            "lines": 78,
+            "longestLine": 1758,
+            "linesOver180": 9
+          },
+          "final": {
+            "bytes": 11744,
+            "lines": 533,
+            "longestLine": 93,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/series-motion.css",
+          "beforeSha256": "68e8c277c070624e90664f2da3c97c36ee87d68a51c254267a73e3f7ec23613a",
+          "finalSha256": "f5d9d137b0c6a86012140ef8629ea866bf2d7d9b8ef653d9f204ee02eebefb85",
+          "normalizedAstSha256": "9d1975684a22b4c0b68e3405d80acb5cefcad962bfc5e21d3d7cf014f2e2de7c",
+          "commentsSha256": "87533a302d1d454568475d4be06bb3713d2166d0bbde37d722656400fef4f1e6",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 2640,
+            "lines": 34,
+            "longestLine": 315,
+            "linesOver180": 4
+          },
+          "final": {
+            "bytes": 3029,
+            "lines": 112,
+            "longestLine": 81,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/site-theme.css",
+          "beforeSha256": "1e0fa302c1ba37fbe68e7b406290d6cd3e4029bad8d58650d2b926b3f384a2f8",
+          "finalSha256": "883030bd8780dcabe2e451c3110de8d287342484d18e830cb057a292ffdfb340",
+          "normalizedAstSha256": "d67be0ec08f609fab40e635ccef1acf0a6642d43957cd1e24c801ccd362c18f1",
+          "commentsSha256": "fbfede73f231927459be1a16a75e231dd11f7f63b09cfcd96701638fc9284f69",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 3262,
+            "lines": 32,
+            "longestLine": 361,
+            "linesOver180": 2
+          },
+          "final": {
+            "bytes": 3720,
+            "lines": 123,
+            "longestLine": 84,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/site.css",
+          "beforeSha256": "6ae685c571c5bd8f4e6e5a832276e61d052bbc3c5b677a8e276a120e148194b9",
+          "finalSha256": "8970dfb7dd454cfb4083639a4ac1f042fcdf3abea922d571bd6da5ad49bcbaa0",
+          "normalizedAstSha256": "8eabd029ade8fdc7246edc578c11399eba1aad428d9749b5e6fac5123a4a501f",
+          "commentsSha256": "93ba21e8375527d4bfd726f8f9dd74d55fac8cffc6a8da8dbdc6d922a023a869",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 14997,
+            "lines": 58,
+            "longestLine": 1078,
+            "linesOver180": 29
+          },
+          "final": {
+            "bytes": 18486,
+            "lines": 953,
+            "longestLine": 100,
+            "linesOver180": 0
+          }
+        },
+        {
+          "path": "public/assets/css/ui-symbols.css",
+          "beforeSha256": "e6fefdd3d1a4ada82a1fa10268fbc096aa868dd0571c8d5892c76f7dd634034d",
+          "finalSha256": "b6e193481adaddc1c1f91c830a8f10ef51fb26e7add26b17f6bb3465a230d511",
+          "normalizedAstSha256": "3b9d9a437c8cd4dca4c5e9dc11376019cd0e193783afa0a8410cbf1309e6bb31",
+          "commentsSha256": "56197028ebd793321ab27d20d792e2ad62e8cf1b22410f504247751613e146a5",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 682,
+            "lines": 14,
+            "longestLine": 196,
+            "linesOver180": 1
+          },
+          "final": {
+            "bytes": 721,
+            "lines": 20,
+            "longestLine": 198,
+            "linesOver180": 1
+          }
+        },
+        {
+          "path": "public/assets/css/volume-actions.css",
+          "beforeSha256": "73b8c7a5fad1c847cea8e977035c788c5d970a64878be3954bac6255fd670b2b",
+          "finalSha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc",
+          "normalizedAstSha256": "398a13188b2857d030621f6e251b388164a2f2c9bf17bfcea28f34e71b9015cd",
+          "commentsSha256": "91ed36d117c372a1b8fc7fffae50c1ac2271fcf777b90f4523f2fda1e4e0ed51",
+          "formattingAstEqual": true,
+          "formattingCommentsEqual": true,
+          "before": {
+            "bytes": 2615,
+            "lines": 25,
+            "longestLine": 214,
+            "linesOver180": 2
+          },
+          "final": {
+            "bytes": 3082,
+            "lines": 133,
+            "longestLine": 88,
+            "linesOver180": 0
+          }
+        }
+      ]
+    }
+  },
+  "reviewedAssets": [
+    {
+      "path": "assets/css/admin-batch.css",
+      "sha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a",
+      "bytes": 4847
+    },
+    {
+      "path": "assets/css/admin-import-report.css",
+      "sha256": "6b5d99c3377130f5d93db23f0501cbc03e8f65c20c9b2dd2f3e5ed99540a17e0",
+      "bytes": 5289
+    },
+    {
+      "path": "assets/css/admin-maintenance.css",
+      "sha256": "2d8b6425638ed5452ab75761bbbd154496c005d0db1ad63b5fb10765ab564650",
+      "bytes": 5456
+    },
+    {
+      "path": "assets/css/admin-motion.css",
+      "sha256": "727030c78224738bd7fb860152b2b02a1ef971ab0e055a8346230e6d86ccba4b",
+      "bytes": 3411
+    },
+    {
+      "path": "assets/css/admin-preflight.css",
+      "sha256": "8695674f76b7a06079a94949b2ae1e408df0b483309f20b081b065b74bd475cc",
+      "bytes": 4402
+    },
+    {
+      "path": "assets/css/admin-security.css",
+      "sha256": "b04b28b4a23508cbf5470dedc79dfbc6f3b43029d5d64eb2af71d81c7010326a",
+      "bytes": 996
+    },
+    {
+      "path": "assets/css/admin-series-editor.css",
+      "sha256": "4050ce60d151bca136165f1b713797096e92aae1c7c625e3e0fa52de74894bd3",
+      "bytes": 2992
+    },
+    {
+      "path": "assets/css/garden-pass.css",
+      "sha256": "60448aa6ce259cc3be4fe795f628e9b960f905bd837623b351b904953ba665c2",
+      "bytes": 2926
+    },
+    {
+      "path": "assets/css/library-features.css",
+      "sha256": "8b66826f11ab639e456563d260249ee0a595a0315cc69e127d91358d0aa5356b",
+      "bytes": 15530
+    },
+    {
+      "path": "assets/css/library-layout.css",
+      "sha256": "f0d6fbea920b3956b89ceaf80fb5e97a33fe3ff785b0123fb7be06d435d74fc3",
+      "bytes": 9097
+    },
+    {
+      "path": "assets/css/library-motion.css",
+      "sha256": "5fed3b9d2afa19763c83ae509ef6c8bff73c33c1db6d69c9438183beaa49cfe9",
+      "bytes": 6127
+    },
+    {
+      "path": "assets/css/nav.css",
+      "sha256": "a747fa3de5ba9dc82d345df8236d8d89e8c93061045058e0b77028dc5730e568",
+      "bytes": 5427
+    },
+    {
+      "path": "assets/css/public-artwork.css",
+      "sha256": "9198db635a87df1562f7846465b052b1a6d5f013f36342c6c8b4229793799586",
+      "bytes": 8582
+    },
+    {
+      "path": "assets/css/public-components.css",
+      "sha256": "a56c54d1344e9fc1926f1d73af515b0fc2d7eb5f38f74277b7eade574fae709a",
+      "bytes": 13058
+    },
+    {
+      "path": "assets/css/reading-status.css",
+      "sha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f",
+      "bytes": 4205
+    },
+    {
+      "path": "assets/css/series-extra.css",
+      "sha256": "cc14d0e88bcd666ee3fb4f05b286076e62d66b09bc2c04a10e62ce0fbf6ef903",
+      "bytes": 11744
+    },
+    {
+      "path": "assets/css/series-motion.css",
+      "sha256": "f5d9d137b0c6a86012140ef8629ea866bf2d7d9b8ef653d9f204ee02eebefb85",
+      "bytes": 3029
+    },
+    {
+      "path": "assets/css/site-theme.css",
+      "sha256": "883030bd8780dcabe2e451c3110de8d287342484d18e830cb057a292ffdfb340",
+      "bytes": 3720
+    },
+    {
+      "path": "assets/css/site.css",
+      "sha256": "8970dfb7dd454cfb4083639a4ac1f042fcdf3abea922d571bd6da5ad49bcbaa0",
+      "bytes": 18486
+    },
+    {
+      "path": "assets/css/ui-symbols.css",
+      "sha256": "b6e193481adaddc1c1f91c830a8f10ef51fb26e7add26b17f6bb3465a230d511",
+      "bytes": 721
+    },
+    {
+      "path": "assets/css/volume-actions.css",
+      "sha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc",
+      "bytes": 3082
+    },
+    {
+      "path": "assets/js/admin-batch.js",
+      "sha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304",
+      "bytes": 31686
+    },
+    {
+      "path": "assets/js/admin/shell.js",
+      "sha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f",
+      "bytes": 8376
+    },
+    {
+      "path": "assets/js/library.js",
+      "sha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49",
+      "bytes": 22117
+    }
+  ],
+  "datedFixtures": [
+    {
+      "path": "tests/browser/fixtures/stylesheets-2.18.12.json",
+      "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+      "originalHashesVerified": true,
+      "productionAsset": false
+    },
+    {
+      "path": "tests/browser/fixtures/library-readiness-2.18.12.js",
+      "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+      "sha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+      "productionAsset": false
+    }
+  ],
+  "prCi": {
+    "runId": 40065545158,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/40065545158",
+    "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+    "tree": "b001b1aee4080a0cba250e0d79fb403b3c0e8059",
+    "conclusion": "success",
+    "verifyJobId": 120787903134,
+    "nodePassed": 471,
+    "browserPassed": 821,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "desktop-firefox",
+        "jobId": 120787970581,
+        "conclusion": "success",
+        "passed": 163,
+        "skipped": 3,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   12 [desktop-firefox] › tests/browser/garden-pass.spec.mjs:73:1 › closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-  106 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "mobile-chromium",
+        "jobId": 120787970582,
+        "conclusion": "success",
+        "passed": 166,
+        "skipped": 0,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 120787970624,
+        "conclusion": "success",
+        "passed": 166,
+        "skipped": 0,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": true,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 120787970658,
+        "conclusion": "success",
+        "passed": 164,
+        "skipped": 2,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-  106 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 120787970735,
+        "conclusion": "success",
+        "passed": 162,
+        "skipped": 4,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-  106 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper",
+          "-  127 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:21:3 › Continuous scroll stability › fast upward scrolling does not reverse when earlier chapters render",
+          "-  133 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:241:3 › Continuous scroll stability › native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "mainCi": {
+    "runId": 40066899682,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/40066899682",
+    "source": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+    "tree": "b001b1aee4080a0cba250e0d79fb403b3c0e8059",
+    "conclusion": "success",
+    "verifyJobId": 120791956512,
+    "nodePassed": 471,
+    "browserPassed": 821,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "mobile-chromium",
+        "jobId": 120792037548,
+        "conclusion": "success",
+        "passed": 166,
+        "skipped": 0,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-chromium",
+        "jobId": 120792037559,
+        "conclusion": "success",
+        "passed": 166,
+        "skipped": 0,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "name": "desktop-firefox",
+        "jobId": 120792037574,
+        "conclusion": "success",
+        "passed": 163,
+        "skipped": 3,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   12 [desktop-firefox] › tests/browser/garden-pass.spec.mjs:73:1 › closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-  106 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-firefox] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "name": "mobile-webkit",
+        "jobId": 120792037589,
+        "conclusion": "success",
+        "passed": 162,
+        "skipped": 4,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-  106 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [mobile-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper",
+          "-  127 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:21:3 › Continuous scroll stability › fast upward scrolling does not reverse when earlier chapters render",
+          "-  133 [mobile-webkit] › tests/browser/reader-scroll-stability.spec.mjs:241:3 › Continuous scroll stability › native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      },
+      {
+        "name": "desktop-webkit",
+        "jobId": 120792037612,
+        "conclusion": "success",
+        "passed": 164,
+        "skipped": 2,
+        "stylesheetCasesPassed": 5,
+        "queueLifecycleCasesPassed": 10,
+        "firstCssCasesPassed": 4,
+        "libraryReadinessCasesPassed": 6,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-  106 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in garden",
+          "-  107 [desktop-webkit] › tests/browser/reader-production.spec.mjs:277:41 › production reader integration › image focus retains artwork colors under automatic darkening in paper"
+        ]
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "visualEvidence": {
+    "sameDomComparisons": 95,
+    "profiles": [
+      {
+        "profile": "mobile-webkit",
+        "artifactId": 12550000344,
+        "archiveSha256": "069fb6ab021c1d14f5553f84fa2b23573fb6ef257905c37e5f8792f5321e4bf7",
+        "digestVerifiedBeforeEnvironmentLoss": true,
+        "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+        "runId": 40065545158,
+        "sameDomComparisons": 19,
+        "allPixelsAndStylesEqual": true,
+        "coveredChangedStylesheetCount": 21
+      },
+      {
+        "profile": "desktop-chromium",
+        "artifactId": 12549452685,
+        "archiveSha256": "54a7891ddf5664a66aa3f0f0eb38e876ab861bca4d2f540f60e5a05d9ed6a6ca",
+        "digestVerifiedBeforeEnvironmentLoss": true,
+        "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+        "runId": 40065545158,
+        "sameDomComparisons": 19,
+        "allPixelsAndStylesEqual": true,
+        "coveredChangedStylesheetCount": 21
+      },
+      {
+        "profile": "desktop-firefox",
+        "artifactId": 12548658976,
+        "archiveSha256": "a4d238f29c20b6c2592537712c0841f2e4eebfc96d7c4bf07a0f00b84f31457e",
+        "digestVerifiedBeforeEnvironmentLoss": true,
+        "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+        "runId": 40065545158,
+        "sameDomComparisons": 19,
+        "allPixelsAndStylesEqual": true,
+        "coveredChangedStylesheetCount": 21
+      },
+      {
+        "profile": "desktop-webkit",
+        "artifactId": 12548644548,
+        "archiveSha256": "413ccafc177704d713e1ec8a80c685cc88164dc5927b5ec9df86ef0f8cb14075",
+        "digestVerifiedBeforeEnvironmentLoss": true,
+        "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+        "runId": 40065545158,
+        "sameDomComparisons": 19,
+        "allPixelsAndStylesEqual": true,
+        "coveredChangedStylesheetCount": 21
+      },
+      {
+        "profile": "mobile-chromium",
+        "artifactId": 12548464971,
+        "archiveSha256": "08c4f8049bd6647607b5ff29ff1f3ae79586e73653e180b1308860fc8d47c22e",
+        "digestVerifiedBeforeEnvironmentLoss": true,
+        "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+        "runId": 40065545158,
+        "sameDomComparisons": 19,
+        "allPixelsAndStylesEqual": true,
+        "coveredChangedStylesheetCount": 21
+      }
+    ],
+    "reportRetentionDays": 7,
+    "manualReview": {
+      "source": "eee9f03e382fe5cd7a3b7f658184f369c101c078",
+      "reviewedBeforeEnvironmentLoss": true,
+      "captures": [
+        {
+          "file": "mobile-chromium-main-library-349-candidate.png",
+          "observation": "Header, collapsed search/filter row, reading suggestion and series card fit the 349-pixel viewport; current spacing/truncation retained."
+        },
+        {
+          "file": "mobile-chromium-keeper-preflight-349-candidate.png",
+          "observation": "Dialog header/close stay visible above scrolling metadata/review; checked Adult control and ready summary remain contained."
+        },
+        {
+          "file": "desktop-chromium-keeper-maintenance-candidate.png",
+          "observation": "Summary cards and health actions fit the dialog. The mock Abuse Watch unavailable state is retained; it is a disposable API fixture, not a production outage."
+        },
+        {
+          "file": "desktop-chromium-keeper-series-draft-candidate.png",
+          "observation": "Expanded volume/translation fields remain in the scroll body; header and enabled Save footer retain the unsaved-draft presentation."
+        },
+        {
+          "file": "desktop-webkit-adult-garden-pass-candidate.png",
+          "observation": "Adult rose palette, centered dialog, backdrop and Cancel match the paired baseline; widget is disposable."
+        },
+        {
+          "file": "desktop-webkit-main-library-761-candidate.png",
+          "observation": "Expanded filters/native selects fit their existing grid with matching geometry, colors and spacing."
+        }
+      ]
+    },
+    "records": "Full comparison JSON and paired PNGs are in the linked GitHub browser artifacts. Their archive bytes/digests, all 95 comparison records and all 21 active CSS paths per profile were verified before the local execution environment became unavailable; this durable summary retains the verified counts and artifact digests."
+  },
+  "validationCorrections": [
+    {
+      "candidate": "a38a56a3df64b18eda34eaf5e625f214c158d301",
+      "tree": "250eb65e992d01fb1aaf07629ad2933a1bb251a0",
+      "prRun": 40063969212,
+      "pushRun": 40063938850,
+      "failureJobId": 120783267838,
+      "artifactId": 12548622075,
+      "archiveSha256": "014453febeda6d5ffd0be3a5d7be5994daf76791eb6ebc98e27c8d6b44de9fe2",
+      "reason": "Disposable target already contained volume 1. Retain duplicate Skip, explicitly choose Add separate, then expect Upload. No application or cancellation-assertion changes."
+    },
+    {
+      "candidate": "eee2d47b644f0f1ee54a045e5e6c2d9770c57953",
+      "tree": "4ab4eae591d2ac7644331801efd93da1421d996d",
+      "prRun": 40064221696,
+      "pushRun": 40064218967,
+      "failureJobId": 120784016410,
+      "artifactId": 12549071544,
+      "archiveSha256": "86deae34ab154c73d9286daedadf9693f18a9f59d65dcefd362b9eeef69b5268",
+      "reason": "Retained public readiness assertion exposed existing Library busy state never clearing. Correct controller settlement/failure placeholders; add six dated-controller/candidate controls."
+    },
+    {
+      "candidate": "a12fa4103a134030a5b7a424f3362f8e3b4da0ed",
+      "tree": "8ef4ba4a4a78334386d22e1fd34527a51dfef0dc",
+      "prRun": 40065101249,
+      "pushRun": 40065099108,
+      "failureJobId": 120786625554,
+      "artifactId": 12549271566,
+      "archiveSha256": "74af8b657564d28e82293c3eae87183ecd36a57694e676e5e3bcc6abf328aa3d",
+      "pixelSha256": "03dc26590cf217cbc97fb768bbd9b789ec6f6e270e23572e2dc1a4e76a207de6",
+      "baselineAndCandidateStyleSha256": "ec6eed4943cd29a1f94cfa337abfe286df8f235c1d21ed10c687fc049013728f",
+      "affectedElements": [
+        "authorSelect",
+        "translatorSelect",
+        "genreSelect",
+        "yearSelect",
+        "volumeCountSelect",
+        "sortSelect"
+      ],
+      "reason": "WebKit served/restored control after a collapsed-filter breakpoint resize reported native-select display differences, with all three RGBA hashes equal and baseline/candidate styles equal. Enter each public viewport with a fresh document, retain same DOM within each comparison and all assertions. No application changes."
+    }
+  ],
+  "production": {
+    "workflowRunId": 40066899682,
+    "workflowRunAttempt": 1,
+    "jobId": 120795509388,
+    "publicationAttempts": 1,
+    "canonicalMetadataSource": "Authenticated project and D1 captures plus public HTTP checks in the successful trusted-main workflow; not an independent connector resource GET.",
+    "access": {
+      "workflowRunId": 40066899682,
+      "source": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+      "jobId": 120791956395,
+      "conclusion": "success",
+      "pagesRead": true,
+      "d1Select": true,
+      "databaseWrites": 0
+    },
+    "report": {
+      "checkedAt": "2026-10-24T05:55:14.513Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "828bb91c-d3b1-450d-91db-27b199c9b5af",
+      "source": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+      "version": "2.18.13",
+      "baselineCheckedAt": "2026-10-24T05:55:12.344Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 204
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+          "version": "2.18.13"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/admin-batch.css",
+          "sha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a",
+          "bytes": 4847
+        },
+        {
+          "path": "/assets/css/admin-import-report.css",
+          "sha256": "6b5d99c3377130f5d93db23f0501cbc03e8f65c20c9b2dd2f3e5ed99540a17e0",
+          "bytes": 5289
+        },
+        {
+          "path": "/assets/css/admin-maintenance.css",
+          "sha256": "2d8b6425638ed5452ab75761bbbd154496c005d0db1ad63b5fb10765ab564650",
+          "bytes": 5456
+        },
+        {
+          "path": "/assets/css/admin-motion.css",
+          "sha256": "727030c78224738bd7fb860152b2b02a1ef971ab0e055a8346230e6d86ccba4b",
+          "bytes": 3411
+        },
+        {
+          "path": "/assets/css/admin-preflight.css",
+          "sha256": "8695674f76b7a06079a94949b2ae1e408df0b483309f20b081b065b74bd475cc",
+          "bytes": 4402
+        },
+        {
+          "path": "/assets/css/admin-security.css",
+          "sha256": "b04b28b4a23508cbf5470dedc79dfbc6f3b43029d5d64eb2af71d81c7010326a",
+          "bytes": 996
+        },
+        {
+          "path": "/assets/css/admin-series-editor.css",
+          "sha256": "4050ce60d151bca136165f1b713797096e92aae1c7c625e3e0fa52de74894bd3",
+          "bytes": 2992
+        },
+        {
+          "path": "/assets/css/garden-pass.css",
+          "sha256": "60448aa6ce259cc3be4fe795f628e9b960f905bd837623b351b904953ba665c2",
+          "bytes": 2926
+        },
+        {
+          "path": "/assets/css/library-features.css",
+          "sha256": "8b66826f11ab639e456563d260249ee0a595a0315cc69e127d91358d0aa5356b",
+          "bytes": 15530
+        },
+        {
+          "path": "/assets/css/library-layout.css",
+          "sha256": "f0d6fbea920b3956b89ceaf80fb5e97a33fe3ff785b0123fb7be06d435d74fc3",
+          "bytes": 9097
+        },
+        {
+          "path": "/assets/css/library-motion.css",
+          "sha256": "5fed3b9d2afa19763c83ae509ef6c8bff73c33c1db6d69c9438183beaa49cfe9",
+          "bytes": 6127
+        },
+        {
+          "path": "/assets/css/nav.css",
+          "sha256": "a747fa3de5ba9dc82d345df8236d8d89e8c93061045058e0b77028dc5730e568",
+          "bytes": 5427
+        },
+        {
+          "path": "/assets/css/public-artwork.css",
+          "sha256": "9198db635a87df1562f7846465b052b1a6d5f013f36342c6c8b4229793799586",
+          "bytes": 8582
+        },
+        {
+          "path": "/assets/css/public-components.css",
+          "sha256": "a56c54d1344e9fc1926f1d73af515b0fc2d7eb5f38f74277b7eade574fae709a",
+          "bytes": 13058
+        },
+        {
+          "path": "/assets/css/reading-status.css",
+          "sha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f",
+          "bytes": 4205
+        },
+        {
+          "path": "/assets/css/series-extra.css",
+          "sha256": "cc14d0e88bcd666ee3fb4f05b286076e62d66b09bc2c04a10e62ce0fbf6ef903",
+          "bytes": 11744
+        },
+        {
+          "path": "/assets/css/series-motion.css",
+          "sha256": "f5d9d137b0c6a86012140ef8629ea866bf2d7d9b8ef653d9f204ee02eebefb85",
+          "bytes": 3029
+        },
+        {
+          "path": "/assets/css/site-theme.css",
+          "sha256": "883030bd8780dcabe2e451c3110de8d287342484d18e830cb057a292ffdfb340",
+          "bytes": 3720
+        },
+        {
+          "path": "/assets/css/site.css",
+          "sha256": "8970dfb7dd454cfb4083639a4ac1f042fcdf3abea922d571bd6da5ad49bcbaa0",
+          "bytes": 18486
+        },
+        {
+          "path": "/assets/css/ui-symbols.css",
+          "sha256": "b6e193481adaddc1c1f91c830a8f10ef51fb26e7add26b17f6bb3465a230d511",
+          "bytes": 721
+        },
+        {
+          "path": "/assets/css/volume-actions.css",
+          "sha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc",
+          "bytes": 3082
+        },
+        {
+          "path": "/assets/js/admin-batch.js",
+          "sha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304",
+          "bytes": 31686
+        },
+        {
+          "path": "/assets/js/admin/shell.js",
+          "sha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f",
+          "bytes": 8376
+        },
+        {
+          "path": "/assets/js/library.js",
+          "sha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49",
+          "bytes": 22117
+        }
+      ],
+      "rollbackDeploymentId": "f75b7696-25f3-4ce4-8a3a-4b54846e340e",
+      "rollbackSource": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+      "beforeCheckedAt": "2026-10-24T05:55:02.502Z"
+    },
+    "artifact": {
+      "id": 12549149912,
+      "name": "production-verification",
+      "digest": "sha256:44da09fdfdfe54b19e7dfa23d77f85ded0c2aa17e2b36bd25eed30c6a801df86",
+      "sizeInBytes": 2011,
+      "workflowSource": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+      "uploadDigestMatchesGitHubMetadata": true,
+      "loggedReportSerializedSha256": "f1fd43d38e9c770d6239b9b8a8a4b2ba56b4a5b4f034bcbc17e31f1cd4fae6e7",
+      "archiveIndependentlyDownloadedAndChecked": false,
+      "retentionDays": 30
+    },
+    "verificationMethod": "The successful workflow verifies canonical source/version, both D1-derived catalogs and all 24 changed source asset bytes after publication, with preservation checks and zero database writes. The sanitized job-log report and upload digest were checked against GitHub run/job/artifact metadata."
+  },
+  "independentHttpBefore": {
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": "2.18.12",
+    "source": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+    "matchingAssetCount": 24,
+    "allAssetsMatchedSource": true,
+    "completedBeforeEnvironmentLoss": true,
+    "fullLocalRecordUnavailableAfterEnvironmentLoss": true
+  },
+  "independentHttpAfter": {
+    "status": "unavailable",
+    "reason": "The local execution environment became unavailable before separate post-deployment curl/archive checks; the web retrieval tool could not access the public version endpoint. Production HTTP verification still passed inside the successful trusted-main job."
+  },
+  "limits": [
+    "CSS syntax/comment equivalence covers formatting only; separately documented JavaScript owners change Upload target and Library loading behavior.",
+    "Font shorthand spelling is retained where whitespace changes parser token representation. One intact SVG data URL remains long; source bytes increase and no performance improvement is claimed.",
+    "Public viewport states enter fresh documents at selected widths. Each served/dated/restored three-frame comparison preserves its same DOM, stylesheet positions and pointer/focus/scroll identity; dynamically loaded CSS is awaited. No resize-transition equivalence is claimed.",
+    "Settled captures consistently disable animation/transition/caret painting. Ordered source syntax and normal integration checks retain motion scope; no exhaustive selector/viewport or animation-frame proof is claimed.",
+    "The original CSS tests retain their separate v2.18.11 baseline and are included in browser pass counts but excluded from the 95 new comparison total.",
+    "Tests use disposable APIs/generated technical EPUBs. No live upload/catalog/provider write, real credential/CAPTCHA or new physical-device acceptance is claimed.",
+    "Target changes invalidate continuations without forcibly interrupting ZIP/XML work already underway. Active uploads still block context changes.",
+    "Browser artifacts retain full records/captures for seven days; production-verification retention is 30 days. Dated CSS/controller fixtures, hashes and pinned CI runtime support reproduction.",
+    "After the local environment became unavailable, final release verification and documentation used connected GitHub APIs. Production archive digest matches its upload log; raw archive bytes and separate post-deployment asset GETs were not independently rechecked. The production job itself passed all 27 checks.",
+    "Production captures are separate reads, not an atomic transaction or a guarantee against later edits. Private baselines remain ignored and uploaded reports are sanitized."
+  ]
+}

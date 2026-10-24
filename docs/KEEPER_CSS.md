@@ -106,10 +106,13 @@ unchanged, with zero database writes. The retained rollback is
 `c1fa8f80-6803-4d80-9d1f-834570a5b1b7`. See
 [verification evidence](keeper-css-verification.json).
 
-## Remaining work
+## Follow-up status
 
-The remaining dense Keeper preflight, batch, maintenance, report and related
-stylesheets can be reviewed in later scoped batches. Preserve their current
-cascade until a concrete redundancy or behavior defect is established. The
+The subsequent [v2.18.13 stylesheet batch](STYLESHEET_OWNERSHIP.md) completes
+the remaining dense Keeper/shared/public review, expanding 21 sheets while
+retaining their ordered parsed CSS, comments and cascade. The separate
+[Upload target investigation](KEEPER_TARGET_CONTEXT.md) is also reproduced,
+corrected and released. The validation above retains this first batch's dated
+v2.18.12 scope. See the
 [current audit status](CODEBASE_AUDIT_2026-10.md#current-work-and-retained-decisions)
-separates these maintainability tasks from completed fixes and retained contracts.
+for completed work and retained contracts.

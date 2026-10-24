@@ -1,5 +1,55 @@
 # ShadowGarden project audit
 
+## Upload target ownership and remaining stylesheets released — 2026-10-24
+
+The latest production release is **v2.18.13**, deployed on 2026-10-24 from
+`8d500eb` through [PR #53](https://github.com/skypie0102/ShadowGarden/pull/53).
+[Upload target ownership](KEEPER_TARGET_CONTEXT.md) uses the engine's reset/
+cancellation owner and retains the queue's target while its dialog is closed.
+Six baseline controls fail; all 23 corrected queue controls pass.
+[Stylesheet ownership](STYLESHEET_OWNERSHIP.md) expands 21 remaining dense Keeper/
+shared/public sheets with ordered parsed CSS/comments preserved and no removals.
+Long lines decrease from 147 to one intact SVG URL.
+[Library readiness](LIBRARY_READINESS.md) clears busy after populated, empty or
+failed catalog loads and removes stale failure placeholders.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40065545158) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40066899682) both pass
+**471 Node tests** and **821 browser cases** across five profiles, with nine
+documented platform skips and zero test retries. All five new CSS cases, ten
+queue-lifecycle cases and six Library readiness cases pass in every profile.
+The separate Chromium Library-startup profile passes on the PR and is excluded
+from the 821 cases.
+
+All **95 new same-DOM comparisons** match decoded RGBA pixels and computed-style/
+geometry hashes, including the served/restored candidate control. All 21 changed
+sheets are loaded across each profile's compared states. Six representative
+desktop/mobile captures were visually reviewed. Settled frames and the recorded
+default/349/761 widths define this scope; no exhaustive viewport, animation-frame
+or resize-transition equivalence is claimed.
+
+The workflow publishes **v2.18.13**, source `8d500eb`, deployment
+`828bb91c-d3b1-450d-91db-27b199c9b5af`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+Publication completes in one attempt; the version check uses one request over
+204 ms. All **27 production checks** pass: canonical source/version,
+both D1-derived catalogs and all 24 changed CSS/JavaScript assets. The exact
+revision-9 catalog document, all 9 snapshots and recorded settings remain
+unchanged, with zero database writes. The retained v2.18.12 rollback is
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, source `e531786`.
+See [verification evidence](keeper-target-stylesheets-verification.json).
+
+The sanitized report is checked from the successful workflow's logs; GitHub's
+production-artifact digest matches the upload log. The local execution
+environment became unavailable after PR artifact review, so separate
+post-deployment asset GETs and raw production-archive verification were not
+completed. The workflow itself performed the 27 live checks; the evidence
+records this verification limit.
+
+The preceding [v2.18.12 CSS release](KEEPER_CSS.md) expands four base/layout/
+component/presentation sheets and removes two superseded checkbox declarations.
+Its [dated evidence](keeper-css-verification.json) retains 463 Node tests, 746
+browser passes, 45 visual comparisons and production preservation.
+
 ## Keeper CSS readability released — 2026-10-24
 
 The latest production release is **v2.18.12**, deployed on 2026-10-24 from
