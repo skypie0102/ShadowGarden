@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 // This owner's v2.18.12 CSS is syntax-equivalent to the v2.19.0 layout.
 const previousCss = JSON.parse(readFileSync(new URL('./fixtures/stylesheets-2.18.12.json', import.meta.url)))
   .files.find(file => file.path === '/assets/css/series-extra.css').css;
+const candidateCss = readFileSync(new URL('../../public/assets/css/series-extra.css', import.meta.url), 'utf8');
 
 const bookId = 'bk_A2yCOKedG1g4xXTJJhbEzA';
 const cover = '/test/series-layout-cover.svg';
@@ -52,17 +53,18 @@ async function layout(page) {
 
 async function previousLayout(page, inspect) {
   await page.evaluate(css => {
-    const link = document.querySelector('link[href*="/series-extra.css"]');
+    const current = document.querySelector('link[href*="/series-extra.css"], style[data-series-layout-css]');
     const style = document.createElement('style');
-    style.id = 'previous-series-css'; style.textContent = css;
-    link.after(style); link.disabled = true;
+    style.dataset.seriesLayoutCss = 'true'; style.textContent = css;
+    current.replaceWith(style);
   }, previousCss);
   try { return await inspect(); }
   finally {
-    await page.evaluate(() => {
-      document.querySelector('link[href*="/series-extra.css"]').disabled = false;
-      document.querySelector('#previous-series-css').remove();
-    });
+    // Re-enabling a disabled link can apply its rules on a later frame. Restore
+    // the exact served candidate text in the same slot before reading geometry.
+    await page.evaluate(css => {
+      document.querySelector('style[data-series-layout-css]').textContent = css;
+    }, candidateCss);
   }
 }
 
