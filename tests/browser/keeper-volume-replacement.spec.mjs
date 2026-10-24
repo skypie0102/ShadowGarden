@@ -27,13 +27,15 @@ async function prepare(page, { adult = false, onUpload, onCommit } = {}) {
     await route.fulfill({ json: state.catalog }); return true;
   }, catalog);
   await page.route('**/admin-api/upload?*', async route => {
-    uploads.push({ key: new URL(route.request().url()).searchParams.get('key'), bytes: route.request().postDataBuffer() });
+    uploads.push({ key: new URL(route.request().url()).searchParams.get('key'),
+      type: route.request().headers()['content-type'], bytes: route.request().postDataBuffer() });
     if (onUpload && await onUpload(route)) return;
     await route.fulfill({ json: { ok: true } });
   });
   await page.evaluate(() => {
     const client = window.ShadowGardenKeeper.client, upload = client.uploadObject.bind(client);
     client.uploadObject = (...args) => {
+      window.replacementUploadBlob = args[1];
       const pending = upload(...args);
       window.replacementUploadSettled = pending.then(() => true, () => false);
       return pending;
@@ -57,14 +59,21 @@ for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume repl
     const edit = await card.locator('[data-volume-toggle]').boundingBox(), replace = await card.locator('[data-volume-replace]').boundingBox();
     expect(replace.x).toBeGreaterThanOrEqual(edit.x + edit.width + 4);
     expect(Math.abs(replace.y - edit.y)).toBeLessThan(1);
-    expect(replace.height).toBeGreaterThanOrEqual(44); expect(replace.x + replace.width).toBeLessThanOrEqual(width);
+    // Transformed Firefox rectangles can report 43.99997 for a 44px control.
+    expect(replace.height).toBeGreaterThanOrEqual(44 - 0.001); expect(replace.x + replace.width).toBeLessThanOrEqual(width);
     if ([393, 1280].includes(width)) await info.attach(`replacement-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
   }
   const bytes = await epub(), original = structuredClone(f.f.catalog[adult ? 'adult' : 'main'][0]);
   await choose(page, card, file(bytes));
   await expect(card.locator('[data-volume-replacement-status]')).toContainText('EPUB replaced: replacement.epub');
   await expectDraft(page); await expect(card.locator('[data-v-title]')).toHaveValue('Unpublished volume title');
-  expect(f.uploads).toHaveLength(1); expect(f.uploads[0].bytes.equals(bytes)).toBe(true);
+  expect(f.uploads).toHaveLength(1); expect(f.uploads[0].type).toBe('application/epub+zip');
+  // WebKit routing omits binary POST bodies. Check the supplied Blob in every
+  // engine, and also compare the wire body wherever Playwright exposes it.
+  const uploadedHash = await page.evaluate(async () => [...new Uint8Array(await crypto.subtle.digest(
+    'SHA-256', await window.replacementUploadBlob.arrayBuffer()))].map(b => b.toString(16).padStart(2, '0')).join(''));
+  expect(uploadedHash).toBe(createHash('sha256').update(bytes).digest('hex'));
+  if (f.uploads[0].bytes) expect(f.uploads[0].bytes.equals(bytes)).toBe(true);
   expect(f.f.writes[0]).toMatchObject({ revision: '5', payload: { action: 'replace-volume-file', id: 'a', bookId: 'a-1', epubKey: f.uploads[0].key, sha256: createHash('sha256').update(bytes).digest('hex'), originalFilename: 'replacement.epub' } });
   const saved = f.f.catalog[adult ? 'adult' : 'main'][0], volume = saved.volumes[0];
   expect({ ...saved, volumes: original.volumes }).toEqual(original);
