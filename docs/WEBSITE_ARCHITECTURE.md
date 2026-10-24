@@ -27,6 +27,12 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.12 CSS batch](KEEPER_CSS.md) documents the existing stylesheet
+owners: base defaults, workspace/dialog layout, Upload/translation components and
+banner/editor/review presentation. Their order and intentional overrides remain.
+The Series Editor sheet exclusively retains the accessible hidden checkbox
+declarations; an earlier same-selector/same-value rule is removed as redundant.
+
 The [v2.18.11 queue lifecycle batch](KEEPER_QUEUE_LIFECYCLE.md) keeps file
 preparation in the Upload engine. Selections share a serial context; Clear and
 session lock invalidate its continuations. The view and safety guidance read the

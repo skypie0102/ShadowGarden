@@ -5,7 +5,40 @@ Checked pushes to current `main` publish to the existing `shadowgarden` project
 at `shadowgarden-bon.pages.dev` after access, verification and all five browser
 profiles pass. The separate test-project preview remains independent.
 
-**Current production release — 2026-10-24:** v2.18.11, deployment
+**Current production release — 2026-10-24:** v2.18.12, deployment
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, source `e531786` through
+[PR #52](https://github.com/skypie0102/ShadowGarden/pull/52).
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40057285978) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40058525055)
+both pass **463 Node tests** and **746 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All four new CSS
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 746 cases.
+
+All **45 same-DOM comparisons** in the PR artifacts match decoded RGBA pixels,
+computed-style/geometry hashes and the served/restored candidate control.
+Representative desktop/mobile captures were also visually reviewed. Settled-frame
+comparisons cover the profile defaults and widths 349/600/761; they do not claim
+animation-frame or exhaustive viewport equivalence.
+
+The automatic workflow publishes **v2.18.12**, source `e531786`, deployment
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.11 rollback. The version check uses one request
+over 205 ms. Canonical source/version, both D1-derived
+catalogs and all four changed CSS files pass verification. Independent public
+HTTP checks match the same version/source and exact CSS bytes. The exact
+revision-9 catalog document, all nine snapshots and recorded settings remain
+unchanged, with zero database writes. The retained rollback is
+`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`. See
+[verification evidence](keeper-css-verification.json).
+
+The artifact matches the logged report and GitHub's archive digest. Trusted-main
+Actions owns publication on the existing project; native Git production
+publication remains disabled.
+
+**Previous production release — 2026-10-24:** v2.18.11, deployment
 `c1fa8f80-6803-4d80-9d1f-834570a5b1b7`, source `34eade0` through
 [PR #51](https://github.com/skypie0102/ShadowGarden/pull/51).
 

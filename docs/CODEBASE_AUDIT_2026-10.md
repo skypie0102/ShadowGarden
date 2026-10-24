@@ -12,7 +12,7 @@ records below retain their historical counts and scope.
 
 | Status | Boundary | Next action / retained evidence |
 | --- | --- | --- |
-| Implemented; CSS release validation pending | Keeper CSS readability | Four base/layout/component/presentation sheets are expanded; one superseded checkbox rule is removed. Preserve current visuals and verify paired browser captures before publishing. See [CSS ownership and validation](KEEPER_CSS.md). |
+| Completed in v2.18.12 | First Keeper CSS batch | Four base/layout/component/presentation sheets are expanded; one superseded checkbox rule is removed. All 45 PR visual comparisons match, representative captures are reviewed and production preservation is verified. See [CSS ownership and validation](KEEPER_CSS.md). |
 | Remaining maintainability work | Other dense CSS | Review Keeper preflight, batch, maintenance, report and related sheets in small batches, then remaining shared/public sheets. Keep intentional cascade overrides and verify each removal. |
 | Reproduction lead | Changing an Upload target during preparation | Check the shell's separate `resetUploadContext` path while local inspection/catalog lookup is pending. Clear-button and session-lock contexts are covered in v2.18.11; target-switch cancellation needs its own controlled reproduction. This is a source-review lead, not a confirmed new defect. |
 | Completed | Initial cross-subsystem defects and startup/access fixes | v2.15.0–v2.18.0 records retain their reproductions, fixes and acceptance scope. |
@@ -187,44 +187,51 @@ with nine documented platform skips and zero test retries. All eleven new Keeper
 cases pass in every profile. The separate Chromium Library-startup profile passes
 on the PR and is excluded from the 636 browser cases.
 
-The latest production release is **v2.18.11**, deployed on 2026-10-24 from
-`34eade0` through [PR #51](https://github.com/skypie0102/ShadowGarden/pull/51).
-[Keeper queue lifecycle](KEEPER_QUEUE_LIFECYCLE.md) gives file selections a
-queue/session context, serializes current preparation and discards obsolete
-inspection/catalog results after Clear or lock. Upload waits for preparation to
-settle; failed duplicate lookup can retry on the next selection. Ready entries,
-explicit queue actions and existing upload/revision contracts remain. Twelve
-baseline controls fail; all 51 focused queue/inspection/Upload controls pass.
+The latest production release is **v2.18.12**, deployed on 2026-10-24 from
+`e531786` through [PR #52](https://github.com/skypie0102/ShadowGarden/pull/52).
+[Keeper CSS ownership](KEEPER_CSS.md) expands four stylesheets and removes one
+superseded checkbox rule with two declarations. Formatting-stage parsed CSS and
+comments retain their order; lines over 180 columns decrease from 21 to zero.
+The winning checkbox rules, existing appearance and intentional cascade overrides
+remain. The audit now separates completed work, remaining CSS, retained contracts
+and a separate target-switching reproduction lead.
 
-The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40050677211) and
-[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40051762262)
-both pass **463 Node tests** and **726 browser cases** across five profiles,
-with nine documented platform skips and zero test retries. All six new queue
-lifecycle cases pass in every profile. The separate Chromium Library-startup
-profile passes on the PR and is excluded from the 726 cases.
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40057285978) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40058525055)
+both pass **463 Node tests** and **746 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All four new CSS
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 746 cases.
 
-The automatic workflow publishes **v2.18.11**, source `34eade0`, deployment
-`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+All **45 same-DOM comparisons** in the PR artifacts match decoded RGBA pixels,
+computed-style/geometry hashes and the served/restored candidate control.
+Representative desktop/mobile captures were also visually reviewed. Settled-frame
+comparisons cover the profile defaults and widths 349/600/761; they do not claim
+animation-frame or exhaustive viewport equivalence.
+
+The automatic workflow publishes **v2.18.12**, source `e531786`, deployment
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
 The release completes in one publication attempt, retaining the original
-pre-publication baseline and v2.18.10 rollback. The version check uses one request
-over 148 ms. Canonical source/version, both D1-derived
-catalogs and all three changed queue modules pass verification. Independent
-public HTTP checks match the same version/source and exact module bytes. The
-exact revision-9 catalog document, all nine snapshots and recorded settings
-remain unchanged, with zero database writes. The retained rollback is
-`a9acfe26-d51f-4fc6-821e-6b972234cafe`. See
-[verification evidence](keeper-queue-lifecycle-verification.json).
+pre-publication baseline and v2.18.11 rollback. The version check uses one request
+over 205 ms. Canonical source/version, both D1-derived
+catalogs and all four changed CSS files pass verification. Independent public
+HTTP checks match the same version/source and exact CSS bytes. The exact
+revision-9 catalog document, all nine snapshots and recorded settings remain
+unchanged, with zero database writes. The retained rollback is
+`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`. See
+[verification evidence](keeper-css-verification.json).
 
-The preceding [v2.18.10 EPUB inspection release](EPUB_INSPECTION.md)
-corrects false missing-file results for encoded archive names and expands the
-data-only inspection service. Its [dated evidence](epub-inspection-verification.json)
-retains 448 Node tests, 696 browser passes and production preservation checks.
+The preceding [v2.18.11 queue lifecycle release](KEEPER_QUEUE_LIFECYCLE.md)
+owns pending file selections across Clear/lock, serializes preparation, gates
+early uploads and retries failed duplicate lookup on the next selection. Its
+[dated evidence](keeper-queue-lifecycle-verification.json) retains 463 Node tests,
+726 browser passes and production preservation checks.
 
-This closes the reproduced file-selection/queue ownership boundaries. It does
-not claim complete Keeper coverage, forced cancellation of local ZIP work or a
-performance improvement. The earlier [Upload presentation](KEEPER_UPLOAD_PRESENTATION.md)
-and [upload-buffer](UPLOAD_BUFFER_BUDGET.md) releases retain their separate
-source, validation, measurement and production records.
+This completes the four-sheet CSS batch, with source and visual checks retaining
+its current appearance. Other CSS and the target-switching reproduction lead
+remain on the current work list above. Earlier release records keep their dated
+scope and validation; no performance improvement or complete Keeper coverage is
+claimed.
 
 ## Validation and release
 

@@ -1,0 +1,2629 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.18.12",
+  "recordedAt": "2026-10-24T03:48:59.582427+00:00",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/52",
+  "scope": "Expand four Keeper stylesheets, preserve formatting-stage CSS syntax/comment order, remove one superseded two-declaration checkbox rule, document cascade ownership and refresh the current audit work list. No application JavaScript/backend/API/schema/configuration/dependency/storage-format/reader/upload-limit changes.",
+  "validationCorrections": [
+    {
+      "initialSource": "b22162465c33b312f8397cc11d38831055e0fa38",
+      "initialTree": "641e9632f4a2a963791c3acf9e19c5c07541f647",
+      "runId": 40056891289,
+      "failedJobId": 120761814385,
+      "artifactId": 12545148558,
+      "artifactSha256": "2bfb54c28e3e194388a62f93ece2dc2acbc7f4d542309757b5fb30222cb9cfdd",
+      "finding": "A translation-remove button under the last click position entered hover after scrolling/style recalculation; served/reinserted candidate control detected the interaction change.",
+      "correction": "Park the pointer at (0,0) before every capture and include focus/hover identity in comparison state.",
+      "applicationCssUnchanged": true,
+      "initialComparison": {
+        "decodedPixelsEqual": true,
+        "baselineCandidateStylesEqual": true,
+        "servedRestoredStylesEqual": false,
+        "rgbaSha256": "e88ae19d7fb1862157d23c0f3d5f94542c99f6cb7a8e4bc9764c273990e1f732"
+      }
+    }
+  ],
+  "baseSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+  "candidate": "708b90c7c94cf050aa752297ad1aaab957c88677",
+  "mergeSource": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+  "testedTree": "14e1ee24854a0d9bd86415c785eaf7aa4f3b7e44",
+  "mergeTreeMatchesTested": true,
+  "localChecks": {
+    "assetAudit": "passed",
+    "nodePassed": 463,
+    "staticBuild": "passed",
+    "bindingAwareFunctionsBuild": "passed",
+    "logSha256": "9341e7e8f741e4995a4976bc55d151fae6bf4228a8c1108b1b6d0e284db02e87"
+  },
+  "sourceEvidence": {
+    "schemaVersion": 1,
+    "checkedAt": "2026-10-24T02:57:15.038Z",
+    "base": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+    "formatter": {
+      "name": "prettier",
+      "version": "3.6.2",
+      "options": {
+        "parser": "css",
+        "printWidth": 100,
+        "tabWidth": 2,
+        "useTabs": false,
+        "singleQuote": false
+      }
+    },
+    "comparison": "Formatting stage: ordered CSS parser AST equality excludes positions, whitespace metadata and redundant raw aggregate copies; number tokens use canonical numeric text. Selector/value tokens, declarations, priorities, rules and media-query child order remain. Comments are checked separately. Final deletion is checked separately against the formatted AST.",
+    "stylesheetOrder": [
+      "/assets/css/site.css",
+      "/assets/css/nav.css",
+      "/assets/css/site-theme.css",
+      "/assets/css/motion.css",
+      "/assets/css/admin.css",
+      "/assets/css/admin-security.css",
+      "/assets/css/admin-preflight.css",
+      "/assets/css/admin-batch.css",
+      "/assets/css/admin-maintenance.css",
+      "/assets/css/admin-series-editor.css",
+      "/assets/css/admin-layout.css",
+      "/assets/css/admin-components.css",
+      "/assets/css/admin-version.css",
+      "/assets/css/admin-presentation.css",
+      "/assets/css/admin-motion.css",
+      "/assets/css/ui-symbols.css"
+    ],
+    "witness": {
+      "path": "public/assets/css/admin-series-editor.css",
+      "sha256": "f6d3377c87e14a05631513a7995260aa6aaf6f2e4db86257c1813da4cd9ae9f2"
+    },
+    "firstPartyConsumers": [
+      "public/admin.html"
+    ],
+    "files": [
+      {
+        "path": "public/assets/css/admin.css",
+        "beforeSha256": "ff9c3427c3f66805215f9336fc5d7ee2703abe694fc86c35a29f18799dd053c5",
+        "formattedSha256": "7a1f9c18dea8c63a1bfdbca01e72337bf5b148f0ded44b714d8f25c61f2f9622",
+        "finalSha256": "f07a765853fd6fd8cc9d2f17fa13e5a33dea923326fc48af72246c5cc462d913",
+        "normalizedAstSha256": "3467d1e494af5614fcc3ebaea85dcd57b4f36bde8fd56bcfed7a20818ff89ee3",
+        "commentsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "formattingAstEqual": true,
+        "formattingCommentsEqual": true,
+        "before": {
+          "bytes": 12459,
+          "lines": 1,
+          "longestLine": 12459,
+          "linesOver180": 1
+        },
+        "formatted": {
+          "bytes": 15535,
+          "lines": 791,
+          "longestLine": 86,
+          "linesOver180": 0
+        },
+        "final": {
+          "bytes": 15473,
+          "lines": 787,
+          "longestLine": 86,
+          "linesOver180": 0
+        },
+        "removed": [
+          {
+            "selector": ".adult-toggle > input",
+            "declarations": [
+              [
+                "position",
+                "absolute"
+              ],
+              [
+                "opacity",
+                "0"
+              ]
+            ],
+            "witness": {
+              "path": "public/assets/css/admin-series-editor.css",
+              "selector": ".adult-toggle>input",
+              "sameValues": true,
+              "later": true,
+              "important": true
+            },
+            "reason": "Same selector and values are supplied unconditionally by the later required Series Editor stylesheet with !important; both declarations are redundant."
+          }
+        ]
+      },
+      {
+        "path": "public/assets/css/admin-layout.css",
+        "beforeSha256": "3137a6e1c75b888a73bede3eb015977952c96f436ad3581c1026c5b1a2f9ce0f",
+        "formattedSha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+        "finalSha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+        "normalizedAstSha256": "8ad9d40098554cdf0522a2d3a15f317004640c1bbf6af54a3a5fcbd60109fb08",
+        "commentsSha256": "b6c6fbabec0518846140443cecf519972d564b60526c80eea1e14feff0d137d2",
+        "formattingAstEqual": true,
+        "formattingCommentsEqual": true,
+        "before": {
+          "bytes": 4162,
+          "lines": 57,
+          "longestLine": 227,
+          "linesOver180": 2
+        },
+        "formatted": {
+          "bytes": 5003,
+          "lines": 246,
+          "longestLine": 98,
+          "linesOver180": 0
+        },
+        "final": {
+          "bytes": 5003,
+          "lines": 246,
+          "longestLine": 98,
+          "linesOver180": 0
+        },
+        "removed": []
+      },
+      {
+        "path": "public/assets/css/admin-components.css",
+        "beforeSha256": "e270c928581e12d761b104762268257528af13458907e4ef7a487d194c5f90b6",
+        "formattedSha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+        "finalSha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+        "normalizedAstSha256": "f007217c13639f49bdd913840700feb8e568e4f2314d9fa6c1981ce51f3576e0",
+        "commentsSha256": "95dbe23310265d8860167928184a96dd5923a3e914f855e2537558e9bfb3a108",
+        "formattingAstEqual": true,
+        "formattingCommentsEqual": true,
+        "before": {
+          "bytes": 9625,
+          "lines": 126,
+          "longestLine": 1575,
+          "linesOver180": 10
+        },
+        "formatted": {
+          "bytes": 11320,
+          "lines": 477,
+          "longestLine": 104,
+          "linesOver180": 0
+        },
+        "final": {
+          "bytes": 11320,
+          "lines": 477,
+          "longestLine": 104,
+          "linesOver180": 0
+        },
+        "removed": []
+      },
+      {
+        "path": "public/assets/css/admin-presentation.css",
+        "beforeSha256": "3aef8669bf00b47dee6647da32b8f9069f33663bfbaee7486db9ca2451d6949d",
+        "formattedSha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+        "finalSha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+        "normalizedAstSha256": "6288dc7968c565841b78e4ea51452ebe3d926f3ffc838abf08f2376efa09be4a",
+        "commentsSha256": "49ee4a0b5012e7f03277b5216238d13403b5ac75bb85446ce21ac4dd312461e9",
+        "formattingAstEqual": true,
+        "formattingCommentsEqual": true,
+        "before": {
+          "bytes": 4952,
+          "lines": 32,
+          "longestLine": 935,
+          "linesOver180": 8
+        },
+        "formatted": {
+          "bytes": 5856,
+          "lines": 261,
+          "longestLine": 79,
+          "linesOver180": 0
+        },
+        "final": {
+          "bytes": 5856,
+          "lines": 261,
+          "longestLine": 79,
+          "linesOver180": 0
+        },
+        "removed": []
+      }
+    ]
+  },
+  "reviewedAssets": [
+    {
+      "path": "assets/css/admin.css",
+      "bytes": 15473,
+      "sha256": "f07a765853fd6fd8cc9d2f17fa13e5a33dea923326fc48af72246c5cc462d913"
+    },
+    {
+      "path": "assets/css/admin-layout.css",
+      "bytes": 5003,
+      "sha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9"
+    },
+    {
+      "path": "assets/css/admin-components.css",
+      "bytes": 11320,
+      "sha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e"
+    },
+    {
+      "path": "assets/css/admin-presentation.css",
+      "bytes": 5856,
+      "sha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e"
+    }
+  ],
+  "checkboxWitnessVerified": true,
+  "adminHtmlAndApplicationJavaScriptUnchanged": true,
+  "datedFixture": {
+    "path": "tests/browser/fixtures/keeper-css-2.18.11.json",
+    "base": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+    "originalHashesVerified": true,
+    "productionAsset": false
+  },
+  "prCi": {
+    "runId": 40057285978,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/40057285978",
+    "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+    "tree": "14e1ee24854a0d9bd86415c785eaf7aa4f3b7e44",
+    "conclusion": "success",
+    "verifyJobId": 120762948416,
+    "nodePassed": 463,
+    "browserPassed": 746,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "newCasesPassed": 4,
+        "name": "mobile-webkit",
+        "jobId": 120763032031,
+        "conclusion": "success",
+        "passed": 147,
+        "skipped": 4,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   91 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-  112 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-  118 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-chromium",
+        "jobId": 120763032046,
+        "conclusion": "success",
+        "passed": 151,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": true,
+        "skippedCases": []
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-webkit",
+        "jobId": 120763032047,
+        "conclusion": "success",
+        "passed": 149,
+        "skipped": 2,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   91 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-firefox",
+        "jobId": 120763032102,
+        "conclusion": "success",
+        "passed": 148,
+        "skipped": 3,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-    7 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-   91 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "mobile-chromium",
+        "jobId": 120763032117,
+        "conclusion": "success",
+        "passed": 151,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "mainCi": {
+    "runId": 40058525055,
+    "url": "https://github.com/skypie0102/ShadowGarden/actions/runs/40058525055",
+    "source": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+    "tree": "14e1ee24854a0d9bd86415c785eaf7aa4f3b7e44",
+    "conclusion": "success",
+    "verifyJobId": 120766762460,
+    "nodePassed": 463,
+    "browserPassed": 746,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-webkit",
+        "jobId": 120766865978,
+        "conclusion": "success",
+        "passed": 149,
+        "skipped": 2,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   91 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [desktop-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-chromium",
+        "jobId": 120766865990,
+        "conclusion": "success",
+        "passed": 151,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "mobile-chromium",
+        "jobId": 120766866030,
+        "conclusion": "success",
+        "passed": 151,
+        "skipped": 0,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": []
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "mobile-webkit",
+        "jobId": 120766866035,
+        "conclusion": "success",
+        "passed": 147,
+        "skipped": 4,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-   91 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [mobile-webkit] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper",
+          "-  112 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:21:3 \u203a Continuous scroll stability \u203a fast upward scrolling does not reverse when earlier chapters render",
+          "-  118 [mobile-webkit] \u203a tests/browser/reader-scroll-stability.spec.mjs:241:3 \u203a Continuous scroll stability \u203a native scrolling wins over a suspended-position restore waiting for access"
+        ]
+      },
+      {
+        "newCasesPassed": 4,
+        "name": "desktop-firefox",
+        "jobId": 120766866176,
+        "conclusion": "success",
+        "passed": 148,
+        "skipped": 3,
+        "runtimeGuardPassed": true,
+        "startupProfilePassed": null,
+        "skippedCases": [
+          "-    7 [desktop-firefox] \u203a tests/browser/garden-pass.spec.mjs:73:1 \u203a closed-shadow cross-origin widget keyboard access matches an ordinary-page control",
+          "-   91 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in garden",
+          "-   92 [desktop-firefox] \u203a tests/browser/reader-production.spec.mjs:277:41 \u203a production reader integration \u203a image focus retains artwork colors under automatic darkening in paper"
+        ]
+      }
+    ],
+    "workflowRunAttempt": 1,
+    "workflowConclusion": "success"
+  },
+  "visualEvidence": {
+    "sameDomComparisons": 45,
+    "profiles": [
+      {
+        "profile": "desktop-chromium",
+        "artifactId": 12545134912,
+        "archiveSha256": "02e1b5d0e6372eb46910a43f6ee0e8c3ae2283920d7bbdb69a60494971703497",
+        "digestVerified": true,
+        "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+        "runId": 40057285978,
+        "sameDomComparisons": 9,
+        "allPixelsAndStylesEqual": true,
+        "comparisons": [
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "dashboard",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "9d1673c697a63117deb6f1ee13e070b2989e04a843aa8fd4f641194b64877274"
+                },
+                "styleSha256": "861cf2cfed8369980c3704fc089b79d00d93105af3379bc13c9630140e98fb4f"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "9d1673c697a63117deb6f1ee13e070b2989e04a843aa8fd4f641194b64877274"
+                },
+                "styleSha256": "861cf2cfed8369980c3704fc089b79d00d93105af3379bc13c9630140e98fb4f"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "9d1673c697a63117deb6f1ee13e070b2989e04a843aa8fd4f641194b64877274"
+                },
+                "styleSha256": "861cf2cfed8369980c3704fc089b79d00d93105af3379bc13c9630140e98fb4f"
+              },
+              "renderedElements": 73
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/9697ffe1ddf554852f9cb0993c44d0c7bb057051.png",
+                "sha256": "76d6592d44a80ccf16090808beccfd59faa3e67a0ac6e6313f168a722ceeda6a"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/9697ffe1ddf554852f9cb0993c44d0c7bb057051.png",
+                "sha256": "76d6592d44a80ccf16090808beccfd59faa3e67a0ac6e6313f168a722ceeda6a"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "locked",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "26fc4b8d0dff6e624d22038d99a20ac2bfae14aafe8e031355726bc60ff5cc26"
+                },
+                "styleSha256": "87bd1455f48d58071511837c26dbdb7a317291cefcfd2936cbefef6f188bd099"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "26fc4b8d0dff6e624d22038d99a20ac2bfae14aafe8e031355726bc60ff5cc26"
+                },
+                "styleSha256": "87bd1455f48d58071511837c26dbdb7a317291cefcfd2936cbefef6f188bd099"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "26fc4b8d0dff6e624d22038d99a20ac2bfae14aafe8e031355726bc60ff5cc26"
+                },
+                "styleSha256": "87bd1455f48d58071511837c26dbdb7a317291cefcfd2936cbefef6f188bd099"
+              },
+              "renderedElements": 27
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/2ccfb94581046f60e7b38f759c20ee07c20ba3f1.png",
+                "sha256": "6b331381c1c810284018200e58492cd9293860a2d2b8691d8566371f94922c73"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/2ccfb94581046f60e7b38f759c20ee07c20ba3f1.png",
+                "sha256": "6b331381c1c810284018200e58492cd9293860a2d2b8691d8566371f94922c73"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "series-editor",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a2d1f1610fafbc9a4ed64d7978f11cca1b11c4cb243c3f72e130a6eb10b0ad82"
+                },
+                "styleSha256": "1474866a1ca5c274e554aa8026a905c7a16223e5c026c0c031d436169c4ff83f"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a2d1f1610fafbc9a4ed64d7978f11cca1b11c4cb243c3f72e130a6eb10b0ad82"
+                },
+                "styleSha256": "1474866a1ca5c274e554aa8026a905c7a16223e5c026c0c031d436169c4ff83f"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a2d1f1610fafbc9a4ed64d7978f11cca1b11c4cb243c3f72e130a6eb10b0ad82"
+                },
+                "styleSha256": "1474866a1ca5c274e554aa8026a905c7a16223e5c026c0c031d436169c4ff83f"
+              },
+              "renderedElements": 250
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/df451caa3ddab57d602b408c46faeee08747d257.png",
+                "sha256": "15d2932c5f353aa3d653445fe0f0406521b433eaba882d4c08066fcaf312aff3"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/df451caa3ddab57d602b408c46faeee08747d257.png",
+                "sha256": "15d2932c5f353aa3d653445fe0f0406521b433eaba882d4c08066fcaf312aff3"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-1280",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "8a34302e304ea55791be3ef664ef357ce6fe47bfed786968c0f0e0c2f5287dba"
+                },
+                "styleSha256": "72286d5978ff6e2391f9c9f68a0f04d2313043d373e466ae74bc78eaed7f26db"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "8a34302e304ea55791be3ef664ef357ce6fe47bfed786968c0f0e0c2f5287dba"
+                },
+                "styleSha256": "72286d5978ff6e2391f9c9f68a0f04d2313043d373e466ae74bc78eaed7f26db"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "8a34302e304ea55791be3ef664ef357ce6fe47bfed786968c0f0e0c2f5287dba"
+                },
+                "styleSha256": "72286d5978ff6e2391f9c9f68a0f04d2313043d373e466ae74bc78eaed7f26db"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/63a0c1eb6ce4db303e5a5cab748c12d75880e245.png",
+                "sha256": "ad5f076a60dc6052c6789117b61b4ed5047e8cd767d6e87c9578d56b8b7d299b"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/63a0c1eb6ce4db303e5a5cab748c12d75880e245.png",
+                "sha256": "ad5f076a60dc6052c6789117b61b4ed5047e8cd767d6e87c9578d56b8b7d299b"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-349",
+              "served": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "2dc7c995d4e4e2dee5ca4d2874cf9fce39c1b20f45d204f4741a390567329746"
+                },
+                "styleSha256": "bbbe2898c9f528d286f11c4e10f24a5ab810d68a7bf733bfea9edceac9d35bc5"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "2dc7c995d4e4e2dee5ca4d2874cf9fce39c1b20f45d204f4741a390567329746"
+                },
+                "styleSha256": "bbbe2898c9f528d286f11c4e10f24a5ab810d68a7bf733bfea9edceac9d35bc5"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "2dc7c995d4e4e2dee5ca4d2874cf9fce39c1b20f45d204f4741a390567329746"
+                },
+                "styleSha256": "bbbe2898c9f528d286f11c4e10f24a5ab810d68a7bf733bfea9edceac9d35bc5"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/ba062a1608ce47219ba5f4402479f2ca94fdd13a.png",
+                "sha256": "427f4f8f780d629f44ea9b6f7ae27b016c5da0f3cf979593162f8150bbcd6a02"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/ba062a1608ce47219ba5f4402479f2ca94fdd13a.png",
+                "sha256": "427f4f8f780d629f44ea9b6f7ae27b016c5da0f3cf979593162f8150bbcd6a02"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-600",
+              "served": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "bfc2558177e42e2253358c819d55512c366ebbb4f243c3b2135d90b6693c435e"
+                },
+                "styleSha256": "151abe345df3ab7bab2134d4eb74652d9e41f3897f6a161f7b89d7e0a6d3a341"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "bfc2558177e42e2253358c819d55512c366ebbb4f243c3b2135d90b6693c435e"
+                },
+                "styleSha256": "151abe345df3ab7bab2134d4eb74652d9e41f3897f6a161f7b89d7e0a6d3a341"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "bfc2558177e42e2253358c819d55512c366ebbb4f243c3b2135d90b6693c435e"
+                },
+                "styleSha256": "151abe345df3ab7bab2134d4eb74652d9e41f3897f6a161f7b89d7e0a6d3a341"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/4e1dff58746cca1507615db6a550086c12049450.png",
+                "sha256": "8dab294f34ad67312f85783bec3a6e210105ed5842c4dbce4bc300d16ae56486"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/4e1dff58746cca1507615db6a550086c12049450.png",
+                "sha256": "8dab294f34ad67312f85783bec3a6e210105ed5842c4dbce4bc300d16ae56486"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-761",
+              "served": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "5a852c3bfacdab1b2ee042543d9f63dd31fdfe9c29098393fb94958107dbc457"
+                },
+                "styleSha256": "d6e654ffd183c257aeaa8338f5905388f55ad3618fcd53ff01afdb388f5ca74a"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "5a852c3bfacdab1b2ee042543d9f63dd31fdfe9c29098393fb94958107dbc457"
+                },
+                "styleSha256": "d6e654ffd183c257aeaa8338f5905388f55ad3618fcd53ff01afdb388f5ca74a"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "5a852c3bfacdab1b2ee042543d9f63dd31fdfe9c29098393fb94958107dbc457"
+                },
+                "styleSha256": "d6e654ffd183c257aeaa8338f5905388f55ad3618fcd53ff01afdb388f5ca74a"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/a61dc09b87adf0a40d996b9bbd2d654661bd78e9.png",
+                "sha256": "f24d4916413b52062257a3a9cedebe2d0177f059c9b490778c5c38556c52c518"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/a61dc09b87adf0a40d996b9bbd2d654661bd78e9.png",
+                "sha256": "f24d4916413b52062257a3a9cedebe2d0177f059c9b490778c5c38556c52c518"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-adult",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "ebc8b5ce02b59ef47a53ff6344e83a721da9b281671bf2f345cb8f745483b47a"
+                },
+                "styleSha256": "9b35e0c6d850bf7faa9bb7a92c8309d53df53e82441f5b30bd4d5a4f9f31beb3"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "ebc8b5ce02b59ef47a53ff6344e83a721da9b281671bf2f345cb8f745483b47a"
+                },
+                "styleSha256": "9b35e0c6d850bf7faa9bb7a92c8309d53df53e82441f5b30bd4d5a4f9f31beb3"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "ebc8b5ce02b59ef47a53ff6344e83a721da9b281671bf2f345cb8f745483b47a"
+                },
+                "styleSha256": "9b35e0c6d850bf7faa9bb7a92c8309d53df53e82441f5b30bd4d5a4f9f31beb3"
+              },
+              "renderedElements": 283
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/fd3839ea44e56ee227e6ffbd7672060f8d9a6d8a.png",
+                "sha256": "c209c822b4615fcbed33803d0725a983011c7bbbd7af7c20b3e12b72fddab758"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/fd3839ea44e56ee227e6ffbd7672060f8d9a6d8a.png",
+                "sha256": "c209c822b4615fcbed33803d0725a983011c7bbbd7af7c20b3e12b72fddab758"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-main",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0d880dda3b7b44fb70f13bf01a9c644b0a693c494f9cfb5fa307fa4cb124fa2b"
+                },
+                "styleSha256": "3e75c26a69e7d9dcfb09853719e5ceff52ee5d750ec8d4f47670ac36a9fce7e0"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0d880dda3b7b44fb70f13bf01a9c644b0a693c494f9cfb5fa307fa4cb124fa2b"
+                },
+                "styleSha256": "3e75c26a69e7d9dcfb09853719e5ceff52ee5d750ec8d4f47670ac36a9fce7e0"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0d880dda3b7b44fb70f13bf01a9c644b0a693c494f9cfb5fa307fa4cb124fa2b"
+                },
+                "styleSha256": "3e75c26a69e7d9dcfb09853719e5ceff52ee5d750ec8d4f47670ac36a9fce7e0"
+              },
+              "renderedElements": 283
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/c7517d0d1334fe8875a1d55b2d71b260d1f3a17a.png",
+                "sha256": "6fccf53174815210a2956d72c8ddce3d5284353b564a12605a0e670f0a776876"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/c7517d0d1334fe8875a1d55b2d71b260d1f3a17a.png",
+                "sha256": "6fccf53174815210a2956d72c8ddce3d5284353b564a12605a0e670f0a776876"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "profile": "mobile-chromium",
+        "artifactId": 12545677779,
+        "archiveSha256": "6284f50740623420055399138f1c4255f7d45deddb214b25d930510959df4fac",
+        "digestVerified": true,
+        "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+        "runId": 40057285978,
+        "sameDomComparisons": 9,
+        "allPixelsAndStylesEqual": true,
+        "comparisons": [
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "dashboard",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "6c474db1c59aaef5c64f6fb3fda698267f653493a32867151571f9f1fe0955a6"
+                },
+                "styleSha256": "9ae3a9e09bdb3fd6249dce7ecae400943b246b2233b5ca8e508ed3ea8c6ddec1"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "6c474db1c59aaef5c64f6fb3fda698267f653493a32867151571f9f1fe0955a6"
+                },
+                "styleSha256": "9ae3a9e09bdb3fd6249dce7ecae400943b246b2233b5ca8e508ed3ea8c6ddec1"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "6c474db1c59aaef5c64f6fb3fda698267f653493a32867151571f9f1fe0955a6"
+                },
+                "styleSha256": "9ae3a9e09bdb3fd6249dce7ecae400943b246b2233b5ca8e508ed3ea8c6ddec1"
+              },
+              "renderedElements": 72
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/973ff9f6692961cd1ad9753d23adc64ea7c8bc1f.png",
+                "sha256": "08c0d762d52d5cdbdac26725068cf8698171dd330a0ba332090de73ca5ad03b6"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/973ff9f6692961cd1ad9753d23adc64ea7c8bc1f.png",
+                "sha256": "08c0d762d52d5cdbdac26725068cf8698171dd330a0ba332090de73ca5ad03b6"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "locked",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "ff122694c602de51e7e5be315e355ed0804bc9846485853863357e2059cf1b24"
+                },
+                "styleSha256": "9d8df54c518ccf8c5f7100ceae9c41f63a57f3721ae85734017a6b27204cc205"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "ff122694c602de51e7e5be315e355ed0804bc9846485853863357e2059cf1b24"
+                },
+                "styleSha256": "9d8df54c518ccf8c5f7100ceae9c41f63a57f3721ae85734017a6b27204cc205"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "ff122694c602de51e7e5be315e355ed0804bc9846485853863357e2059cf1b24"
+                },
+                "styleSha256": "9d8df54c518ccf8c5f7100ceae9c41f63a57f3721ae85734017a6b27204cc205"
+              },
+              "renderedElements": 26
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/c66602906523d5f56f60e0299ba00a69f2b37246.png",
+                "sha256": "b53597e55b89c5fe16336888e04151597f0d26352298003d6397bacac783d174"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/c66602906523d5f56f60e0299ba00a69f2b37246.png",
+                "sha256": "b53597e55b89c5fe16336888e04151597f0d26352298003d6397bacac783d174"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "series-editor",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "043dd9f89cd4f648c6d3fbcd2a9cc69cfd88b187f747bad319d3b82d8c795963"
+                },
+                "styleSha256": "1c70c113b84397ecc084cd6ce621a47649f4eb19ae4087d3e8e901636403d541"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "043dd9f89cd4f648c6d3fbcd2a9cc69cfd88b187f747bad319d3b82d8c795963"
+                },
+                "styleSha256": "1c70c113b84397ecc084cd6ce621a47649f4eb19ae4087d3e8e901636403d541"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "043dd9f89cd4f648c6d3fbcd2a9cc69cfd88b187f747bad319d3b82d8c795963"
+                },
+                "styleSha256": "1c70c113b84397ecc084cd6ce621a47649f4eb19ae4087d3e8e901636403d541"
+              },
+              "renderedElements": 249
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/39923120763ce89c099f2204279bbcbbe0595135.png",
+                "sha256": "7c171de3d30b4b943fbd8a7c064d2423c639b6ce5c53f3d7ce2c9766f298ea81"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/39923120763ce89c099f2204279bbcbbe0595135.png",
+                "sha256": "7c171de3d30b4b943fbd8a7c064d2423c639b6ce5c53f3d7ce2c9766f298ea81"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-349",
+              "served": {
+                "pixels": {
+                  "width": 349,
+                  "height": 839,
+                  "rgbaSha256": "5da188b80bda203c767d84ec0b2a548d4c1f69b97e65d83e9390d1c71c934533"
+                },
+                "styleSha256": "a38f76d0a2127e4a5bc57744e80f0658dc0921b025323cd14cb476fc99f4be40"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 349,
+                  "height": 839,
+                  "rgbaSha256": "5da188b80bda203c767d84ec0b2a548d4c1f69b97e65d83e9390d1c71c934533"
+                },
+                "styleSha256": "a38f76d0a2127e4a5bc57744e80f0658dc0921b025323cd14cb476fc99f4be40"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 349,
+                  "height": 839,
+                  "rgbaSha256": "5da188b80bda203c767d84ec0b2a548d4c1f69b97e65d83e9390d1c71c934533"
+                },
+                "styleSha256": "a38f76d0a2127e4a5bc57744e80f0658dc0921b025323cd14cb476fc99f4be40"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/210478de58f1fc3832c8a6966b2d6ca419ce0100.png",
+                "sha256": "c677ab21149af8cf7e545e07e5e795f4d07c1e4c233f75fabbe1504bf1df6470"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/210478de58f1fc3832c8a6966b2d6ca419ce0100.png",
+                "sha256": "c677ab21149af8cf7e545e07e5e795f4d07c1e4c233f75fabbe1504bf1df6470"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-412",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "bc4fab643aee23979d33376eed588b80e21492a9bb83377e315ac2be7185d604"
+                },
+                "styleSha256": "517536c32231c935f13d29633fa991f0810a0ddbd7d8b4ddc6000d24d5c9ca12"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "bc4fab643aee23979d33376eed588b80e21492a9bb83377e315ac2be7185d604"
+                },
+                "styleSha256": "517536c32231c935f13d29633fa991f0810a0ddbd7d8b4ddc6000d24d5c9ca12"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "bc4fab643aee23979d33376eed588b80e21492a9bb83377e315ac2be7185d604"
+                },
+                "styleSha256": "517536c32231c935f13d29633fa991f0810a0ddbd7d8b4ddc6000d24d5c9ca12"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/05bc3e7ecf3235fde6170e48f5a1724d71209ae0.png",
+                "sha256": "93679181bcbfe755bff9a7832667025716c7fe64afa2962cb78c0b89ed04fb77"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/05bc3e7ecf3235fde6170e48f5a1724d71209ae0.png",
+                "sha256": "93679181bcbfe755bff9a7832667025716c7fe64afa2962cb78c0b89ed04fb77"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-600",
+              "served": {
+                "pixels": {
+                  "width": 600,
+                  "height": 839,
+                  "rgbaSha256": "e3e5f05ded3ec0c389b65755b343914520f35a25592a6abc367468f7149d75a4"
+                },
+                "styleSha256": "b0c812c5c91d3225312ef1b754ef169c821b9b37a830025be37ab2e888799a00"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 600,
+                  "height": 839,
+                  "rgbaSha256": "e3e5f05ded3ec0c389b65755b343914520f35a25592a6abc367468f7149d75a4"
+                },
+                "styleSha256": "b0c812c5c91d3225312ef1b754ef169c821b9b37a830025be37ab2e888799a00"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 600,
+                  "height": 839,
+                  "rgbaSha256": "e3e5f05ded3ec0c389b65755b343914520f35a25592a6abc367468f7149d75a4"
+                },
+                "styleSha256": "b0c812c5c91d3225312ef1b754ef169c821b9b37a830025be37ab2e888799a00"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/ad52ffec3c7e410e5a36de24bccd9e5864b4b280.png",
+                "sha256": "c8e075970a21df16336b42425cba2050b7894b296e171d0ad38c59037e4602e4"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/ad52ffec3c7e410e5a36de24bccd9e5864b4b280.png",
+                "sha256": "c8e075970a21df16336b42425cba2050b7894b296e171d0ad38c59037e4602e4"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-761",
+              "served": {
+                "pixels": {
+                  "width": 761,
+                  "height": 839,
+                  "rgbaSha256": "16c125048d0ae59524f2b21a1d7141b38a34c12f4762d999d49ec5be6ce9d4de"
+                },
+                "styleSha256": "27e91ca64f34e7d44870ae158ee64ddb1291546191bc120882d50ed0c87a2ff0"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 761,
+                  "height": 839,
+                  "rgbaSha256": "16c125048d0ae59524f2b21a1d7141b38a34c12f4762d999d49ec5be6ce9d4de"
+                },
+                "styleSha256": "27e91ca64f34e7d44870ae158ee64ddb1291546191bc120882d50ed0c87a2ff0"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 761,
+                  "height": 839,
+                  "rgbaSha256": "16c125048d0ae59524f2b21a1d7141b38a34c12f4762d999d49ec5be6ce9d4de"
+                },
+                "styleSha256": "27e91ca64f34e7d44870ae158ee64ddb1291546191bc120882d50ed0c87a2ff0"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/b094757c3df44df484b465f0856ef8380cbe603b.png",
+                "sha256": "1e8e4ff641e639b6e750feb67ba984e60fae19f8e00182014bf53d6947698eba"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/b094757c3df44df484b465f0856ef8380cbe603b.png",
+                "sha256": "1e8e4ff641e639b6e750feb67ba984e60fae19f8e00182014bf53d6947698eba"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-adult",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "5e2e613ed66aa19372127a848cff522dc622c26c381c52bc6ec03fab350cde18"
+                },
+                "styleSha256": "e0ca50f63948e6ceb15564214ef9965c42f53f335770940f2437b035e73dca0b"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "5e2e613ed66aa19372127a848cff522dc622c26c381c52bc6ec03fab350cde18"
+                },
+                "styleSha256": "e0ca50f63948e6ceb15564214ef9965c42f53f335770940f2437b035e73dca0b"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "5e2e613ed66aa19372127a848cff522dc622c26c381c52bc6ec03fab350cde18"
+                },
+                "styleSha256": "e0ca50f63948e6ceb15564214ef9965c42f53f335770940f2437b035e73dca0b"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/81b20fd12a1b1fca47ce8d7442374d63530a4bbb.png",
+                "sha256": "e44f9c92a87eb7cc9eb4ad518f1b738c595a338678eab589492ffb7b8bce4c0d"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/81b20fd12a1b1fca47ce8d7442374d63530a4bbb.png",
+                "sha256": "e44f9c92a87eb7cc9eb4ad518f1b738c595a338678eab589492ffb7b8bce4c0d"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-main",
+              "served": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "50023f189a1a879874dc3e1618725bcabc7f2f21b00a6e026882498d2466a9d5"
+                },
+                "styleSha256": "8b24ba8ab295fb964795fcd2880769853c387204fcf22afe00779289fcd9e439"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "50023f189a1a879874dc3e1618725bcabc7f2f21b00a6e026882498d2466a9d5"
+                },
+                "styleSha256": "8b24ba8ab295fb964795fcd2880769853c387204fcf22afe00779289fcd9e439"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 412,
+                  "height": 839,
+                  "rgbaSha256": "50023f189a1a879874dc3e1618725bcabc7f2f21b00a6e026882498d2466a9d5"
+                },
+                "styleSha256": "8b24ba8ab295fb964795fcd2880769853c387204fcf22afe00779289fcd9e439"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/6799aa49d7297d128174798cf4aab9ccf1ad884f.png",
+                "sha256": "4993884897e3975ff8323b476a465473357ad44cdf94847c5cf4775cf7431128"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/6799aa49d7297d128174798cf4aab9ccf1ad884f.png",
+                "sha256": "4993884897e3975ff8323b476a465473357ad44cdf94847c5cf4775cf7431128"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "profile": "desktop-firefox",
+        "artifactId": 12546495427,
+        "archiveSha256": "cca3619b35e4855f41590247d04692adcb37e8d8eed41da50d7f0205c64fcfce",
+        "digestVerified": true,
+        "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+        "runId": 40057285978,
+        "sameDomComparisons": 9,
+        "allPixelsAndStylesEqual": true,
+        "comparisons": [
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "dashboard",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5a410662e184a299234a4805ea722b26da54a93b855f2fa87fe95c72d915c7a4"
+                },
+                "styleSha256": "2f3bb04482df5bab55e8150c38ad89e917b31f2e0365d71aa28ad727e1729afc"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5a410662e184a299234a4805ea722b26da54a93b855f2fa87fe95c72d915c7a4"
+                },
+                "styleSha256": "2f3bb04482df5bab55e8150c38ad89e917b31f2e0365d71aa28ad727e1729afc"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5a410662e184a299234a4805ea722b26da54a93b855f2fa87fe95c72d915c7a4"
+                },
+                "styleSha256": "2f3bb04482df5bab55e8150c38ad89e917b31f2e0365d71aa28ad727e1729afc"
+              },
+              "renderedElements": 73
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/acd3d696a329847916ce4eb00496b5392afbb619.png",
+                "sha256": "6a0a8f30c9171ee6e40d7178a71ca098fd984094f69804b8d07c83b7ae386dc3"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/acd3d696a329847916ce4eb00496b5392afbb619.png",
+                "sha256": "6a0a8f30c9171ee6e40d7178a71ca098fd984094f69804b8d07c83b7ae386dc3"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "locked",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "7886c56ba3f83111287ea48ad8346d1db4b23c5c5b49857c4a76ec1708d7d2a2"
+                },
+                "styleSha256": "62a7a73e2c4f241ac0fdca7bfa79413806c76aa0f6e1fcc9895d404204593b66"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "7886c56ba3f83111287ea48ad8346d1db4b23c5c5b49857c4a76ec1708d7d2a2"
+                },
+                "styleSha256": "62a7a73e2c4f241ac0fdca7bfa79413806c76aa0f6e1fcc9895d404204593b66"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "7886c56ba3f83111287ea48ad8346d1db4b23c5c5b49857c4a76ec1708d7d2a2"
+                },
+                "styleSha256": "62a7a73e2c4f241ac0fdca7bfa79413806c76aa0f6e1fcc9895d404204593b66"
+              },
+              "renderedElements": 27
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/d07c1e2e49a4da46fcbca18afd325ddb1d181bd8.png",
+                "sha256": "f584f29752fe4ffcdb432b8a77e9fd50a8148265e243eb4ef2832b102037a5e1"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/d07c1e2e49a4da46fcbca18afd325ddb1d181bd8.png",
+                "sha256": "f584f29752fe4ffcdb432b8a77e9fd50a8148265e243eb4ef2832b102037a5e1"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "series-editor",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "6806d5fc876b4e625518236f4d2cdd6ca6823b0752f50e3eed6c1d33c85b4f91"
+                },
+                "styleSha256": "3b33ac3d23b144e5765e120b84744e1953dd8e28f5b6ca584a1cb63494b1d3c6"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "6806d5fc876b4e625518236f4d2cdd6ca6823b0752f50e3eed6c1d33c85b4f91"
+                },
+                "styleSha256": "3b33ac3d23b144e5765e120b84744e1953dd8e28f5b6ca584a1cb63494b1d3c6"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "6806d5fc876b4e625518236f4d2cdd6ca6823b0752f50e3eed6c1d33c85b4f91"
+                },
+                "styleSha256": "3b33ac3d23b144e5765e120b84744e1953dd8e28f5b6ca584a1cb63494b1d3c6"
+              },
+              "renderedElements": 250
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/76ca27899a3cbf04f2d1cc06ebe9bbae66b7db0c.png",
+                "sha256": "1b8b6aa8fcc74c856c994fe60c6d26bc8855294dc3b43890225fc106b52ef008"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/76ca27899a3cbf04f2d1cc06ebe9bbae66b7db0c.png",
+                "sha256": "1b8b6aa8fcc74c856c994fe60c6d26bc8855294dc3b43890225fc106b52ef008"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-1280",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "65362812e2875a76562fbe680b54774a77a319e7faa9e7a3372e7813f38bce9a"
+                },
+                "styleSha256": "c55e02087f968820d957fab0d679972f0b9f854cfd397738265557c956d1c58e"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "65362812e2875a76562fbe680b54774a77a319e7faa9e7a3372e7813f38bce9a"
+                },
+                "styleSha256": "c55e02087f968820d957fab0d679972f0b9f854cfd397738265557c956d1c58e"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "65362812e2875a76562fbe680b54774a77a319e7faa9e7a3372e7813f38bce9a"
+                },
+                "styleSha256": "c55e02087f968820d957fab0d679972f0b9f854cfd397738265557c956d1c58e"
+              },
+              "renderedElements": 282
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/d01cd73777d8c34e9aa929bc9827b0913ff8c926.png",
+                "sha256": "f91e08028e63ca410d253c81677af4c8ed2295d8374243411aa13e9b6c3e8798"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/d01cd73777d8c34e9aa929bc9827b0913ff8c926.png",
+                "sha256": "f91e08028e63ca410d253c81677af4c8ed2295d8374243411aa13e9b6c3e8798"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-349",
+              "served": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "96220ca5e2f523350c1d10c3d4934eb5e5558d33281666977a48b613685dc48b"
+                },
+                "styleSha256": "335b52faff825d6a9c7f3ff737b2b600d2a9f0eda7b51b26bea465457428a614"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "96220ca5e2f523350c1d10c3d4934eb5e5558d33281666977a48b613685dc48b"
+                },
+                "styleSha256": "335b52faff825d6a9c7f3ff737b2b600d2a9f0eda7b51b26bea465457428a614"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "96220ca5e2f523350c1d10c3d4934eb5e5558d33281666977a48b613685dc48b"
+                },
+                "styleSha256": "335b52faff825d6a9c7f3ff737b2b600d2a9f0eda7b51b26bea465457428a614"
+              },
+              "renderedElements": 280
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/eb95a0503bddbac952b9cfb029eadd9f2e2780ef.png",
+                "sha256": "49ea51083a532d35e73410ff804c5b4deaf2113c52b7c6801042366ead2b8eff"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/eb95a0503bddbac952b9cfb029eadd9f2e2780ef.png",
+                "sha256": "49ea51083a532d35e73410ff804c5b4deaf2113c52b7c6801042366ead2b8eff"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-600",
+              "served": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "adb9b7278aba1c226d011fbccdc7c8837520c716708f4ad538b249bb22215156"
+                },
+                "styleSha256": "f76726736bd2cabceb181952b889396b65bd789cc06c162ff8989d1b1c8dfbf4"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "adb9b7278aba1c226d011fbccdc7c8837520c716708f4ad538b249bb22215156"
+                },
+                "styleSha256": "f76726736bd2cabceb181952b889396b65bd789cc06c162ff8989d1b1c8dfbf4"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "adb9b7278aba1c226d011fbccdc7c8837520c716708f4ad538b249bb22215156"
+                },
+                "styleSha256": "f76726736bd2cabceb181952b889396b65bd789cc06c162ff8989d1b1c8dfbf4"
+              },
+              "renderedElements": 280
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/f0db683f3dbffd3412c5d101c071cb9769e4f532.png",
+                "sha256": "925bb4484e99c0a0c785a716659af7df7fe8885627ca9d19920524de22ad95de"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/f0db683f3dbffd3412c5d101c071cb9769e4f532.png",
+                "sha256": "925bb4484e99c0a0c785a716659af7df7fe8885627ca9d19920524de22ad95de"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-761",
+              "served": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8904175c2239205138bd078025fdf67a36036d4ec695dcd1bd9e88149fc2aa53"
+                },
+                "styleSha256": "a704c88fac2391ac2faaeaa309372997bc26a2308b9367a401354538770f7996"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8904175c2239205138bd078025fdf67a36036d4ec695dcd1bd9e88149fc2aa53"
+                },
+                "styleSha256": "a704c88fac2391ac2faaeaa309372997bc26a2308b9367a401354538770f7996"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8904175c2239205138bd078025fdf67a36036d4ec695dcd1bd9e88149fc2aa53"
+                },
+                "styleSha256": "a704c88fac2391ac2faaeaa309372997bc26a2308b9367a401354538770f7996"
+              },
+              "renderedElements": 282
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/3bf2dc36acd27c4c497be4e45ed435915ed42db7.png",
+                "sha256": "6c9143dceed109c7f3d3b04ff7efe73e03142aec27acbfa06d8ba62a986bb064"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/3bf2dc36acd27c4c497be4e45ed435915ed42db7.png",
+                "sha256": "6c9143dceed109c7f3d3b04ff7efe73e03142aec27acbfa06d8ba62a986bb064"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-adult",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "e7600afe8e4eae233f5cd5807e68f48842f834d629d1be7d503253e6e95d6519"
+                },
+                "styleSha256": "7c9e2a9eae9f68d816db134dbd3664659d65b570244937bc710399fcd0f7aea2"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "e7600afe8e4eae233f5cd5807e68f48842f834d629d1be7d503253e6e95d6519"
+                },
+                "styleSha256": "7c9e2a9eae9f68d816db134dbd3664659d65b570244937bc710399fcd0f7aea2"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "e7600afe8e4eae233f5cd5807e68f48842f834d629d1be7d503253e6e95d6519"
+                },
+                "styleSha256": "7c9e2a9eae9f68d816db134dbd3664659d65b570244937bc710399fcd0f7aea2"
+              },
+              "renderedElements": 284
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/f175c9b54bd0a339f064eb763d263a2342520847.png",
+                "sha256": "8ab90a15a886eefa9317d1e1b1c84c49c330cc2449f7f57aecaac8682595a8f8"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/f175c9b54bd0a339f064eb763d263a2342520847.png",
+                "sha256": "8ab90a15a886eefa9317d1e1b1c84c49c330cc2449f7f57aecaac8682595a8f8"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-main",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "84dd672936400b4e14bd4e3606175d0d5aa105dbaa0dd9cf2d613cb7daa97132"
+                },
+                "styleSha256": "c0fcb8d7f4fe49c829966f8b1ceeb18c68a659bac64a54b2d11ac9e03ffbb633"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "84dd672936400b4e14bd4e3606175d0d5aa105dbaa0dd9cf2d613cb7daa97132"
+                },
+                "styleSha256": "c0fcb8d7f4fe49c829966f8b1ceeb18c68a659bac64a54b2d11ac9e03ffbb633"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "84dd672936400b4e14bd4e3606175d0d5aa105dbaa0dd9cf2d613cb7daa97132"
+                },
+                "styleSha256": "c0fcb8d7f4fe49c829966f8b1ceeb18c68a659bac64a54b2d11ac9e03ffbb633"
+              },
+              "renderedElements": 284
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/fab2532e4e5a9d5d43546c0b32af0bb731b1dae2.png",
+                "sha256": "5a4959a8bc1391aae69ab419388b09f64435f9bbd5331243d179d315607b50d8"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/fab2532e4e5a9d5d43546c0b32af0bb731b1dae2.png",
+                "sha256": "5a4959a8bc1391aae69ab419388b09f64435f9bbd5331243d179d315607b50d8"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "profile": "desktop-webkit",
+        "artifactId": 12546460792,
+        "archiveSha256": "025f27d785a27b380a023155acb067916b8f704b9313dcb3b5c717f783424fae",
+        "digestVerified": true,
+        "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+        "runId": 40057285978,
+        "sameDomComparisons": 9,
+        "allPixelsAndStylesEqual": true,
+        "comparisons": [
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "dashboard",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5c0f63d0bf25c75139b23b6081c1a9b279f4e24c0b65c2c8056e7106db1d7050"
+                },
+                "styleSha256": "a1d39cb6f6f427f1bd9b1fbffe2e14b558608b349308eb55f79d87634b93dfbe"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5c0f63d0bf25c75139b23b6081c1a9b279f4e24c0b65c2c8056e7106db1d7050"
+                },
+                "styleSha256": "a1d39cb6f6f427f1bd9b1fbffe2e14b558608b349308eb55f79d87634b93dfbe"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "5c0f63d0bf25c75139b23b6081c1a9b279f4e24c0b65c2c8056e7106db1d7050"
+                },
+                "styleSha256": "a1d39cb6f6f427f1bd9b1fbffe2e14b558608b349308eb55f79d87634b93dfbe"
+              },
+              "renderedElements": 73
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/5e6192318ef3b387bbeaeb224fc5caf2d9ff1162.png",
+                "sha256": "3bd6ec1cfecd3fb733bf7930c1181a0973960cdb92bc533e4ffe2107c28f946b"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/5e6192318ef3b387bbeaeb224fc5caf2d9ff1162.png",
+                "sha256": "3bd6ec1cfecd3fb733bf7930c1181a0973960cdb92bc533e4ffe2107c28f946b"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "locked",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "3ab5fa206d78b8bcf418494642ee19ee7d6494da1ee93216d0574adcd908b237"
+                },
+                "styleSha256": "01dc68ef25dcd8feb909950f287e631b869c92c447f15b79eaaf30febcd9fabd"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "3ab5fa206d78b8bcf418494642ee19ee7d6494da1ee93216d0574adcd908b237"
+                },
+                "styleSha256": "01dc68ef25dcd8feb909950f287e631b869c92c447f15b79eaaf30febcd9fabd"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "3ab5fa206d78b8bcf418494642ee19ee7d6494da1ee93216d0574adcd908b237"
+                },
+                "styleSha256": "01dc68ef25dcd8feb909950f287e631b869c92c447f15b79eaaf30febcd9fabd"
+              },
+              "renderedElements": 27
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/8a83f1e617e9a73157047e974ef4dea26e25b038.png",
+                "sha256": "94c371021ea6242e81278dd32d54153530dd62c4b26447075e36391a354d59d9"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/8a83f1e617e9a73157047e974ef4dea26e25b038.png",
+                "sha256": "94c371021ea6242e81278dd32d54153530dd62c4b26447075e36391a354d59d9"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "series-editor",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "17edbf2efd3fb4e1138b51e20b7d265fee37b3db995ed5578de9839f41c7b298"
+                },
+                "styleSha256": "6c2b9ed29f8a4749cdcbe773819954fab87858304b5b6ba0595f0c73ee00d56c"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "17edbf2efd3fb4e1138b51e20b7d265fee37b3db995ed5578de9839f41c7b298"
+                },
+                "styleSha256": "6c2b9ed29f8a4749cdcbe773819954fab87858304b5b6ba0595f0c73ee00d56c"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "17edbf2efd3fb4e1138b51e20b7d265fee37b3db995ed5578de9839f41c7b298"
+                },
+                "styleSha256": "6c2b9ed29f8a4749cdcbe773819954fab87858304b5b6ba0595f0c73ee00d56c"
+              },
+              "renderedElements": 250
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/92f0bb5dcee8b44ea86b828902b4da2af01d7527.png",
+                "sha256": "7184d9db4797f56a97dfa7b133a2d1aa7bb1b20320abe19116d842ac0ebc7718"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/92f0bb5dcee8b44ea86b828902b4da2af01d7527.png",
+                "sha256": "7184d9db4797f56a97dfa7b133a2d1aa7bb1b20320abe19116d842ac0ebc7718"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-1280",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a655f4558e89e03eb3e79a3d264fabc26b416084e8f9931d3efd16538ebab3f3"
+                },
+                "styleSha256": "ddfbaf54be26938aa284a5d4d52bd253a937c346ea183b7b8e9daee8727e3458"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a655f4558e89e03eb3e79a3d264fabc26b416084e8f9931d3efd16538ebab3f3"
+                },
+                "styleSha256": "ddfbaf54be26938aa284a5d4d52bd253a937c346ea183b7b8e9daee8727e3458"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "a655f4558e89e03eb3e79a3d264fabc26b416084e8f9931d3efd16538ebab3f3"
+                },
+                "styleSha256": "ddfbaf54be26938aa284a5d4d52bd253a937c346ea183b7b8e9daee8727e3458"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/a6fff5d5c4d7a3c859be3ab5df98e43e41d9e675.png",
+                "sha256": "74e685cc47740a7a7d6d7c54e08f4d1c10e080e5d3aa643bf8a8d63d62808afd"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/a6fff5d5c4d7a3c859be3ab5df98e43e41d9e675.png",
+                "sha256": "74e685cc47740a7a7d6d7c54e08f4d1c10e080e5d3aa643bf8a8d63d62808afd"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-349",
+              "served": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "5a09f9d13a1ec91cb3e32a8890595cb8c24e3b742ff5b36470edc19167a3b4e8"
+                },
+                "styleSha256": "85b7fa35b49a61b08e1b29f93c356b368d60a0c878401dc9f43ee6ffd0281691"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "5a09f9d13a1ec91cb3e32a8890595cb8c24e3b742ff5b36470edc19167a3b4e8"
+                },
+                "styleSha256": "85b7fa35b49a61b08e1b29f93c356b368d60a0c878401dc9f43ee6ffd0281691"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 349,
+                  "height": 720,
+                  "rgbaSha256": "5a09f9d13a1ec91cb3e32a8890595cb8c24e3b742ff5b36470edc19167a3b4e8"
+                },
+                "styleSha256": "85b7fa35b49a61b08e1b29f93c356b368d60a0c878401dc9f43ee6ffd0281691"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/d9adf09cfd080840998a8ff9778425725b81befb.png",
+                "sha256": "eaaafbf5e678addf3d5c84311426a864d9ae394b87c84f6359358093984043af"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/d9adf09cfd080840998a8ff9778425725b81befb.png",
+                "sha256": "eaaafbf5e678addf3d5c84311426a864d9ae394b87c84f6359358093984043af"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-600",
+              "served": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "e66025582e440071c08880d9d8c8261555f9ac3608fe78b5a2bda15e2dec55b7"
+                },
+                "styleSha256": "73f051f43ad0a25b1016cddc4245e3b456c72282e8efb4aa8954643058da8bcb"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "e66025582e440071c08880d9d8c8261555f9ac3608fe78b5a2bda15e2dec55b7"
+                },
+                "styleSha256": "73f051f43ad0a25b1016cddc4245e3b456c72282e8efb4aa8954643058da8bcb"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 600,
+                  "height": 720,
+                  "rgbaSha256": "e66025582e440071c08880d9d8c8261555f9ac3608fe78b5a2bda15e2dec55b7"
+                },
+                "styleSha256": "73f051f43ad0a25b1016cddc4245e3b456c72282e8efb4aa8954643058da8bcb"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/ef05176e7e90382ed24ef6d75b45ee741e180b26.png",
+                "sha256": "fbc3438f1a82acdb3338ee3ef2e4414bdb8f3171fe3586461f6feaa5075aa610"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/ef05176e7e90382ed24ef6d75b45ee741e180b26.png",
+                "sha256": "fbc3438f1a82acdb3338ee3ef2e4414bdb8f3171fe3586461f6feaa5075aa610"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-761",
+              "served": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8c40569fd6703bea28fbdfe675a53d3d983d4415a9f38aa88a8e9c6e05f48200"
+                },
+                "styleSha256": "5542398fb2d39473dd81fef0c97301947e7c39030392fbca87ec8336db4c1154"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8c40569fd6703bea28fbdfe675a53d3d983d4415a9f38aa88a8e9c6e05f48200"
+                },
+                "styleSha256": "5542398fb2d39473dd81fef0c97301947e7c39030392fbca87ec8336db4c1154"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 761,
+                  "height": 720,
+                  "rgbaSha256": "8c40569fd6703bea28fbdfe675a53d3d983d4415a9f38aa88a8e9c6e05f48200"
+                },
+                "styleSha256": "5542398fb2d39473dd81fef0c97301947e7c39030392fbca87ec8336db4c1154"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/b4278eed9d8caf6c164ecfeacab423175d4f45f4.png",
+                "sha256": "8d7810276c5632ba5b37b37f51e5fce00ff6104c6d1484cf16398faf40cb4e24"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/b4278eed9d8caf6c164ecfeacab423175d4f45f4.png",
+                "sha256": "8d7810276c5632ba5b37b37f51e5fce00ff6104c6d1484cf16398faf40cb4e24"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-adult",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0e1e2ee76bdcb4622a4c9bfa28b16b79cd899271f18d41f4f58f2a9823f27531"
+                },
+                "styleSha256": "48fbae6d4f3d59b195cb108b041ffc7d26ab45d2dc7d9e30546964107fb8f535"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0e1e2ee76bdcb4622a4c9bfa28b16b79cd899271f18d41f4f58f2a9823f27531"
+                },
+                "styleSha256": "48fbae6d4f3d59b195cb108b041ffc7d26ab45d2dc7d9e30546964107fb8f535"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "0e1e2ee76bdcb4622a4c9bfa28b16b79cd899271f18d41f4f58f2a9823f27531"
+                },
+                "styleSha256": "48fbae6d4f3d59b195cb108b041ffc7d26ab45d2dc7d9e30546964107fb8f535"
+              },
+              "renderedElements": 283
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/77a37372a5fb19f6fc71599493308de610d7226a.png",
+                "sha256": "797c66cbf22093aafa3a687d5372a5b32838993cfd3871bbc0abc9e811c42ed2"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/77a37372a5fb19f6fc71599493308de610d7226a.png",
+                "sha256": "797c66cbf22093aafa3a687d5372a5b32838993cfd3871bbc0abc9e811c42ed2"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-main",
+              "served": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "31bf8ef1376f92fa63856367f8582d08c0063c51ef64ea3178a52cbee744ecd9"
+                },
+                "styleSha256": "5e4bb65a9183cbc2cfed787258760131af62d65faa020868e15a90647cfd3354"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "31bf8ef1376f92fa63856367f8582d08c0063c51ef64ea3178a52cbee744ecd9"
+                },
+                "styleSha256": "5e4bb65a9183cbc2cfed787258760131af62d65faa020868e15a90647cfd3354"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 1280,
+                  "height": 720,
+                  "rgbaSha256": "31bf8ef1376f92fa63856367f8582d08c0063c51ef64ea3178a52cbee744ecd9"
+                },
+                "styleSha256": "5e4bb65a9183cbc2cfed787258760131af62d65faa020868e15a90647cfd3354"
+              },
+              "renderedElements": 283
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/1890689db672517ad5e99bf1a361bb408297c1e0.png",
+                "sha256": "d8531d1a921d3a603d84cf88de7075923f33f3225847a1ea9cee408e5a47e998"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/1890689db672517ad5e99bf1a361bb408297c1e0.png",
+                "sha256": "d8531d1a921d3a603d84cf88de7075923f33f3225847a1ea9cee408e5a47e998"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "profile": "mobile-webkit",
+        "artifactId": 12546017529,
+        "archiveSha256": "2befbe708cafd3299afafb9efe77d4b2bcf88f18a347dd283c7a375a3d327fe5",
+        "digestVerified": true,
+        "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+        "runId": 40057285978,
+        "sameDomComparisons": 9,
+        "allPixelsAndStylesEqual": true,
+        "comparisons": [
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "dashboard",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "83f0c0b5c3b1b0a7427a3a5446c762ac1949e1e94b06798adce49b3152b145ac"
+                },
+                "styleSha256": "8c160c489435e837293e59e9cef0684f0794715d9be31fcca5c234240784f321"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "83f0c0b5c3b1b0a7427a3a5446c762ac1949e1e94b06798adce49b3152b145ac"
+                },
+                "styleSha256": "8c160c489435e837293e59e9cef0684f0794715d9be31fcca5c234240784f321"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "83f0c0b5c3b1b0a7427a3a5446c762ac1949e1e94b06798adce49b3152b145ac"
+                },
+                "styleSha256": "8c160c489435e837293e59e9cef0684f0794715d9be31fcca5c234240784f321"
+              },
+              "renderedElements": 72
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/c2caed0b93f650484357c9fe620c72746a2a3b26.png",
+                "sha256": "4b38536adcffcbec427828bace2b9b61aff17238aff6a13fb57d544551029691"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/c2caed0b93f650484357c9fe620c72746a2a3b26.png",
+                "sha256": "4b38536adcffcbec427828bace2b9b61aff17238aff6a13fb57d544551029691"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "locked",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "97904ec3caf03cdd834a352efd9c0661cacd62791b350e7feadee36cd4a4dd17"
+                },
+                "styleSha256": "aae5ae8d8a56202bb8aacfd1a19acadc140181283ab72c9ecb26b6bedcac02c9"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "97904ec3caf03cdd834a352efd9c0661cacd62791b350e7feadee36cd4a4dd17"
+                },
+                "styleSha256": "aae5ae8d8a56202bb8aacfd1a19acadc140181283ab72c9ecb26b6bedcac02c9"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "97904ec3caf03cdd834a352efd9c0661cacd62791b350e7feadee36cd4a4dd17"
+                },
+                "styleSha256": "aae5ae8d8a56202bb8aacfd1a19acadc140181283ab72c9ecb26b6bedcac02c9"
+              },
+              "renderedElements": 26
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/e8868c753829e6760da9778dae47ea8f842d7fcd.png",
+                "sha256": "75f40485c19f078d546d4c4cd8672d85514adac12a8aa64460075ce97a089af0"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/e8868c753829e6760da9778dae47ea8f842d7fcd.png",
+                "sha256": "75f40485c19f078d546d4c4cd8672d85514adac12a8aa64460075ce97a089af0"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "series-editor",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fca4b4e1671ed11f88fd5d532441941408d7cb511696285c3d8d4a906df2cd06"
+                },
+                "styleSha256": "ca19768b6250185e2135268f78edef33045adfa23551ddee4f3e39a174c1cda5"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fca4b4e1671ed11f88fd5d532441941408d7cb511696285c3d8d4a906df2cd06"
+                },
+                "styleSha256": "ca19768b6250185e2135268f78edef33045adfa23551ddee4f3e39a174c1cda5"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fca4b4e1671ed11f88fd5d532441941408d7cb511696285c3d8d4a906df2cd06"
+                },
+                "styleSha256": "ca19768b6250185e2135268f78edef33045adfa23551ddee4f3e39a174c1cda5"
+              },
+              "renderedElements": 249
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/4ec0f24d848a9ae6dfd970508fc319c56f375d27.png",
+                "sha256": "bb55cdba1379eaff1dba081c0b92a5230456b230d4a255209f31e82393829aab"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/4ec0f24d848a9ae6dfd970508fc319c56f375d27.png",
+                "sha256": "bb55cdba1379eaff1dba081c0b92a5230456b230d4a255209f31e82393829aab"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-349",
+              "served": {
+                "pixels": {
+                  "width": 349,
+                  "height": 664,
+                  "rgbaSha256": "d8818479cbc45c21c27f5a51455fa71fc07e52d63acc14d314654f11adda0747"
+                },
+                "styleSha256": "1369bf8ae31cffb2dc46d68bdcccd615f77d63fe4f06a44b4e16ba84e7a7e6bf"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 349,
+                  "height": 664,
+                  "rgbaSha256": "d8818479cbc45c21c27f5a51455fa71fc07e52d63acc14d314654f11adda0747"
+                },
+                "styleSha256": "1369bf8ae31cffb2dc46d68bdcccd615f77d63fe4f06a44b4e16ba84e7a7e6bf"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 349,
+                  "height": 664,
+                  "rgbaSha256": "d8818479cbc45c21c27f5a51455fa71fc07e52d63acc14d314654f11adda0747"
+                },
+                "styleSha256": "1369bf8ae31cffb2dc46d68bdcccd615f77d63fe4f06a44b4e16ba84e7a7e6bf"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/3ba3525867e4c87e7ab978742f21f356bfa604ee.png",
+                "sha256": "92662e701e54f07b656232d204dad76d783f3e70a21b88fa9216635a74bb1996"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/3ba3525867e4c87e7ab978742f21f356bfa604ee.png",
+                "sha256": "92662e701e54f07b656232d204dad76d783f3e70a21b88fa9216635a74bb1996"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-390",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "c53a6262fae66c84f1de953d1ddfe25fc99aa97e5e78df207a9bcde4c0994ae7"
+                },
+                "styleSha256": "e8b7f71a69e6aa823de3f6564e2a4549d6acd7303b293db3cbab26ee52cdba27"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "c53a6262fae66c84f1de953d1ddfe25fc99aa97e5e78df207a9bcde4c0994ae7"
+                },
+                "styleSha256": "e8b7f71a69e6aa823de3f6564e2a4549d6acd7303b293db3cbab26ee52cdba27"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "c53a6262fae66c84f1de953d1ddfe25fc99aa97e5e78df207a9bcde4c0994ae7"
+                },
+                "styleSha256": "e8b7f71a69e6aa823de3f6564e2a4549d6acd7303b293db3cbab26ee52cdba27"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/4a8ceeedeebbfed8f625898bbe248cfab8f6636e.png",
+                "sha256": "90f6c192607175f474acabc8e3b36f32bb61c833b9b44540a18b5e756a2a8ba9"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/4a8ceeedeebbfed8f625898bbe248cfab8f6636e.png",
+                "sha256": "90f6c192607175f474acabc8e3b36f32bb61c833b9b44540a18b5e756a2a8ba9"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-600",
+              "served": {
+                "pixels": {
+                  "width": 600,
+                  "height": 664,
+                  "rgbaSha256": "cd12106df1ba3fe00d065c60f2dc389a33a75b27c277b483947af0d1e3f59617"
+                },
+                "styleSha256": "324b787647828e42ab8dcc4ef811851ce7b295f27f4d07727796e0237dee91da"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 600,
+                  "height": 664,
+                  "rgbaSha256": "cd12106df1ba3fe00d065c60f2dc389a33a75b27c277b483947af0d1e3f59617"
+                },
+                "styleSha256": "324b787647828e42ab8dcc4ef811851ce7b295f27f4d07727796e0237dee91da"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 600,
+                  "height": 664,
+                  "rgbaSha256": "cd12106df1ba3fe00d065c60f2dc389a33a75b27c277b483947af0d1e3f59617"
+                },
+                "styleSha256": "324b787647828e42ab8dcc4ef811851ce7b295f27f4d07727796e0237dee91da"
+              },
+              "renderedElements": 279
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/4ccb035afaad18c11df2aba908991a25e0217b3a.png",
+                "sha256": "698a6debe484185374211dc0139e819c5cf108a995a4b5e6fe5123f5604c2d10"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/4ccb035afaad18c11df2aba908991a25e0217b3a.png",
+                "sha256": "698a6debe484185374211dc0139e819c5cf108a995a4b5e6fe5123f5604c2d10"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "target-adult-761",
+              "served": {
+                "pixels": {
+                  "width": 761,
+                  "height": 664,
+                  "rgbaSha256": "6366b4ed5d72e4501d2ed6f3f5e808b0ff034db73bbd96b0628dfe84a0d9d76a"
+                },
+                "styleSha256": "a61214f122f1dfccf7d9bc062498357a851a2cc783aa9c5554e99ab18dbd9280"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 761,
+                  "height": 664,
+                  "rgbaSha256": "6366b4ed5d72e4501d2ed6f3f5e808b0ff034db73bbd96b0628dfe84a0d9d76a"
+                },
+                "styleSha256": "a61214f122f1dfccf7d9bc062498357a851a2cc783aa9c5554e99ab18dbd9280"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 761,
+                  "height": 664,
+                  "rgbaSha256": "6366b4ed5d72e4501d2ed6f3f5e808b0ff034db73bbd96b0628dfe84a0d9d76a"
+                },
+                "styleSha256": "a61214f122f1dfccf7d9bc062498357a851a2cc783aa9c5554e99ab18dbd9280"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/ef4b5ccc6ba46f795ae2cfc668e0f240011e92b9.png",
+                "sha256": "4203dc83da571062f35f925a4b47fea42a21c79af55d8b69b5be2b666cf8dcd9"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/ef4b5ccc6ba46f795ae2cfc668e0f240011e92b9.png",
+                "sha256": "4203dc83da571062f35f925a4b47fea42a21c79af55d8b69b5be2b666cf8dcd9"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-adult",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "65a0338c731ce9107d29102c89ecd1193beeb6d034fec538b6cfa1bdedbf3ce4"
+                },
+                "styleSha256": "35ba8bddd59ea77a34c0c40a4cbe9aad51659a2f309540f02324ea179421e498"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "65a0338c731ce9107d29102c89ecd1193beeb6d034fec538b6cfa1bdedbf3ce4"
+                },
+                "styleSha256": "35ba8bddd59ea77a34c0c40a4cbe9aad51659a2f309540f02324ea179421e498"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "65a0338c731ce9107d29102c89ecd1193beeb6d034fec538b6cfa1bdedbf3ce4"
+                },
+                "styleSha256": "35ba8bddd59ea77a34c0c40a4cbe9aad51659a2f309540f02324ea179421e498"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/f026cf7c6a0db898e2e75c381cc70d6bd113eb71.png",
+                "sha256": "a98a1332dfe25a6540001fe900d5ca7cff7da2592c49256a4cb15278d756ba87"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/f026cf7c6a0db898e2e75c381cc70d6bd113eb71.png",
+                "sha256": "a98a1332dfe25a6540001fe900d5ca7cff7da2592c49256a4cb15278d756ba87"
+              }
+            ]
+          },
+          {
+            "comparison": {
+              "baselineSource": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+              "label": "upload-main",
+              "served": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fe8c90bc05e2122326dfde234b7d72867743de904e108f9b55fc50aae54eac24"
+                },
+                "styleSha256": "ed92b000fc8e93337da7a145304bb0e3b41448477623c5ce5a471bf92f40133e"
+              },
+              "baseline": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fe8c90bc05e2122326dfde234b7d72867743de904e108f9b55fc50aae54eac24"
+                },
+                "styleSha256": "ed92b000fc8e93337da7a145304bb0e3b41448477623c5ce5a471bf92f40133e"
+              },
+              "candidate": {
+                "pixels": {
+                  "width": 390,
+                  "height": 664,
+                  "rgbaSha256": "fe8c90bc05e2122326dfde234b7d72867743de904e108f9b55fc50aae54eac24"
+                },
+                "styleSha256": "ed92b000fc8e93337da7a145304bb0e3b41448477623c5ce5a471bf92f40133e"
+              },
+              "renderedElements": 281
+            },
+            "captures": [
+              {
+                "kind": "baseline",
+                "member": "playwright-report/data/12dc0b08d8d35b455c7512c8e6d51f2dfefbee99.png",
+                "sha256": "6e9ff7ded3113b13f766bb8f7b4f88c91d522cea12bb82cb67102ae4b1f9f249"
+              },
+              {
+                "kind": "candidate",
+                "member": "playwright-report/data/12dc0b08d8d35b455c7512c8e6d51f2dfefbee99.png",
+                "sha256": "6e9ff7ded3113b13f766bb8f7b4f88c91d522cea12bb82cb67102ae4b1f9f249"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "manualReview": {
+      "source": "708b90c7c94cf050aa752297ad1aaab957c88677",
+      "checkedAt": "2026-10-24T03:23:40.444920+00:00",
+      "reviewed": true,
+      "scope": "Representative real browser captures from the successful PR jobs; paired artifact records independently confirm identical baseline/candidate RGBA and style hashes.",
+      "observations": [
+        "Desktop dashboard cards, counts, toolbar and typography retain their existing layout.",
+        "Expanded Series/translation editor retains its modal boundary, scrollable body and Save footer.",
+        "Mobile Adult toggle is visible and checked with the existing accent and control geometry.",
+        "Targeted Adult Upload at 349 pixels retains its callout and stacked queue/action controls within the dialog."
+      ],
+      "captures": [
+        {
+          "file": "desktop-chromium-dashboard-candidate.png",
+          "sha256": "76d6592d44a80ccf16090808beccfd59faa3e67a0ac6e6313f168a722ceeda6a"
+        },
+        {
+          "file": "desktop-chromium-series-editor-candidate.png",
+          "sha256": "15d2932c5f353aa3d653445fe0f0406521b433eaba882d4c08066fcaf312aff3"
+        },
+        {
+          "file": "mobile-chromium-upload-adult-candidate.png",
+          "sha256": "e44f9c92a87eb7cc9eb4ad518f1b738c595a338678eab589492ffb7b8bce4c0d"
+        },
+        {
+          "file": "mobile-chromium-target-adult-349-candidate.png",
+          "sha256": "c677ab21149af8cf7e545e07e5e795f4d07c1e4c233f75fabbe1504bf1df6470"
+        }
+      ]
+    },
+    "reportRetentionDays": 7
+  },
+  "production": {
+    "id": 12546427736,
+    "name": "production-verification",
+    "archiveSha256": "8f10498906919c42511087459031158b6fbbdc4f5be63becdb0ebd0e96646dfc",
+    "reportSha256": "555c8a82da3dad6056ebd605f9018a6b2f48b1d63b7f2611d4596d5f573834ca",
+    "matchesLoggedReport": true,
+    "digestVerified": true,
+    "members": [
+      "production-verification.json"
+    ],
+    "report": {
+      "checkedAt": "2026-10-24T03:47:07.933Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "f75b7696-25f3-4ce4-8a3a-4b54846e340e",
+      "source": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+      "version": "2.18.12",
+      "baselineCheckedAt": "2026-10-24T03:47:06.657Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 205
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+          "version": "2.18.12"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/admin-components.css",
+          "sha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+          "bytes": 11320
+        },
+        {
+          "path": "/assets/css/admin-layout.css",
+          "sha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+          "bytes": 5003
+        },
+        {
+          "path": "/assets/css/admin-presentation.css",
+          "sha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+          "bytes": 5856
+        },
+        {
+          "path": "/assets/css/admin.css",
+          "sha256": "f07a765853fd6fd8cc9d2f17fa13e5a33dea923326fc48af72246c5cc462d913",
+          "bytes": 15473
+        }
+      ],
+      "rollbackDeploymentId": "c1fa8f80-6803-4d80-9d1f-834570a5b1b7",
+      "rollbackSource": "34eade0f2712442144eaaec49b8a088c74c35f07",
+      "beforeCheckedAt": "2026-10-24T03:46:57.771Z"
+    },
+    "workflowRunId": 40058525055,
+    "workflowRunAttempt": 1,
+    "jobId": 120770288225,
+    "publicationAttempts": 1,
+    "canonicalMetadataSource": "Authenticated project and D1 captures in the successful trusted-main workflow; not an independent connector resource GET.",
+    "access": {
+      "jobId": 120766762277,
+      "pagesRead": true,
+      "d1Select": true,
+      "databaseWrites": 0,
+      "source": "Trusted-main GitHub Actions production-access job"
+    }
+  },
+  "independentHttpBefore": {
+    "checkedAt": "2026-10-24T03:04:29.446291+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.11",
+      "releaseVersion": "2.18.11",
+      "commit": "34eade0f2712442144eaaec49b8a088c74c35f07",
+      "shortCommit": "34eade0",
+      "branch": "main",
+      "builtAt": "2026-10-24T02:08:26.415Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "/assets/css/admin.css",
+        "sha256": "ff9c3427c3f66805215f9336fc5d7ee2703abe694fc86c35a29f18799dd053c5",
+        "bytes": 12459,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-layout.css",
+        "sha256": "3137a6e1c75b888a73bede3eb015977952c96f436ad3581c1026c5b1a2f9ce0f",
+        "bytes": 4162,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-components.css",
+        "sha256": "e270c928581e12d761b104762268257528af13458907e4ef7a487d194c5f90b6",
+        "bytes": 9625,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-presentation.css",
+        "sha256": "3aef8669bf00b47dee6647da32b8f9069f33663bfbaee7486db9ca2451d6949d",
+        "bytes": 4952,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      }
+    ]
+  },
+  "independentHttpAfter": {
+    "checkedAt": "2026-10-24T03:48:25.035204+00:00",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": {
+      "name": "Shadow Garden",
+      "version": "2.18.12",
+      "releaseVersion": "2.18.12",
+      "commit": "e5317866f0c0384961ca818c71fdbbe4d03a3ca6",
+      "shortCommit": "e531786",
+      "branch": "main",
+      "builtAt": "2026-10-24T03:46:55.779Z",
+      "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+    },
+    "assets": [
+      {
+        "path": "/assets/css/admin.css",
+        "sha256": "f07a765853fd6fd8cc9d2f17fa13e5a33dea923326fc48af72246c5cc462d913",
+        "bytes": 15473,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-layout.css",
+        "sha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+        "bytes": 5003,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-components.css",
+        "sha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+        "bytes": 11320,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      },
+      {
+        "path": "/assets/css/admin-presentation.css",
+        "sha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+        "bytes": 5856,
+        "contentType": "text/css; charset=utf-8",
+        "matchesSource": true
+      }
+    ]
+  },
+  "limits": [
+    "CSS syntax equivalence applies to mechanical formatting only; the two superseded declarations and emptied rule are recorded separately. Same-selector/same-value !important declarations remain in the later required unchanged stylesheet.",
+    "Visual controls use actual Keeper with disposable catalog/auth/version responses and generated EPUBs. No upload action or live catalog/provider writes occur in those cases.",
+    "Same-DOM comparison preserves stylesheet positions and checks served candidate, dated CSS and restored candidate. Pointer/focus state, rendered geometry, selected computed properties and decoded RGBA hashes are compared.",
+    "Animation/transition/caret painting is disabled consistently for settled captures. Ordered syntax preservation and normal integration checks retain motion scope; no animation-frame equivalence or exhaustive CSS/browser/viewport conformance claim is made.",
+    "Browser reports and captures have seven-day retention. Dated CSS inputs, hashes, comparison records and pinned runtime remain reproducible evidence.",
+    "Formatting increases source bytes; no measured performance improvement is claimed. Other intentional cascade overrides remain.",
+    "The target-switching audit item is a source-review reproduction lead, not a confirmed new defect or a fix in this release.",
+    "Production captures and HTTP checks are separate reads, not an atomic transaction or a guarantee against later edits. Private baselines remain ignored and only the sanitized verification report is uploaded.",
+    "No new physical-device, real credential/CAPTCHA or provider-write acceptance is claimed."
+  ]
+}

@@ -77,10 +77,34 @@ records focus/hover state. Application CSS is unchanged by this fixture correcti
 The initial run and trace artifact are retained in the release evidence.
 
 Local `npm run check` passes all 463 Node tests, asset/provenance audit, static
-build and binding/compatibility-aware Functions build. Full PR/main CI and
-production verification are pending. The release still requires source/version,
-both catalogs, all changed CSS bytes and preservation of the existing catalog,
-snapshots and recorded settings to pass verification.
+build and binding/compatibility-aware Functions build. The tested candidate is
+`708b90c7c94cf050aa752297ad1aaab957c88677`, tree `14e1ee24854a0d9bd86415c785eaf7aa4f3b7e44`.
+Squash merge `e5317866f0c0384961ca818c71fdbbe4d03a3ca6` has exactly that tested tree.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40057285978) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40058525055)
+both pass **463 Node tests** and **746 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All four new CSS
+cases pass in every profile. The separate Chromium Library-startup profile passes
+on the PR and is excluded from the 746 cases.
+
+All **45 same-DOM comparisons** in the PR artifacts match decoded RGBA pixels,
+computed-style/geometry hashes and the served/restored candidate control.
+Representative desktop/mobile captures were also visually reviewed. Settled-frame
+comparisons cover the profile defaults and widths 349/600/761; they do not claim
+animation-frame or exhaustive viewport equivalence.
+
+The automatic workflow publishes **v2.18.12**, source `e531786`, deployment
+`f75b7696-25f3-4ce4-8a3a-4b54846e340e`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.11 rollback. The version check uses one request
+over 205 ms. Canonical source/version, both D1-derived
+catalogs and all four changed CSS files pass verification. Independent public
+HTTP checks match the same version/source and exact CSS bytes. The exact
+revision-9 catalog document, all nine snapshots and recorded settings remain
+unchanged, with zero database writes. The retained rollback is
+`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`. See
+[verification evidence](keeper-css-verification.json).
 
 ## Remaining work
 
