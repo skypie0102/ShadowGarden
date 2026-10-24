@@ -118,7 +118,7 @@ export function seriesMarkup(series, dependencies) {
           <div class="series-actions">
             ${startAction ? `<a class="primary-button" ${attrs(startAction, esc)} href="${startAction.href}">${esc(startAction.label)}</a>` : ""}
             ${audioAlignedUrl ? `<a class="secondary-button audio-series-link" href="${esc(audioAlignedUrl)}" target="_blank" rel="noopener noreferrer">Audio EPUBs ↗</a>` : ""}
-            <button id="pinButton" class="secondary-button series-pin-button ${pinned ? "pinned" : ""}" type="button" aria-label="${pinned ? "Unpin from Garden" : "Pin to Garden"}" aria-pressed="${pinned}" title="${pinned ? "Unpin from Garden" : "Pin to Garden"}"><span aria-hidden="true">📌</span></button>
+            <button id="pinButton" class="secondary-button series-pin-button ${pinned ? "pinned" : ""}" type="button" aria-label="${pinned ? "Unpin from Garden" : "Pin to Garden"}" aria-pressed="${pinned}" title="${pinned ? "Unpin from Garden" : "Pin to Garden"}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="pin-head" d="m16 3 5 5-4 1-4 4 1 4-2 2-7-7 2-2 4 1 4-4 1-4Z"/><path d="m8.5 15.5-5.5 5.5"/></svg></button>
           </div>
           <div class="tag-row">${tagLinks(series, urls, format)}</div>
         </div>

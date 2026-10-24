@@ -130,7 +130,12 @@ for (const adult of [false, true]) {
     }
     await page.setViewportSize({ width: 393, height: 850 });
     const pin = page.locator('#pinButton');
-    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveText('');
+    const icon = pin.locator('svg');
+    await expect(icon).toBeVisible();
+    await expect(icon).toHaveAttribute('aria-hidden', 'true');
+    const unpinnedColor = await pin.evaluate(button => getComputedStyle(button).color);
+    await expect(icon).toHaveCSS('stroke', unpinnedColor);
     await expect(pin).toHaveAccessibleName('Pin to Garden');
     await expect(pin).toHaveAttribute('aria-pressed', 'false');
     const pinBox = await pin.boundingBox();
@@ -139,10 +144,14 @@ for (const adult of [false, true]) {
     await pin.focus();
     await expect(pin).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveText('');
     await expect(pin).toHaveAccessibleName('Unpin from Garden');
     await expect(pin).toHaveAttribute('aria-pressed', 'true');
     await expect(pin).toHaveClass(/pinned/);
+    const accent = adult ? 'rgb(214, 160, 173)' : 'rgb(195, 180, 238)';
+    await expect(pin).toHaveCSS('color', accent);
+    await expect(icon).toHaveCSS('stroke', accent);
+    expect(unpinnedColor).not.toBe(accent);
     // Re-rendering the hero for a saved preference retains the same compact layout.
     const pinnedLayout = await layout(page);
     expect(pinnedLayout.controls[0].y - pinnedLayout.metadata.bottom).toBeLessThanOrEqual(20);
@@ -154,6 +163,7 @@ for (const adult of [false, true]) {
     await expect(page.locator('#seriesRoot')).toHaveAttribute('aria-busy', 'false');
     await expect(pin).toHaveAccessibleName('Unpin from Garden');
     await expect(pin).toHaveAttribute('aria-pressed', 'true');
+    await expect(icon).toHaveCSS('stroke', accent);
     await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in-progress');
     const savedLayout = await layout(page);
     expect(savedLayout.controls[0].y - savedLayout.metadata.bottom).toBeLessThanOrEqual(20);
@@ -162,7 +172,7 @@ for (const adult of [false, true]) {
       body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
     });
     await pin.click();
-    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveText('');
     await expect(pin).toHaveAccessibleName('Pin to Garden');
     await expect(pin).toHaveAttribute('aria-pressed', 'false');
     await expect(pin).not.toHaveClass(/pinned/);
