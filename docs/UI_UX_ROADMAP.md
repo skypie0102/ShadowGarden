@@ -85,6 +85,13 @@ configuration are preserved, with zero DB writes. Live Main Series markup and
 desktop geometry are verified. See the
 [release evidence](series-mobile-layout-release-2.19.1.json).
 
+A v2.19.2 follow-up is in progress after mobile feedback showed that the
+v2.19.1 grid left unused space below short titles/authors. The mobile header
+now lets metadata and inline actions flow around the cover, while tags clear
+the cover and use the full width. Checks use the reported Main title without
+a translator credit and retain the exact v2.19.1 stylesheet as a negative
+control. Focused screenshot artifacts are available before the full suite.
+
 Acceptance: new reader, partially read book, finished volume with a successor,
 completed series, missing/unreadable volume and long titles. Read again retains
 its explicit confirmation and existing bookmarks.
