@@ -5,6 +5,23 @@ The baseline passes 224 Node tests and 432 browser cases across five profiles,
 with eight existing platform skips. The audit preserves production data,
 book/series identities, storage formats and accepted reader scrolling/image behavior.
 
+## Current work and retained decisions
+
+This table is the current work list. The original ledger and dated release
+records below retain their historical counts and scope.
+
+| Status | Boundary | Next action / retained evidence |
+| --- | --- | --- |
+| Implemented; CSS release validation pending | Keeper CSS readability | Four base/layout/component/presentation sheets are expanded; one superseded checkbox rule is removed. Preserve current visuals and verify paired browser captures before publishing. See [CSS ownership and validation](KEEPER_CSS.md). |
+| Remaining maintainability work | Other dense CSS | Review Keeper preflight, batch, maintenance, report and related sheets in small batches, then remaining shared/public sheets. Keep intentional cascade overrides and verify each removal. |
+| Reproduction lead | Changing an Upload target during preparation | Check the shell's separate `resetUploadContext` path while local inspection/catalog lookup is pending. Clear-button and session-lock contexts are covered in v2.18.11; target-switch cancellation needs its own controlled reproduction. This is a source-review lead, not a confirmed new defect. |
+| Completed | Initial cross-subsystem defects and startup/access fixes | v2.15.0–v2.18.0 records retain their reproductions, fixes and acceptance scope. |
+| Completed | Keeper JavaScript readability and reproduced ownership defects | v2.18.2–v2.18.11 records cover workflow/editor/upload ownership, presentation, encoded EPUB paths and queue preparation. They do not claim exhaustive coverage or an absence of further defects. |
+| Completed with measured limits | Maintenance and upload budgets | v2.16.0/v2.18.8 retain bounded history/readiness and measured buffering/admission changes. Total native memory and unchanged concurrent throughput were not established. |
+| Completed | Release verification and automatic publication | Existing trusted-main deployment checks source, assets, both public catalogs and production preservation. No additional login or test project is required by that workflow. |
+| Retained compatibility decision | Revision headers | Current Keeper forms send displayed revisions. Legacy writes retain their documented optional-header contract; making headers mandatory needs an explicit migration/deprecation decision. |
+| Retained acceptance limits | Browser storage, platform skips and physical/provider checks | Grouped writes do not provide crash atomicity/cross-tab isolation. Existing conditional skips and historical Android/Soul/owner acceptance keep their dated scope. |
+
 ## Coverage and method
 
 The baseline has 100 first-party frontend JavaScript files, 39 stylesheets,
@@ -60,7 +77,11 @@ live database/size errors is also removed without changing error codes or contra
 | UI/accessibility | Existing main/adult themes and responsive controls remain; loading state now has one owner. Browser coverage includes real public/controller markup, not only unit mocks. |
 | Tooling | Asset/provenance audit, exact package pins, isolated local D1 harness and actual Functions binding checks remain. New deliberate recovered-file changes are individually listed in the audit script. |
 
-## Audit follow-ups, ordered
+## Original follow-up ledger
+
+This is the original ordered ledger with its release updates. Use the current
+table above for outstanding work; older "follow-up" wording in dated records
+does not reopen work completed by a later release.
 
 1. **Maintenance budgets — completed in v2.16.0:** ten-summary history pages
    inspect one document at a time; readiness has a 20-second request deadline.
@@ -258,10 +279,11 @@ footers show the release. A fresh revision-9 baseline with nine snapshots is
 exactly unchanged after publication, as are actual/saved production settings.
 [The transport report](PROTECTED_SOURCE_TRANSPORT.md) and
 [machine-readable evidence](protected-source-verification-2.17.1.json) retain the
-consumer map, Request/cancellation contracts and acceptance limits. The remaining
-ordered follow-ups now cover scoped readability, Garden Pass keyboard focus
-and measured module startup; legacy mandatory-header migration and broader
-upload buffering remain explicit design follow-ups.
+consumer map, Request/cancellation contracts and acceptance limits. At that
+release, the remaining ordered follow-ups covered scoped readability, Garden
+Pass keyboard focus, module startup and broader upload buffering. Later release
+records and the current table above supersede that historical work list;
+mandatory revision headers remain a compatibility/deprecation decision.
 
 
 The release-operations continuation adds twelve regression cases (305 Node tests

@@ -73,6 +73,9 @@ const deliberate=new Set([
   'public/assets/js/admin/shell.js',
   // v2.18.4: syntax-equivalent Keeper UI/session readability batch.
   'public/assets/js/admin/motion.js',
+  // v2.18.12: CSS readability and the superseded checkbox declarations.
+  'public/assets/css/admin.css',
+  'public/assets/css/admin-presentation.css',
   // v2.18.4: queue visibility follows its owner's explicit hidden state.
   'public/assets/css/admin-components.css',
   // Keeper form navigation: avoid inherited animated root scrolling.
