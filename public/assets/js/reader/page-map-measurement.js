@@ -3,6 +3,7 @@
 // The controller owns generation ordering, cache identity and fallback policy.
 import {createReaderScope} from "./lifecycle.js";
 import {installEpubLifecyclePatch} from './epub-lifecycle.js';
+import {applyParagraphAlignment} from './paragraph-alignment.js';
 
 const VISUAL_SELECTOR = "img,svg,picture,video,object,canvas";
 
@@ -114,7 +115,7 @@ async function waitForMedia(view, frame, signal) {
   }finally{scope.dispose()}
 }
 
-async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreate }) {
+async function createSandbox({ bookUrl, metrics, paginatedTheme, paragraphAlignment="default", signal, onCreate }) {
   const frame = document.createElement("iframe");
   const sandbox = { frame, book: null, rendition: null, destroyed: false };
   onCreate?.(sandbox);
@@ -169,6 +170,7 @@ async function createSandbox({ bookUrl, metrics, paginatedTheme, signal, onCreat
       minSpreadWidth: 900
     });
     sandbox.rendition = rendition;
+    rendition.hooks.content.register(contents=>applyParagraphAlignment(contents,paragraphAlignment));
     try { rendition.themes.default(paginatedTheme); } catch {}
     try {
       if (metrics.spread === "single") rendition.spread("none");
