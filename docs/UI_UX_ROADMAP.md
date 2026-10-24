@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series header shipped in v2.19.1 |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected in v2.19.2 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
@@ -66,13 +66,13 @@ for intentionally redesigned styles.
 
 - [ ] Use consistent Start reading / Continue reading / Read next volume / Read again actions.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
-- [x] Fill the mobile cover-column gap with full-width reading/pin/audio actions and tags.
+- [x] Let mobile metadata and reading actions flow around the cover; keep tags full width.
 - [x] Tighten header padding, use 44px action targets and bound missing-cover placeholders.
 - [ ] Refine the synopsis and volume list around the next reading action.
 - [ ] Show reliable saved progress without truncating its useful context.
 - [ ] Keep download actions visually secondary and easy to find.
 
-The mobile header ships as **v2.19.1** through
+The first mobile header adjustment shipped as **v2.19.1** through
 [PR #55](https://github.com/skypie0102/ShadowGarden/pull/55), source `57d6b89`.
 The PR and checked-main runs pass 471 Node tests and 861 browser cases, with
 nine existing platform skips and zero retries. All 15 new Series cases pass
@@ -85,12 +85,23 @@ configuration are preserved, with zero DB writes. Live Main Series markup and
 desktop geometry are verified. See the
 [release evidence](series-mobile-layout-release-2.19.1.json).
 
-A v2.19.2 follow-up is in progress after mobile feedback showed that the
-v2.19.1 grid left unused space below short titles/authors. The mobile header
-now lets metadata and inline actions flow around the cover, while tags clear
-the cover and use the full width. Checks use the reported Main title without
-a translator credit and retain the exact v2.19.1 stylesheet as a negative
-control. Focused screenshot artifacts are available before the full suite.
+The remaining gap below short metadata is corrected in **v2.19.2** through
+[PR #56](https://github.com/skypie0102/ShadowGarden/pull/56), source `c9425b0`.
+The mobile header uses text and inline controls that flow around the cover;
+buttons follow the author/translator immediately and can wrap below the cover.
+Tags clear the cover and use the full width. The reported Main metadata has no
+translator credit, which exposed the gap missed by the previous taller-row
+acceptance check. The exact served v2.19.1 stylesheet is retained as a negative
+control: the old gap exceeds 30px; the candidate must remain within 8–20px.
+
+The PR and main runs pass 471 Node tests and 861 browser cases, including all
+15 focused Series controls across five profiles. Seven captures are reviewed
+before the full-suite gate, covering both palettes, short/long metadata,
+saved progress, missing cover, tablet and desktop. All four production checks
+pass. The catalog document, nine snapshots and configuration are preserved with
+zero DB writes. Live Main metadata and responsive CSS rules are verified.
+[Release evidence](series-mobile-flow-release-2.19.2.json) records the scope and
+retains the physical-device acceptance limit.
 
 Acceptance: new reader, partially read book, finished volume with a successor,
 completed series, missing/unreadable volume and long titles. Read again retains

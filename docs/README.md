@@ -3,7 +3,26 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.19.1**, deployed on 2026-10-24 from
+The latest production release is **v2.19.2**, deployed on 2026-10-24 from
+`c9425b0` through [PR #56](https://github.com/skypie0102/ShadowGarden/pull/56).
+[Mobile Series flow](UI_UX_ROADMAP.md) removes the remaining gap below
+short titles/authors. Reading controls follow the metadata and wrap around or
+below the cover; tags use the full width after the cover. The reported Main
+metadata without a translator credit is now an explicit regression case.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40104546632) and
+[main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40106036066)
+pass **471 Node tests** and **861 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All 15 focused Series controls pass.
+The exact v2.19.1 stylesheet reproduces a metadata-to-button gap over 30px;
+the candidate is checked for an 8–20px gap. Seven captures were reviewed across
+all five profiles. All **four production checks** pass: version/source, both
+catalogs and the changed CSS. Revision 9, all nine snapshots and configuration
+are preserved, with zero database writes. The live Main metadata and loaded
+responsive rules are verified. See
+[release evidence](series-mobile-flow-release-2.19.2.json).
+
+The preceding production release is **v2.19.1**, deployed on 2026-10-24 from
 `57d6b89` through [PR #55](https://github.com/skypie0102/ShadowGarden/pull/55).
 [Mobile Series layout](UI_UX_ROADMAP.md) places reading/pin/audio actions
 and tags across the full mobile header beneath the cover/title pair. It adds
