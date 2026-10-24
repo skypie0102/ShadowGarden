@@ -1,0 +1,33 @@
+.volume-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.volume-summary-actions .volume-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.volume-summary-actions .volume-toggle:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.volume-replacement-status {
+  margin: 0;
+  padding: 0 12px 12px;
+  color: var(--leaf2);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.volume-replacement-status[data-kind="error"] {
+  color: var(--danger);
+}
+@media (max-width: 560px) {
+  .manage-volume-summary {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+  .volume-summary-actions {
+    grid-column: 2;
+  }
+}

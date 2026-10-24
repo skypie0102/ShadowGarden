@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {fixture,context,adminHeaders} from './helpers.mjs';
 import {endpoint} from '../server/http.js';
-import {upload,catalog,maintenance,backup,abuse,statusEndpoint,library} from '../server/admin.js';
+import {upload,catalog,maintenance,backup,abuse,statusEndpoint,library,seriesBanner} from '../server/admin.js';
 import {validateEpub} from '../server/epub.js';
 import {loadState} from '../server/state.js';
 import {rateLimit,clientId} from '../server/security.js';
@@ -78,6 +78,58 @@ test('replacement cannot assign another book identity to an already mapped EPUB'
   assert.equal(response.status,409);
   const after=await loadState(env);assert.equal(after.revision,before.revision);
   assert.equal(after.document.books[a.bookId],keys[0]);assert.equal(after.document.books[b.bookId],keys[1]);
+});
+test('Series Editor file replacement preserves metadata, identity, artwork and snapshot bytes in both libraries',async(t)=>{
+  for(const adult of [false,true]) {
+    const env=fixture(),headers=await adminHeaders(env),objects=mockStorage(t,env);
+    t.after(()=>env.DB.sqlite.close());
+    const oldKey='shadow-garden/books/editor-old.epub',nextKey='shadow-garden/books/editor-new.epub';
+    const bytes=epubFixture();objects.set(oldKey,bytes);objects.set(nextKey,Buffer.concat([bytes,Buffer.from('new edition')]));
+    const coverKey='shadow-garden/covers/keep-detail.webp',coverThumbKey='shadow-garden/covers/keep-thumb.webp';
+    objects.set(coverKey,Buffer.from('old cover'));objects.set(coverThumbKey,Buffer.from('old thumbnail'));
+    const added=await (await endpoint(catalog)(context(env,'/admin-api/catalog','POST',{
+      series:'Editor fixture',title:'Keep this title',author:'Keep author',number:2,adult,
+      date:'2026-09-01',publisher:'Keep publisher',description:'Keep description',language:'en',
+      translations:[{name:'Keep translator'}],epubKey:oldKey,coverKey,coverThumbKey
+    },headers))).json();
+    assert.equal((await endpoint(seriesBanner)(context(env,'/admin-api/series-banner','POST',{id:added.seriesId,bannerBookId:added.bookId},headers))).status,200);
+    const before=await loadState(env),scope=adult?'adult':'main',original=structuredClone(before.document[scope].find(s=>s.id===added.seriesId));
+    const response=await endpoint(library)(context(env,'/admin-api/library','POST',{
+      action:'replace-volume-file',id:added.seriesId,bookId:added.bookId,epubKey:nextKey,
+      sha256:'a'.repeat(64),originalFilename:'new edition.epub',size:999999,title:'Ignore imported title',number:99
+    },{...headers,'if-match':String(before.revision)}));
+    assert.equal(response.status,200);
+    const after=await loadState(env),expected=structuredClone(original);
+    Object.assign(expected.volumes.find(v=>v.bookId===added.bookId),{size:objects.get(nextKey).length,sha256:'a'.repeat(64),originalFilename:'new edition.epub'});
+    assert.deepEqual(after.document[scope].find(s=>s.id===added.seriesId),expected);
+    assert.equal(after.document.books[added.bookId],nextKey);assert.deepEqual(objects.get(oldKey),bytes);
+    assert.equal(after.revision,before.revision+1);
+    const snapshot=env.DB.sqlite.prepare("SELECT document FROM snapshots WHERE reason='replace-volume-file'").get();
+    assert.deepEqual(JSON.parse(snapshot.document),before.document);
+  }
+});
+test('Series Editor replacement rejects stale revisions, missing targets, missing objects and reused identities without catalog writes',async(t)=>{
+  const env=fixture(),headers=await adminHeaders(env),objects=mockStorage(t,env);t.after(()=>env.DB.sqlite.close());
+  const keys=['shadow-garden/books/editor-a.epub','shadow-garden/books/editor-b.epub','shadow-garden/books/editor-fresh.epub'];
+  for(const key of keys)objects.set(key,epubFixture());
+  const post=p=>endpoint(catalog)(context(env,'/admin-api/catalog','POST',p,headers));
+  const a=await (await post({series:'Editor A',title:'A',number:1,epubKey:keys[0]})).json();
+  const b=await (await post({series:'Editor B',title:'B',number:1,epubKey:keys[1]})).json();
+  const before=await loadState(env),payload={action:'replace-volume-file',id:a.seriesId,bookId:a.bookId,epubKey:keys[2],sha256:'b'.repeat(64),originalFilename:'new.epub'};
+  for(const [patch,revision,status] of [
+    [{},undefined,428],[{},String(before.revision-1),409],
+    [{bookId:b.bookId},String(before.revision),409],
+    [{bookId:'missing'},String(before.revision),409],
+    [{epubKey:'shadow-garden/books/missing.epub'},String(before.revision),400],
+    [{epubKey:keys[1]},String(before.revision),409],
+    [{epubKey:keys[0]},String(before.revision),409],
+    [{sha256:'invalid'},String(before.revision),400],
+    [{sha256:['b'.repeat(64)]},String(before.revision),400]
+  ]) {
+    const response=await endpoint(library)(context(env,'/admin-api/library','POST',{...payload,...patch},{...headers,...(revision?{'if-match':revision}:{})}));
+    assert.equal(response.status,status,JSON.stringify(patch));
+    const after=await loadState(env);assert.equal(after.revision,before.revision);assert.deepEqual(after.document,before.document);
+  }
 });
 test('series and volume trash restores reject identities already active in another series',async(t)=>{
   for(const action of ['delete-series','delete-volume']){
