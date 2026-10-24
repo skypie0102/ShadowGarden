@@ -43,6 +43,27 @@ for(const entry of provenance.files){
   if(sha!==entry.sha256)modified.push(entry.path);
 }
 const deliberate=new Set([
+  // v2.18.13: ordered syntax/comment-equivalent Keeper and public CSS.
+  'public/assets/css/admin-batch.css',
+  'public/assets/css/admin-import-report.css',
+  'public/assets/css/admin-maintenance.css',
+  'public/assets/css/admin-motion.css',
+  'public/assets/css/admin-preflight.css',
+  'public/assets/css/admin-security.css',
+  'public/assets/css/admin-series-editor.css',
+  'public/assets/css/garden-pass.css',
+  'public/assets/css/library-features.css',
+  'public/assets/css/library-layout.css',
+  'public/assets/css/library-motion.css',
+  'public/assets/css/public-artwork.css',
+  'public/assets/css/public-components.css',
+  'public/assets/css/reading-status.css',
+  'public/assets/css/series-extra.css',
+  'public/assets/css/series-motion.css',
+  'public/assets/css/site-theme.css',
+  'public/assets/css/ui-symbols.css',
+  'public/assets/css/volume-actions.css',
+
   'public/assets/js/data-source.js',
   'public/assets/js/domain/catalog.js',
   'public/assets/js/domain/urls.js',

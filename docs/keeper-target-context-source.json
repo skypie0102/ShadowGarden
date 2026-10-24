@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+  "nodeControls": {
+    "total": 23,
+    "new": 8,
+    "baselinePassed": 17,
+    "baselineFailed": 6,
+    "correctedPassed": 23,
+    "baselineLogSha256": "67a6eba02c0587ea5e1b6ae4ba405420ff955b2155ea40874fbf49167e3830e8"
+  },
+  "localCheck": {
+    "nodePassed": 471,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingAwareFunctionsBuild": "passed",
+    "logSha256": "32831fb070c16dd7aba82d881eccaffef799367cd990ae7bbd5c6d688ca737f4"
+  },
+  "files": [
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "beforeSha256": "c5bb1aef8e75dcc8a552299ed3c0e81ffabe85200eddaf5d8326746183e04633",
+      "finalSha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304"
+    },
+    {
+      "path": "public/assets/js/admin/shell.js",
+      "beforeSha256": "a9b5594c45f675d056eddaae4a1fbfa646776ad04d2716f47341190e14244907",
+      "finalSha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+    },
+    {
+      "path": "public/assets/js/library.js",
+      "beforeSha256": "a93fc3162b749cb3e84ab0bfce905cc8ae76b1eac89cf5ae51949cbad0b8c8c2",
+      "finalSha256": "22edaa0ea76b6fc616000a0855d145add8058bcbf15026032bb736ebf8b26b49"
+    }
+  ],
+  "libraryReadiness": {
+    "datedController": "tests/browser/fixtures/library-readiness-2.18.12.js",
+    "browserControls": 6,
+    "outcomes": [
+      "populated",
+      "empty",
+      "failure"
+    ],
+    "scopes": [
+      "Main",
+      "Adult"
+    ],
+    "purpose": "Execute dated actual controller and candidate with independent held catalog responses; verify pending/settled busy and absence of stale loading placeholders."
+  }
+}

@@ -65,35 +65,6 @@
       dialog.addEventListener("close", () => restoreDialogFocus(dialog));
     }
 
-    function resetUploadContext() {
-      const q = state.batch;
-      if (!q || q.running) return false;
-      if (q.objectUrl) {
-        try {
-          URL.revokeObjectURL(q.objectUrl);
-        } catch {}
-      }
-      q.items.splice(0, q.items.length);
-      q.activeId = null;
-      q.library = null;
-      q.objectUrl = "";
-      $("#batchPanel")?.classList.add("hidden");
-      if ($("#batchList")) $("#batchList").innerHTML = "";
-      $("#metadataCard")?.classList.add("hidden");
-      $("#preflightCard")?.classList.add("hidden");
-      $("#uploadCard")?.classList.add("hidden");
-      $("#openSeries")?.classList.add("hidden");
-      if ($("#epubFile")) $("#epubFile").value = "";
-      if ($("#filePickerTitle"))
-        $("#filePickerTitle").textContent = "Choose EPUBs from this device";
-      if ($("#filePickerMeta"))
-        $("#filePickerMeta").textContent = "Select one or many EPUBs · 50 MB maximum per file";
-      setFileState("WAITING");
-      setUploadState("WAITING");
-      setStatus("Ready to upload", "Choose one or more EPUBs to begin.", "✦");
-      return true;
-    }
-
     function targetKey(target) {
       return target?.id || "";
     }
@@ -143,10 +114,10 @@
         keeper.ui.toast("Finish the current upload before changing the New Books window.", "info");
         return false;
       }
-      if (q?.items?.length && previous !== next) {
+      if ((q?.items?.length || q?.preparing) && previous !== next) {
         if (!confirm("Start a new upload session? The current New Books queue will be cleared."))
           return false;
-        resetUploadContext();
+        if (!keeper.uploadQueue.reset()) return false;
       }
       state.addBookTarget = target || null;
       applyTargetToEditor();
@@ -219,12 +190,8 @@
       if (event.target.closest("[data-batch-edit]")) queueMicrotask(applyTargetToEditor);
     });
     $("#batchEditorSelect")?.addEventListener("change", () => queueMicrotask(applyTargetToEditor));
-    addDialog.addEventListener("close", () => {
-      if (!state.batch?.running) {
-        state.addBookTarget = null;
-        applyTargetToEditor();
-      }
-    });
+    // Closing only hides this queue. Keep its target until a confirmed context
+    // change; otherwise reopening general Upload loses the previous owner.
 
     keeper.events.addEventListener("session:unlocked", () => {
       manageView.classList.remove("hidden");

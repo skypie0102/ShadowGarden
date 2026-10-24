@@ -575,9 +575,12 @@
     apply();
   } catch (error) {
     console.error(error);
+    $("#catalogGrid")?.replaceChildren();
     $("#resultCount").textContent = "Could not load catalog";
     $("#emptyState")?.classList.remove("hidden");
     if ($("#emptyMessage"))
       $("#emptyMessage").textContent = "The library catalog could not be reached.";
+  } finally {
+    $("#catalogGrid")?.setAttribute("aria-busy", "false");
   }
 })();

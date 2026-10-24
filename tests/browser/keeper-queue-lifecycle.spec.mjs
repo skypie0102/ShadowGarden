@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createReaderEpub, createReaderZip, readerTitle } from './reader-production-fixture.mjs';
-import { installKeeper } from './keeper-volume-fixture.mjs';
+import { installKeeper, series } from './keeper-volume-fixture.mjs';
 
 test.setTimeout(90000);
 const empty = () => ({ ok: true, revision: 5, main: [], adult: [], counts: { series: 0, volumes: 0 } });
@@ -17,7 +17,7 @@ async function publication(name, title) {
     buffer: await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' }) };
 }
 
-async function prepare(page, heldName = '') {
+async function prepare(page, heldName = '', seed = empty()) {
   const writeAttempts = [];
   page.on('request', request => {
     const path = new URL(request.url()).pathname;
@@ -40,7 +40,7 @@ async function prepare(page, heldName = '') {
     }, heldName);
     await route.continue();
   });
-  const f = await installKeeper(page, undefined, empty());
+  const f = await installKeeper(page, undefined, seed);
   await expect.poll(() => page.evaluate(() => window.ShadowGardenKeeper.state.management?.revision)).toBe(5);
   await page.evaluate(() => {
     const client = window.ShadowGardenKeeper.client, request = client.request.bind(client);
@@ -67,6 +67,66 @@ async function release(page, name) {
   await expect.poll(() => page.evaluate(name => window.queueInspection.completed.includes(name), name)).toBe(true);
 }
 function assertNoWrites(f) { expect(f.writes).toEqual([]); expect(f.writeAttempts).toEqual([]); expect(f.errors).toEqual([]); }
+
+const targetedCatalog = () => ({ ...empty(), main: [series('a')], adult: [series('b')], counts: { series: 2, volumes: 4 } });
+async function changeTarget(page, id = 'b') {
+  await page.locator('#closeAddBooks').click();
+  await page.locator(`[data-manager-add="${id}"]`).click();
+  await expect(page.locator('#seriesInput')).toHaveValue('Series ' + id);
+}
+
+test('changing target cancels old inspection and immediately prepares a fresh targeted EPUB', async ({ page }) => {
+  const f = await prepare(page, 'old.epub', targetedCatalog());
+  await choose(page, await publication('old', 'Old selection'), await publication('abandoned', 'Abandoned selection'));
+  await expect.poll(() => page.evaluate(() => window.queueInspection.ready)).toEqual(['old.epub']);
+  await changeTarget(page); await choose(page, await publication('fresh', 'Fresh selection')); await ready(page, 1);
+  await release(page, 'old.epub');
+  expect(await page.evaluate(() => window.queueInspection.started)).toEqual(['old.epub', 'fresh.epub']);
+  expect(await page.evaluate(() => window.ShadowGardenKeeper.state.batch.items.map(i => i.file.name))).toEqual(['fresh.epub']);
+  await expect(page.locator('#seriesInput')).toHaveValue('Series b'); await expect(page.locator('#adultInput')).toBeChecked();
+  // This target already owns volume 1. Keep the real duplicate guard and make
+  // the operator's explicit Add separate decision before enabling Upload.
+  await expect(page.locator('#uploadButton')).toBeDisabled();
+  await expect(page.locator('#batchList [data-batch-action]')).toHaveValue('skip');
+  await page.locator('#batchList [data-batch-action]').selectOption('separate');
+  await expect(page.locator('#uploadButton')).toBeEnabled(); assertNoWrites(f);
+});
+
+for (const fail of [false, true]) test(`changing target ignores old catalog ${fail ? 'failure' : 'success'} while a new lookup is pending`, async ({ page }) => {
+  const f = await prepare(page, '', targetedCatalog()), old = deferred(), fresh = deferred(); let reads = 0;
+  await page.evaluate(() => window.ShadowGardenKeeper.uploadQueue.reset());
+  await page.route('**/admin-api/library', async route => {
+    const first = ++reads === 1; await (first ? old.promise : fresh.promise);
+    await route.fulfill({ status: first && fail ? 503 : 200, json: first && fail ? { error: 'Obsolete target lookup' } : catalog(first ? 'Obsolete catalog' : 'Fresh catalog') });
+  });
+  await choose(page, await publication('old', 'Old selection'));
+  await expect.poll(() => page.evaluate(() => window.ShadowGardenKeeper.state.batch.items[0]?.metaReady)).toBe(true);
+  await changeTarget(page); await choose(page, await publication('fresh', 'Fresh selection'));
+  await expect.poll(() => reads).toBe(2);
+  await expect.poll(() => page.evaluate(() => window.ShadowGardenKeeper.state.batch.items[0]?.metaReady)).toBe(true);
+  old.resolve(); await expect.poll(() => page.evaluate(() => window.queueLibrarySettled.length)).toBe(1);
+  await expect(page.locator('#uploadButton')).toBeDisabled();
+  expect(await page.evaluate(() => window.ShadowGardenKeeper.state.batch.library)).toBeNull();
+  fresh.resolve(); await ready(page, 1);
+  expect(await page.evaluate(() => window.ShadowGardenKeeper.state.batch.library.main[0].title)).toBe('Fresh catalog');
+  await expect(page.locator('#seriesInput')).toHaveValue('Series b'); assertNoWrites(f);
+});
+
+test('closing and reopening a targeted queue retains ownership until a confirmed context change', async ({ page }) => {
+  const f = await prepare(page, 'retained.epub', targetedCatalog());
+  await changeTarget(page); await choose(page, await publication('retained', 'Retained selection'));
+  await expect.poll(() => page.evaluate(() => window.queueInspection.ready)).toEqual(['retained.epub']);
+  await page.locator('#closeAddBooks').click(); await page.locator('[data-manager-add="b"]').click();
+  await release(page, 'retained.epub'); await ready(page, 1);
+  await expect(page.locator('#seriesInput')).toHaveValue('Series b'); await expect(page.locator('#adultInput')).toBeChecked();
+  await page.locator('#closeAddBooks').click();
+  page.removeAllListeners('dialog'); page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#openNewBooks').click(); await expect(page.locator('#addBooksDialog')).not.toBeVisible();
+  expect(await page.evaluate(() => window.ShadowGardenKeeper.state.batch.items.length)).toBe(1);
+  page.once('dialog', dialog => dialog.accept()); await page.locator('#openNewBooks').click();
+  await expect(page.locator('#batchList .batch-item')).toHaveCount(0); await expect(page.locator('#adultInput')).toBeEnabled();
+  expect(await page.evaluate(() => window.ShadowGardenKeeper.state.addBookTarget)).toBeNull(); assertNoWrites(f);
+});
 
 test('Clear discards a held inspection and its remaining files while a fresh queue can proceed', async ({ page }) => {
   const f = await prepare(page, 'old.epub');
