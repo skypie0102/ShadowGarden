@@ -25,7 +25,23 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.19.2**, deployed on 2026-10-24 from
+The latest production release is **v2.19.3**, deployed on 2026-10-25 (Asia/Manila)
+from `70e11fd` through [PR #57](https://github.com/skypie0102/ShadowGarden/pull/57).
+The Series pin action is a compact **📌** button with a 44px target, a highlighted
+pinned state, accessible Pin/Unpin labels, a tooltip and pressed state. Saved
+pin preferences are retained.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40112683505) and
+[main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40113065695)
+pass **471 Node tests** and **861 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All 15 focused Series controls pass,
+including keyboard pinning, reload persistence and unpinning. Three mobile and
+desktop captures were reviewed. All **six production checks** pass: version/source,
+both catalogs and the three changed assets. Revision 9, all nine snapshots and
+configuration are preserved, with zero database writes. See
+[release evidence](docs/series-pin-icon-release-2.19.3.json).
+
+The preceding production release is **v2.19.2**, deployed on 2026-10-24 from
 `c9425b0` through [PR #56](https://github.com/skypie0102/ShadowGarden/pull/56).
 [Mobile Series flow](docs/UI_UX_ROADMAP.md) removes the remaining gap below
 short titles/authors. Reading controls follow the metadata and wrap around or

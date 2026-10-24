@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.19.3",
+  "recordedAt": "2026-10-24T17:05:21.334Z",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 57,
+  "scope": "Series pin icon",
+  "candidate": "bfb026030847c936823b6766aaac843058c9689a",
+  "mergeSource": "70e11fd313c018057b9dc41f9a98f0c3ab66be46",
+  "testedTree": "12d572f56b6409158791c8d52ff7c45cdacd063c",
+  "mergeTreeMatchesTested": true,
+  "changes": [
+    "Replace the wide Pin to Garden/Pinned text with an aria-hidden \ud83d\udccc glyph in a 44px button.",
+    "Retain local pin preferences and highlight the pinned state.",
+    "Expose Pin/Unpin accessible labels, aria-pressed and action tooltips on initial render and toggle."
+  ],
+  "localCheck": {
+    "command": "npm run check",
+    "conclusion": "success",
+    "nodeTests": 471
+  },
+  "prCi": {
+    "run": 40112683505,
+    "conclusion": "success",
+    "nodeTests": 471,
+    "profiles": [
+      {
+        "jobId": 120927616702,
+        "profile": "desktop-firefox",
+        "passed": 171,
+        "skipped": 3,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120927616707,
+        "profile": "mobile-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120927616712,
+        "profile": "desktop-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120927616758,
+        "profile": "desktop-webkit",
+        "passed": 172,
+        "skipped": 2,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120927616797,
+        "profile": "mobile-webkit",
+        "passed": 170,
+        "skipped": 4,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      }
+    ],
+    "libraryStartupProfile": "passed"
+  },
+  "mainCi": {
+    "run": 40113065695,
+    "conclusion": "success",
+    "nodeTests": 471,
+    "profiles": [
+      {
+        "jobId": 120928716746,
+        "profile": "desktop-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120928716764,
+        "profile": "mobile-webkit",
+        "passed": 170,
+        "skipped": 4,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120928716773,
+        "profile": "desktop-webkit",
+        "passed": 172,
+        "skipped": 2,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120928716785,
+        "profile": "desktop-firefox",
+        "passed": 171,
+        "skipped": 3,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120928716906,
+        "profile": "mobile-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      }
+    ],
+    "productionJob": 120932835881
+  },
+  "focusedControls": {
+    "total": 15,
+    "conclusion": "success",
+    "checks": [
+      "Main and Adult palettes",
+      "44px icon target",
+      "Accessible name and pressed state",
+      "Keyboard pinning",
+      "State retained after reload",
+      "Unpinning",
+      "Responsive header flow, long metadata, missing cover and optional audio"
+    ]
+  },
+  "visualEvidence": {
+    "focusedReports": {
+      "pin-reviewed-desktop-firefox-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "pin-reviewed-desktop-chromium-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "pin-reviewed-desktop-webkit-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "pin-reviewed-mobile-webkit-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "pin-reviewed-mobile-chromium-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    "reviewed": [
+      {
+        "file": "pin-reviewed-mobile-chromium-main-series-393.png",
+        "sha256": "ee3abcc4dfd3bf7b06bba84a257c0386fd42b4c243287e4409969b99e8104990"
+      },
+      {
+        "file": "pin-reviewed-mobile-webkit-adult-saved-progress-series.png",
+        "sha256": "893641ff5bb979b88cf74b0719fedbb89962c9ae8250984b07daff9a86c201b7"
+      },
+      {
+        "file": "pin-reviewed-desktop-chromium-main-series-1280.png",
+        "sha256": "5ccbe33ebf9ce5db56c9a96b1e7cdd53c69c43d84e740f8b3d0e044279d6b9f7"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 12567162755,
+        "name": "series-layout-mobile-webkit",
+        "digest": "sha256:a5fe6b0a2f5b52c6d22c110da9a58e18fce6c2b4aa7ce6809f2d7f5acd324837"
+      },
+      {
+        "id": 12567052143,
+        "name": "series-layout-desktop-firefox",
+        "digest": "sha256:eb05617ca1550ceb747eede22e8b54b9895dcdc4d6b0be52ca64efee8bb97468"
+      },
+      {
+        "id": 12566723444,
+        "name": "series-layout-mobile-chromium",
+        "digest": "sha256:0bae2e7e7dd273b3b19246604e563c1124d220af0e0405845ef0bdc179bdf841"
+      },
+      {
+        "id": 12566379340,
+        "name": "series-layout-desktop-chromium",
+        "digest": "sha256:78d10104d80adbd98302c81f59a88d2736f580ede849bae1c3c096ea307ce04a"
+      },
+      {
+        "id": 12566264617,
+        "name": "series-layout-desktop-webkit",
+        "digest": "sha256:79897e3d345bc62df4c8cf9beada2c1920479e662f27b18f0fa6844c8859b73f"
+      }
+    ]
+  },
+  "production": {
+    "artifact": {
+      "id": 12567004441,
+      "name": "production-verification",
+      "digest": "sha256:7b50d728d022cd2fbfb4bbdfda2b4d3d34159b6699144ebadc02e69899defd3b"
+    },
+    "report": {
+      "checkedAt": "2026-10-24T17:05:21.334Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "ceb7a4bf-df37-4a13-aea3-dc76cd96c3d8",
+      "source": "70e11fd313c018057b9dc41f9a98f0c3ab66be46",
+      "version": "2.19.3",
+      "baselineCheckedAt": "2026-10-24T17:05:20.419Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 152
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "70e11fd313c018057b9dc41f9a98f0c3ab66be46",
+          "version": "2.19.3"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/series-extra.css",
+          "sha256": "292ea80b47c504130574396b83199b4bfd02004d9bbca70191af76de1bb11558",
+          "bytes": 12950
+        },
+        {
+          "path": "/assets/js/series-renderers.js",
+          "sha256": "88001744684361e935bda5a072d51ae77eb78d997fe191b261fa09690c11cba4",
+          "bytes": 9804
+        },
+        {
+          "path": "/assets/js/series.js",
+          "sha256": "a47872c9ee44324c27d431549253e25fe2d4bfe50b2abd41eecbf6294421500d",
+          "bytes": 5216
+        }
+      ],
+      "rollbackDeploymentId": "5c8f55df-17e6-41c9-8ac0-66ae7f59478e",
+      "rollbackSource": "c9425b0bd069f999df29a452909eac1082da9403",
+      "beforeCheckedAt": "2026-10-24T17:05:11.493Z"
+    }
+  },
+  "limits": [
+    "Mobile rendering uses pinned Playwright browser profiles and viewport resizing; no new physical Android/Soul pass is claimed."
+  ]
+}

@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected in v2.19.2 |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; compact pin control in v2.19.3 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
@@ -68,6 +68,7 @@ for intentionally redesigned styles.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
 - [x] Let mobile metadata and reading actions flow around the cover; keep tags full width.
 - [x] Tighten header padding, use 44px action targets and bound missing-cover placeholders.
+- [x] Replace the wide Series pin label with a compact 📌 control, accessible state labels and a visible pinned state.
 - [ ] Refine the synopsis and volume list around the next reading action.
 - [ ] Show reliable saved progress without truncating its useful context.
 - [ ] Keep download actions visually secondary and easy to find.
@@ -102,6 +103,17 @@ pass. The catalog document, nine snapshots and configuration are preserved with
 zero DB writes. Live Main metadata and responsive CSS rules are verified.
 [Release evidence](series-mobile-flow-release-2.19.2.json) records the scope and
 retains the physical-device acceptance limit.
+
+The Series pin action is a compact **📌** control in **v2.19.3**, through
+[PR #57](https://github.com/skypie0102/ShadowGarden/pull/57), source `70e11fd`.
+It retains saved preferences, uses a 44px target, highlights the pinned state
+and provides accessible Pin/Unpin labels, a tooltip and pressed state. The
+existing Series controls now also check keyboard pinning, reload persistence
+and unpinning. The PR and main runs pass 471 Node tests, 861 browser cases and
+all 15 focused Series controls, with nine existing platform skips and zero
+retries. Three captures were reviewed; six production checks pass, preserving
+the catalog, snapshots and configuration with zero DB writes.
+[Release evidence](series-pin-icon-release-2.19.3.json).
 
 Acceptance: new reader, partially read book, finished volume with a successor,
 completed series, missing/unreadable volume and long titles. Read again retains
