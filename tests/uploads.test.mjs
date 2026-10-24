@@ -123,7 +123,8 @@ test('Series Editor replacement rejects stale revisions, missing targets, missin
     [{epubKey:'shadow-garden/books/missing.epub'},String(before.revision),400],
     [{epubKey:keys[1]},String(before.revision),409],
     [{epubKey:keys[0]},String(before.revision),409],
-    [{sha256:'invalid'},String(before.revision),400]
+    [{sha256:'invalid'},String(before.revision),400],
+    [{sha256:['b'.repeat(64)]},String(before.revision),400]
   ]) {
     const response=await endpoint(library)(context(env,'/admin-api/library','POST',{...payload,...patch},{...headers,...(revision?{'if-match':revision}:{})}));
     assert.equal(response.status,status,JSON.stringify(patch));

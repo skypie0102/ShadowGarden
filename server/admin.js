@@ -82,7 +82,7 @@ export async function library(context) {
     if (doc.books[v.bookId]===key) fail(409,'replacement_unchanged','Upload a new EPUB object for replacement.');
     if (Object.entries(doc.books).some(([id,mapped])=>mapped===key&&id!==v.bookId))
       fail(409,'object_already_mapped','This EPUB object is already associated with another book.');
-    if (!/^[a-f0-9]{64}$/i.test(p.sha256||'')) fail(400,'invalid_checksum','Provide the replacement EPUB checksum.');
+    if (typeof p.sha256!=='string' || !/^[a-f0-9]{64}$/i.test(p.sha256)) fail(400,'invalid_checksum','Provide the replacement EPUB checksum.');
     const stored=await requireObject(context.env,key,'book');
     doc.books[v.bookId]=key;
     v.size=Number(stored.headers.get('content-length'))||Math.max(0,Number(p.size)||0);
