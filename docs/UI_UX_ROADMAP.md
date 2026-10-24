@@ -13,7 +13,7 @@ palette; Adult keeps its rose palette.
 | 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
-| 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
+| 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned — direct volume EPUB replacement delivered in v2.20.0 |
 
 ## Phase 1 — Library discovery
 
@@ -154,10 +154,28 @@ mobile/desktop widths, including long content and increased text size.
 
 ## Phase 5 — Keeper feedback
 
+- [x] Add per-volume Replace EPUB beside Edit, retaining metadata and drafts with clear checking/upload/save/retry feedback.
 - [ ] Walk through the existing upload/target/duplicate flow before selecting changes.
 - [ ] Make the selected destination and consequences of each duplicate choice explicit.
 - [ ] Present per-file preparation, upload, failure and retry states consistently.
 - [ ] Make completion summaries and the next useful action easy to understand.
+
+Direct volume EPUB replacement ships in **v2.20.0** through
+[PR #59](https://github.com/skypie0102/ShadowGarden/pull/59), source `0b687cf`.
+Replace EPUB sits beside Edit, checks and confirms the selected file, and
+presents preparation, upload, save and retry feedback on that row. It retains
+the volume's identity, metadata and artwork as well as open editor drafts.
+The new file-only Library action requires the displayed revision and locates
+the target by stable book ID; the previous bytes remain recoverable through
+the ordinary snapshot mapping.
+
+The PR and main runs pass 473 Node tests and 896 browser cases, with nine
+existing platform skips and zero retries. All 35 new focused controls pass
+across five profiles; five final captures were reviewed. Seven production
+checks pass, preserving the immediate revision-16 catalog, 15 snapshots and
+configuration with zero DB writes. Tests use disposable EPUBs and mocked
+storage; no real volume was replaced during live verification.
+[Release evidence](keeper-volume-replacement-release-2.20.0.json).
 
 Acceptance: new/existing series, Main/Adult targets, mixed valid/invalid files,
 duplicates, partial failure, retry, cancellation and reopening a queued batch.

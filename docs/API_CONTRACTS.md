@@ -22,7 +22,7 @@ returned in error payloads. Success payloads include `revision` when applicable.
 | `/book-access` | POST | `book-access.js`: `{bookId}` or same-origin `{book}`; `{url,bookId,expiresAt,ttlSeconds}`; 428 challenge; 503 missing config/mapping |
 | `/media/:path*` | GET, HEAD | Public main/adult catalogs and covers; object-scoped ticket required for EPUBs; supports one byte range |
 | `/admin-api/status` | POST | `admin/core.js`: validates bearer + session, returns configuration status and `catalogReadable`; damaged catalog data does not prevent authenticated recovery |
-| `/admin-api/library` | GET, POST | `admin/library-workflow.js`: `{main,adult,counts}`; update/delete series or volume; deletion moves metadata to trash |
+| `/admin-api/library` | GET, POST | `admin/library-workflow.js`, `admin/volume-replacement.js`: `{main,adult,counts}`; update/delete series or volume; replace a volume's EPUB; deletion moves metadata to trash |
 | `/admin-api/catalog` | POST | `admin-batch.js`: uploaded EPUB/cover keys and metadata; duplicate reject/replace/separate; returns `seriesId,bookId` |
 | `/admin-api/upload` | POST | `admin/core.js`: raw bytes with query `key`; B2 upload with bounded body, extension/signature checks, ZIP structure checks for EPUBs and unique key reservation |
 | `/admin-api/translations` | POST | `admin/translation-workflow.js`: series/volume credits; sanitized HTTP(S) links |
@@ -40,14 +40,15 @@ The last two use the explicit replacement retention policy below.
 
 ## Revision-header compatibility
 
-Keeper sends the revision belonging to the displayed editor for series,
+Keeper sends the revision belonging to the displayed editor for series, volume,
 translation and banner edits, and its current revision for other catalog and
 maintenance calls. A successful edit advances its form revision; background
 refreshes do not silently update an open form's revision.
 
 | Request | `If-Match` contract |
 | --- | --- |
-| Library, catalog, translations and series-banner POST | Optional for legacy callers; when supplied, must equal the loaded revision or return 409 `catalog_conflict` |
+| Library, catalog, translations and series-banner POST | Optional for legacy callers except file replacement below; when supplied, must equal the loaded revision or return 409 `catalog_conflict` |
+| Library `replace-volume-file` | Required; absent returns 428 `revision_required`, stale returns 409 |
 | Maintenance GET/POST | Supplied headers are checked, including object checks, manual backup and continuation; most actions permit an absent header |
 | Maintenance `purge-trash` | Required; absent returns 428 `revision_required`, stale returns 409 |
 | Recovery `restore-snapshot` | Required, plus the selected snapshot checksum |
@@ -58,6 +59,17 @@ is absent. Legacy catalog-saving calls without a header still use the server's
 conditional D1 revision transaction and safety snapshots. That protects
 concurrent server writes; it cannot detect an edit made since a legacy caller
 last displayed the catalog when the caller omits that earlier revision.
+
+Series Editor EPUB replacement sends `{action:"replace-volume-file",id,bookId,
+epubKey,sha256,originalFilename,size}` to Library after the shared immutable
+upload. The displayed editor revision belongs in `If-Match`. The target is
+looked up by stable book ID within that series, rather than by a movable row
+index. The server checks the uploaded object and rejects a key mapped to a
+different book. It changes only the object mapping, size, checksum and source
+filename; editorial metadata, artwork, ordering, banner selection and book ID
+remain intact. The response is the refreshed admin catalog and revision.
+The ordinary revision transaction retains a snapshot of the previous mapping;
+the old EPUB bytes are not overwritten or deleted.
 
 The October audit retains this compatibility deliberately. Repository clients
 send guarded mutations, while backend fixtures also exercise successful legacy

@@ -3,7 +3,29 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.19.4**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.20.0**, deployed on 2026-10-25 (Asia/Manila)
+from `0b687cf` through [PR #59](https://github.com/skypie0102/ShadowGarden/pull/59).
+Keeper's Series Editor now offers **Replace EPUB** beside **Edit** on each
+volume. It checks the selected file, confirms the replacement and shows inline
+checking/upload/save/error feedback. The volume's identity, metadata, artwork
+and editor drafts are retained. File-only replacement uses the existing
+immutable upload, revision and snapshot guards.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40119056287) and
+[main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40119539775)
+pass **473 Node tests** and **896 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All **35 new focused replacement
+controls** pass, covering both libraries, narrow layouts, invalid/cancelled
+selection, retries, retained drafts and late responses. Five final captures
+were reviewed across all profiles. All **seven production checks** pass:
+version/source, both catalogs and all four changed assets. The immediate
+revision-16 catalog, all 15 retained snapshots and configuration are preserved,
+with zero database writes. Replacement tests use disposable EPUBs and mocked
+storage; no live volume was replaced for verification. See
+[release evidence](keeper-volume-replacement-release-2.20.0.json) and the
+[API contract](API_CONTRACTS.md).
+
+The preceding production release is **v2.19.4**, deployed on 2026-10-25 (Asia/Manila)
 from `74397bd` through [PR #58](https://github.com/skypie0102/ShadowGarden/pull/58).
 It replaces v2.19.3's red platform emoji with a monochrome SVG pin. The icon uses
 the muted site color normally, and the Main lavender or Adult rose accent when

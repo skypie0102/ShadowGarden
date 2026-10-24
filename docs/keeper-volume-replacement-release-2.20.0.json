@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.20.0",
+  "recordedAt": "2026-10-24T18:30:51.061Z",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 59,
+  "candidate": "952055e665e00a1c2a56bc3656d67986c39326f0",
+  "mergeSource": "0b687cf6678d498b1825c07f4464898988b7179f",
+  "testedTree": "c8d7a0d1cedf79f801ef9f13521c4bef596f8838",
+  "mergeTreeMatchesTested": true,
+  "scope": "Keeper Series Editor per-volume EPUB replacement",
+  "changes": [
+    "Replace EPUB appears beside Edit on each volume row, with 44px targets and a responsive action row.",
+    "The shared local EPUB inspector checks the file before confirmation; inline status covers checking, upload, save, cancellation and errors.",
+    "The existing immutable upload service supplies a fresh object coordinate; a file-only Library action requires the displayed editor revision and stable target book ID.",
+    "Only the EPUB mapping, size, checksum and source filename change. Metadata, artwork, ordering, banner selection and book identity remain intact.",
+    "Successful replacement advances the form revision without discarding series, volume or translation drafts. Late responses cannot change a newer editor."
+  ],
+  "localCheck": {
+    "command": "npm run check",
+    "conclusion": "success",
+    "nodeTests": 473,
+    "serverControls": [
+      "Both libraries retain volume metadata, artwork, banner selection and identity.",
+      "Old EPUB bytes and the snapshot of the previous mapping remain intact.",
+      "Missing/stale revision, absent/cross-series target, missing object, reused mapping, unchanged key and invalid checksum type/value are rejected without catalog mutation."
+    ]
+  },
+  "prCi": {
+    "run": 40119056287,
+    "conclusion": "success",
+    "nodeTests": 473,
+    "profiles": [
+      {
+        "jobId": 120946504557,
+        "profile": "mobile-chromium",
+        "passed": 181,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120946504580,
+        "profile": "desktop-firefox",
+        "passed": 178,
+        "skipped": 3,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120946504636,
+        "profile": "desktop-chromium",
+        "passed": 181,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120946504568,
+        "profile": "mobile-webkit",
+        "passed": 177,
+        "skipped": 4,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120946504574,
+        "profile": "desktop-webkit",
+        "passed": 179,
+        "skipped": 2,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "mainCi": {
+    "run": 40119539775,
+    "conclusion": "success",
+    "nodeTests": 473,
+    "profiles": [
+      {
+        "jobId": 120947949674,
+        "profile": "desktop-chromium",
+        "passed": 181,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120947949667,
+        "profile": "desktop-firefox",
+        "passed": 178,
+        "skipped": 3,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120947949679,
+        "profile": "desktop-webkit",
+        "passed": 179,
+        "skipped": 2,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120947949717,
+        "profile": "mobile-chromium",
+        "passed": 181,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120947949743,
+        "profile": "mobile-webkit",
+        "passed": 177,
+        "skipped": 4,
+        "flaky": 0,
+        "retries": 0,
+        "focusedReplacement": 7,
+        "seriesLayout": 3,
+        "conclusion": "success"
+      }
+    ],
+    "productionJob": 120952312503
+  },
+  "focusedControls": {
+    "total": 35,
+    "conclusion": "success",
+    "casesPerProfile": 7,
+    "checks": [
+      "Main and Adult targets at 320, 393, 720 and 1280px; controls beside Edit and in view.",
+      "Selected EPUB Blob checksum, upload Content-Type, target identity and actual immutable key.",
+      "Draft retention and revision advancement after replacement.",
+      "Invalid EPUBs and cancelled confirmation perform no upload or catalog write.",
+      "Upload/save failure retries use fresh object keys.",
+      "Late upload/save responses leave a different editor and its drafts intact."
+    ]
+  },
+  "visualEvidence": {
+    "focusedReports": {
+      "keeper-replace-final-mobile-chromium-summary": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "keeper-replace-final-mobile-webkit-summary": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "keeper-replace-final-desktop-firefox-summary": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "keeper-replace-final-desktop-webkit-summary": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "keeper-replace-final-desktop-chromium-summary": {
+        "total": 7,
+        "expected": 7,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    "reviewed": [
+      {
+        "file": "keeper-replace-final-mobile-chromium-main-replacement-393.png",
+        "sha256": "76d9a900ab83067cbb8f50148697782c698bd2a17ea37c716b624fde21f5c316"
+      },
+      {
+        "file": "keeper-replace-final-mobile-webkit-adult-replacement-393.png",
+        "sha256": "1532fe25d2c6b457e45cc7e9e7836e67e4fb01761fb57745a486b1a72a0ac8f8"
+      },
+      {
+        "file": "keeper-replace-final-desktop-chromium-main-replacement-1280.png",
+        "sha256": "2d5f4ac71900b9ab40a8056b6302fd263791b0383afd6baabf5a2559b19453e2"
+      },
+      {
+        "file": "keeper-replace-final-desktop-firefox-adult-replacement-393.png",
+        "sha256": "025f398c8961acc24ae3dd9d5ef22d8ac01e5a4e624692679626279f4da4efd8"
+      },
+      {
+        "file": "keeper-replace-final-desktop-webkit-main-replacement-1280.png",
+        "sha256": "2995d27de6992e0a8ca20a8b9fc8561a84296407761e1d6c67239091895989a7"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 12570567635,
+        "name": "keeper-volume-replacement-mobile-chromium",
+        "digest": "sha256:4a77f26df5bf044d8bfb42a471410f2c0321cbeff6e21de8a1fbfaf67c8ae02b"
+      },
+      {
+        "id": 12570039623,
+        "name": "keeper-volume-replacement-desktop-webkit",
+        "digest": "sha256:54f880b8f9733dd665ae841628e4268203a430236cc9b10581a88022622fb993"
+      },
+      {
+        "id": 12569889572,
+        "name": "keeper-volume-replacement-desktop-firefox",
+        "digest": "sha256:6b2052005e3f4147a0148e3d3f7c03d5cde494365dc968066e271fabbb71d177"
+      },
+      {
+        "id": 12569749681,
+        "name": "keeper-volume-replacement-desktop-chromium",
+        "digest": "sha256:8bdff2ba66477e12cc2e128f4cff27cd3d496e2033af5e1014309a322315900d"
+      },
+      {
+        "id": 12569419601,
+        "name": "keeper-volume-replacement-mobile-webkit",
+        "digest": "sha256:b78f4372c0c2c7bec4c44bbe44742c23ef4195d66e96c431959b4de15327b58e"
+      }
+    ]
+  },
+  "validationCorrections": [
+    "Shared browser fixture now supports Adult metadata saves.",
+    "Captures scroll the volume action row into view.",
+    "Button geometry permits 0.001px floating-point rounding.",
+    "All engines verify the exact upload Blob; wire bytes are also compared where exposed."
+  ],
+  "production": {
+    "artifact": {
+      "id": 12571297324,
+      "name": "production-verification",
+      "digest": "sha256:3ff2f0301c9ce5b4a40d13708e926a9913a028cbe5f415cb3bda4bc0a3bce838"
+    },
+    "report": {
+      "checkedAt": "2026-10-24T18:30:51.061Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "143d036b-bc3d-4d0b-8497-971663a7ef7d",
+      "source": "0b687cf6678d498b1825c07f4464898988b7179f",
+      "version": "2.20.0",
+      "baselineCheckedAt": "2026-10-24T18:30:49.778Z",
+      "revision": 16,
+      "documentSha256": "ab24a4447f5b6f32341dce964c18fc9b7e50666912c8dbd06a77f96b0592efa5",
+      "snapshots": 15,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 360
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "0b687cf6678d498b1825c07f4464898988b7179f",
+          "version": "2.20.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "e53e22b0655f8dbe911d817c43bab098124658b7f3765f7799ca6fef79e24de9",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "b89c6dcc51faf8a42471a6a98dc16651873f52f064d307f0abe3cc39f99d336e",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/admin-volume-replacement.css",
+          "sha256": "e6b1a4a8ce1817b525dedef4bb677b404e73dbe4714dcd74e7e54a4a6649db2f",
+          "bytes": 665
+        },
+        {
+          "path": "/assets/js/admin/app.js",
+          "sha256": "393f4747bff28712c4398ec336782ede31af4fbac9248c41c540659ebf2c03e6",
+          "bytes": 4175
+        },
+        {
+          "path": "/assets/js/admin/library-workflow.js",
+          "sha256": "ca1b08c3221e31c8eb00c8552ef7ffcdab4f289f39047664afa1081690325aba",
+          "bytes": 26446
+        },
+        {
+          "path": "/assets/js/admin/volume-replacement.js",
+          "sha256": "1ebcf34c17bbbb80df25599adb76cd63ba2a7432473df4828d3e480b7c1bee37",
+          "bytes": 4616
+        }
+      ],
+      "rollbackDeploymentId": "04fff058-0e27-4866-9b60-a57e192e393b",
+      "rollbackSource": "74397bdcc9f818623b31fb8f1049a47be129c510",
+      "beforeCheckedAt": "2026-10-24T18:30:41.405Z"
+    },
+    "preservationScope": "The guarded release preserves its immediate pre-deployment revision-16 catalog, all 15 retained snapshots and configuration, with zero database writes."
+  },
+  "limits": [
+    "Browser replacement interactions use disposable EPUBs and mocked storage. Production verification is read-only; no live volume was replaced for testing.",
+    "WebKit does not expose binary POST bodies through Playwright routing. Every engine verifies the uploader Blob checksum and observed request; wire bytes are compared where exposed.",
+    "Mobile validation uses pinned Playwright profiles and viewport resizing; no new physical Android/Soul pass is claimed."
+  ]
+}
