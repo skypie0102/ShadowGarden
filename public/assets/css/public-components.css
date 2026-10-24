@@ -376,11 +376,6 @@ body.adult-library .volume-cover {
     top: 6px;
     left: 8px;
   }
-  .filter-toggle {
-    min-width: 42px;
-    width: 42px;
-    height: 42px;
-  }
   .header-actions .header-stat {
     display: none;
   }

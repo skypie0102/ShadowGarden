@@ -30,6 +30,17 @@ async function noOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 }
 
+async function filterContentsFit(page) {
+  const clipped = await page.locator('#filterToggle').evaluate(button => {
+    const box = button.getBoundingClientRect();
+    return [...button.children].filter(child => child.getClientRects().length).filter(child => {
+      const bounds = child.getBoundingClientRect();
+      return bounds.left < box.left || bounds.right > box.right;
+    }).map(child => child.className);
+  });
+  expect(clipped).toEqual([]);
+}
+
 for (const adult of [false, true]) {
   test(`${adult ? 'Adult' : 'Main'} discovery keeps filters and selected chips usable on narrow screens`, async ({ page }, info) => {
     const errors = await library(page, adult);
@@ -46,6 +57,7 @@ for (const adult of [false, true]) {
     await expect(toggle).toHaveAccessibleName('Filters');
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     expect((await toggle.boundingBox()).height).toBeGreaterThanOrEqual(44);
+    await filterContentsFit(page);
     await page.locator('#searchInput').fill('technical');
     await expect(page.locator('.filter-toggle-count')).toHaveText('1');
     await toggle.click();
@@ -55,6 +67,8 @@ for (const adult of [false, true]) {
     await expect(page.locator('#catalogGrid .series-card')).toHaveCount(1);
     await toggle.click();
     await expect(page.locator('#authorSelect')).toBeHidden();
+    await filterContentsFit(page);
+    await info.attach('active-filters', { body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png' });
     const author = page.locator('#activeTags [data-clear-filter="author"]');
     await expect(author).toBeVisible();
     await author.click();
