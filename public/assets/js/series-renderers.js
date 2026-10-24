@@ -109,10 +109,12 @@ export function seriesMarkup(series, dependencies) {
       <div class="series-hero-inner">
         ${cover ? `<img class="series-cover" src="${esc(cover)}" alt="${esc(series?.title)} cover" loading="eager" decoding="async" fetchpriority="high">` : `<div class="series-cover-fallback">${esc(series?.title)}</div>`}
         <div class="series-info">
-          <p class="kicker">${series?.nsfw ? "ADULT · " : ""}${esc((series?.status || "SERIES").toUpperCase())}</p>
-          <h1>${esc(series?.title)}</h1>
-          <p class="series-byline">${esc(series?.author || "Unknown author")} ${series?.year ? `<span class="series-year">· ${series.year}</span>` : ""}${finishedCount ? ` <span class="series-year">· ${finishedCount}/${volumes.length} finished</span>` : ""}</p>
-          ${translatorSummary}
+          <div class="series-heading">
+            <p class="kicker">${series?.nsfw ? "ADULT · " : ""}${esc((series?.status || "SERIES").toUpperCase())}</p>
+            <h1>${esc(series?.title)}</h1>
+            <p class="series-byline">${esc(series?.author || "Unknown author")} ${series?.year ? `<span class="series-year">· ${series.year}</span>` : ""}${finishedCount ? ` <span class="series-year">· ${finishedCount}/${volumes.length} finished</span>` : ""}</p>
+            ${translatorSummary}
+          </div>
           <div class="series-actions">
             ${startAction ? `<a class="primary-button" ${attrs(startAction, esc)} href="${startAction.href}">${esc(startAction.label)}</a>` : ""}
             ${audioAlignedUrl ? `<a class="secondary-button audio-series-link" href="${esc(audioAlignedUrl)}" target="_blank" rel="noopener noreferrer">Audio EPUBs ↗</a>` : ""}
