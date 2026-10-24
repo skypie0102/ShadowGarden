@@ -42,6 +42,12 @@ check held inspection, old lookup success/failure and close/reopen/decline/
 confirmed-reset behavior. No upload action or live catalog/provider write is
 performed. Full CI and production verification are pending for this release.
 
+The first browser run correctly blocked the fresh targeted EPUB because that
+disposable series already contained volume 1. The new fixture now verifies
+that duplicate guard, then explicitly chooses Add separate before expecting
+Upload to enable. Application code and the target-cancellation checks are
+unchanged by this fixture correction.
+
 [Source hashes and local evidence](keeper-target-context-source.json) record
 the baseline and correction. Local `npm run check` passes 471 Node tests,
 asset/provenance audit, static build and binding-aware Functions build.

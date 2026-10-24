@@ -84,6 +84,11 @@ test('changing target cancels old inspection and immediately prepares a fresh ta
   expect(await page.evaluate(() => window.queueInspection.started)).toEqual(['old.epub', 'fresh.epub']);
   expect(await page.evaluate(() => window.ShadowGardenKeeper.state.batch.items.map(i => i.file.name))).toEqual(['fresh.epub']);
   await expect(page.locator('#seriesInput')).toHaveValue('Series b'); await expect(page.locator('#adultInput')).toBeChecked();
+  // This target already owns volume 1. Keep the real duplicate guard and make
+  // the operator's explicit Add separate decision before enabling Upload.
+  await expect(page.locator('#uploadButton')).toBeDisabled();
+  await expect(page.locator('#batchList [data-batch-action]')).toHaveValue('skip');
+  await page.locator('#batchList [data-batch-action]').selectOption('separate');
   await expect(page.locator('#uploadButton')).toBeEnabled(); assertNoWrites(f);
 });
 
