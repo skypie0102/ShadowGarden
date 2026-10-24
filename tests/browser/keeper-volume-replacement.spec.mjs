@@ -52,7 +52,8 @@ for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume repl
   await draft(page); await card.locator('[data-v-title]').fill('Unpublished volume title');
   for (const width of [320, 393, 720, 1280]) {
     await page.setViewportSize({ width, height: 900 });
-    await card.scrollIntoViewIfNeeded();
+    await card.locator('.manage-volume-summary').scrollIntoViewIfNeeded();
+    await expect(card.locator('[data-volume-replace]')).toBeInViewport();
     const edit = await card.locator('[data-volume-toggle]').boundingBox(), replace = await card.locator('[data-volume-replace]').boundingBox();
     expect(replace.x).toBeGreaterThanOrEqual(edit.x + edit.width + 4);
     expect(Math.abs(replace.y - edit.y)).toBeLessThan(1);
