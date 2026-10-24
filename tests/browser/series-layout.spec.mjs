@@ -35,7 +35,11 @@ async function openSeries(page, adult, overrides = {}) {
 }
 
 async function layout(page) {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
+    // Viewport updates can acknowledge before media queries and balanced text
+    // finish their next layout frame, especially with mobile device emulation.
+    await document.fonts.ready;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const rect = selector => {
       const { x, y, width, height, right, bottom } = document.querySelector(selector).getBoundingClientRect();
       return { x, y, width, height, right, bottom };
