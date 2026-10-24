@@ -62,6 +62,16 @@ each case. Settled frames consistently disable animation, transition and caret
 painting; ordered source syntax and the normal integration suite retain motion
 scope. The existing first CSS batch retains its separate v2.18.11 baseline.
 
+An initial WebKit control after resizing from collapsed mobile filters to a
+761-pixel layout reported six select controls as `inline-block` for the served
+candidate and `block` after reinserting the same candidate. Baseline and
+candidate computed hashes matched, and all three decoded pixel hashes were
+identical. Public width states now load a fresh document after selecting each
+viewport, while each three-frame comparison retains its same DOM. All computed
+style, geometry, pixel and served/restored assertions remain. No application CSS
+or JavaScript changed for this fixture correction. This controls page entry at
+each width; it is not a resize-transition equivalence claim.
+
 These controls do not establish exhaustive viewport/animation-frame equivalence
 or physical-device/provider acceptance. No real CAPTCHA, upload or live catalog
 mutation is performed. Full CI, artifact review and production verification are

@@ -72,13 +72,19 @@ for (const adult of [false, true]) test(`shared/public CSS preserves ${adult ? '
     volumes: [{ bookId: 'bk_A2yCOKedG1g4xXTJJhbEzA', number: 1, title: 'Technical volume', description: 'Disposable volume description.' }] };
   for (const scope of [false, true]) await page.route(`**/media/shadow-garden/data/${scope ? 'adult-catalog' : 'catalog'}.json`,
     route => route.fulfill({ json: { series: scope === adult ? [item] : [] } }));
-  await page.goto(adult ? '/nsfw' : '/'); await expect(page.locator('#catalogGrid .series-card')).toHaveCount(1);
-  await expect(page.locator('#catalogGrid')).toHaveAttribute('aria-busy', 'false'); await settleCssComparison(page);
+  const loadLibrary = async () => {
+    await page.goto(adult ? '/nsfw' : '/'); await expect(page.locator('#catalogGrid .series-card')).toHaveCount(1);
+    await expect(page.locator('#catalogGrid')).toHaveAttribute('aria-busy', 'false'); await settleCssComparison(page);
+  };
   const viewport = page.viewportSize();
   for (const width of [...new Set([viewport.width, 349, 761])]) {
-    await page.setViewportSize({ width, height: viewport.height }); await compare(page, `${adult ? 'adult' : 'main'}-library-${width}`);
+    // A fresh document per width avoids WebKit's observed native-select computed
+    // display inconsistency after crossing the collapsed-filter breakpoint.
+    // Each served/baseline/restored comparison still keeps exactly one DOM.
+    await page.setViewportSize({ width, height: viewport.height }); await loadLibrary();
+    await compare(page, `${adult ? 'adult' : 'main'}-library-${width}`);
   }
-  await page.setViewportSize(viewport); await page.locator('.brand-mark').click();
+  await page.setViewportSize(viewport); await loadLibrary(); await page.locator('.brand-mark').click();
   await expect(page.locator('.brand-mark')).toHaveAttribute('aria-expanded', 'true'); await compare(page, `${adult ? 'adult' : 'main'}-navigation`);
   await page.goto(`/series?id=css-public&scope=${adult ? 'adult' : 'main'}`);
   await expect(page.locator('#seriesRoot h1')).toHaveText(item.title); await settleCssComparison(page);
