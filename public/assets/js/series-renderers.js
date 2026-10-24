@@ -118,7 +118,7 @@ export function seriesMarkup(series, dependencies) {
           <div class="series-actions">
             ${startAction ? `<a class="primary-button" ${attrs(startAction, esc)} href="${startAction.href}">${esc(startAction.label)}</a>` : ""}
             ${audioAlignedUrl ? `<a class="secondary-button audio-series-link" href="${esc(audioAlignedUrl)}" target="_blank" rel="noopener noreferrer">Audio EPUBs ↗</a>` : ""}
-            <button id="pinButton" class="secondary-button ${pinned ? "pinned" : ""}" type="button">${pinned ? "◆ Pinned" : "◇ Pin to Garden"}</button>
+            <button id="pinButton" class="secondary-button series-pin-button ${pinned ? "pinned" : ""}" type="button" aria-label="${pinned ? "Unpin from Garden" : "Pin to Garden"}" aria-pressed="${pinned}" title="${pinned ? "Unpin from Garden" : "Pin to Garden"}"><span aria-hidden="true">📌</span></button>
           </div>
           <div class="tag-row">${tagLinks(series, urls, format)}</div>
         </div>

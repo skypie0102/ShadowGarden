@@ -318,6 +318,18 @@
   align-items: center;
   gap: 10px;
 }
+.series-actions .series-pin-button {
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.series-actions .series-pin-button.pinned {
+  background: rgba(182, 154, 104, 0.14);
+}
 .series-actions .primary-button {
   min-height: 46px;
   padding-inline: 18px;
