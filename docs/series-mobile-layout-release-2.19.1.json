@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.19.1",
+  "recordedAt": "2026-10-24T14:26:18.381245+00:00",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 55,
+  "scope": "UI/UX Phase 2: compact mobile Series header",
+  "candidate": "701e6a720fc09983821125dcc3bc4c9811212fe5",
+  "mergeSource": "57d6b89769de5ca6031e69c423fb76c46c1bea71",
+  "testedTree": "b2ecc9c04d240139227913e83bbf9b5ec45a041e",
+  "mergeTreeMatchesTested": true,
+  "changes": [
+    "Full-width action and tag rows beneath the mobile cover/title pair at up to 720px.",
+    "Compact header padding and 44px minimum action targets.",
+    "Cover-column width follows the actual cover on narrow phones.",
+    "Long titles wrap; missing-cover text is bounded while the heading retains the full title.",
+    "Desktop geometry retains its previous arrangement."
+  ],
+  "prCi": {
+    "runId": 40088319274,
+    "conclusion": "success",
+    "nodePassed": 471,
+    "browserPassed": 861,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "focusedSeriesPassed": 15,
+    "newSeriesCasesInFullSuite": 15,
+    "startupProfilePassed": true,
+    "profiles": [
+      {
+        "profile": "desktop-chromium",
+        "stats": {
+          "total": 174,
+          "expected": 174,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "ok": true
+        },
+        "newSeriesCases": 3,
+        "artifactId": 12557299360,
+        "artifactSha256": "d476f1a918f873b23c51b220b7ca30048995a2357bb286f7aff334cb0a9a3406"
+      },
+      {
+        "profile": "mobile-chromium",
+        "stats": {
+          "total": 174,
+          "expected": 174,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 0,
+          "ok": true
+        },
+        "newSeriesCases": 3,
+        "artifactId": 12558475835,
+        "artifactSha256": "75be557f27260dadaca156f0b7558cd4278b103e3ee6b00d7d03fadfa8a8bb4f"
+      },
+      {
+        "profile": "desktop-firefox",
+        "stats": {
+          "total": 174,
+          "expected": 171,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 3,
+          "ok": true
+        },
+        "newSeriesCases": 3,
+        "artifactId": 12557319652,
+        "artifactSha256": "c3f0c5497bdf9af4fd6943d5fbd15fb85fb5c5217ddc8370d022a10163a0931b"
+      },
+      {
+        "profile": "desktop-webkit",
+        "stats": {
+          "total": 174,
+          "expected": 172,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 2,
+          "ok": true
+        },
+        "newSeriesCases": 3,
+        "artifactId": 12558247109,
+        "artifactSha256": "0df67bef77a0aeafd2fe14c7970a994da45a5ba846491b02ea017f6a23eee072"
+      },
+      {
+        "profile": "mobile-webkit",
+        "stats": {
+          "total": 174,
+          "expected": 170,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 4,
+          "ok": true
+        },
+        "newSeriesCases": 3,
+        "artifactId": 12557668462,
+        "artifactSha256": "5b7bc252b647e3e2735a9e4c9cdf2f432b57705bbba2bceba2050dc631c01cc7"
+      }
+    ]
+  },
+  "mainCi": {
+    "runId": 40100935463,
+    "workflowRunAttempt": 1,
+    "conclusion": "success",
+    "nodePassed": 471,
+    "browserPassed": 861,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "focusedSeriesPassed": 15,
+    "newSeriesCasesInFullSuite": 15,
+    "profiles": [
+      {
+        "name": "browser (desktop-chromium, chromium)",
+        "id": 120892830262,
+        "passed": 174,
+        "skipped": 0,
+        "focusedPassed": true,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (desktop-firefox, firefox)",
+        "id": 120892830263,
+        "passed": 171,
+        "skipped": 3,
+        "focusedPassed": true,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (mobile-chromium, chromium)",
+        "id": 120892830348,
+        "passed": 174,
+        "skipped": 0,
+        "focusedPassed": true,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (desktop-webkit, webkit)",
+        "id": 120892830275,
+        "passed": 172,
+        "skipped": 2,
+        "focusedPassed": true,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (mobile-webkit, webkit)",
+        "id": 120892830375,
+        "passed": 170,
+        "skipped": 4,
+        "focusedPassed": true,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "visualEvidence": {
+    "reviewedCaptures": [
+      {
+        "name": "series-release-desktop-chromium-main-series-393.png",
+        "sha256": "67528ac281a39f8bb5c4cfc315e0d5f3360a5bc9925a5ba3a705e61bb999c5fb"
+      },
+      {
+        "name": "series-release-desktop-chromium-long-title-long-title-no-cover.png",
+        "sha256": "01f10be9ae836e9b333a931c4e9ed0bc1d9eadb036cb8eeccc8d50cb076e0a7f"
+      },
+      {
+        "name": "series-release-mobile-chromium-adult-series-393.png",
+        "sha256": "3ca955eee5026262d207f8a6a4b9613c3bf085d4ec40136cca6ee2011be5e01b"
+      },
+      {
+        "name": "series-release-desktop-firefox-main-series-393.png",
+        "sha256": "1a9e8072bf17ea23e403d1e8942a142ed6fa5161cc2a6775113481c02bacc3e8"
+      },
+      {
+        "name": "series-release-desktop-webkit-main-series-1280.png",
+        "sha256": "fc5cadecb3ab0256d1b40318969815fcd8b0883727432be5cdab6909ec8653e5"
+      },
+      {
+        "name": "series-release-mobile-webkit-main-series-393.png",
+        "sha256": "c02247e693375610113695e3a656704744ae81e7404d44322f44a970545f0354"
+      },
+      {
+        "name": "series-release-mobile-webkit-adult-series-393.png",
+        "sha256": "1c152661739c06fd50daab5b7bb5c2ad94d7b49143f02452f790147f61f4bb18"
+      },
+      {
+        "name": "series-release-mobile-webkit-main-series-720.png",
+        "sha256": "19589cac296f599b2f7a3814ff19218f0b2f406cf0cac53f7df8cd47b1894bb0"
+      }
+    ],
+    "coverage": "All five profiles; Main/Adult mobile, tablet, desktop, long title and missing cover.",
+    "historicalStylesheetOwnersRetained": 16,
+    "intentionalRedesignOwners": [
+      "site.css",
+      "public-components.css",
+      "public-artwork.css",
+      "library-features.css",
+      "series-extra.css"
+    ]
+  },
+  "validationCorrections": [
+    {
+      "runId": 40085825799,
+      "candidate": "61e42af96aa4988c265b406985ba03a8c884b0f7",
+      "correction": "Replace disabled-link restoration with atomic stylesheet text replacement before comparing geometry."
+    },
+    {
+      "runId": 40086625177,
+      "candidate": "7e09a631e6691ee9c7a2ee7048d7e1e2e15c28f3",
+      "correction": "Wait for rendered frames after viewport changes; check Series layout before the full suite."
+    },
+    {
+      "runId": 40087415682,
+      "candidate": "673443b132850a5b0aa8048b1d0955a8a8ff27fc",
+      "correction": "Visual review found a tall missing-cover title; bound the duplicate placeholder text and assert book proportions."
+    }
+  ],
+  "production": {
+    "jobId": 120896487701,
+    "artifact": {
+      "id": 12562863838,
+      "sha256": "68d286baaefbc0f4658e431c5114cba5dd773ffbb3179d885b549848a12ca9a7"
+    },
+    "report": {
+      "checkedAt": "2026-10-24T14:22:56.875Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "535682cd-1889-4e12-a3a0-4b7df86bb7f0",
+      "source": "57d6b89769de5ca6031e69c423fb76c46c1bea71",
+      "version": "2.19.1",
+      "baselineCheckedAt": "2026-10-24T14:22:55.864Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 372
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "57d6b89769de5ca6031e69c423fb76c46c1bea71",
+          "version": "2.19.1"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/series-extra.css",
+          "sha256": "ff107b173c1d673b3f1d7fd9f428ae0f67a556198014ce15250995a540f00b62",
+          "bytes": 12517
+        },
+        {
+          "path": "/assets/js/series-renderers.js",
+          "sha256": "47f90f9309318684b8c853b0503cc6334956c30122e012174e64d2c9ca4832cd",
+          "bytes": 9650
+        }
+      ],
+      "rollbackDeploymentId": "6e3422f2-4177-4aeb-8007-f8ae6d6b49ea",
+      "rollbackSource": "af3c7bd0217603308d55d528d2f9e553518c738d",
+      "beforeCheckedAt": "2026-10-24T14:22:47.815Z"
+    },
+    "servedAssetBytesMatchReviewedSource": true
+  },
+  "independentCloudflare": {
+    "initialBefore": {
+      "checkedAt": "2026-10-24T10:24:50.898Z",
+      "deployment": {
+        "id": "6e3422f2-4177-4aeb-8007-f8ae6d6b49ea",
+        "source": "af3c7bd0217603308d55d528d2f9e553518c738d",
+        "environment": "production",
+        "status": "success"
+      },
+      "database": {
+        "revision": 9,
+        "updatedAt": "2026-10-20T01:48:08.045Z",
+        "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+        "snapshotCount": 9,
+        "snapshotsSha256": "067dd7dac156d82f3f6aebd955c0198164e44a5072f1f09f736ced005bee7f93",
+        "allSnapshotChecksumsValid": true
+      },
+      "configurationSha256": "c8172c567324b9c31ec202cff2dd0aca66426f94eb26f77f4749692eb63e54c8",
+      "databaseWrites": 0
+    },
+    "beforeMainDeployment": {
+      "checkedAt": "2026-10-24T14:06:12.022Z",
+      "deployment": {
+        "id": "6e3422f2-4177-4aeb-8007-f8ae6d6b49ea",
+        "source": "af3c7bd0217603308d55d528d2f9e553518c738d",
+        "environment": "production",
+        "status": "success"
+      },
+      "database": {
+        "revision": 9,
+        "updatedAt": "2026-10-20T01:48:08.045Z",
+        "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+        "snapshotCount": 9,
+        "snapshotsSha256": "067dd7dac156d82f3f6aebd955c0198164e44a5072f1f09f736ced005bee7f93",
+        "allSnapshotChecksumsValid": true
+      },
+      "configurationSha256": "c8172c567324b9c31ec202cff2dd0aca66426f94eb26f77f4749692eb63e54c8",
+      "databaseWrites": 0
+    },
+    "after": {
+      "checkedAt": "2026-10-24T14:24:30.723Z",
+      "deployment": {
+        "id": "535682cd-1889-4e12-a3a0-4b7df86bb7f0",
+        "source": "57d6b89769de5ca6031e69c423fb76c46c1bea71",
+        "environment": "production",
+        "status": "success"
+      },
+      "database": {
+        "revision": 9,
+        "updatedAt": "2026-10-20T01:48:08.045Z",
+        "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+        "snapshotCount": 9,
+        "snapshotsSha256": "067dd7dac156d82f3f6aebd955c0198164e44a5072f1f09f736ced005bee7f93",
+        "allSnapshotChecksumsValid": true
+      },
+      "configurationSha256": "c8172c567324b9c31ec202cff2dd0aca66426f94eb26f77f4749692eb63e54c8",
+      "databaseWrites": 0
+    },
+    "preservationMatches": {
+      "revision": true,
+      "updatedAt": true,
+      "document": true,
+      "snapshots": true,
+      "configuration": true,
+      "allSnapshotChecksumsValid": true,
+      "databaseWrites": true
+    }
+  },
+  "liveMainSeries": {
+    "url": "https://shadowgarden-bon.pages.dev/series?id=the-villainess-malfoy",
+    "before": {
+      "width": 1363,
+      "height": 936,
+      "boxes": [
+        {
+          "name": "series-hero-inner",
+          "x": 54,
+          "y": 72,
+          "width": 1240,
+          "height": 423
+        },
+        {
+          "name": "series-cover",
+          "x": 54,
+          "y": 130,
+          "width": 210,
+          "height": 315
+        },
+        {
+          "name": "series-actions",
+          "x": 306,
+          "y": 350,
+          "width": 988,
+          "height": 46
+        },
+        {
+          "name": "tag-row",
+          "x": 306,
+          "y": 416,
+          "width": 988,
+          "height": 27
+        },
+        {
+          "name": "series-body",
+          "x": 54,
+          "y": 496,
+          "width": 1240,
+          "height": 810.921875
+        }
+      ]
+    },
+    "after": {
+      "width": 1363,
+      "height": 936,
+      "headingGroupPresent": true,
+      "boxes": [
+        {
+          "name": "series-hero-inner",
+          "x": 54,
+          "y": 72,
+          "width": 1240,
+          "height": 423
+        },
+        {
+          "name": "series-cover",
+          "x": 54,
+          "y": 130,
+          "width": 210,
+          "height": 315
+        },
+        {
+          "name": "series-actions",
+          "x": 306,
+          "y": 350,
+          "width": 988,
+          "height": 46
+        },
+        {
+          "name": "tag-row",
+          "x": 306,
+          "y": 416,
+          "width": 988,
+          "height": 27
+        },
+        {
+          "name": "series-body",
+          "x": 54,
+          "y": 496,
+          "width": 1240,
+          "height": 810.921875
+        }
+      ]
+    },
+    "geometryMatches": true
+  },
+  "limits": [
+    "Mobile layouts use pinned Chromium/WebKit device emulation and responsive resizing; no new physical Android/Soul pass is claimed.",
+    "Live Main Series markup and desktop layout were inspected; both catalog scopes and changed assets were checked over production HTTP.",
+    "No new protected-book challenge, upload, catalog mutation, migration or seeding was part of this presentation release.",
+    "The 861 browser passes exclude the repeated 15-case focused run and the PR-only startup profile."
+  ]
+}

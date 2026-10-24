@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — compact mobile Series header in v2.19.1 candidate |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series header shipped in v2.19.1 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
@@ -53,7 +53,8 @@ first catalog book moves from y=759.8 to y=369.0 pixels (390.8 pixels higher).
 This is one observed desktop layout, not a general performance measurement.
 [Release evidence](library-discovery-release-2.19.0.json) retains source identities,
 CI/report hashes, visual review and independent preservation digests. Phase 2
-is next: consistent reading actions and clearer Series/volume presentation.
+is in progress with the mobile Series header; reading-action consistency and
+clearer Series/volume presentation remain next.
 
 Acceptance: Main and Adult; empty, single-series and larger catalogs; narrow
 mobile, tablet and desktop; filtering/reset/history; keyboard operation; no
@@ -65,14 +66,24 @@ for intentionally redesigned styles.
 
 - [ ] Use consistent Start reading / Continue reading / Read next volume / Read again actions.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
-- [ ] Balance the mobile series header, synopsis and volume list around the next reading action.
-  - v2.19.1 candidate: place reading/pin/audio actions and tags across the full
-    mobile header beneath the cover/title pair. Reduce header padding and remove
-    the unused cover-column gap. Desktop retains its current layout.
-    Verify both palettes, breakpoint resizing, long metadata, missing cover,
-    keyboard pinning and optional audio links before publication.
+- [x] Fill the mobile cover-column gap with full-width reading/pin/audio actions and tags.
+- [x] Tighten header padding, use 44px action targets and bound missing-cover placeholders.
+- [ ] Refine the synopsis and volume list around the next reading action.
 - [ ] Show reliable saved progress without truncating its useful context.
 - [ ] Keep download actions visually secondary and easy to find.
+
+The mobile header ships as **v2.19.1** through
+[PR #55](https://github.com/skypie0102/ShadowGarden/pull/55), source `57d6b89`.
+The PR and checked-main runs pass 471 Node tests and 861 browser cases, with
+nine existing platform skips and zero retries. All 15 new Series cases pass
+across five profiles, including breakpoint resizing, both palettes, long
+metadata, missing cover, optional audio links and keyboard pinning. Desktop
+geometry is compared against the prior layout; eight final captures were
+reviewed. The five production checks verify version/source, both catalogs and
+the two changed assets. The exact revision-9 document, nine snapshots and
+configuration are preserved, with zero DB writes. Live Main Series markup and
+desktop geometry are verified. See the
+[release evidence](series-mobile-layout-release-2.19.1.json).
 
 Acceptance: new reader, partially read book, finished volume with a successor,
 completed series, missing/unreadable volume and long titles. Read again retains

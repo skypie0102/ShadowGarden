@@ -3,7 +3,25 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.19.0**, deployed on 2026-10-24 from
+The latest production release is **v2.19.1**, deployed on 2026-10-24 from
+`57d6b89` through [PR #55](https://github.com/skypie0102/ShadowGarden/pull/55).
+[Mobile Series layout](UI_UX_ROADMAP.md) places reading/pin/audio actions
+and tags across the full mobile header beneath the cover/title pair. It adds
+compact padding, 44px action targets and bounded missing-cover placeholders,
+while retaining desktop geometry.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40088319274) and
+[main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40100935463)
+pass **471 Node tests** and **861 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All 15 new Series cases pass; the
+separate focused run repeats those 15 controls successfully. Eight final
+captures were reviewed across all five profiles. All **five production checks**
+pass: version/source, both catalogs and both changed assets. Revision 9, all nine
+snapshots and production configuration are preserved with zero database writes.
+Live Main Series markup and unchanged desktop geometry are verified.
+See [release evidence](series-mobile-layout-release-2.19.1.json).
+
+The preceding production release is **v2.19.0**, deployed on 2026-10-24 from
 `af3c7bd` through [PR #54](https://github.com/skypie0102/ShadowGarden/pull/54).
 [UI/UX Phase 1](UI_UX_ROADMAP.md) adds a compact Library introduction,
 labeled mobile filters with active counts, larger changed controls, fewer
