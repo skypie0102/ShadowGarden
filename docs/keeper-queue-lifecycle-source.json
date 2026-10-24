@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-24T01:36:51.056428+00:00",
+  "base": "1df8bb6120a3074c52b667536263306deb1b42cd",
+  "comparison": "Focused functional lifecycle changes; no formatting-equivalence claim.",
+  "files": [
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "beforeSha256": "2c21c5e58eaa45f102fa4a885ee5182e5424c137b81e38d87810348a2fed61bb",
+      "finalSha256": "c5bb1aef8e75dcc8a552299ed3c0e81ffabe85200eddaf5d8326746183e04633",
+      "bytes": 31289
+    },
+    {
+      "path": "public/assets/js/admin-upload-workflow.js",
+      "beforeSha256": "24b3357e9c45d5695d80ec1dc1427e70a63f2c09920f54c2384109e8203b0b48",
+      "finalSha256": "fcd27d1df5a85b9aaa2cc200e40a80ed334e686da43a26b31c59613c686501b8",
+      "bytes": 19158
+    },
+    {
+      "path": "public/assets/js/admin/upload-safety.js",
+      "beforeSha256": "5dcf3796181310b57f58a05ba7b1ce6337c1ab14db9485aeaea6e4a335e1bb0e",
+      "finalSha256": "dd8bae0d29b5ecd318c5f619111e48cd02a600e63c33243b3ed67809914ddbb2",
+      "bytes": 5699
+    }
+  ]
+}

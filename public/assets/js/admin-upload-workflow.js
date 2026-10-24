@@ -68,10 +68,12 @@
         : "";
     panel.classList.toggle("hidden", !q.items.length);
     if (!q.running) {
-      uploadButton.disabled = !ready;
-      uploadButton.textContent = ready
-        ? `Upload ${ready} ${ready === 1 ? "Book" : "Books"}`
-        : "Nothing to upload";
+      uploadButton.disabled = q.preparing || !ready;
+      uploadButton.textContent = q.preparing
+        ? "Checking selected EPUBs…"
+        : ready
+          ? `Upload ${ready} ${ready === 1 ? "Book" : "Books"}`
+          : "Nothing to upload";
       document.querySelector("#uploadCard")?.classList.toggle("hidden", !q.items.length);
     }
     if (q.items.length) {

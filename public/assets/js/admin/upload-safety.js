@@ -35,6 +35,12 @@
   }
   function syncGuidance() {
     if (q.running || !q.items.length) return;
+    if (q.preparing) {
+      upload.disabled = true;
+      upload.title = "Waiting for EPUB inspection and duplicate lookup to finish";
+      setUploadState("CHECKING");
+      return;
+    }
     const current =
       keeper.state.uploadStatus?.label || document.querySelector("#uploadState")?.textContent || "";
     if (
