@@ -129,10 +129,20 @@ for (const adult of [false, true]) {
       });
     }
     await page.setViewportSize({ width: 393, height: 850 });
-    await page.locator('#pinButton').focus();
-    await expect(page.locator('#pinButton')).toBeFocused();
+    const pin = page.locator('#pinButton');
+    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveAccessibleName('Pin to Garden');
+    await expect(pin).toHaveAttribute('aria-pressed', 'false');
+    const pinBox = await pin.boundingBox();
+    expect(pinBox.width).toBe(44);
+    expect(pinBox.height).toBeGreaterThanOrEqual(44);
+    await pin.focus();
+    await expect(pin).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#pinButton')).toContainText('Pinned');
+    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveAccessibleName('Unpin from Garden');
+    await expect(pin).toHaveAttribute('aria-pressed', 'true');
+    await expect(pin).toHaveClass(/pinned/);
     // Re-rendering the hero for a saved preference retains the same compact layout.
     const pinnedLayout = await layout(page);
     expect(pinnedLayout.controls[0].y - pinnedLayout.metadata.bottom).toBeLessThanOrEqual(20);
@@ -142,6 +152,8 @@ for (const adult of [false, true]) {
       JSON.stringify({ percentage: 0.42, page: 12, updatedAt: Date.now() })), bookId);
     await page.reload();
     await expect(page.locator('#seriesRoot')).toHaveAttribute('aria-busy', 'false');
+    await expect(pin).toHaveAccessibleName('Unpin from Garden');
+    await expect(pin).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in-progress');
     const savedLayout = await layout(page);
     expect(savedLayout.controls[0].y - savedLayout.metadata.bottom).toBeLessThanOrEqual(20);
@@ -149,6 +161,11 @@ for (const adult of [false, true]) {
     await info.attach('saved-progress-series', {
       body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
     });
+    await pin.click();
+    await expect(pin).toHaveText('📌');
+    await expect(pin).toHaveAccessibleName('Pin to Garden');
+    await expect(pin).toHaveAttribute('aria-pressed', 'false');
+    await expect(pin).not.toHaveClass(/pinned/);
     expect(errors).toEqual([]);
   });
 }

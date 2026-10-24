@@ -81,7 +81,10 @@
       const on = !domain.preferences.isPinned(series.id);
       domain.preferences.setPinned(series.id, on);
       button.classList.toggle("pinned", on);
-      button.textContent = on ? "◆ Pinned" : "◇ Pin to Garden";
+      const label = on ? "Unpin from Garden" : "Pin to Garden";
+      button.setAttribute("aria-pressed", String(on));
+      button.setAttribute("aria-label", label);
+      button.title = label;
     });
 
     let scrollTick = false;
