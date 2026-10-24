@@ -1,17 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
-// This owner's v2.18.12 CSS is syntax-equivalent to the v2.19.0 layout.
-const previousCss = JSON.parse(readFileSync(new URL('./fixtures/stylesheets-2.18.12.json', import.meta.url)))
-  .files.find(file => file.path === '/assets/css/series-extra.css').css;
+// Exact served v2.19.1 owner: reproduces the reported gap below short metadata.
+const previousCss = readFileSync(new URL('./fixtures/series-extra-2.19.1.css', import.meta.url), 'utf8');
+if (createHash('sha256').update(previousCss).digest('hex') !== 'ff107b173c1d673b3f1d7fd9f428ae0f67a556198014ce15250995a540f00b62') {
+  throw Error('Damaged v2.19.1 Series layout control.');
+}
 const candidateCss = readFileSync(new URL('../../public/assets/css/series-extra.css', import.meta.url), 'utf8');
 
 const bookId = 'bk_A2yCOKedG1g4xXTJJhbEzA';
 const cover = '/test/series-layout-cover.svg';
 const item = {
-  id: 'series-layout', title: 'The Garden Chronicle', author: 'Sample Author (著者)', year: 2026,
-  status: 'Ongoing', translations: [{ name: 'Sample translator' }],
-  genres: ['Action', 'Fantasy'], tags: ['School Life', 'Supernatural', 'Ongoing'],
+  id: 'series-layout', title: 'The Villainess Malfoy', author: 'Gosokdoru', year: 2026,
+  status: 'Ongoing', translations: [],
+  genres: ['Fantasy', 'Gender Bender', 'Romance'], tags: ['Fanfic', 'Magic', 'Ongoing'],
   description: 'A disposable series synopsis. The volume list should follow the compact series header.',
   cover, volumes: [{ bookId, file: bookId, number: 1, title: 'Volume 1', cover }]
 };
@@ -44,12 +47,16 @@ async function layout(page) {
       const { x, y, width, height, right, bottom } = document.querySelector(selector).getBoundingClientRect();
       return { x, y, width, height, right, bottom };
     };
+    const headingRange = document.createRange();
+    headingRange.selectNodeContents(document.querySelector('.series-heading h1'));
     return {
       hero: rect('.series-hero-inner'), cover: rect('.series-cover, .series-cover-fallback'),
       heading: rect('.series-heading'), actions: rect('.series-actions'), tags: rect('.tag-row'),
+      metadata: rect(document.querySelector('.series-translator-summary') ? '.series-translator-summary' : '.series-byline'),
+      headingTextX: headingRange.getClientRects()[0].x,
       overflow: document.documentElement.scrollWidth > window.innerWidth,
       controls: [...document.querySelectorAll('.series-actions > *')].map(el => {
-        const { x, right, height } = el.getBoundingClientRect(); return { x, right, height };
+        const { x, y, right, bottom, height } = el.getBoundingClientRect(); return { x, y, right, bottom, height };
       })
     };
   });
@@ -74,11 +81,14 @@ async function previousLayout(page, inspect) {
 
 for (const adult of [false, true]) {
   test(`${adult ? 'Adult' : 'Main'} series uses the space beneath the mobile cover`, async ({ page }, info) => {
-    const errors = await openSeries(page, adult);
+    const errors = await openSeries(page, adult, adult ? {
+      title: 'Adolescent Adam', author: 'Sakaki Kasa (さかき傘)',
+      translations: [{ name: 'js06' }]
+    } : {});
     await page.setViewportSize({ width: 393, height: 850 });
     await previousLayout(page, async () => {
       const before = await layout(page);
-      expect(before.actions.x).toBeGreaterThan(before.cover.right);
+      expect(before.controls[0].y - before.metadata.bottom).toBeGreaterThan(30);
       await info.attach('previous-mobile-series', {
         body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
       });
@@ -87,24 +97,23 @@ for (const adult of [false, true]) {
       await page.setViewportSize({ width, height: 850 });
       const boxes = await layout(page);
       expect(boxes.overflow).toBe(false);
-      expect(boxes.cover.x).toBeLessThan(boxes.heading.x);
       for (const control of boxes.controls) {
         expect(control.x).toBeGreaterThanOrEqual(boxes.hero.x - 1);
         expect(control.right).toBeLessThanOrEqual(boxes.hero.right + 1);
         expect(control.height).toBeGreaterThanOrEqual(42);
       }
       if (width <= 720) {
-        // The reported defect leaves these controls trapped beside the cover.
-        expect(Math.abs(boxes.actions.x - boxes.cover.x)).toBeLessThan(1);
-        expect(Math.abs(boxes.tags.x - boxes.cover.x)).toBeLessThan(1);
-        expect(Math.abs(boxes.actions.width - boxes.hero.width)).toBeLessThan(1);
-        const gap = boxes.actions.y - Math.max(boxes.cover.bottom, boxes.heading.bottom);
-        expect(gap).toBeGreaterThanOrEqual(12);
+        // Controls must follow the metadata, even when it is shorter than the cover.
+        const gap = boxes.controls[0].y - boxes.metadata.bottom;
+        expect(gap).toBeGreaterThanOrEqual(8);
         expect(gap).toBeLessThanOrEqual(20);
-        expect(boxes.tags.y - boxes.actions.bottom).toBeGreaterThanOrEqual(12);
-        expect(boxes.tags.y - boxes.actions.bottom).toBeLessThanOrEqual(20);
+        expect(boxes.headingTextX).toBeGreaterThanOrEqual(boxes.cover.right + 16);
+        expect(Math.abs(boxes.tags.x - boxes.cover.x)).toBeLessThan(1);
+        expect(boxes.tags.y).toBeGreaterThanOrEqual(Math.max(boxes.cover.bottom, ...boxes.controls.map(c => c.bottom)));
+        expect(boxes.tags.y - Math.max(boxes.cover.bottom, ...boxes.controls.map(c => c.bottom))).toBeLessThanOrEqual(24);
         expect(boxes.controls.every(control => control.height >= 44)).toBe(true);
       } else {
+        expect(boxes.cover.x).toBeLessThan(boxes.heading.x);
         expect(Math.abs(boxes.actions.x - boxes.heading.x)).toBeLessThan(1);
         expect(Math.abs(boxes.tags.x - boxes.heading.x)).toBeLessThan(1);
         const previous = await previousLayout(page, () => layout(page));
@@ -125,9 +134,21 @@ for (const adult of [false, true]) {
     await page.keyboard.press('Enter');
     await expect(page.locator('#pinButton')).toContainText('Pinned');
     // Re-rendering the hero for a saved preference retains the same compact layout.
-    expect(Math.abs((await layout(page)).actions.x - (await layout(page)).cover.x)).toBeLessThan(1);
+    const pinnedLayout = await layout(page);
+    expect(pinnedLayout.controls[0].y - pinnedLayout.metadata.bottom).toBeLessThanOrEqual(20);
     await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-book-id', bookId);
-    await expect(page.locator('.tag-row a').first()).toHaveAttribute('href', `${adult ? '/nsfw.html' : '/'}?genre=Action`);
+    await expect(page.locator('.tag-row a').first()).toHaveAttribute('href', `${adult ? '/nsfw.html' : '/'}?genre=Fantasy`);
+    await page.evaluate(identity => localStorage.setItem(`sg-progress:${identity}`,
+      JSON.stringify({ percentage: 0.42, page: 12, updatedAt: Date.now() })), bookId);
+    await page.reload();
+    await expect(page.locator('#seriesRoot')).toHaveAttribute('aria-busy', 'false');
+    await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in-progress');
+    const savedLayout = await layout(page);
+    expect(savedLayout.controls[0].y - savedLayout.metadata.bottom).toBeLessThanOrEqual(20);
+    expect(savedLayout.overflow).toBe(false);
+    await info.attach('saved-progress-series', {
+      body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
+    });
     expect(errors).toEqual([]);
   });
 }
@@ -136,6 +157,7 @@ test('long metadata, missing cover and optional audio action fit a narrow series
   const errors = await openSeries(page, false, {
     title: 'An unusually long series title that still needs a readable reading action on a narrow screen',
     author: 'AnAuthorNameWithoutAnyBreaksToCheckNarrowLayouts', cover: '',
+    translations: [{ name: 'A fan translator with a longer credit' }],
     audioAlignedUrl: 'https://example.test/audio',
     volumes: [{ bookId, file: bookId, number: 1, title: 'Volume 1' }]
   });
@@ -146,8 +168,8 @@ test('long metadata, missing cover and optional audio action fit a narrow series
     // The full title is already the page heading; its cover placeholder must
     // retain the book's proportions rather than growing to fit a second copy.
     expect(Math.abs(boxes.cover.height - boxes.cover.width * 1.5)).toBeLessThan(1);
-    expect(Math.abs(boxes.actions.x - boxes.hero.x)).toBeLessThan(1);
-    expect(boxes.actions.y).toBeGreaterThanOrEqual(Math.max(boxes.cover.bottom, boxes.heading.bottom));
+    expect(boxes.controls[0].y - boxes.metadata.bottom).toBeLessThanOrEqual(20);
+    expect(boxes.controls[0].y).toBeGreaterThanOrEqual(boxes.metadata.bottom);
     expect(boxes.controls.every(control => control.x >= boxes.hero.x - 1 && control.right <= boxes.hero.right + 1)).toBe(true);
   }
   await expect(page.getByRole('link', { name: 'Audio EPUBs' })).toBeVisible();

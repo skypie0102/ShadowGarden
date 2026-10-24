@@ -460,12 +460,17 @@
   .series-hero-inner {
     padding-top: 28px;
     padding-bottom: 28px;
-    gap: 16px 20px;
-    align-items: start;
+    display: flow-root;
   }
-  /* Let actions and tags use the space beneath both cover and heading. */
+  /* Text and inline controls follow the cover's edge, then regain full width. */
+  .series-cover,
+  .series-cover-fallback {
+    float: left;
+    margin: 0 20px 8px 0;
+  }
   .series-info {
-    display: contents;
+    display: block;
+    padding-bottom: 0;
   }
   .series-heading {
     min-width: 0;
@@ -487,17 +492,26 @@
     text-wrap: wrap;
   }
   .series-actions {
-    grid-column: 1 / -1;
-    margin-top: 0;
-    gap: 8px;
+    display: block;
+    margin-top: 12px;
+    font-size: 0;
+    line-height: 0;
   }
   .series-actions > a,
   .series-actions > button {
     min-height: 44px;
+    max-width: 100%;
+    margin: 0 8px 8px 0;
+    vertical-align: top;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .series-actions > :last-child {
+    margin-right: 0;
   }
   .series-info > .tag-row {
-    grid-column: 1 / -1;
-    margin-top: 0;
+    clear: both;
+    margin-top: 8px;
   }
   .series-actions .primary-button {
     min-height: 44px;
@@ -533,12 +547,6 @@
   }
   .volume-actions {
     padding-top: 8px;
-  }
-}
-
-@media (max-width: 460px) {
-  .series-hero-inner {
-    grid-template-columns: 92px minmax(0, 1fr);
   }
 }
 

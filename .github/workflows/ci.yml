@@ -136,6 +136,14 @@ jobs:
           retention-days: 1
       - name: Check Series header layout before the full browser suite
         run: npm run test:browser -- series-layout.spec.mjs --project ${{ matrix.project }} --max-failures=1
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: series-layout-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
       - run: npm run test:browser -- --project ${{ matrix.project }} --max-failures=1
       - name: Profile Library module startup
         if: ${{ !cancelled() && matrix.project == 'desktop-chromium' && github.event_name == 'pull_request' }}
