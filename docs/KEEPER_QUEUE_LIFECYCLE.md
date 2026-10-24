@@ -54,8 +54,32 @@ hashing run normally. The actual client handles intercepted catalog responses;
 all admin APIs are disposable, and no upload action is performed.
 
 Local `npm run check` passes 463 Node tests, asset/provenance audit, static build
-and binding/compatibility-aware Functions build. Full PR/main CI and production
-verification are pending. [Source hashes](keeper-queue-lifecycle-source.json)
+and binding/compatibility-aware Functions build.
+
+The tested candidate is `c3e8b725a9f230ac938f046d25dc7eff51eca46f`, tree
+`66578ae0ce7e9f8afbfcb5f5300a21a5135e3d37`. Squash merge `34eade0f2712442144eaaec49b8a088c74c35f07`
+has exactly that tested tree.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40050677211) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40051762262)
+both pass **463 Node tests** and **726 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All six new queue
+lifecycle cases pass in every profile. The separate Chromium Library-startup
+profile passes on the PR and is excluded from the 726 cases.
+
+The automatic workflow publishes **v2.18.11**, source `34eade0`, deployment
+`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.10 rollback. The version check uses one request
+over 148 ms. Canonical source/version, both D1-derived
+catalogs and all three changed queue modules pass verification. Independent
+public HTTP checks match the same version/source and exact module bytes. The
+exact revision-9 catalog document, all nine snapshots and recorded settings
+remain unchanged, with zero database writes. The retained rollback is
+`a9acfe26-d51f-4fc6-821e-6b972234cafe`. See
+[verification evidence](keeper-queue-lifecycle-verification.json).
+
+[Source hashes](keeper-queue-lifecycle-source.json)
 record the reviewed application files. No backend, API, schema, configuration,
 dependency, storage format, reader behavior or upload limit changes. No new
 physical-device, credential/CAPTCHA, provider-write acceptance or performance

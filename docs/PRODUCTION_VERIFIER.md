@@ -124,7 +124,9 @@ It does not check compiled server source bytes, encrypted secret values,
 real CAPTCHA/credential flows, B2 writes/deletes, EPUB opening or physical device
 acceptance. Use the existing CI and separately scoped live acceptance for those
 behaviors. The current production verification record is
-[`epub-inspection-verification.json`](epub-inspection-verification.json).
+[`keeper-queue-lifecycle-verification.json`](keeper-queue-lifecycle-verification.json).
+The preceding [EPUB inspection release](epub-inspection-verification.json)
+retains its separate dated evidence.
 The preceding [Upload presentation release](keeper-upload-presentation-verification.json)
 retains its separate dated evidence.
 The preceding [upload-buffer release](upload-buffer-verification-2.18.8.json)

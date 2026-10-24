@@ -27,6 +27,12 @@ values. Ownership remains as mapped below.
 | Upload presentation | `admin-batch-editor.js`, `admin-upload-presentation.js`, `admin/upload-*.js` | Focused queue/editor/validation/similarity presentation and safety policy consumers |
 | Keeper data workflows | `admin/*-workflow.js` | Library, history, Trash, maintenance, recovery, translation and abuse behavior through the shared revision-aware client |
 
+The [v2.18.11 queue lifecycle batch](KEEPER_QUEUE_LIFECYCLE.md) keeps file
+preparation in the Upload engine. Selections share a serial context; Clear and
+session lock invalidate its continuations. The view and safety guidance read the
+engine's preparation state, and the upload handler enforces the same boundary.
+Inspection remains data-only, and existing client/session/revision policy remains.
+
 The [v2.18.10 local EPUB inspection batch](EPUB_INSPECTION.md) expands the
 data-only ZIP/XML service. Its resolver separates URI components before decoding
 archive filename data once; decoded traversal checks still apply. It performs no

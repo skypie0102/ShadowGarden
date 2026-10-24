@@ -1,5 +1,40 @@
 # ShadowGarden project audit
 
+## Keeper queue lifecycle released — 2026-10-24
+
+The latest production release is **v2.18.11**, deployed on 2026-10-24 from
+`34eade0` through [PR #51](https://github.com/skypie0102/ShadowGarden/pull/51).
+[Keeper queue lifecycle](KEEPER_QUEUE_LIFECYCLE.md) gives file selections a
+queue/session context, serializes current preparation and discards obsolete
+inspection/catalog results after Clear or lock. Upload waits for preparation to
+settle; failed duplicate lookup can retry on the next selection. Ready entries,
+explicit queue actions and existing upload/revision contracts remain. Twelve
+baseline controls fail; all 51 focused queue/inspection/Upload controls pass.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40050677211) and
+[checked main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40051762262)
+both pass **463 Node tests** and **726 browser cases** across five profiles,
+with nine documented platform skips and zero test retries. All six new queue
+lifecycle cases pass in every profile. The separate Chromium Library-startup
+profile passes on the PR and is excluded from the 726 cases.
+
+The automatic workflow publishes **v2.18.11**, source `34eade0`, deployment
+`c1fa8f80-6803-4d80-9d1f-834570a5b1b7`, to [live ShadowGarden](https://shadowgarden-bon.pages.dev).
+The release completes in one publication attempt, retaining the original
+pre-publication baseline and v2.18.10 rollback. The version check uses one request
+over 148 ms. Canonical source/version, both D1-derived
+catalogs and all three changed queue modules pass verification. Independent
+public HTTP checks match the same version/source and exact module bytes. The
+exact revision-9 catalog document, all nine snapshots and recorded settings
+remain unchanged, with zero database writes. The retained rollback is
+`a9acfe26-d51f-4fc6-821e-6b972234cafe`. See
+[verification evidence](keeper-queue-lifecycle-verification.json).
+
+The preceding [v2.18.10 EPUB inspection release](EPUB_INSPECTION.md)
+corrects false missing-file results for encoded archive names and expands the
+data-only inspection service. Its [dated evidence](epub-inspection-verification.json)
+retains 448 Node tests, 696 browser passes and production preservation checks.
+
 ## Local EPUB inspection released — 2026-10-24
 
 The latest production release is **v2.18.10**, deployed on 2026-10-24 from
