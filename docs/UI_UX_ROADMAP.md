@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | Planned; banner clarity starts in Phase 1 |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — compact mobile Series header in v2.19.1 candidate |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
@@ -66,6 +66,11 @@ for intentionally redesigned styles.
 - [ ] Use consistent Start reading / Continue reading / Read next volume / Read again actions.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
 - [ ] Balance the mobile series header, synopsis and volume list around the next reading action.
+  - v2.19.1 candidate: place reading/pin/audio actions and tags across the full
+    mobile header beneath the cover/title pair. Reduce header padding and remove
+    the unused cover-column gap. Desktop retains its current layout.
+    Verify both palettes, breakpoint resizing, long metadata, missing cover,
+    keyboard pinning and optional audio links before publication.
 - [ ] Show reliable saved progress without truncating its useful context.
 - [ ] Keep download actions visually secondary and easy to find.
 

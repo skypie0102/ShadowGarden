@@ -6,10 +6,10 @@ import { createReaderEpub } from './reader-production-fixture.mjs';
 
 test.setTimeout(180000);
 const baseline = JSON.parse(readFileSync(new URL('./fixtures/stylesheets-2.18.12.json', import.meta.url)));
-// Phase 1 deliberately redesigns these four owners. Keep the historical
-// equivalence controls for the other 17 sheets; library-discovery.spec.mjs
-// covers the new interaction/layout contract rather than claiming old pixels.
-const redesigned = new Set(['/assets/css/site.css', '/assets/css/public-components.css', '/assets/css/public-artwork.css', '/assets/css/library-features.css']);
+// UI/UX work deliberately redesigns these five owners. Keep the historical
+// equivalence controls for the other 16 sheets; library-discovery.spec.mjs and
+// series-layout.spec.mjs cover the new interaction/layout contracts.
+const redesigned = new Set(['/assets/css/site.css', '/assets/css/public-components.css', '/assets/css/public-artwork.css', '/assets/css/library-features.css', '/assets/css/series-extra.css']);
 const compare = createCssComparison({ ...baseline, files: baseline.files.filter(file => !redesigned.has(file.path)) });
 async function stableVersion(page) {
   await prepareCssComparison(page);

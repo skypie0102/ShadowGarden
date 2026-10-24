@@ -458,16 +458,46 @@
 
 @media (max-width: 720px) {
   .series-hero-inner {
-    padding-top: 40px;
-    padding-bottom: 38px;
-    gap: 20px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    gap: 16px 20px;
+    align-items: start;
+  }
+  /* Let actions and tags use the space beneath both cover and heading. */
+  .series-info {
+    display: contents;
+  }
+  .series-heading {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .series-cover-fallback {
+    padding: 10px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .series-cover-fallback > span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
   }
   .series-info h1 {
     text-wrap: wrap;
   }
   .series-actions {
-    margin-top: 20px;
+    grid-column: 1 / -1;
+    margin-top: 0;
     gap: 8px;
+  }
+  .series-actions > a,
+  .series-actions > button {
+    min-height: 44px;
+  }
+  .series-info > .tag-row {
+    grid-column: 1 / -1;
+    margin-top: 0;
   }
   .series-actions .primary-button {
     min-height: 44px;
@@ -503,6 +533,12 @@
   }
   .volume-actions {
     padding-top: 8px;
+  }
+}
+
+@media (max-width: 460px) {
+  .series-hero-inner {
+    grid-template-columns: 92px minmax(0, 1fr);
   }
 }
 
