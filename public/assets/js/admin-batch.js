@@ -21,6 +21,7 @@
     activeId: null,
     library: null,
     running: false,
+    preparing: false,
     editorSync: false,
     objectUrl: ""
   };
@@ -46,8 +47,21 @@
 
   const batchUpload = $("#uploadButton");
   let uploadGeneration = 0;
+  const newSelection = () => ({ pending: 0, tail: Promise.resolve() });
+  let selection = newSelection();
+  const currentSelection = owner => owner === selection && state.unlocked;
+  function cancelSelection() {
+    selection = newSelection();
+    q.preparing = false;
+    clearTimeout(q._editTimer);
+  }
   window.ShadowGardenKeeper.events.addEventListener("session:locked", () => {
     uploadGeneration++;
+    cancelSelection();
+    q.library = null;
+    // Ready entries remain reviewable; unfinished local work belongs to the old session.
+    q.items = q.items.filter(item => item.status !== "checking");
+    renderQueue();
   });
 
   function safeDecode(v) {
@@ -217,6 +231,12 @@
   }
 
   function refreshUploadButton() {
+    if (q.preparing) {
+      batchUpload.disabled = true;
+      batchUpload.textContent = "Checking selected EPUBs…";
+      setUploadState("CHECKING");
+      return;
+    }
     if (q.running) {
       batchUpload.disabled = true;
       return;
@@ -377,30 +397,23 @@
     renderQueue();
   }
 
-  async function ensureLibrary() {
+  async function ensureLibrary(owner) {
     if (q.library) return;
     try {
       const data = await api("/admin-api/library", { method: "GET" });
+      // A clear/lock or newer Library refresh owns the state now.
+      if (!currentSelection(owner) || q.library) return;
       q.library = { main: arr(data.main), adult: arr(data.adult) };
       state.management = data;
     } catch (error) {
+      if (!currentSelection(owner) || q.library) return;
       console.warn("Duplicate lookup unavailable", error);
-      q.library = { main: [], adult: [] };
       setStatus("Duplicate lookup unavailable", error.message, "△");
     }
   }
 
-  async function addFiles(files) {
-    const chosen = Array.from(files || []).filter(
-      file => /\.epub$/i.test(file.name) || file.type === "application/epub+zip"
-    );
-    if (!chosen.length) {
-      setFileState("NO EPUB", "error");
-      $("#filePickerMeta").textContent =
-        "No EPUB file was received from the file picker. Please choose an .epub file.";
-      return;
-    }
-
+  async function addFiles(chosen, owner) {
+    if (!currentSelection(owner)) return;
     /* Give immediate feedback before any B2/catalog network work. Duplicate lookup runs in
      * parallel with local inspection, then every ready item is evaluated once the lookup settles. */
     panel.classList.remove("hidden");
@@ -417,9 +430,10 @@
     $("#filePickerTitle").textContent =
       `${chosen.length} EPUB${chosen.length === 1 ? "" : "s"} selected`;
     $("#filePickerMeta").textContent = "Reading EPUB metadata on this device…";
-    const libraryPromise = ensureLibrary();
+    const libraryPromise = ensureLibrary(owner);
 
     for (const file of chosen) {
+      if (!currentSelection(owner)) return;
       const sameLocal = q.items.find(
         x =>
           x.file.name === file.name &&
@@ -443,6 +457,8 @@
       renderQueue();
       try {
         const meta = await inspect(file);
+        if (!currentSelection(owner)) return;
+        if (!q.items.includes(item)) continue;
         Object.assign(item, meta, {
           file,
           status: "queued",
@@ -454,6 +470,8 @@
         });
         if (meta.validation?.status === "fail") item.action = "skip";
       } catch (error) {
+        if (!currentSelection(owner)) return;
+        if (!q.items.includes(item)) continue;
         console.error(error);
         item.validation = failed("EPUB inspection failed", error.message);
         item.status = "failed";
@@ -466,10 +484,19 @@
     }
 
     await libraryPromise;
+    if (!currentSelection(owner)) return;
     for (const item of q.items)
       if (item.metaReady && item.status !== "done") evaluateDuplicate(item);
-    renderQueue();
+  }
 
+  function finishSelection() {
+    if (!q.items.length) {
+      setFileState("WAITING");
+      setUploadState("WAITING");
+      $("#filePickerTitle").textContent = "Choose EPUBs from this device";
+      $("#filePickerMeta").textContent = "Select one or many EPUBs · 50 MB maximum per file";
+      return;
+    }
     const failedCount = q.items.filter(i => i.validation?.status === "fail").length;
     setFileState(failedCount ? "REVIEW" : "READY", failedCount ? "warning" : "ready");
     $("#filePickerTitle").textContent =
@@ -482,6 +509,46 @@
       "✓"
     );
     refreshUploadButton();
+  }
+
+  function queueFiles(files) {
+    if (q.running || !state.unlocked) return;
+    const chosen = Array.from(files || []).filter(
+      file => /\.epub$/i.test(file.name) || file.type === "application/epub+zip"
+    );
+    if (!chosen.length) {
+      setFileState("NO EPUB", "error");
+      $("#filePickerMeta").textContent =
+        "No EPUB file was received from the file picker. Please choose an .epub file.";
+      return;
+    }
+    const owner = selection;
+    owner.pending++;
+    q.preparing = true;
+    refreshUploadButton();
+    owner.tail = owner.tail
+      .then(async () => {
+        let completed = false;
+        try {
+          await addFiles(chosen, owner);
+          completed = true;
+        } finally {
+          if (currentSelection(owner)) {
+            owner.pending--;
+            q.preparing = owner.pending > 0;
+            if (!q.preparing && completed) finishSelection();
+            renderQueue();
+          }
+        }
+      })
+      .catch(error => {
+        if (!currentSelection(owner)) return;
+        console.error("Batch selection failed", error);
+        setFileState("FAILED", "error");
+        setUploadState("BLOCKED", "error");
+        setStatus("Could not process selected EPUBs", error?.message || String(error), "!");
+        $("#filePickerMeta").textContent = error?.message || String(error);
+      });
   }
 
   function validateItem(item) {
@@ -594,7 +661,7 @@
   }
 
   async function uploadBatch() {
-    if (q.running || !state.unlocked) return;
+    if (q.running || q.preparing || !state.unlocked) return;
     saveEditor();
     const items = q.items.filter(
       i =>
@@ -684,11 +751,13 @@
 
   function resetQueue() {
     if (q.running) return;
+    cancelSelection();
     if (q.objectUrl) URL.revokeObjectURL(q.objectUrl);
     q.items = [];
     q.activeId = null;
     q.library = null;
     q.objectUrl = "";
+    $("#batchList").innerHTML = "";
     window.ShadowGardenKeeper.events.dispatchEvent(new Event("upload:queue-rendered"));
     panel.classList.add("hidden");
     $("#metadataCard").classList.add("hidden");
@@ -703,13 +772,7 @@
     const files = Array.from(event.currentTarget.files || []);
     if (!files.length) return;
     event.currentTarget.value = "";
-    void addFiles(files).catch(error => {
-      console.error("Batch selection failed", error);
-      setFileState("FAILED", "error");
-      setUploadState("BLOCKED", "error");
-      setStatus("Could not process selected EPUBs", error?.message || String(error), "!");
-      $("#filePickerMeta").textContent = error?.message || String(error);
-    });
+    queueFiles(files);
   });
   $("#batchAddMore").addEventListener("click", () => fileInput.click());
   $("#batchClear").addEventListener("click", () => {
