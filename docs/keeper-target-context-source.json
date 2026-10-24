@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "base": "b64fcf5c0c63badde5ef7f5435ee67e0fadadc90",
+  "nodeControls": {
+    "total": 23,
+    "new": 8,
+    "baselinePassed": 17,
+    "baselineFailed": 6,
+    "correctedPassed": 23,
+    "baselineLogSha256": "67a6eba02c0587ea5e1b6ae4ba405420ff955b2155ea40874fbf49167e3830e8"
+  },
+  "localCheck": {
+    "nodePassed": 471,
+    "assetAudit": "passed",
+    "staticBuild": "passed",
+    "bindingAwareFunctionsBuild": "passed",
+    "logSha256": "2f6332e6c5547a26588c57646713e20703906e871a62d7c61f5ffd4978e023a0"
+  },
+  "files": [
+    {
+      "path": "public/assets/js/admin-batch.js",
+      "beforeSha256": "c5bb1aef8e75dcc8a552299ed3c0e81ffabe85200eddaf5d8326746183e04633",
+      "finalSha256": "9a699080afab79541782a7c753f307ee70f11f4c94855f6ff69586f66e03f304"
+    },
+    {
+      "path": "public/assets/js/admin/shell.js",
+      "beforeSha256": "a9b5594c45f675d056eddaae4a1fbfa646776ad04d2716f47341190e14244907",
+      "finalSha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+    }
+  ]
+}

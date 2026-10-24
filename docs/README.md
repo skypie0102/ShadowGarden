@@ -155,6 +155,8 @@ Those physical/provider observations keep their original release scope.
 | [Public readability](PUBLIC_READABILITY.md) | Scoped controller formatting, source/AST evidence and release state |
 | [Maintenance budgets](MAINTENANCE_BUDGETS.md) | Bounded history/readiness contracts, measurements and rollout |
 | [Keeper CSS ownership](KEEPER_CSS.md) | Readability, retained cascade, paired visual comparisons and source evidence |
+| [Remaining stylesheet ownership](STYLESHEET_OWNERSHIP.md) | Keeper/shared/public formatting, source preservation and visual comparison scope |
+| [Keeper target context](KEEPER_TARGET_CONTEXT.md) | Target-change cancellation, retained dialog ownership and regression controls |
 | [Keeper queue lifecycle](KEEPER_QUEUE_LIFECYCLE.md) | File-selection ownership, preparation gating and source/CI evidence |
 | [Local EPUB inspection](EPUB_INSPECTION.md) | Encoded archive paths, inspection boundaries and source/CI evidence |
 | [Keeper Upload presentation](KEEPER_UPLOAD_PRESENTATION.md) | Similar-volume warning ownership, report refreshes and source/CI evidence |

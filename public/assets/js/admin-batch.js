@@ -750,9 +750,13 @@
   }
 
   function resetQueue() {
-    if (q.running) return;
+    if (q.running) return false;
     cancelSelection();
-    if (q.objectUrl) URL.revokeObjectURL(q.objectUrl);
+    if (q.objectUrl) {
+      try {
+        URL.revokeObjectURL(q.objectUrl);
+      } catch {}
+    }
     q.items = [];
     q.activeId = null;
     q.library = null;
@@ -763,10 +767,18 @@
     $("#metadataCard").classList.add("hidden");
     $("#preflightCard").classList.add("hidden");
     $("#uploadCard").classList.add("hidden");
+    $("#openSeries").classList.add("hidden");
     $("#filePickerTitle").textContent = "Choose EPUBs from this device";
     $("#filePickerMeta").textContent = "Select one or many EPUBs · 50 MB maximum per file";
     setFileState("WAITING");
+    setUploadState("WAITING");
+    setStatus("Ready to upload", "Choose one or more EPUBs to begin.", "✦");
+    refreshUploadButton();
+    return true;
   }
+
+  // The engine owns selection cancellation as well as the visible queue reset.
+  window.ShadowGardenKeeper.uploadQueue = { reset: resetQueue };
 
   fileInput.addEventListener("change", event => {
     const files = Array.from(event.currentTarget.files || []);
