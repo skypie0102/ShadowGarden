@@ -74,6 +74,21 @@ export async function library(context) {
       if (scope!==next) {doc[scope]=doc[scope].filter(x=>x.id!==s.id);doc[next].push(s);}
     }
   } else if (p.action==='update-volume') setVolumeMetadata(volume(s,p.volumeIndex),p);
+  else if (p.action==='replace-volume-file') {
+    requireRevision(context,row);
+    const v=s.volumes.find(v=>v.bookId===p.bookId);
+    if (!v) fail(409,'replacement_missing','Replacement target is no longer present in this series.');
+    const key=objectKey(p.epubKey,'book');
+    if (doc.books[v.bookId]===key) fail(409,'replacement_unchanged','Upload a new EPUB object for replacement.');
+    if (Object.entries(doc.books).some(([id,mapped])=>mapped===key&&id!==v.bookId))
+      fail(409,'object_already_mapped','This EPUB object is already associated with another book.');
+    if (!/^[a-f0-9]{64}$/i.test(p.sha256||'')) fail(400,'invalid_checksum','Provide the replacement EPUB checksum.');
+    const stored=await requireObject(context.env,key,'book');
+    doc.books[v.bookId]=key;
+    v.size=Number(stored.headers.get('content-length'))||Math.max(0,Number(p.size)||0);
+    v.sha256=p.sha256.toLowerCase();
+    v.originalFilename=text(p.originalFilename,255);
+  }
   else if (p.action==='delete-series' || p.action==='delete-volume') {
     const item={id:crypto.randomUUID(),scope,removedAt:new Date().toISOString(),seriesId:s.id,series:structuredClone(s)};
     if (p.action==='delete-series') {Object.assign(item,{type:'series',title:s.title,subtitle:`${s.volumes.length} volumes`});doc[scope]=doc[scope].filter(x=>x.id!==s.id);}
