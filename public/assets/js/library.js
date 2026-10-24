@@ -187,6 +187,13 @@
         `<button type="button" class="active-filter-clear-all" data-clear-all-filters title="Clear all result filters"><span class="active-filter-pill-label">Clear all</span><span aria-hidden="true">↺</span></button>`
       );
     container.innerHTML = pills.join("");
+    const count = activeFilterCount();
+    const badge = $("#filterToggle .filter-toggle-count");
+    if (badge) {
+      badge.textContent = String(count);
+      badge.setAttribute("aria-label", `${count} active ${count === 1 ? "filter" : "filters"}`);
+      badge.hidden = count === 0;
+    }
     document
       .querySelectorAll("#genreChips button")
       .forEach(button => button.classList.toggle("active", state.tags.has(button.dataset.tag)));
@@ -330,7 +337,7 @@
     renderers.renderRecentlyAdded(
       $("#recentSection"),
       $("#recentVolumes"),
-      model.recentlyAdded(state.items),
+      state.items.length > 1 ? model.recentlyAdded(state.items) : [],
       dependencies
     );
   }

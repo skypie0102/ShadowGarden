@@ -1,5 +1,8 @@
 # ShadowGarden documentation
 
+[Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
+codebase audit, beginning with Library discovery and reading-action clarity.
+
 The latest production release is **v2.18.13**, deployed on 2026-10-24 from
 `8d500eb` through [PR #53](https://github.com/skypie0102/ShadowGarden/pull/53).
 [Upload target ownership](KEEPER_TARGET_CONTEXT.md) uses the engine's reset/

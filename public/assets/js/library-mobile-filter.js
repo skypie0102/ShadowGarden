@@ -54,12 +54,8 @@
   function syncToggle(collapsed) {
     toggle.hidden = false;
     toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-    toggle.setAttribute(
-      "aria-label",
-      collapsed ? "Expand library filters" : "Collapse library filters"
-    );
     toggle.title = collapsed ? "Expand filters" : "Collapse filters";
-    toggle.textContent = collapsed ? "▼" : "▲";
+    toggle.querySelector(".filter-toggle-icon").textContent = collapsed ? "▼" : "▲";
     placeStructure();
     placeActiveTags(collapsed);
   }

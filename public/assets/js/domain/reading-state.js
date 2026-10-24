@@ -234,7 +234,8 @@ function randomSuggestionFromSnapshots(snapshots, randomValue) {
   if (!candidates.length) return null;
   const unfinished = candidates.filter(candidate => candidate.state !== STATES.FINISHED);
   const pool = unfinished.length ? unfinished : candidates;
-  return pool[Math.floor(randomUnit(randomValue) * pool.length)] || pool[0] || null;
+  const selected = pool[Math.floor(randomUnit(randomValue) * pool.length)] || pool[0];
+  return { ...selected, suggestionCount: pool.length };
 }
 
 export function randomSeriesSuggestionEntry(seriesList, randomValue = Math.random) {
