@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-24T02:57:15.038Z",
+  "base": "dca3c0bb2c80cf2e1a4252bcbe2214335bc9d3b0",
+  "formatter": {
+    "name": "prettier",
+    "version": "3.6.2",
+    "options": {
+      "parser": "css",
+      "printWidth": 100,
+      "tabWidth": 2,
+      "useTabs": false,
+      "singleQuote": false
+    }
+  },
+  "comparison": "Formatting stage: ordered CSS parser AST equality excludes positions, whitespace metadata and redundant raw aggregate copies; number tokens use canonical numeric text. Selector/value tokens, declarations, priorities, rules and media-query child order remain. Comments are checked separately. Final deletion is checked separately against the formatted AST.",
+  "stylesheetOrder": [
+    "/assets/css/site.css",
+    "/assets/css/nav.css",
+    "/assets/css/site-theme.css",
+    "/assets/css/motion.css",
+    "/assets/css/admin.css",
+    "/assets/css/admin-security.css",
+    "/assets/css/admin-preflight.css",
+    "/assets/css/admin-batch.css",
+    "/assets/css/admin-maintenance.css",
+    "/assets/css/admin-series-editor.css",
+    "/assets/css/admin-layout.css",
+    "/assets/css/admin-components.css",
+    "/assets/css/admin-version.css",
+    "/assets/css/admin-presentation.css",
+    "/assets/css/admin-motion.css",
+    "/assets/css/ui-symbols.css"
+  ],
+  "witness": {
+    "path": "public/assets/css/admin-series-editor.css",
+    "sha256": "f6d3377c87e14a05631513a7995260aa6aaf6f2e4db86257c1813da4cd9ae9f2"
+  },
+  "firstPartyConsumers": [
+    "public/admin.html"
+  ],
+  "files": [
+    {
+      "path": "public/assets/css/admin.css",
+      "beforeSha256": "ff9c3427c3f66805215f9336fc5d7ee2703abe694fc86c35a29f18799dd053c5",
+      "formattedSha256": "7a1f9c18dea8c63a1bfdbca01e72337bf5b148f0ded44b714d8f25c61f2f9622",
+      "finalSha256": "f07a765853fd6fd8cc9d2f17fa13e5a33dea923326fc48af72246c5cc462d913",
+      "normalizedAstSha256": "3467d1e494af5614fcc3ebaea85dcd57b4f36bde8fd56bcfed7a20818ff89ee3",
+      "commentsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 12459,
+        "lines": 1,
+        "longestLine": 12459,
+        "linesOver180": 1
+      },
+      "formatted": {
+        "bytes": 15535,
+        "lines": 791,
+        "longestLine": 86,
+        "linesOver180": 0
+      },
+      "final": {
+        "bytes": 15473,
+        "lines": 787,
+        "longestLine": 86,
+        "linesOver180": 0
+      },
+      "removed": [
+        {
+          "selector": ".adult-toggle > input",
+          "declarations": [
+            [
+              "position",
+              "absolute"
+            ],
+            [
+              "opacity",
+              "0"
+            ]
+          ],
+          "witness": {
+            "path": "public/assets/css/admin-series-editor.css",
+            "selector": ".adult-toggle>input",
+            "sameValues": true,
+            "later": true,
+            "important": true
+          },
+          "reason": "Same selector and values are supplied unconditionally by the later required Series Editor stylesheet with !important; both declarations are redundant."
+        }
+      ]
+    },
+    {
+      "path": "public/assets/css/admin-layout.css",
+      "beforeSha256": "3137a6e1c75b888a73bede3eb015977952c96f436ad3581c1026c5b1a2f9ce0f",
+      "formattedSha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+      "finalSha256": "62a7bef021441ce240ce817173682f9fbdb1309dc2295358c2839aea8b3da2d9",
+      "normalizedAstSha256": "8ad9d40098554cdf0522a2d3a15f317004640c1bbf6af54a3a5fcbd60109fb08",
+      "commentsSha256": "b6c6fbabec0518846140443cecf519972d564b60526c80eea1e14feff0d137d2",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 4162,
+        "lines": 57,
+        "longestLine": 227,
+        "linesOver180": 2
+      },
+      "formatted": {
+        "bytes": 5003,
+        "lines": 246,
+        "longestLine": 98,
+        "linesOver180": 0
+      },
+      "final": {
+        "bytes": 5003,
+        "lines": 246,
+        "longestLine": 98,
+        "linesOver180": 0
+      },
+      "removed": []
+    },
+    {
+      "path": "public/assets/css/admin-components.css",
+      "beforeSha256": "e270c928581e12d761b104762268257528af13458907e4ef7a487d194c5f90b6",
+      "formattedSha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+      "finalSha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e",
+      "normalizedAstSha256": "f007217c13639f49bdd913840700feb8e568e4f2314d9fa6c1981ce51f3576e0",
+      "commentsSha256": "95dbe23310265d8860167928184a96dd5923a3e914f855e2537558e9bfb3a108",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 9625,
+        "lines": 126,
+        "longestLine": 1575,
+        "linesOver180": 10
+      },
+      "formatted": {
+        "bytes": 11320,
+        "lines": 477,
+        "longestLine": 104,
+        "linesOver180": 0
+      },
+      "final": {
+        "bytes": 11320,
+        "lines": 477,
+        "longestLine": 104,
+        "linesOver180": 0
+      },
+      "removed": []
+    },
+    {
+      "path": "public/assets/css/admin-presentation.css",
+      "beforeSha256": "3aef8669bf00b47dee6647da32b8f9069f33663bfbaee7486db9ca2451d6949d",
+      "formattedSha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+      "finalSha256": "d6f4b3cabd98b4148ff221b802b4ce0aa6b449675907631f9cdb7b36bce7aa6e",
+      "normalizedAstSha256": "6288dc7968c565841b78e4ea51452ebe3d926f3ffc838abf08f2376efa09be4a",
+      "commentsSha256": "49ee4a0b5012e7f03277b5216238d13403b5ac75bb85446ce21ac4dd312461e9",
+      "formattingAstEqual": true,
+      "formattingCommentsEqual": true,
+      "before": {
+        "bytes": 4952,
+        "lines": 32,
+        "longestLine": 935,
+        "linesOver180": 8
+      },
+      "formatted": {
+        "bytes": 5856,
+        "lines": 261,
+        "longestLine": 79,
+        "linesOver180": 0
+      },
+      "final": {
+        "bytes": 5856,
+        "lines": 261,
+        "longestLine": 79,
+        "linesOver180": 0
+      },
+      "removed": []
+    }
+  ]
+}
