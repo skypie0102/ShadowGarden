@@ -107,7 +107,7 @@ export function seriesMarkup(series, dependencies) {
     <section class="series-hero">
       ${backdrop ? `<div class="series-backdrop" aria-hidden="true" style="background-image:url('${esc(backdrop)}')"></div>` : ""}
       <div class="series-hero-inner">
-        ${cover ? `<img class="series-cover" src="${esc(cover)}" alt="${esc(series?.title)} cover" loading="eager" decoding="async" fetchpriority="high">` : `<div class="series-cover-fallback">${esc(series?.title)}</div>`}
+        ${cover ? `<img class="series-cover" src="${esc(cover)}" alt="${esc(series?.title)} cover" loading="eager" decoding="async" fetchpriority="high">` : `<div class="series-cover-fallback"><span>${esc(series?.title)}</span></div>`}
         <div class="series-info">
           <div class="series-heading">
             <p class="kicker">${series?.nsfw ? "ADULT · " : ""}${esc((series?.status || "SERIES").toUpperCase())}</p>

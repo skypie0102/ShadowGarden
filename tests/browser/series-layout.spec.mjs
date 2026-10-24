@@ -143,6 +143,9 @@ test('long metadata, missing cover and optional audio action fit a narrow series
     await page.setViewportSize({ width, height: 850 });
     const boxes = await layout(page);
     expect(boxes.overflow).toBe(false);
+    // The full title is already the page heading; its cover placeholder must
+    // retain the book's proportions rather than growing to fit a second copy.
+    expect(Math.abs(boxes.cover.height - boxes.cover.width * 1.5)).toBeLessThan(1);
     expect(Math.abs(boxes.actions.x - boxes.hero.x)).toBeLessThan(1);
     expect(boxes.actions.y).toBeGreaterThanOrEqual(Math.max(boxes.cover.bottom, boxes.heading.bottom));
     expect(boxes.controls.every(control => control.x >= boxes.hero.x - 1 && control.right <= boxes.hero.right + 1)).toBe(true);
