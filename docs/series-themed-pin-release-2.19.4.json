@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.19.4",
+  "recordedAt": "2026-10-24T17:31:44.724Z",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 58,
+  "candidate": "e0bb97f36c58492de22e21eb8d3372565d76091f",
+  "mergeSource": "74397bdcc9f818623b31fb8f1049a47be129c510",
+  "testedTree": "5801a7cc363f75e6355bdcfca474f3cb48412d7d",
+  "mergeTreeMatchesTested": true,
+  "scope": "Theme-colored Series pin icon",
+  "problem": "The platform emoji in v2.19.3 rendered a red pin instead of matching the website palette.",
+  "changes": [
+    "Use a monochrome SVG pin whose stroke inherits currentColor.",
+    "Use the existing muted color normally, and the Main lavender or Adult rose accent for pinned, hover and focus states.",
+    "Use the same theme accent for the pinned fill, border and background.",
+    "Retain the 44px target, accessible Pin/Unpin labels, pressed state, tooltip and saved preference."
+  ],
+  "localCheck": {
+    "command": "npm run check",
+    "conclusion": "success",
+    "nodeTests": 471
+  },
+  "mainCi": {
+    "run": 40115389633,
+    "conclusion": "success",
+    "nodeTests": 471,
+    "profiles": [
+      {
+        "jobId": 120935607977,
+        "profile": "desktop-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120935607978,
+        "profile": "mobile-chromium",
+        "passed": 174,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120935608001,
+        "profile": "desktop-firefox",
+        "passed": 171,
+        "skipped": 3,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120935607931,
+        "profile": "desktop-webkit",
+        "passed": 172,
+        "skipped": 2,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      },
+      {
+        "jobId": 120935608000,
+        "profile": "mobile-webkit",
+        "passed": 170,
+        "skipped": 4,
+        "flaky": 0,
+        "retries": 0,
+        "focused": 3,
+        "conclusion": "success"
+      }
+    ],
+    "productionJob": 120938764192
+  },
+  "focusedControls": {
+    "total": 15,
+    "conclusion": "success",
+    "checks": [
+      "Rendered SVG stroke inherits the button color",
+      "Pinned Main stroke is rgb(195, 180, 238)",
+      "Pinned Adult stroke is rgb(214, 160, 173)",
+      "Palette remains correct after reload",
+      "Keyboard pinning, saved preference and unpinning",
+      "44px target and existing responsive header controls"
+    ]
+  },
+  "visualEvidence": {
+    "focusedReports": {
+      "themed-reviewed-desktop-chromium-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "themed-reviewed-desktop-firefox-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "themed-reviewed-mobile-webkit-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "themed-reviewed-desktop-webkit-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "themed-reviewed-mobile-chromium-summary": {
+        "total": 3,
+        "expected": 3,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    },
+    "reviewed": [
+      {
+        "file": "themed-reviewed-mobile-chromium-main-series-393.png",
+        "sha256": "43f53d85a6d716f24617e07709352bb2f4fcde798a3d0775d957755f3f2bc1be"
+      },
+      {
+        "file": "themed-reviewed-mobile-chromium-main-saved-progress-series.png",
+        "sha256": "347fb29dcaa9f08c67655ad741f6a6ef59fc6429a06b610ad629b576ffa36a54"
+      },
+      {
+        "file": "themed-reviewed-mobile-webkit-adult-saved-progress-series.png",
+        "sha256": "a6a76b456aee6cb90380b87f02cc79e675e6fa96826262645681dd75da98a1c7"
+      },
+      {
+        "file": "themed-reviewed-desktop-chromium-main-series-1280.png",
+        "sha256": "74c6e9c3d1f1cf85a456a03ce5696aa396321182fe07dc4ab65d948503940697"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 12568790171,
+        "name": "series-layout-desktop-webkit",
+        "digest": "sha256:d3d3e2b912f50783059aae32c0d9e8ab9259a43fb8d36488502653ec38280c4e"
+      },
+      {
+        "id": 12568531173,
+        "name": "series-layout-desktop-chromium",
+        "digest": "sha256:f689f9b54ef2344485f7034931b1931b5a4c166da086286f2d58387e682d01eb"
+      },
+      {
+        "id": 12568416570,
+        "name": "series-layout-desktop-firefox",
+        "digest": "sha256:b99b30c340869967f66608aa9af4be85a110dbe7a9814b5d513b5399e7174c81"
+      },
+      {
+        "id": 12568157577,
+        "name": "series-layout-mobile-webkit",
+        "digest": "sha256:416e2b8a63f6dea75872720d63089c6f613c3bae5fc46c3c31be04c5138fa91d"
+      },
+      {
+        "id": 12568023750,
+        "name": "series-layout-mobile-chromium",
+        "digest": "sha256:03b7d10efec9b03ee95526e86f193f18abf827390569a8fbef23e3c5247d751e"
+      }
+    ]
+  },
+  "production": {
+    "artifact": {
+      "id": 12569415163,
+      "name": "production-verification",
+      "digest": "sha256:83851fe280b99832994787081fd8b82fdbb2cb8eddbe630b2cde7371d46b3f44"
+    },
+    "report": {
+      "checkedAt": "2026-10-24T17:31:44.724Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "04fff058-0e27-4866-9b60-a57e192e393b",
+      "source": "74397bdcc9f818623b31fb8f1049a47be129c510",
+      "version": "2.19.4",
+      "baselineCheckedAt": "2026-10-24T17:31:44.028Z",
+      "revision": 12,
+      "documentSha256": "977f95fd9cbda62f04048df5d2ba4157f4172996d9f73699464168f13f07bb13",
+      "snapshots": 12,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 73
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "74397bdcc9f818623b31fb8f1049a47be129c510",
+          "version": "2.19.4"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "6299444c543f46e409d6b11558c4d230a5957632097bdf05b764941094b82229",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "801ad76badfe652200c9c150b65d022e03287702624e1789a0efec7aa510fdae",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/series-extra.css",
+          "sha256": "45723b1d0eb74457f5a2d3a08dedc10d5a434d1ded367dc7e8ff581b6040ef59",
+          "bytes": 13358
+        },
+        {
+          "path": "/assets/js/series-renderers.js",
+          "sha256": "9ebd57aecaa2eff124ff84546e3a02c9adb0414a3c0f816e0718ea4847677a4e",
+          "bytes": 10063
+        }
+      ],
+      "rollbackDeploymentId": "ceb7a4bf-df37-4a13-aea3-dc76cd96c3d8",
+      "rollbackSource": "70e11fd313c018057b9dc41f9a98f0c3ab66be46",
+      "beforeCheckedAt": "2026-10-24T17:31:36.093Z"
+    },
+    "preservationScope": "The existing guarded release compares its immediate pre-deployment and post-deployment catalog, snapshot and configuration baselines. That baseline is revision 12 with 12 snapshots; this release performs no database writes."
+  },
+  "limits": [
+    "Mobile validation uses pinned Playwright profiles and viewport resizing; no new physical Android/Soul pass is claimed."
+  ]
+}

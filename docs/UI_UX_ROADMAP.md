@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; compact pin control in v2.19.3 |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned |
@@ -68,7 +68,7 @@ for intentionally redesigned styles.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
 - [x] Let mobile metadata and reading actions flow around the cover; keep tags full width.
 - [x] Tighten header padding, use 44px action targets and bound missing-cover placeholders.
-- [x] Replace the wide Series pin label with a compact 📌 control, accessible state labels and a visible pinned state.
+- [x] Replace the wide Series pin label with a compact, theme-colored pin icon, accessible state labels and a visible pinned state.
 - [ ] Refine the synopsis and volume list around the next reading action.
 - [ ] Show reliable saved progress without truncating its useful context.
 - [ ] Keep download actions visually secondary and easy to find.
@@ -114,6 +114,17 @@ all 15 focused Series controls, with nine existing platform skips and zero
 retries. Three captures were reviewed; six production checks pass, preserving
 the catalog, snapshots and configuration with zero DB writes.
 [Release evidence](series-pin-icon-release-2.19.3.json).
+
+The pin's platform emoji is replaced with a theme-colored SVG in **v2.19.4**,
+through [PR #58](https://github.com/skypie0102/ShadowGarden/pull/58), source
+`74397bd`. Its stroke follows the existing muted color and Main lavender /
+Adult rose accent; pinned fill, border and background follow the same palette.
+Rendered-color assertions cover both themes and reload persistence. The main
+release passes 471 Node tests, 861 browser cases and all 15 focused Series
+controls, with nine existing platform skips and zero retries. Four captures
+were reviewed. Five production checks pass, preserving the immediate
+revision-12 catalog, 12 snapshots and configuration with zero DB writes.
+[Release evidence](series-themed-pin-release-2.19.4.json).
 
 Acceptance: new reader, partially read book, finished volume with a successor,
 completed series, missing/unreadable volume and long titles. Read again retains

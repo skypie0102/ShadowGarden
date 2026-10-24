@@ -3,7 +3,24 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.19.3**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.19.4**, deployed on 2026-10-25 (Asia/Manila)
+from `74397bd` through [PR #58](https://github.com/skypie0102/ShadowGarden/pull/58).
+It replaces v2.19.3's red platform emoji with a monochrome SVG pin. The icon uses
+the muted site color normally, and the Main lavender or Adult rose accent when
+pinned, hovered or focused. Its pinned fill, border and background follow the
+same theme. The 44px target, accessible labels and saved preference are retained.
+
+The [main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40115389633)
+passes **471 Node tests** and **861 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All 15 focused Series controls pass,
+including rendered icon colors in both palettes and after reload. Four mobile
+and desktop captures were reviewed. All **five production checks** pass:
+version/source, both catalogs and both changed assets. Revision 12, all 12
+snapshots and configuration are preserved against the immediate pre-deployment
+baseline, with zero database writes. See
+[release evidence](series-themed-pin-release-2.19.4.json).
+
+The preceding production release is **v2.19.3**, deployed on 2026-10-25 (Asia/Manila)
 from `70e11fd` through [PR #57](https://github.com/skypie0102/ShadowGarden/pull/57).
 The Series pin action is a compact **📌** button with a 44px target, a highlighted
 pinned state, accessible Pin/Unpin labels, a tooltip and pressed state. Saved
