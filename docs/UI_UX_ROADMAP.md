@@ -9,7 +9,7 @@ palette; Adult keeps its rose palette.
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
-| 1. Library discovery | Find books sooner and understand filters and reading suggestions | Implemented locally; browser/release checks pending |
+| 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
 | 2. Reading journey | Recognize saved progress and the next volume across Library and Series | Planned; banner clarity starts in Phase 1 |
 | 3. Reader controls | Find and understand reading preferences and navigation | Planned |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
@@ -17,7 +17,7 @@ palette; Adult keeps its rose palette.
 
 ## Phase 1 — Library discovery
 
-- [x] Reduce introductory spacing and heading size; visual acceptance is pending.
+- [x] Reduce introductory spacing and heading size; review desktop/mobile layouts.
 - [x] Give the existing mobile filter toggle a visible **Filters** label and active count.
 - [x] Retain search, selected-filter chips and individual removal while filters are collapsed.
 - [x] Improve filter-label readability and the touch size of the changed controls.
@@ -25,18 +25,35 @@ palette; Adult keeps its rose palette.
 - [x] Distinguish **Continue reading**, **Next in series** and **Reading suggestion** in the banner.
 - [x] Keep banner titles/progress readable and offer another suggestion only when an alternative exists.
 
-Checked items mean implementation is present; browser acceptance and publication
-remain separate gates. The initial implementation is on local branch
-`feat/library-ux-phase-1` for v2.19.0. `npm run check` passes the asset audit,
-all 471 Node tests, the static build and binding-aware Functions compilation.
-Direct selection/render checks also pass for alternative suggestion pools, a
-single choice, saved progress, the next volume and the finished action.
-Five new browser cases cover both Library scopes, filtering across responsive
-widths, sparse/empty catalogs and the reading-state/Read again journey. Their
-execution and screenshot review are pending: no local browser executables are
-installed, and the browser CDN download returned an invalid archive. The
-retained optional CI browser-runtime exports have expired. Browser acceptance, screenshot review and production publication will be
-recorded after the feature branch passes CI.
+Phase 1 is merged through [PR #54](https://github.com/skypie0102/ShadowGarden/pull/54)
+for v2.19.0. The PR [verification run](https://github.com/skypie0102/ShadowGarden/actions/runs/40081665674)
+passes the asset audit, all **471 Node tests**, the static build and binding-aware
+Functions compilation. All **846 browser cases** pass across five profiles, with
+nine existing platform skips and zero retries. All 25 new Library cases pass.
+The separate Chromium startup profile also passes.
+
+The new cases cover both Library scopes, filtering across responsive widths,
+sparse/empty catalogs and the saved-progress/next-volume/Read again journey.
+They verify that the mobile Filters label, count and arrow fit inside the button,
+including two active filters. Representative desktop, tablet, narrow-screen and
+reading-banner captures were reviewed across Chromium, Firefox and WebKit.
+The four intentionally redesigned stylesheet owners use these new layout checks;
+the historical pixel/cascade comparisons retain the other 17 sheets.
+
+Merged source `af3c7bd` has exactly the reviewed tree. The
+[main release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40082970117)
+passes the same 471 Node/846 browser checks and publishes **v2.19.0** to the
+existing live project. All 11 production checks pass: version/source, both
+D1-derived catalogs and all eight changed assets. The exact revision-9 document,
+nine snapshots and production configuration are preserved, with zero DB writes.
+
+Live Main Library search, Reset and the visible version footer are verified.
+At the same 1363×936 desktop viewport and unchanged single-series catalog, the
+first catalog book moves from y=759.8 to y=369.0 pixels (390.8 pixels higher).
+This is one observed desktop layout, not a general performance measurement.
+[Release evidence](library-discovery-release-2.19.0.json) retains source identities,
+CI/report hashes, visual review and independent preservation digests. Phase 2
+is next: consistent reading actions and clearer Series/volume presentation.
 
 Acceptance: Main and Adult; empty, single-series and larger catalogs; narrow
 mobile, tablet and desktop; filtering/reset/history; keyboard operation; no
@@ -70,6 +87,7 @@ restoration in the automated fixture; record Android/Soul acceptance separately.
 ## Phase 4 — Visual consistency
 
 - [ ] Review muted text and control boundaries against both public palettes.
+- [ ] Review filter density in stacked tablet layouts and keyboard reachability of collapsed sections.
 - [ ] Align spacing, button hierarchy, icons and touch targets across public pages.
 - [ ] Review dialog, loading, empty, failure and success presentation.
 - [ ] Retain visible keyboard focus, reduced motion and forced-colors support.

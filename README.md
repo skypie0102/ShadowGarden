@@ -25,7 +25,24 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.18.13**, deployed on 2026-10-24 from
+The latest production release is **v2.19.0**, deployed on 2026-10-24 from
+`af3c7bd` through [PR #54](https://github.com/skypie0102/ShadowGarden/pull/54).
+[UI/UX Phase 1](docs/UI_UX_ROADMAP.md) adds a compact Library introduction,
+labeled mobile filters with active counts, larger changed controls, fewer
+redundant shelves in single-series catalogs, and distinct reading suggestions,
+saved progress and next-volume actions.
+
+The [PR run](https://github.com/skypie0102/ShadowGarden/actions/runs/40081665674) and
+[main release](https://github.com/skypie0102/ShadowGarden/actions/runs/40082970117)
+pass **471 Node tests** and **846 browser cases** across five profiles, with nine
+existing platform skips and zero retries. All 25 new Library cases pass;
+14 corrected-build captures were reviewed. All **11 production checks** pass:
+version/source, both D1-derived catalogs and all eight changed assets. Revision 9,
+all nine snapshots and configuration are preserved, with zero database writes.
+Live Main Library search, Reset and the visible v2.19.0 footer are verified.
+See [release evidence](docs/library-discovery-release-2.19.0.json).
+
+The preceding production release **v2.18.13** was deployed on 2026-10-24 from
 `8d500eb` through [PR #53](https://github.com/skypie0102/ShadowGarden/pull/53).
 [Upload target ownership](docs/KEEPER_TARGET_CONTEXT.md) uses the engine's reset/
 cancellation owner and retains the queue's target while its dialog is closed.

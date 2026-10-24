@@ -1,0 +1,429 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "2.19.0",
+  "recordedAt": "2026-10-24T10:08:06.540852+00:00",
+  "repository": "skypie0102/ShadowGarden",
+  "pullRequest": 54,
+  "scope": "UI/UX roadmap Phase 1: Library discovery and reading-banner clarity",
+  "candidate": "62d65c26d992ee00f92220222e6b8d7b3d1be352",
+  "mergeSource": "af3c7bd0217603308d55d528d2f9e553518c738d",
+  "testedTree": "f4f0867f33c02829b4aa55b1feaf0ac3f9350c57",
+  "mergeTreeMatchesTested": true,
+  "reviewedAssets": [
+    {
+      "path": "/assets/css/library-features.css",
+      "sha256": "95c2c51f91d7c88a571f43c718e8d6f4f4524d190a492715b7008022861a6fec",
+      "bytes": 16347
+    },
+    {
+      "path": "/assets/css/public-artwork.css",
+      "sha256": "68a39c23e166add670d3f373c7cf0e93f0c0bde825a197ed3cc92c44c9dea245",
+      "bytes": 8596
+    },
+    {
+      "path": "/assets/css/public-components.css",
+      "sha256": "bb308b4e66d06c64969dc78b1532d984c754b48ef83605948526e1e805e26665",
+      "bytes": 12864
+    },
+    {
+      "path": "/assets/css/site.css",
+      "sha256": "f5916715c5f7b8cb13b04b76dbf839d903e55cb9d6ff3f0b99908341fc8537ec",
+      "bytes": 18666
+    },
+    {
+      "path": "/assets/js/domain/reading-state.js",
+      "sha256": "8ac6f6aa5231cc6693816f9a0599752363cba6f676189ca4bc3a6e855cc66965",
+      "bytes": 10659
+    },
+    {
+      "path": "/assets/js/library-mobile-filter.js",
+      "sha256": "d40bc54fd92af2e9f9654b912be1fbb24ad2fb1cbcad27a0131cf98a5826eb91",
+      "bytes": 3861
+    },
+    {
+      "path": "/assets/js/library-renderers.js",
+      "sha256": "d6b70bd14e41744ff2b61b457adc53d36e10099e99434ea848930ddfe4bab008",
+      "bytes": 8677
+    },
+    {
+      "path": "/assets/js/library.js",
+      "sha256": "16023457f7742309d2ccdbde86b22a2fce5f6047648b46ea8e588f3a96d1a556",
+      "bytes": 22440
+    }
+  ],
+  "prCi": {
+    "runId": 40081665674,
+    "conclusion": "success",
+    "nodePassed": 471,
+    "browserPassed": 846,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "newCasesPassed": 25,
+    "profiles": [
+      {
+        "name": "desktop-chromium",
+        "total": 171,
+        "expected": 171,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      {
+        "name": "desktop-firefox",
+        "total": 171,
+        "expected": 168,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 3,
+        "ok": true
+      },
+      {
+        "name": "desktop-webkit",
+        "total": 171,
+        "expected": 169,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 2,
+        "ok": true
+      },
+      {
+        "name": "mobile-chromium",
+        "total": 171,
+        "expected": 171,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      {
+        "name": "mobile-webkit",
+        "total": 171,
+        "expected": 167,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 4,
+        "ok": true
+      }
+    ],
+    "separateChromiumStartupProfile": "passed"
+  },
+  "mainCi": {
+    "runId": 40082970117,
+    "workflowRunAttempt": 1,
+    "conclusion": "success",
+    "nodePassed": 471,
+    "browserPassed": 846,
+    "browserSkipped": 9,
+    "testRetries": 0,
+    "profiles": [
+      {
+        "name": "browser (desktop-webkit, webkit)",
+        "id": 120840183744,
+        "passed": 169,
+        "skipped": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (desktop-chromium, chromium)",
+        "id": 120840183756,
+        "passed": 171,
+        "skipped": 0,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (mobile-webkit, webkit)",
+        "id": 120840183762,
+        "passed": 167,
+        "skipped": 4,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (mobile-chromium, chromium)",
+        "id": 120840183792,
+        "passed": 171,
+        "skipped": 0,
+        "conclusion": "success"
+      },
+      {
+        "name": "browser (desktop-firefox, firefox)",
+        "id": 120840183892,
+        "passed": 168,
+        "skipped": 3,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "visualEvidence": {
+    "reviewedCaptureCount": 14,
+    "records": [
+      {
+        "file": "final-desktop-chromium-main-narrow-library.png",
+        "sha256": "73a1c0ccea56b8836aacbbfe6d31bc6a53fbb7df7014675d268843b3e10c09b6"
+      },
+      {
+        "file": "final-desktop-chromium-main-active-filters.png",
+        "sha256": "b6271e74b13a23c50416fdad2a1febaa479a51947fe9c83a54e0ad5cd7755c72"
+      },
+      {
+        "file": "final-desktop-chromium-adult-active-filters.png",
+        "sha256": "9001f259a13daf71110b780c66369aec630f26e6b4f31804e2a9afb7df13e749"
+      },
+      {
+        "file": "final-mobile-chromium-main-desktop-or-device-library.png",
+        "sha256": "05efeeb694c3f228e5143c12308c9bfcfc99b76a7683931634c7165a3a76b836"
+      },
+      {
+        "file": "final-desktop-firefox-main-narrow-library.png",
+        "sha256": "02fb3c3fd6c86891d1c9e6b9a181ffb229d12a8582b6b728b53441196992dfcf"
+      },
+      {
+        "file": "final-desktop-firefox-progress-saved-progress-banner.png",
+        "sha256": "89b2eece48213d3f563a2ea8cba2557ea7f602a186af80e8e04880fb463ba4f3"
+      },
+      {
+        "file": "final-mobile-webkit-main-active-filters.png",
+        "sha256": "50daa1b3643148894dbc05712b5a5ea3f929a365df4f6aa433001e0e5ad793f1"
+      },
+      {
+        "file": "final-mobile-webkit-adult-narrow-library.png",
+        "sha256": "8ee810c2696d4a2777b530de551beab64cb3d8a39f688d25713288b7b996d63f"
+      },
+      {
+        "file": "final-mobile-webkit-progress-saved-progress-banner.png",
+        "sha256": "fba9c2c2b076028850c19d43cf72731da3250f7a87a1918aba457f6c5053eabc"
+      },
+      {
+        "file": "final-desktop-webkit-main-narrow-library.png",
+        "sha256": "e95a78a6d017818d66e7f1e371626ef9a4ecbcd9e20bfab1ccc81ef28f22c2be"
+      },
+      {
+        "file": "final-desktop-webkit-adult-active-filters.png",
+        "sha256": "b0e224926c32442a3f0727f2985ac15752055844805f0e5daa68173f253ec356"
+      },
+      {
+        "file": "final-desktop-chromium-main-desktop-or-device-library.png",
+        "sha256": "c6702f157b7a5e1f72ecefd9783ffc45c00ec37d52301cd3dfb554aa4747bce0"
+      },
+      {
+        "file": "final-desktop-chromium-main-tablet-library.png",
+        "sha256": "a80ea8d7a0ddddc1c6bf2c0f1a43c991933a6bc4f493f40c7c0a262eed3ab7a2"
+      },
+      {
+        "file": "final-desktop-chromium-adult-desktop-or-device-library.png",
+        "sha256": "aac081208974fe8815c995cd406554583df966f33f188281d445d4e4c2547189"
+      }
+    ],
+    "historicalCssComparisonOwners": 17,
+    "intentionallyRedesignedCssOwners": [
+      "site.css",
+      "public-components.css",
+      "public-artwork.css",
+      "library-features.css"
+    ],
+    "reportRetentionDays": 7
+  },
+  "validationCorrections": [
+    {
+      "finding": "A remaining mobile icon-only width clipped the new Filters label and arrow.",
+      "correction": "Removed the 42px width rule; the control uses its content width and a 44px minimum height.",
+      "regression": "New bounds checks cover the label, count and arrow with zero and two active filters.",
+      "correctedCandidate": "62d65c26d992ee00f92220222e6b8d7b3d1be352"
+    }
+  ],
+  "production": {
+    "workflowRunId": 40082970117,
+    "jobId": 120843118676,
+    "report": {
+      "checkedAt": "2026-10-24T09:58:04.757Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "6e3422f2-4177-4aeb-8007-f8ae6d6b49ea",
+      "source": "af3c7bd0217603308d55d528d2f9e553518c738d",
+      "version": "2.19.0",
+      "baselineCheckedAt": "2026-10-24T09:58:03.354Z",
+      "revision": 9,
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshots": 9,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 323
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "af3c7bd0217603308d55d528d2f9e553518c738d",
+          "version": "2.19.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "b737045c6db4cdde456d30080f81af34c695579508bda6baffe086634bcae358",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "5ec98d5f2be6a7160bcf0c6e320e88bfcd5fe96a1272c2a6bb37d9f348b1ce50",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/library-features.css",
+          "sha256": "95c2c51f91d7c88a571f43c718e8d6f4f4524d190a492715b7008022861a6fec",
+          "bytes": 16347
+        },
+        {
+          "path": "/assets/css/public-artwork.css",
+          "sha256": "68a39c23e166add670d3f373c7cf0e93f0c0bde825a197ed3cc92c44c9dea245",
+          "bytes": 8596
+        },
+        {
+          "path": "/assets/css/public-components.css",
+          "sha256": "bb308b4e66d06c64969dc78b1532d984c754b48ef83605948526e1e805e26665",
+          "bytes": 12864
+        },
+        {
+          "path": "/assets/css/site.css",
+          "sha256": "f5916715c5f7b8cb13b04b76dbf839d903e55cb9d6ff3f0b99908341fc8537ec",
+          "bytes": 18666
+        },
+        {
+          "path": "/assets/js/domain/reading-state.js",
+          "sha256": "8ac6f6aa5231cc6693816f9a0599752363cba6f676189ca4bc3a6e855cc66965",
+          "bytes": 10659
+        },
+        {
+          "path": "/assets/js/library-mobile-filter.js",
+          "sha256": "d40bc54fd92af2e9f9654b912be1fbb24ad2fb1cbcad27a0131cf98a5826eb91",
+          "bytes": 3861
+        },
+        {
+          "path": "/assets/js/library-renderers.js",
+          "sha256": "d6b70bd14e41744ff2b61b457adc53d36e10099e99434ea848930ddfe4bab008",
+          "bytes": 8677
+        },
+        {
+          "path": "/assets/js/library.js",
+          "sha256": "16023457f7742309d2ccdbde86b22a2fce5f6047648b46ea8e588f3a96d1a556",
+          "bytes": 22440
+        }
+      ],
+      "rollbackDeploymentId": "828bb91c-d3b1-450d-91db-27b199c9b5af",
+      "rollbackSource": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+      "beforeCheckedAt": "2026-10-24T09:57:55.757Z"
+    },
+    "artifact": {
+      "id": 12556685787,
+      "name": "production-verification",
+      "size_in_bytes": 1217,
+      "url": "https://api.github.com/repos/skypie0102/ShadowGarden/actions/artifacts/12556685787",
+      "archive_download_url": "https://api.github.com/repos/skypie0102/ShadowGarden/actions/artifacts/12556685787/zip",
+      "expired": false,
+      "created_at": "2026-10-24T09:58:05Z",
+      "expires_at": "2026-11-23T09:58:04Z",
+      "updated_at": "2026-10-24T09:58:05Z",
+      "digest": "sha256:8ad0971d00ce3018d9003baf60ea2013f549d464943d4a72c24704422fb295f4",
+      "workflow_run": {
+        "id": 40082970117,
+        "repository_id": 1382831207,
+        "head_repository_id": 1382831207,
+        "head_branch": "main",
+        "head_sha": "af3c7bd0217603308d55d528d2f9e553518c738d"
+      }
+    }
+  },
+  "independentCloudflare": {
+    "before": {
+      "checkedAt": "2026-10-24T09:16:27.520Z",
+      "deployment": {
+        "id": "828bb91c-d3b1-450d-91db-27b199c9b5af",
+        "source": "8d500eb163edad0f8e2d4639e365504e1bddee51",
+        "environment": "production",
+        "status": "success"
+      },
+      "revision": 9,
+      "updatedAt": "2026-10-20T01:48:08.045Z",
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshotCount": 9,
+      "snapshotsSha256": "29cef7f1c477ebc1c384dcb83f63a7a0a3a93a9bfad0b906caa617a244842ee1",
+      "snapshotChecksumsValid": true,
+      "actualConfigurationSha256": "a1d672519aa91d03471d23beb5dd5a2e40a1e229040191e28381b337c9427b42",
+      "savedConfigurationSha256": "a1d672519aa91d03471d23beb5dd5a2e40a1e229040191e28381b337c9427b42",
+      "databaseWrites": 0
+    },
+    "after": {
+      "checkedAt": "2026-10-24T09:58:28.008Z",
+      "deployment": {
+        "id": "6e3422f2-4177-4aeb-8007-f8ae6d6b49ea",
+        "source": "af3c7bd0217603308d55d528d2f9e553518c738d",
+        "environment": "production",
+        "status": "success"
+      },
+      "revision": 9,
+      "updatedAt": "2026-10-20T01:48:08.045Z",
+      "documentSha256": "56a5763ce9c4a166ffcf32ce5229b19444235d1bbfbf80fd162efa6a8a6b73f2",
+      "snapshotCount": 9,
+      "snapshotsSha256": "29cef7f1c477ebc1c384dcb83f63a7a0a3a93a9bfad0b906caa617a244842ee1",
+      "snapshotChecksumsValid": true,
+      "actualConfigurationSha256": "a1d672519aa91d03471d23beb5dd5a2e40a1e229040191e28381b337c9427b42",
+      "savedConfigurationSha256": "a1d672519aa91d03471d23beb5dd5a2e40a1e229040191e28381b337c9427b42",
+      "databaseWrites": 0
+    },
+    "preservationMatches": {
+      "revision": true,
+      "updatedAt": true,
+      "documentSha256": true,
+      "snapshotCount": true,
+      "snapshotsSha256": true,
+      "actualConfigurationSha256": true,
+      "savedConfigurationSha256": true
+    }
+  },
+  "liveMainLibrary": {
+    "before": {
+      "version": "2.18.13",
+      "source": "8d500eb",
+      "viewport": {
+        "width": 1363,
+        "height": 936
+      },
+      "scrollY": 0,
+      "results": "1 series \u00b7 1 volumes",
+      "gridBusy": false,
+      "searchInputTop": 417.640625,
+      "firstCatalogBookTop": 759.828125,
+      "introTop": 130,
+      "introHeight": 189.640625,
+      "recentVisible": true
+    },
+    "after": {
+      "version": "2.19.0",
+      "source": "af3c7bd",
+      "viewport": {
+        "width": 1363,
+        "height": 936
+      },
+      "scrollY": 0,
+      "results": "1 series \u00b7 1 volumes",
+      "gridBusy": false,
+      "searchInputTop": 397.015625,
+      "firstCatalogBookTop": 369.015625,
+      "firstCatalogBookHeight": 303.6875,
+      "introTop": 104,
+      "introHeight": 177.015625,
+      "recentVisible": false,
+      "bannerHeading": "Reading suggestion",
+      "readingAction": "Start reading",
+      "anotherSuggestion": false,
+      "versionTextVisible": true,
+      "searchAndResetPassed": true
+    },
+    "firstBookMovedUpPx": 390.8125,
+    "scope": "Same 1363x936 desktop viewport, scroll position zero and current single-series Main catalog. Search and Reset were exercised after the geometry capture; the footer version was visually verified at page bottom."
+  },
+  "limits": [
+    "Controlled browser fixtures substitute catalogs/provider responses; screenshots cover representative states and widths, not every viewport or animation frame.",
+    "Live browser acceptance covers the Main Library. Adult UI and protected reader/upload flows retain fixture coverage and served-source/catalog checks; this batch does not claim real-provider or physical Android/Soul acceptance."
+  ]
+}
