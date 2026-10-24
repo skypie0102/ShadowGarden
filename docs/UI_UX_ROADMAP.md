@@ -154,6 +154,7 @@ mobile/desktop widths, including long content and increased text size.
 
 ## Phase 5 — Keeper feedback
 
+- [x] Keep translator provenance empty until Add translator is used when no credits are saved (v2.20.1).
 - [x] Add per-volume Replace EPUB beside Edit, retaining metadata and drafts with clear checking/upload/save/retry feedback.
 - [ ] Walk through the existing upload/target/duplicate flow before selecting changes.
 - [ ] Make the selected destination and consequences of each duplicate choice explicit.

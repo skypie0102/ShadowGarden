@@ -1,0 +1,117 @@
+{
+  "version": "2.20.1",
+  "source": "d4ac4b23560b4dbeb5a1ee7137e85c3ec225cd86",
+  "tree": "44b3246ba0f345417bb19f53b31eb39adef29f31",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/60",
+  "change": "Series Editor renders only saved translation credits. With no credits, Add Translator creates the first row.",
+  "localVerification": {
+    "check": "npm run check",
+    "nodeTests": 473,
+    "workflowExercise": [
+      "missing credits start empty",
+      "empty credits start empty",
+      "saved credits render",
+      "Add Translator creates a row"
+    ]
+  },
+  "mainCi": {
+    "run": 40142342699,
+    "conclusion": "success",
+    "nodeTests": 473,
+    "passed": 896,
+    "skipped": 9,
+    "profiles": [
+      {
+        "profile": "desktop-chromium",
+        "jobId": 121016634748,
+        "passed": 181,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-chromium",
+        "jobId": 121016634753,
+        "passed": 181,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-firefox",
+        "jobId": 121016634707,
+        "passed": 178,
+        "skipped": 3,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-webkit",
+        "jobId": 121016634729,
+        "passed": 179,
+        "skipped": 2,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-webkit",
+        "jobId": 121016634734,
+        "passed": 177,
+        "skipped": 4,
+        "retries": 0,
+        "flaky": 0
+      }
+    ]
+  },
+  "production": {
+    "artifact": {
+      "id": 12579019622,
+      "digest": "sha256:aa5f767b8c4e03e1c3fe6cf205ce8e32ecd5ee7d8af7b78b2b09cf916ad0bb94"
+    },
+    "report": {
+      "checkedAt": "2026-10-24T23:41:52.177Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "05e5c82d-30fb-465c-9b9b-8167ef63e97e",
+      "source": "d4ac4b23560b4dbeb5a1ee7137e85c3ec225cd86",
+      "version": "2.20.1",
+      "baselineCheckedAt": "2026-10-24T23:41:51.284Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 344
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "d4ac4b23560b4dbeb5a1ee7137e85c3ec225cd86",
+          "version": "2.20.1"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/admin/translation-workflow.js",
+          "sha256": "6d20f99a537cecb59c16551215113c318862519de4c957950ce028c26ed3788d",
+          "bytes": 7926
+        }
+      ],
+      "rollbackDeploymentId": "143d036b-bc3d-4d0b-8497-971663a7ef7d",
+      "rollbackSource": "0b687cf6678d498b1825c07f4464898988b7179f",
+      "beforeCheckedAt": "2026-10-24T23:41:43.168Z"
+    }
+  },
+  "verificationScope": "Empty, missing and saved credits and Add Translator were exercised in an isolated workflow instance. Production verification is read-only and preserves its immediate catalog, snapshots and configuration baseline."
+}

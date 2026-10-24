@@ -25,7 +25,15 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.20.0**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.20.1**, deployed on 2026-10-25 (Asia/Manila)
+from `d4ac4b2` through [PR #60](https://github.com/skypie0102/ShadowGarden/pull/60).
+Keeper's Series Editor now opens **Translation provenance** with only saved
+credits. When there are none, the list stays empty until **Add translator** is
+used. [Release checks](https://github.com/skypie0102/ShadowGarden/actions/runs/40142342699)
+and production verification are recorded in the
+[release evidence](docs/keeper-translator-empty-state-release-2.20.1.json).
+
+The preceding production release is **v2.20.0**, deployed on 2026-10-25 (Asia/Manila)
 from `0b687cf` through [PR #59](https://github.com/skypie0102/ShadowGarden/pull/59).
 Keeper's Series Editor now offers **Replace EPUB** beside **Edit** on each
 volume. It checks the selected file, confirms the replacement and shows inline
