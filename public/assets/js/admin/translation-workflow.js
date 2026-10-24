@@ -63,7 +63,7 @@
       if (!series) return;
       $("#manageTranslationStatus").value = series.translationStatus || "";
       const list = $("#manageTranslations");
-      list.innerHTML = arr(series.translations).map(creditRow).join("") || creditRow();
+      list.innerHTML = arr(series.translations).map(creditRow).join("");
     }
 
     function installVolumeEditor(series, card, index) {
