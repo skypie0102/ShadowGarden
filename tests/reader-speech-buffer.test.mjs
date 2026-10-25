@@ -17,19 +17,20 @@ function fixture() {
     const entries = Array.from({ length: 3 }, (_, index) => ({ text: `${spineIndex}/${index}` }));
     return entries.map((_, index) => ({ entries, index, spineIndex }));
   });
-  const calls = [];
+  const calls = [], moves = [];
   const source = { async move(cursor, direction, { signal }) {
     signal.throwIfAborted();
+    moves.push(cursor);
     return positions[positions.indexOf(cursor) + direction] || null;
   } };
   const fetchAudio = (text, selectedVoice, signal) => new Promise((resolve, reject) => {
     calls.push({ text, voice: selectedVoice, signal,
       resolve: () => resolve(new Blob([`${selectedVoice}:${text}`])), reject });
   });
-  return { buffer: createSpeechBuffer({ source, fetchAudio }), positions, calls };
+  return { buffer: createSpeechBuffer({ source, fetchAudio }), positions, calls, moves };
 }
 test("four future passages preload across chapter boundaries and are reused in order", async () => {
-  const { buffer, positions, calls } = fixture(), controller = new AbortController();
+  const { buffer, positions, calls, moves } = fixture(), controller = new AbortController();
   const current = buffer.read(positions[0], voice, { signal: controller.signal });
   await until(() => calls.length === 3);
   assert.deepEqual(calls.map(c => c.text), ["1/0", "1/1", "1/2"]);
@@ -42,9 +43,11 @@ test("four future passages preload across chapter boundaries and are reused in o
   calls[3].resolve(); calls[4].resolve();
   await setImmediate();
   assert.deepEqual(calls.map(c => c.text), ["1/0", "1/1", "1/2", "3/0", "3/1"]);
+  const traversals = moves.length;
   buffer.prefetch(positions[0], voice); // Resume keeps completed audio.
   await setImmediate();
   assert.equal(calls.length, 5);
+  assert.equal(moves.length, traversals);
   const second = await buffer.read(positions[1], voice, { signal: controller.signal });
   assert.equal(await second.text(), `${voice}:1/1`);
   await until(() => calls.length === 6);

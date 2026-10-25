@@ -68,8 +68,11 @@ export function createSpeechBuffer({ source, fetchAudio }) {
     // A speculative failure is retried only if playback reaches that passage.
     // It must not stop the audio that is already playing.
     void (async () => {
-      let next = cursor;
-      for (let i = 0; i < 4; i++) {
+      // Continue from the retained tail so Resume and each short line do not
+      // repeatedly extract a chapter whose passages are already queued.
+      let next = [...entries.values()].at(-1)?.cursor || cursor;
+      pump();
+      for (let i = entries.size; i < 4; i++) {
         next = await source.move(next, 1, { signal: controller.signal });
         controller.signal.throwIfAborted();
         if (!next) break;
