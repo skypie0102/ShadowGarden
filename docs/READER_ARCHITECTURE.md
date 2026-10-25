@@ -23,6 +23,12 @@ extract bounded semantic passages and CFIs, starting at the current location and
 skipping image-only spine sections. It never rewrites EPUB source or participates
 in canonical page measurement. `server/edge-speech.js` owns the remote protocol;
 `server/tts.js` owns HTTP validation, Garden Pass and existing rate-limit storage.
+`reader/speech-position.js` owns live range highlighting and centered following.
+It uses the current theme palette, releases markers with their contents/rendition,
+and keeps audio independent of layout. Pages use a temporary viewport offset;
+Continuous uses the shared owned-scroll restoration. Neither changes publisher
+markup or the canonical page map. Starts/resumes close the speech drawer; automatic
+passage transitions respect an options panel the reader reopened.
 See [Reader TTS](READER_TTS.md) for service limits and verification boundaries.
 
 ## Paragraph alignment
