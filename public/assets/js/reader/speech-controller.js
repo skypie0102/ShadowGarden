@@ -453,6 +453,10 @@ export function createSpeechController({
     save();
   });
   scope.listen(window, "pagehide", () => pause());
+  // Only user input cancels follow. Relocation events can arrive late while a
+  // new chapter is loading and are not evidence of a manual navigation.
+  for (const type of ['wheel','touchstart','pointerdown'])
+    scope.listen(elements.viewer,type,()=>{if(wantPlay&&following!==revision)pause()},{passive:true});
   if ("mediaSession" in navigator) {
     const actions = {
       play: () => {
@@ -494,16 +498,6 @@ export function createSpeechController({
     stop,
     pause,
     dispose: () => scope.dispose(),
-    onLocation(index) {
-      if (
-        active() &&
-        following !== revision &&
-        cursor &&
-        Number.isFinite(index) &&
-        index !== cursor.spineIndex
-      )
-        stop("Reading position changed. Press Play to read from here.");
-    },
     attachRendition(rendition) {
       readerInstanceScope(rendition).hook(
         rendition.hooks.content,

@@ -218,7 +218,7 @@ async function initializeReader(session, scope) {
     if (scope.disposed) return Promise.resolve(false);
     const rendition = state.rendition;
     if (!target || !rendition) return Promise.resolve(false);
-    if (!speech) speechController?.stop();
+    if (!speech && !['resume','relayout'].includes(operation?.kind)) speechController?.stop();
     operation = operation || beginRenditionNavigation(rendition);
     if (!operation.isCurrent()) return Promise.resolve(false);
     const pending = { rendition, target, operation, promise: null };
@@ -444,7 +444,6 @@ async function initializeReader(session, scope) {
       return;
     }
     const spineIndex = locationSpineIndex(location);
-    speechController?.onLocation(spineIndex);
     if (Number.isFinite(spineIndex)) state.currentSpineIndex = spineIndex;
     const chapter = tocController.chapterForLocation(location);
     if (intent?.rendition === rendition) {
