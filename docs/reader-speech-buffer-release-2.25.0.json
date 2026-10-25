@@ -1,0 +1,412 @@
+{
+  "version": "2.25.0",
+  "date": "2026-10-25",
+  "pullRequest": 67,
+  "candidate": "a01ae76255bc230056b19c09c48e264fd169010b",
+  "applicationTree": "f0b50108feb49480214d6d6e7e985e73641c801a",
+  "status": "verified",
+  "behavior": [
+    "BrianMultilingual \u00b7 Male is the default; saved English voice choices remain selected.",
+    "Four upcoming passages are prepared across linear chapter boundaries with at most two background synthesis requests.",
+    "Ready and in-flight audio survives Pause/Resume; advancing reuses existing requests and refills from the retained chapter source.",
+    "Previous, Read from here, voice changes, Stop and disposal cancel and clear the buffer; speculative failures retry only when reached."
+  ],
+  "ci": {
+    "prRun": 40204193450,
+    "unitTests": 501,
+    "expectedFocusedPerProfile": 17,
+    "local": {
+      "speechMobilePassed": 17,
+      "finalBufferMobilePassed": 2,
+      "bufferUnitPassed": 5
+    },
+    "prProfiles": [
+      {
+        "job": 121201613108,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 198,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121201613109,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 197,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121201613132,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 200,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121201613154,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 196,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121201613282,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 200,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "browserPassed": 991,
+    "browserSkipped": 9,
+    "retries": 0,
+    "prFocusedArtifacts": [
+      {
+        "id": 12603635340,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:25e54fd078145312421721c06d0f561ed7df03436925563cc3bf75565700005b"
+      },
+      {
+        "id": 12603311151,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:5f5b45f9f4bed9b247c24098365381fc392ecfebb0c6cf931de17fffc8ec01bf"
+      },
+      {
+        "id": 12603306064,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:226f881a99950f725adf05b0d07ef263a651086e9bb0ab8e07430cc3d9020750"
+      },
+      {
+        "id": 12603068538,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:efa0006911ebdd7f8eb1486cefa02a88a65aabd7f235049e4e75a4722b29d502"
+      },
+      {
+        "id": 12602719492,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:a1ce34275067ff145ea73b13fff525b2e7a3c9ea0acf52e3e2412aad0ed5b276"
+      }
+    ],
+    "mainRun": 40206473400,
+    "mainFocusedArtifacts": [
+      {
+        "id": 12604390120,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:4d6fcd3012a34dd8146c83df44e4ad54eb1f1038c248e69245e3bbb1d00297c7"
+      },
+      {
+        "id": 12604240029,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:64de1e43e497fc108c7e20636a3708b8df71212f6abf048fac9bddfb4180b338"
+      },
+      {
+        "id": 12604175393,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:2b5b748355bcce8717578936eefad5943bd9f1848d645a7762f8828f7442c512"
+      },
+      {
+        "id": 12604080383,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:d6d2387426d7e90bf7c575e8e903bf593fe46cf6a70bb579cda7c9f516bc8ff7"
+      },
+      {
+        "id": 12603749109,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:eb550402fffe94ce8968c9c61d0e437599565794b1a8501763146c8fc33d04ed"
+      }
+    ],
+    "mainProfiles": [
+      {
+        "job": 121208503030,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 196,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121208503055,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 200,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121208503056,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 197,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121208503086,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 200,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121208503100,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 198,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 17,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainVerify": {
+      "job": 121208373624,
+      "counts": {
+        "tests": 501,
+        "pass": 501,
+        "fail": 0,
+        "skipped": 0
+      },
+      "functionsCompiled": true
+    },
+    "productionJob": 121215068772
+  },
+  "scope": "Audio and publications in browser checks are disposable fixtures. Android/Soul hardware acceptance is separate. The initial passage, a new voice or a depleted buffer can still wait for network/provider synthesis. No guarantee of gapless audio.",
+  "baseline": {
+    "version": "2.24.0",
+    "source": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "profile": "mobile-chromium",
+    "expectedFailure": "Four upcoming ready passages assertion timed out on the live prior release. Brian was explicitly selected to isolate buffering from the changed default.",
+    "data": "Disposable original EPUB and mocked speech responses; no production catalog or synthesis writes."
+  },
+  "source": "e5fcf059903d0e63011954402967c6ff9b6488fa",
+  "production": {
+    "reportSource": "Completed production job log",
+    "report": {
+      "checkedAt": "2026-10-25T15:48:59.582Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "739637fd-2de4-4af4-bd46-4e1e861362eb",
+      "source": "e5fcf059903d0e63011954402967c6ff9b6488fa",
+      "version": "2.25.0",
+      "baselineCheckedAt": "2026-10-25T15:48:58.737Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 143
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "e5fcf059903d0e63011954402967c6ff9b6488fa",
+          "version": "2.25.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/reader/speech-buffer.js",
+          "sha256": "3a2a7d8f908f22f046d350b249f99e45ee08ce1141e1e036871a2c0be838c8cf",
+          "bytes": 4340
+        },
+        {
+          "path": "/assets/js/reader/speech-controller.js",
+          "sha256": "ce4287694efcfad10a8941d531b8db545fb61f51ee0b4ae9b5846006565dc8e4",
+          "bytes": 18662
+        }
+      ],
+      "rollbackDeploymentId": "7215e3c8-29dc-4bb4-afda-83bb33f7ef2c",
+      "rollbackSource": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+      "beforeCheckedAt": "2026-10-25T15:48:49.975Z",
+      "readerSpeech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-BrianMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "cloudflareCanonical": {
+      "name": "shadowgarden",
+      "subdomain": "shadowgarden-bon.pages.dev",
+      "environment": "production",
+      "id": "739637fd-2de4-4af4-bd46-4e1e861362eb",
+      "source": "e5fcf059903d0e63011954402967c6ff9b6488fa",
+      "status": "success"
+    },
+    "artifact": {
+      "id": 12604658015,
+      "name": "production-verification",
+      "digest": "sha256:9e168350fb5c37264e6bc156143f05ccefca7b4d04aef0a98005ad7b3fb0cea2"
+    },
+    "directBrowser": {
+      "status": "passed",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "profile": "mobile-chromium",
+      "metadata": {
+        "checkedAt": "2026-10-25T15:50:02.291Z",
+        "version": "2.25.0",
+        "source": "e5fcf059903d0e63011954402967c6ff9b6488fa",
+        "speech": {
+          "provider": "edge",
+          "defaultVoice": "en-US-BrianMultilingualNeural",
+          "voiceCount": 318,
+          "defaultMetadata": {
+            "id": "en-US-BrianMultilingualNeural",
+            "name": "Microsoft BrianMultilingual Online (Natural) - English (United States)",
+            "locale": "en-US",
+            "gender": "Male"
+          }
+        }
+      },
+      "checks": [
+        "Brian is the default and four ready passages play through a chapter boundary after the network fails",
+        "Pause and Resume retain in-flight preloads and advancement waits for the original request"
+      ],
+      "stats": {
+        "startTime": "2026-10-25T15:49:44.726Z",
+        "duration": 38020.992,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "data": "Live Reader HTML, startup, vendor and feature assets; disposable original EPUB and mocked synthesis responses. Real public version and voice metadata checked separately.",
+      "visualReview": {
+        "viewportCssWidth": 320,
+        "status": "reviewed",
+        "observation": "Settled Read aloud drawer stays within the viewport; BrianMultilingual \u00b7 Male and all controls remain visible.",
+        "additionalBrowserCheck": {
+          "expected": 1,
+          "unexpected": 0,
+          "flaky": 0,
+          "skipped": 0
+        },
+        "screenshotSha256": "1fa695846cd6ba51fff58920cf73e07c5109d53bb3dcde273d05ba7f10cb9593"
+      }
+    }
+  }
+}

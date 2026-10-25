@@ -132,6 +132,8 @@ its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
 
+- [x] Default to BrianMultilingual · Male and preload four future passages across chapters, retaining ready/in-flight audio through Pause/Resume (v2.25.0, [PR #67](https://github.com/skypie0102/ShadowGarden/pull/67)). All 85 focused speech cases and five-profile regressions pass; two direct live Reader checks and production preservation pass. [Evidence](reader-speech-buffer-release-2.25.0.json).
+
 - [x] Limit Read aloud to English voices, smoothly follow spoken passages with cancellation/reduced-motion support, and add floating Previous/Next controls (v2.24.0, [PR #65](https://github.com/skypie0102/ShadowGarden/pull/65)). All 75 focused checks and five-profile regressions pass, with live preservation verified. [Evidence](reader-speech-controls-release-2.24.0.json).
 
 - [x] Center and highlight spoken passages using the active reader theme, including first/last passages, and close Read aloud options on Start/Resume (v2.23.0, [PR #63](https://github.com/skypie0102/ShadowGarden/pull/63)). All 55 focused checks and five-profile regressions pass; production preservation and served assets are verified. [Evidence](reader-speech-position-release-2.23.0.json).

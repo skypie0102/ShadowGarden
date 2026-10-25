@@ -1,7 +1,30 @@
 # Reader releases
 
-**Current production baseline:** v2.24.0. Ongoing
+**Current production baseline:** v2.25.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.25.0 — Brian default and speech preloading
+
+**Live:** deployment `739637fd-2de4-4af4-bd46-4e1e861362eb`, source `e5fcf059903d0e63011954402967c6ff9b6488fa`,
+verified at 2026-10-25T15:48:59.582Z. [PR #67](https://github.com/skypie0102/ShadowGarden/pull/67)
+sets BrianMultilingual · Male as the default in the Reader, HTML fallback and API
+metadata. Saved English selections remain intact. A session-owned buffer prepares
+four future passages across linear chapters, skipping illustration-only sections,
+with at most two background synthesis requests. Consumption reuses ready or
+in-flight audio and refills from the retained source. Pause/Resume and speed
+changes retain the buffer. Previous, Read from here, voice changes, Stop and
+disposal cancel and clear it; speculative failures retry only when reached.
+
+Candidate and main pass 501 Node tests, 991 full browser cases and all
+85 focused speech cases, with 9 existing skips and zero retries. The exact
+merged application tree matches the candidate. The prior live release fails the
+four-passage buffer check; two direct live Reader checks pass after deployment.
+Production preserves the catalog, snapshots and configuration with zero database
+writes. Version, changed assets, live default voice and request guards pass.
+The browser checks use disposable original EPUBs and mocked synthesis; they do
+not claim new live generated Brian audio or Android/Soul hardware acceptance.
+Network startup and a depleted buffer can still show Preparing speech.
+[Guide](READER_TTS.md) · [Structured evidence](reader-speech-buffer-release-2.25.0.json).
 
 ## Reader v2.24.0 — English voices and smooth playback controls
 
