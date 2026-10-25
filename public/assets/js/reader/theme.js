@@ -1,5 +1,6 @@
 import {recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderScope,readerInstanceScope} from "./lifecycle.js";
+import {applyParagraphAlignment} from "./paragraph-alignment.js";
 const DARK_TEXT = "#17151b";
 const LIGHT_TEXT = "#f1edf6";
 const READER_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap";
@@ -199,6 +200,7 @@ export function createThemeController({ getSettings, isAdult }) {
     if(scope.disposed)return;
     const settings = getSettings();
     applyTypeface(contents);
+    applyParagraphAlignment(contents,settings.alignment);
     if (settings.flow === "scrolled-doc") injectScrollChrome(contents);
     readerInstanceScope(contents).frame(scope.guard(() => repair(contents)));
   }
@@ -210,6 +212,7 @@ export function createThemeController({ getSettings, isAdult }) {
       try {
         rendition.getContents().forEach(contents => {
           applyTypeface(contents);
+          applyParagraphAlignment(contents,getSettings().alignment);
           if (getSettings().flow === "scrolled-doc") injectScrollChrome(contents);
           repair(contents);
         });

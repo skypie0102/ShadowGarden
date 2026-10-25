@@ -5,6 +5,21 @@ The [vendor contract](READER_VENDOR_CONTRACT.md) records supported adaptation;
 [code review](READER_CODE_REVIEW.md) records the baseline. Original phased work
 remains in [the refactor history](READER_REFACTOR_ROADMAP.md).
 
+## Paragraph alignment
+
+`reader/settings.js` owns the persisted `alignment` preference: `default`,
+`left`, `justify` or `right`. Missing/invalid values and Reset use `default`.
+The setting uses the existing semantic reflow and page-map refresh path.
+`reader/paragraph-alignment.js` applies explicit choices to text paragraphs,
+retaining the original inline alignment values and priorities in a WeakMap.
+Default restores those declarations, allowing publication CSS and inherited
+alignment to take effect again. Headings and artwork-only paragraphs retain
+their own alignment. No publication source or EPUB file is rewritten.
+
+The theme content/refresh hooks apply the choice to live chapters. The isolated
+page-map sandbox uses the same helper, and alignment is part of its settings
+fingerprint, so maps from different alignment choices cannot be reused.
+
 ## Startup and engine boundary
 
 `reader.html` loads the unchanged vendor bundles and security/data clients.

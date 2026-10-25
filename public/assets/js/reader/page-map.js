@@ -8,6 +8,7 @@ import {
 import {measureReaderOperation,recordReaderDiagnostic} from './diagnostics.js';
 import {createReaderCache} from './cache-store.js';
 import {cleanSectionHref,sectionHrefMatches,linearSpineItems} from './sections.js';
+import {normalizeParagraphAlignment} from './paragraph-alignment.js';
 const PAGE_MAP_VERSION = 2;
 
 const clamp01 = value => Math.min(1, Math.max(0, Number(value) || 0));
@@ -89,6 +90,7 @@ export function createPageMapController({
     const settings = getSettings?.() || {};
     return {
       font: settings.font || "book",
+      alignment: normalizeParagraphAlignment(settings.alignment),
       fontSize: Number(settings.fontSize) || 100,
       lineHeight: Number(settings.lineHeight) || 1.6,
       textWidth: Number(settings.width) || 760
@@ -162,6 +164,7 @@ export function createPageMapController({
         bookUrl,
         metrics: spec.metrics,
         paginatedTheme: getPaginatedTheme?.() || {},
+        paragraphAlignment: spec.settings.alignment,
         signal: record.controller.signal,
         onCreate: value => { record.sandbox = value; }
       });

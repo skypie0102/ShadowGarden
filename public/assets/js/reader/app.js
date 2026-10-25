@@ -68,6 +68,7 @@ function readerElements() {
     nextBottom: $("#nextBottom"),
     themeSelect: $("#themeSelect"),
     fontSelect: $("#fontSelect"),
+    alignmentSelect: $("#alignmentSelect"),
     fontSizeRange: $("#fontSizeRange"),
     fontSizeValue: $("#fontSizeValue"),
     lineHeightRange: $("#lineHeightRange"),

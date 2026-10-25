@@ -1,4 +1,5 @@
 import {createReaderScope} from "./lifecycle.js";
+import {normalizeParagraphAlignment} from "./paragraph-alignment.js";
 /* Shadow Garden R4 — canonical Reader settings/UI owner. */
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||min));
 
@@ -17,7 +18,7 @@ function normalizeReaderFont(value){
   return "default";
 }
 
-export const READER_DEFAULTS=Object.freeze({theme:"garden",font:"default",fontSize:100,lineHeight:1.6,width:760,flow:"paginated",swipeTurns:true});
+export const READER_DEFAULTS=Object.freeze({theme:"garden",font:"default",alignment:"default",fontSize:100,lineHeight:1.6,width:760,flow:"paginated",swipeTurns:true});
 
 // The same device default is used for first-open, invalid stored flow and reset.
 // Saved choices remain authoritative until the reader explicitly resets them.
@@ -33,6 +34,7 @@ export function sanitizeReaderSettings(value,defaults=readerDefaults()){
   return{
     theme:["garden","night","black","paper"].includes(input.theme)?input.theme:READER_DEFAULTS.theme,
     font:normalizeReaderFont(input.font),
+    alignment:normalizeParagraphAlignment(input.alignment),
     fontSize:clamp(input.fontSize??READER_DEFAULTS.fontSize,75,160),
     lineHeight:clamp(input.lineHeight??READER_DEFAULTS.lineHeight,1.25,2.1),
     width:clamp(input.width??READER_DEFAULTS.width,560,1050),
@@ -67,6 +69,7 @@ export function createSettingsController({storage,elements,isAdult=false,onApply
   function syncControls(){
     if(elements.themeSelect)elements.themeSelect.value=settings.theme;
     syncFontOptions();
+    if(elements.alignmentSelect)elements.alignmentSelect.value=settings.alignment;
     if(elements.fontSizeRange)elements.fontSizeRange.value=settings.fontSize;
     if(elements.fontSizeValue)elements.fontSizeValue.textContent=`${settings.fontSize}%`;
     if(elements.lineHeightRange)elements.lineHeightRange.value=settings.lineHeight;
@@ -83,6 +86,7 @@ export function createSettingsController({storage,elements,isAdult=false,onApply
 
   scope.listen(elements.themeSelect,"change",event=>{settings.theme=event.target.value;persist();onApply?.({relayout:false,rebuildPageMap:false})});
   scope.listen(elements.fontSelect,"change",event=>{settings.font=event.target.value;persist();onApply?.({relayout:true,rebuildPageMap:true})});
+  scope.listen(elements.alignmentSelect,"change",event=>{settings.alignment=event.target.value;persist();onApply?.({relayout:true,rebuildPageMap:true})});
   scope.listen(elements.fontSizeRange,"input",event=>{settings.fontSize=Number(event.target.value);persist();onApply?.({relayout:true,rebuildPageMap:true})});
   scope.listen(elements.lineHeightRange,"input",event=>{settings.lineHeight=Number(event.target.value);persist();onApply?.({relayout:true,rebuildPageMap:true})});
   scope.listen(elements.widthRange,"input",event=>{settings.width=Number(event.target.value);persist();onApply?.({relayout:settings.flow==="scrolled-doc",rebuildPageMap:true})});
