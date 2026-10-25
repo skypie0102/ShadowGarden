@@ -214,17 +214,21 @@ async function initializeReader(session, scope) {
     if (intent.targetIndex < intent.fromIndex) return index > intent.targetIndex;
     return false;
   }
-  function navigate(target, { operation, speech = false } = {}) {
-    if (scope.disposed) return Promise.resolve(false);
+  function navigate(target, { operation, speech = false, signal } = {}) {
+    if (scope.disposed || signal?.aborted) return Promise.resolve(false);
     const rendition = state.rendition;
     if (!target || !rendition) return Promise.resolve(false);
     if (!speech && !['resume','relayout'].includes(operation?.kind)) speechController?.stop();
     operation = operation || beginRenditionNavigation(rendition);
     if (!operation.isCurrent()) return Promise.resolve(false);
+    const cancel = () => operation.cancel();
+    signal?.addEventListener("abort", cancel, { once: true });
+    if (signal?.aborted) cancel();
     const pending = { rendition, target, operation, promise: null };
     state.pendingNavigation = pending;
     elements.viewer?.setAttribute("aria-busy", "true");
     pending.promise = displayTarget(rendition, target, operation).finally(() => {
+      signal?.removeEventListener("abort", cancel);
       if (state.pendingNavigation !== pending) return;
       state.pendingNavigation = null;
       elements.viewer?.removeAttribute("aria-busy");

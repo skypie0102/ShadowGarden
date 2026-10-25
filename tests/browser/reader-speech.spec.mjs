@@ -191,12 +191,10 @@ for (const flow of ["paginated", "scrolled-doc"])
     expect(await page.locator("#speechAudio").getAttribute("src")).toBe(
       audioSource,
     );
-    await test
-      .info()
-      .attach(`speech-drawer-${flow}`, {
-        body: await page.screenshot(),
-        contentType: "image/png",
-      });
+    await test.info().attach(`speech-drawer-${flow}`, {
+      body: await page.screenshot(),
+      contentType: "image/png",
+    });
     await page.locator("#speechSpeed").selectOption("1.5");
     expect(
       await page.locator("#speechAudio").evaluate((a) => a.playbackRate),
@@ -227,12 +225,10 @@ for (const flow of ["paginated", "scrolled-doc"])
     await page.locator("#speechDrawer [data-close]").click();
     await expect(page.locator("#speechMini")).toBeVisible();
     await expect(page.locator("#speechToggle")).toBeFocused();
-    await test
-      .info()
-      .attach(`speech-${flow}`, {
-        body: await page.screenshot(),
-        contentType: "image/png",
-      });
+    await test.info().attach(`speech-${flow}`, {
+      body: await page.screenshot(),
+      contentType: "image/png",
+    });
     await page.locator("#speechMiniStop").click();
     await expect(page.locator("#speechMini")).toBeHidden();
     expect(await page.locator("#speechAudio").getAttribute("src")).toBeNull();
@@ -305,15 +301,109 @@ test("stopping pending audio and navigation cannot restart stale speech; provide
   await expect(page.locator("#speechMini")).toBeHidden();
 });
 
+test("hidden-tab narration advances without rendering and follows the final passage on return", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  await open(page, "scrolled-doc");
+  await page.locator("#speechPlay").click();
+  await expect
+    .poll(() => speechState(page).then((s) => s.status))
+    .toBe("playing");
+  while ((await speechState(page)).index < 3) {
+    await page.locator("#speechNext").click();
+    await expect
+      .poll(() => speechState(page).then((s) => s.status))
+      .toBe("playing");
+  }
+  await expect(page.locator("#viewer")).not.toHaveAttribute(
+    "aria-busy",
+    "true",
+    { timeout: 30000 },
+  );
+  await page.evaluate(() => {
+    const raf = window.requestAnimationFrame.bind(window),
+      cancel = window.cancelAnimationFrame.bind(window),
+      frames = new Map();
+    let serial = 0;
+    window.__speechTabHidden = true;
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      get: () => window.__speechTabHidden,
+    });
+    window.requestAnimationFrame = (callback) => {
+      if (!window.__speechTabHidden) return raf(callback);
+      const id = --serial;
+      frames.set(id, callback);
+      return id;
+    };
+    window.cancelAnimationFrame = (id) => {
+      if (frames.has(id)) frames.delete(id);
+      else cancel(id);
+    };
+    window.__showSpeechTab = () => {
+      window.__speechTabHidden = false;
+      window.requestAnimationFrame = raf;
+      window.cancelAnimationFrame = cancel;
+      for (const callback of frames.values()) raf(callback);
+      frames.clear();
+      document.dispatchEvent(new Event("visibilitychange"));
+    };
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await ended(page);
+  await expect
+    .poll(() => speechState(page).then((s) => s.status))
+    .toBe("playing");
+  await expect(page.locator("#speechPassage")).toHaveText("Chapter two");
+  await ended(page);
+  await expect
+    .poll(() => speechState(page).then((s) => s.status))
+    .toBe("playing");
+  await expect(page.locator("#speechPassage")).toHaveText(
+    "Final spoken paragraph.",
+  );
+  await ended(page);
+  await expect
+    .poll(() => speechState(page).then((s) => s.status))
+    .toBe("complete");
+  expect(
+    await page.evaluate(
+      async (bootstrap) =>
+        (await import(bootstrap)).readerRuntime.current.state.currentSpineIndex,
+      bootstrap,
+    ),
+  ).toBe(1);
+  await page.evaluate(() => window.__showSpeechTab());
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          async (bootstrap) =>
+            (await import(bootstrap)).readerRuntime.current.state
+              .currentSpineIndex,
+          bootstrap,
+        ),
+      { timeout: 30000 },
+    )
+    .toBe(3);
+  await expect(page.locator("#speechStatus")).toHaveText("Volume finished.");
+  await expect(page.locator("#speechMini")).toBeHidden();
+});
+
 test("native audio decodes MP3 and resumes its paused offset without regenerating speech", async ({
-  page,browserName,
+  page,
+  browserName,
 }) => {
   test.setTimeout(120000);
   await open(page, "paginated", { mockMedia: false });
   // Firefox creates an OS audio sink for unmuted playback; the headless CI
   // container has no output device. Muting keeps the real MP3 decoder, media
   // events and time progression while avoiding that unrelated device failure.
-  if(browserName==='firefox')await page.locator('#speechAudio').evaluate(audio=>{audio.muted=true});
+  if (browserName === "firefox")
+    await page.locator("#speechAudio").evaluate((audio) => {
+      audio.muted = true;
+    });
   await page.locator("#speechFollow").uncheck();
   await page.locator("#speechPlay").click();
   await expect
@@ -328,14 +418,12 @@ test("native audio decodes MP3 and resumes its paused offset without regeneratin
   await expect
     .poll(() => speechState(page).then((s) => s.status))
     .toBe("paused");
-  const paused = await page
-    .locator("#speechAudio")
-    .evaluate((a) => ({
-      time: a.currentTime,
-      duration: a.duration,
-      source: a.src,
-      paused: a.paused,
-    }));
+  const paused = await page.locator("#speechAudio").evaluate((a) => ({
+    time: a.currentTime,
+    duration: a.duration,
+    source: a.src,
+    paused: a.paused,
+  }));
   expect(paused.paused).toBe(true);
   expect(paused.duration).toBeGreaterThan(2.5);
   await page.locator("#speechPlay").click();

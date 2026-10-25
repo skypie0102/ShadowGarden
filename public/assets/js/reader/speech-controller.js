@@ -5,6 +5,7 @@ import {
 } from "./lifecycle.js";
 import { readJSON, writeJSON } from "./storage.js";
 import { createSpeechSource } from "./speech-source.js";
+import { recordReaderDiagnostic } from "./diagnostics.js";
 
 const KEY = "sg-reader-speech-settings",
   DEFAULT_VOICE = "en-US-EmmaMultilingualNeural";
@@ -43,7 +44,9 @@ export function createSpeechController({
     request = null,
     objectUrl = "",
     pending = null,
-    following = null,
+    followAbort = null,
+    followTarget = "",
+    followedCfi = "",
     voiceLoad = null,
     voicesLoaded = false,
     ahead = null;
@@ -124,6 +127,7 @@ export function createSpeechController({
   }
   function invalidate() {
     revision++;
+    cancelFollow();
     request?.abort();
     request = null;
     pending = null;
@@ -134,12 +138,15 @@ export function createSpeechController({
     invalidate();
     wantPlay = false;
     cursor = null;
+    followedCfi = "";
     status = "idle";
     releaseAudio();
     render(message);
   }
   function pause() {
     if (!active()) return;
+    cancelFollow();
+    followedCfi = "";
     wantPlay = false;
     audio.pause();
     status = "paused";
@@ -202,6 +209,53 @@ export function createSpeechController({
     );
     ahead = candidate;
   }
+  function cancelFollow() {
+    followAbort?.abort();
+    followAbort = null;
+    followTarget = "";
+  }
+  function followPassage() {
+    const selected = entry();
+    if (
+      !selected ||
+      (!objectUrl && status !== "complete") ||
+      !settings.follow ||
+      document.hidden ||
+      !["playing", "paused", "complete"].includes(status) ||
+      followedCfi === selected.cfi ||
+      (followAbort && followTarget === selected.cfi)
+    )
+      return;
+    cancelFollow();
+    const controller = new AbortController(),
+      serial = revision;
+    followAbort = controller;
+    followTarget = selected.cfi;
+    // Audio does not await rendering: animation frames may stop in a hidden tab.
+    void Promise.resolve()
+      .then(() => {
+        if (scope.disposed || serial !== revision || controller.signal.aborted)
+          return false;
+        return navigate(selected.cfi, {
+          speech: true,
+          signal: controller.signal,
+        });
+      })
+      .then((moved) => {
+        if (moved && serial === revision && !controller.signal.aborted)
+          followedCfi = selected.cfi;
+      })
+      .catch(() => {
+        if (!scope.disposed && !controller.signal.aborted)
+          recordReaderDiagnostic("speech.followFailed");
+      })
+      .finally(() => {
+        if (followAbort === controller) {
+          followAbort = null;
+          followTarget = "";
+        }
+      });
+  }
   async function resumeAudio(serial) {
     if (!wantPlay || serial !== revision || scope.disposed) return;
     try {
@@ -213,7 +267,10 @@ export function createSpeechController({
         status = "paused";
       } else status = "playing";
       render();
-      if (wantPlay) prefetch();
+      if (wantPlay) {
+        prefetch();
+        followPassage();
+      }
     } catch (error) {
       if (serial !== revision || scope.disposed) return;
       wantPlay = false;
@@ -250,19 +307,20 @@ export function createSpeechController({
                 })
               : cursor;
         if (!current()) return;
-        if (!next && direction < 0) {
+        if (!next) {
           wantPlay = false;
-          status = "paused";
-          render("Beginning of the volume.");
+          status = direction < 0 ? "paused" : "complete";
+          render(
+            direction < 0
+              ? "Beginning of the volume."
+              : cursor
+                ? "Volume finished."
+                : "No readable text found.",
+          );
+          followPassage();
           return;
         }
         cursor = next;
-        if (!cursor) {
-          wantPlay = false;
-          status = "complete";
-          render("No more readable text in this direction.");
-          return;
-        }
         render();
         const selected = entry(),
           voice = settings.voice;
@@ -275,22 +333,6 @@ export function createSpeechController({
         objectUrl = URL.createObjectURL(blob);
         audio.src = objectUrl;
         audio.playbackRate = settings.speed;
-        if (settings.follow && wantPlay) {
-          following = serial;
-          let moved;
-          try {
-            moved = await navigate(selected.cfi, { speech: true });
-          } finally {
-            if (following === serial) following = null;
-          }
-          if (!current()) return;
-          if (!moved) {
-            wantPlay = false;
-            status = "paused";
-            render("Reading position changed. Tap Resume to continue.");
-            return;
-          }
-        }
         if (status === "error") return;
         if (wantPlay) await resumeAudio(serial);
         else {
@@ -450,13 +492,26 @@ export function createSpeechController({
   });
   scope.listen(elements.speechFollow, "change", () => {
     settings.follow = elements.speechFollow.checked;
+    if (settings.follow) followPassage();
+    else cancelFollow();
     save();
+  });
+  scope.listen(document, "visibilitychange", () => {
+    if (document.hidden) cancelFollow();
+    else followPassage();
   });
   scope.listen(window, "pagehide", () => pause());
   // Only user input cancels follow. Relocation events can arrive late while a
   // new chapter is loading and are not evidence of a manual navigation.
-  for (const type of ['wheel','touchstart','pointerdown'])
-    scope.listen(elements.viewer,type,()=>{if(wantPlay&&following!==revision)pause()},{passive:true});
+  for (const type of ["wheel", "touchstart", "pointerdown"])
+    scope.listen(
+      elements.viewer,
+      type,
+      () => {
+        if (wantPlay) pause();
+      },
+      { passive: true },
+    );
   if ("mediaSession" in navigator) {
     const actions = {
       play: () => {
@@ -508,7 +563,7 @@ export function createSpeechController({
               contents.document,
               type,
               () => {
-                if (wantPlay && following !== revision) pause();
+                if (wantPlay) pause();
               },
               { passive: true },
             );

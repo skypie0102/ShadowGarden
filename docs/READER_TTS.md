@@ -18,6 +18,8 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   Reloading never starts playback automatically. Speech does not use or override
   paragraph alignment, typography, or page-map settings.
 - Leaving/disposal closes requests, pauses audio and revokes object URLs.
+  Audio advancement does not await page rendering. Hidden tabs defer position
+  following until visible again, including the final passage after completion.
   Browser background/Bluetooth playback depends on the browser/OS. Media Session
   exposes play, pause, previous passage, next passage and stop where supported.
 
@@ -33,6 +35,9 @@ semantic; it cannot resolve every arbitrary publisher CSS visibility rule.
 active blob and at most one prefetched passage. Late fetches and playback
 promises cannot resume a stopped/replaced session. No synthesized audio is
 persisted to local storage or sent to object storage.
+Position following has its own abortable navigation scope; suspended animation
+frames cannot block the audio queue. Pausing, hiding the page or stopping cancels
+an in-flight follow without cancelling speech merely because layout is delayed.
 
 `GET /tts` returns a sanitized voice list cached for an hour. `POST /tts` accepts
 only same-origin JSON, a current Garden Pass human session, a valid voice and
