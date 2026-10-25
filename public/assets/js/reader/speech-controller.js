@@ -429,7 +429,7 @@ export function createSpeechController({
     if (wantPlay && objectUrl && !pending) void prepare({ direction: 1 });
   });
   scope.listen(audio, "error", () => {
-    if (objectUrl && status !== "idle") {
+    if (objectUrl && audio.currentSrc === objectUrl && status !== "idle") {
       wantPlay = false;
       status = "error";
       render("Audio could not play. Tap Retry.");

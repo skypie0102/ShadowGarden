@@ -65,7 +65,7 @@
 }
 .speech-mini {
   position: fixed;
-  z-index: 25;
+  z-index: 35;
   left: 50%;
   bottom: 60px;
   transform: translateX(-50%);

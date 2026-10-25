@@ -55,7 +55,10 @@ not exposed because this endpoint does not support arbitrary SSML.
 
 Run `npm run check` and the five-profile Playwright suite. The speech browser
 fixture uses deterministic media events to check ownership and navigation;
-these are distinct from real provider/audio checks. A successful live provider
+an additional native MP3 test checks decoding, paused offsets and invalid-media
+errors without replacing media methods. Firefox's headless test mutes output
+to avoid requiring a physical audio device. These are distinct from real
+provider/audio checks. A successful live provider
 probe must also verify the voice list and generated MP3, then a deployed Pages
 probe must establish that the Cloudflare egress path is accepted. Android/Soul
 hardware testing is separate from browser emulation.

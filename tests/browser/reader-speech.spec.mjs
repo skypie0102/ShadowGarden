@@ -306,10 +306,14 @@ test("stopping pending audio and navigation cannot restart stale speech; provide
 });
 
 test("native audio decodes MP3 and resumes its paused offset without regenerating speech", async ({
-  page,
+  page,browserName,
 }) => {
   test.setTimeout(120000);
   await open(page, "paginated", { mockMedia: false });
+  // Firefox creates an OS audio sink for unmuted playback; the headless CI
+  // container has no output device. Muting keeps the real MP3 decoder, media
+  // events and time progression while avoiding that unrelated device failure.
+  if(browserName==='firefox')await page.locator('#speechAudio').evaluate(audio=>{audio.muted=true});
   await page.locator("#speechFollow").uncheck();
   await page.locator("#speechPlay").click();
   await expect
