@@ -1,7 +1,29 @@
 # Reader releases
 
-**Current production baseline:** v2.22.1. Ongoing
+**Current production baseline:** v2.23.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.23.0 — centered, themed narration
+
+**Live:** deployment `c4ca9a98-4f32-4be7-993e-96b58a31e036`, source `4de24e0b6f923f704e8341e0000027003fc940d5`,
+verified at 2026-10-25T09:01:09.275Z. [PR #63](https://github.com/skypie0102/ShadowGarden/pull/63)
+centers the spoken range in Pages and Continuous, including the book boundaries,
+and highlights it using Garden, Night, Black, Paper and Adult accent colors.
+Start/Resume closes options; reopening them keeps them open across automatic
+passage changes. Original-text chunk CFIs advance through long paragraphs.
+Custom Highlight and the SVG fallback preserve EPUB markup and canonical page
+measurement. Temporary viewport spacing is released on Stop, disabling following
+and rendition disposal. Audio progression stays independent of rendering.
+
+Candidate and main checks pass 494 Node tests and 961 browser cases, with nine
+existing platform skips and zero retries. All 55 focused TTS cases pass; eight
+candidate captures were reviewed. The merged application tree matches the tested
+candidate. The book-start centering check fails before the boundary correction
+and passes afterward. Production preserves the immediate catalog, snapshots and
+configuration; all 9 version/catalog/asset checks, voice metadata and request
+guards pass. Six further mobile Chromium fixture checks pass against the deployed
+reader. Physical Android/Soul acceptance is separate.
+[Read aloud guide](READER_TTS.md) · [Structured evidence](reader-speech-position-release-2.23.0.json).
 
 ## Reader v2.22.1 — Edge TTS read aloud
 

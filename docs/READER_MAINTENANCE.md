@@ -1,6 +1,14 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-25:** v2.22.1 adds Edge TTS read aloud with themed
+**Latest deployment — 2026-10-25:** v2.23.0 centers and highlights spoken
+passages in both reading modes and closes Read aloud options on Start/Resume.
+All 55 focused cases, 494 Node tests and 961 full-suite browser cases pass across
+five profiles, with nine existing skips and zero retries. Eight candidate captures
+were reviewed; the merged application tree matches. Production preserves the
+immediate catalog, snapshots and configuration with zero database writes.
+[Release evidence](reader-speech-position-release-2.23.0.json) · [Read aloud guide](READER_TTS.md).
+
+**Previous reader deployment — 2026-10-25:** v2.22.1 adds Edge TTS read aloud with themed
 controls, persisted voice/speed preferences, pause/resume and chapter progression.
 All 25 focused cases, 494 Node tests and 931 full-suite browser cases pass
 across five profiles; 9 existing platform skips remain, with zero retries.
@@ -47,7 +55,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.22.1; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.23.0; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The

@@ -27,7 +27,28 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.22.1**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.23.0**, deployed on 2026-10-25 (Asia/Manila)
+from `4de24e0` through [PR #63](https://github.com/skypie0102/ShadowGarden/pull/63).
+Read aloud now centers the spoken passage in Pages and Continuous, highlights it
+using the selected reader theme, and closes options on Start/Resume. Long paragraphs
+have separate chunk positions; the first and last passages also center without
+needing a cover or trailing content. Pause keeps the highlight. Stop, disabling
+following and disposal release temporary viewport positioning. EPUB markup and
+canonical pagination stay intact, and audio remains independent of rendering.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40177121119)
+passes 494 Node tests and 961 browser cases across five profiles, with nine existing
+platform skips and zero retries. All 55 focused TTS checks pass; eight candidate
+captures were reviewed and the merged application tree is identical. Production
+preserves the immediate revision-18 catalog, 17 snapshots and configuration,
+with zero database writes. All 9 version/catalog/asset checks and the live voice
+endpoint and request guards pass. Six additional mobile Chromium checks pass against
+the deployed reader using a disposable EPUB fixture. Physical Android/Soul acceptance
+is separate.
+See the [read aloud guide](docs/READER_TTS.md) and
+[release evidence](docs/reader-speech-position-release-2.23.0.json).
+
+The previous production release is **v2.22.1**, deployed on 2026-10-25 (Asia/Manila)
 from `4fb189a`. The reader implementation is [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62).
 The initial v2.22.0 publish omitted `/tts` from the Pages invocation manifest.
 v2.22.1 corrects that route and verifies voice availability and rejection guards
