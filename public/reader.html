@@ -109,7 +109,7 @@
       <div class="settings-panel speech-panel">
         <p class="speech-description">Edge TTS · Online<br>Passages are sent to Microsoft to generate speech.</p>
         <label><span>Voice</span><select id="speechVoice" aria-describedby="speechVoiceHint"><option value="en-US-EmmaMultilingualNeural">Emma · English (US)</option></select></label>
-        <p id="speechVoiceHint" class="speech-hint">English voices appear first. Other languages are available below.</p>
+        <p id="speechVoiceHint" class="speech-hint">English voices, grouped by region.</p>
         <button id="speechVoicesRetry" class="reader-reset" type="button" hidden>Reload voice list</button>
         <label><span>Speed</span><select id="speechSpeed"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="1.75">1.75×</option><option value="2">2×</option></select></label>
         <label class="reader-toggle-setting"><span>Follow reading position</span><input id="speechFollow" type="checkbox" checked></label>
@@ -122,7 +122,9 @@
     <audio id="speechAudio" preload="none" hidden></audio>
     <div id="speechMini" class="speech-mini" role="region" aria-label="Read aloud playback" hidden>
       <button id="speechMiniPlay" type="button" aria-label="Pause read aloud">Ⅱ</button>
+      <button id="speechMiniPrevious" type="button" aria-label="Previous passage">‹</button>
       <button id="speechMiniSettings" class="speech-mini-detail" type="button" aria-label="Open read aloud settings"><span id="speechMiniLabel">Reading aloud</span></button>
+      <button id="speechMiniNext" type="button" aria-label="Next passage">›</button>
       <button id="speechMiniStop" type="button" aria-label="Stop read aloud">■</button>
     </div>
 

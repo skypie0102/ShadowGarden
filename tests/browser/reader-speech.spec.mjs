@@ -13,6 +13,9 @@ const bootstrap = "/assets/js/reader-bootstrap.js?v=2.11.0";
 const voices = [
   { id: "en-US-EmmaMultilingualNeural", locale: "en-US", gender: "Female" },
   { id: "en-US-GuyNeural", locale: "en-US", gender: "Male" },
+  { id: "en-GB-SoniaNeural", locale: "en-GB", gender: "Female" },
+  { id: "fr-FR-DeniseNeural", locale: "fr-FR", gender: "Female" },
+  { id: "ja-JP-NanamiNeural", locale: "ja-JP", gender: "Female" },
 ];
 // Original 440 Hz test tone: ffmpeg lavfi sine, 24 kHz mono, 48 kbit MP3, 3 s.
 const testAudio = Buffer.from(
@@ -98,7 +101,7 @@ async function open(page, flow, { mockMedia = true, epub, adult = false } = {}) 
     "aria-hidden",
     "false",
   );
-  await expect(page.locator("#speechVoice option")).toHaveCount(2);
+  await expect(page.locator("#speechVoice option")).toHaveCount(3);
 }
 async function position(page, id) {
   return page.evaluate(
@@ -186,6 +189,112 @@ async function markedPosition(page) {
     return null;
   },bootstrap);
 }
+test('English voices replace a saved non-English choice and the floating controls navigate passages', async ({page}) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('sg-reader-speech-settings'))
+      localStorage.setItem('sg-reader-speech-settings', JSON.stringify({voice:'fr-FR-DeniseNeural',speed:1,follow:true}));
+  });
+  await open(page,'scrolled-doc');
+  await expect(page.locator('#speechVoice')).toHaveValue('en-US-EmmaMultilingualNeural');
+  expect(await page.locator('#speechVoice option').evaluateAll(options => options.map(o=>o.value).sort())).toEqual([
+    'en-GB-SoniaNeural','en-US-EmmaMultilingualNeural','en-US-GuyNeural',
+  ]);
+  await page.locator('#speechVoice').selectOption('en-GB-SoniaNeural');
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  while((await speechState(page)).index>0){await page.locator('#speechMiniPrevious').click();await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');}
+  await expect(page.locator('#speechPassage')).toHaveText('Chapter zero');
+  await page.locator('#speechMiniNext').click();
+  await expect(page.locator('#speechPassage')).toHaveText('First spoken paragraph. Emphasis remains readable.');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await page.locator('#speechMiniPrevious').click();
+  await expect(page.locator('#speechPassage')).toHaveText('Chapter zero');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect(await page.locator('#speechMini > button').evaluateAll(buttons=>buttons.map(b=>b.id))).toEqual([
+    'speechMiniPlay','speechMiniPrevious','speechMiniSettings','speechMiniNext','speechMiniStop',
+  ]);
+  for(const width of [320,393,1280]) {
+    await page.setViewportSize({width,height:800});
+    const boxes=await page.locator('#speechMini > button').evaluateAll(buttons=>buttons.map(b=>{
+      const r=b.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};
+    }));
+    expect(boxes[0].left).toBeGreaterThanOrEqual(0);
+    expect(boxes.at(-1).right).toBeLessThanOrEqual(width);
+    boxes.forEach((box,i)=>{
+      expect(box.width).toBeGreaterThanOrEqual(44);expect(box.height).toBeGreaterThanOrEqual(44);
+      if(i)expect(box.left).toBeGreaterThanOrEqual(boxes[i-1].right);
+    });
+    await test.info().attach(`speech-floating-controls-${width}`,{body:await page.screenshot(),contentType:'image/png'});
+  }
+  await page.locator('#speechMiniStop').click();
+  await page.reload();
+  await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
+  await page.locator('#speechToggle').click();
+  await expect(page.locator('#speechVoice')).toHaveValue('en-GB-SoniaNeural');
+  await expect(page.locator('#speechMini')).toBeHidden();
+});
+
+async function followMotion(page, {pause = false} = {}) {
+  return page.evaluate(async ({bootstrap,pause}) => {
+    const r=(await import(bootstrap)).readerRuntime.current;
+    const container=r.state.rendition.manager.container;
+    const start=container.scrollTop,samples=[];
+    let pausedAt=null,displays=0;
+    const display=r.state.rendition.display;
+    r.state.rendition.display=function(...args){displays++;return display.apply(this,args);};
+    document.getElementById('speechAudio').dispatchEvent(new Event('ended'));
+    try {
+      await new Promise(resolve=>{
+        const started=performance.now();
+        function sample(time){
+          const top=container.scrollTop;
+          samples.push(top);
+          if(pause && pausedAt===null && Math.abs(top-start)>2){
+            document.getElementById('speechMiniPlay').click();pausedAt=container.scrollTop;
+          }
+          if(time-started>=700)resolve();else requestAnimationFrame(sample);
+        }
+        requestAnimationFrame(sample);
+      });
+    } finally {r.state.rendition.display=display;}
+    return {start,samples,pausedAt,end:container.scrollTop,displays};
+  },{bootstrap,pause});
+}
+for(const flow of ['paginated','scrolled-doc'])
+  test(`${flow}: following animates one movement and pause cancels the remaining frames`,async({page})=>{
+    await open(page,flow);
+    await pressSpeech(page,'speechPlay');
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    const motion=await followMotion(page);
+    expect(motion.displays).toBe(0);
+    const distance=motion.end-motion.start;
+    expect(Math.abs(distance)).toBeGreaterThan(12);
+    expect(new Set(motion.samples.map(v=>Math.round(v))).size).toBeGreaterThan(4);
+    const steps=motion.samples.map((v,i)=>v-(i?motion.samples[i-1]:motion.start));
+    expect(Math.max(...steps.map(Math.abs))).toBeLessThan(Math.abs(distance)*0.6);
+    expect(steps.every(v=>v*Math.sign(distance)>=-1)).toBe(true);
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    const stopped=await followMotion(page,{pause:true});
+    expect(stopped.pausedAt).not.toBeNull();
+    expect(stopped.end).toBeCloseTo(stopped.pausedAt,0);
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+    expect(await markedPosition(page)).not.toBeNull();
+    await page.locator('#speechMiniStop').click();
+    await expect(page.locator('.sg-speech-centered-page,.sg-speech-centered-scroll')).toHaveCount(0);
+  });
+test('reduced motion follows a passage without an animated scroll',async({page})=>{
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await open(page,'scrolled-doc');
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+  const motion=await followMotion(page);
+  expect(motion.displays).toBe(0);
+  expect(Math.abs(motion.end-motion.start)).toBeGreaterThan(12);
+  const intermediate=motion.samples.filter(v=>Math.abs(v-motion.start)>1 && Math.abs(v-motion.end)>1);
+  expect(intermediate).toEqual([]);
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+});
+
 for(const flow of ['paginated','scrolled-doc'])
   test(`${flow}: the first and last spoken passages can be centered without cover or trailing content`,async({page})=>{
     test.setTimeout(90000);

@@ -35,3 +35,9 @@ test("read aloud preferences have an Edge default, bounded speed and no autoplay
   assert.equal(speechSettings({ speed: "bad" }).speed, 1);
   assert.deepEqual(speechSettings(null), speechSettings());
 });
+test("read aloud keeps English regional voices and replaces saved non-English voices", () => {
+  for (const voice of ["en-US-GuyNeural", "en-GB-SoniaNeural", "en-AU-NatashaNeural"])
+    assert.equal(speechSettings({ voice }).voice, voice);
+  for (const voice of ["fr-FR-DeniseNeural", "ja-JP-NanamiNeural", "ar-SA-ZariyahNeural"])
+    assert.equal(speechSettings({ voice }).voice, speechSettings().voice);
+});

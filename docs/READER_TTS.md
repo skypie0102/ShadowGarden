@@ -6,7 +6,8 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
 
 ## Reader behavior
 
-- Open the themed headphone control to select a voice and speed, then Play.
+- Open the themed headphone control to select an English voice and speed, then Play.
+  Voices are grouped by region. Saved non-English voices fall back to Emma.
 - Play starts at the current passage. Read from here restarts from the current
   reading position. Pause/Resume retains the current audio offset.
 - Previous/Next changes passages. Playback advances through linear EPUB spine
@@ -15,7 +16,11 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   Its highlight follows Garden, Night, Black and Paper, including Adult rose.
   Pausing keeps the highlight; Stop and leaving the reader remove it. Manual navigation
   stops narration; touching or scrolling EPUB content pauses narration. Closing
-  the speech drawer keeps playback controls in a compact floating bar.
+  the speech drawer keeps playback controls in a compact floating bar, ordered
+  Play/Pause, Previous passage, settings, Next passage, Stop.
+- Following a loaded passage in the current chapter uses one eased scroll rather than navigating to its
+  top and then centering it. Pause, Stop, manual input and newer navigation cancel
+  pending animation. Reduced-motion preferences use immediate positioning.
 - Starting or resuming playback closes the Read aloud options. Reopening options
   during playback keeps them open across automatic passage changes.
 - Voice, speed and follow preferences persist in `sg-reader-speech-settings`.
@@ -46,6 +51,11 @@ source CFIs and page measurement intact. Continuous uses owned scroll restoratio
 Pages temporarily offset the rendered viewport. Continuous adds outer viewport
 gutters so the first and last passages can be centered too. Those offsets/gutters
 are released when following is disabled, speech stops or the rendition closes.
+The navigation owner first asks the position controller to follow an already
+rendered range in the current chapter; chapter changes and off-page ranges retain
+EPUB display so background-return location and chapter state stay authoritative.
+Animation interpolates the semantic range position using owned scroll restoration,
+so viewport gutters and Continuous buffering do not introduce a preliminary jump.
 
 Position following has its own abortable navigation scope; suspended animation
 frames cannot block the audio queue. Pausing, hiding the page or stopping cancels

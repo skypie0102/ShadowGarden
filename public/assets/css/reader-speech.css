@@ -73,7 +73,8 @@
   border-color: var(--sg-ui-accent-line);
   color: var(--leaf);
 }
-.speech-controls button:disabled {
+.speech-controls button:disabled,
+.speech-mini button:disabled {
   opacity: 0.4;
   cursor: default;
 }
@@ -102,9 +103,9 @@
   bottom: 60px;
   transform: translateX(-50%);
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-columns: 44px 44px minmax(0, 1fr) 44px 44px;
   gap: 4px;
-  width: min(360px, calc(100vw - 32px));
+  width: min(420px, calc(100vw - 24px));
   padding: 5px;
   border: 1px solid var(--sg-ui-accent-line);
   border-radius: 14px;
