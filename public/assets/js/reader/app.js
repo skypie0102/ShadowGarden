@@ -56,7 +56,7 @@ function readerElements() {
     bookmarksPanel: $("#bookmarksPanel"),
     settingsToggle: $("#settingsToggle"),
     settingsDrawer: $("#settingsDrawer"),
-    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniPlay','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
+    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniPlay','speechMiniPrevious','speechMiniNext','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
     backdrop: $("#drawerBackdrop"),
     bookmarkButton: $("#bookmarkButton"),
     backLink: $("#backLink"),
@@ -214,7 +214,7 @@ async function initializeReader(session, scope) {
     if (intent.targetIndex < intent.fromIndex) return index > intent.targetIndex;
     return false;
   }
-  function navigate(target, { operation, speech = false, signal } = {}) {
+  function navigate(target, { operation, speech = false, signal, followSpeech } = {}) {
     if (scope.disposed || signal?.aborted) return Promise.resolve(false);
     const rendition = state.rendition;
     if (!target || !rendition) return Promise.resolve(false);
@@ -227,7 +227,15 @@ async function initializeReader(session, scope) {
     const pending = { rendition, target, operation, promise: null };
     state.pendingNavigation = pending;
     elements.viewer?.setAttribute("aria-busy", "true");
-    pending.promise = displayTarget(rendition, target, operation).finally(() => {
+    pending.promise = (async () => {
+      // Keep navigation ownership while following a loaded passage directly.
+      // Displaying it first would snap to its top before the centered movement.
+      const current = () => !scope.disposed && rendition === state.rendition && operation.isCurrent();
+      if (speech && await followSpeech?.(operation.signal)) return current();
+      if (!current() || !await displayTarget(rendition, target, operation)) return false;
+      if (speech && followSpeech) return await followSpeech(operation.signal) && current();
+      return current();
+    })().finally(() => {
       signal?.removeEventListener("abort", cancel);
       if (state.pendingNavigation !== pending) return;
       state.pendingNavigation = null;

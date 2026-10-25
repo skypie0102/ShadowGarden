@@ -17,7 +17,7 @@ export function speechSettings(value = {}) {
   return {
     voice:
       typeof value.voice === "string" &&
-      /^[a-z]{2,3}-[A-Z]{2}-[A-Za-z0-9-]+Neural$/.test(value.voice)
+      /^en-[A-Z]{2}-[A-Za-z0-9-]+Neural$/.test(value.voice)
         ? value.voice
         : DEFAULT_VOICE,
     speed: Number.isFinite(Number(value.speed))
@@ -78,6 +78,8 @@ export function createSpeechController({
     elements.speechMiniStop.disabled = !active();
     elements.speechPrevious.disabled = !cursor;
     elements.speechNext.disabled = !cursor;
+    elements.speechMiniPrevious.disabled = !cursor;
+    elements.speechMiniNext.disabled = !cursor;
     elements.speechStatus.textContent =
       message ||
       {
@@ -220,6 +222,7 @@ export function createSpeechController({
   }
   function cancelFollow() {
     followAbort?.abort();
+    position.suspendCenter();
     followAbort = null;
     followTarget = "";
   }
@@ -248,11 +251,11 @@ export function createSpeechController({
         return navigate(selected.cfi, {
           speech: true,
           signal: controller.signal,
+          followSpeech: signal => position.center({ smooth: true, signal }),
         });
       })
       .then((moved) => {
         if (moved && serial === revision && !controller.signal.aborted) {
-          position.center();
           followedCfi = selected.cfi;
         }
       })
@@ -413,14 +416,13 @@ export function createSpeechController({
         const select = elements.speechVoice,
           groups = new Map();
         const voices = data.voices.filter((v) =>
-          /^[a-z]{2,3}-[A-Z]{2}-[A-Za-z0-9-]+Neural$/.test(v.id),
+          /^en-[A-Z]{2}-[A-Za-z0-9-]+Neural$/.test(v?.id) &&
+          /^en-[A-Z]{2}$/.test(v.locale),
         );
         if (!voices.length) throw new Error("Voices unavailable");
         select.replaceChildren();
         voices.sort(
           (a, b) =>
-            (a.locale.startsWith("en") ? 0 : 1) -
-              (b.locale.startsWith("en") ? 0 : 1) ||
             a.locale.localeCompare(b.locale) ||
             a.id.localeCompare(b.id),
         );
@@ -450,12 +452,12 @@ export function createSpeechController({
         save();
         voicesLoaded = true;
         elements.speechVoiceHint.textContent =
-          "English voices appear first. Other languages are available below.";
+          "English voices, grouped by region.";
       } catch {
         if (!scope.disposed) {
           elements.speechVoicesRetry.hidden = false;
           elements.speechVoiceHint.textContent =
-            "Could not load the full voice list. The selected voice is still available to try.";
+            "Could not load English voices. The selected voice is still available to try.";
         }
       } finally {
         voiceLoad = null;
@@ -483,8 +485,10 @@ export function createSpeechController({
     closeOnPlay = true;
     void prepare({ fromCurrent: true });
   });
-  scope.listen(elements.speechNext, "click", () => move(1));
-  scope.listen(elements.speechPrevious, "click", () => move(-1));
+  for (const button of [elements.speechNext, elements.speechMiniNext])
+    scope.listen(button, "click", () => move(1));
+  for (const button of [elements.speechPrevious, elements.speechMiniPrevious])
+    scope.listen(button, "click", () => move(-1));
   scope.listen(audio, "ended", () => {
     if (wantPlay && objectUrl && !pending) void prepare({ direction: 1 });
   });

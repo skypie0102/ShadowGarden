@@ -8,8 +8,42 @@ const NAME = "sg-reader-speech";
 // Custom Highlight preserves publisher markup, CFIs, selections and pagination.
 export function createSpeechPosition() {
   const scope = createReaderScope(), marks = new Map();
-  let rendition = null, lifetime = null, selected = null, fallback = "", centered = false;
+  let rendition = null, lifetime = null, selected = null, fallback = "", centered = false, motion = null;
+  function cancelMotion() { motion?.dispose(); motion = null; }
+  function slide(place, smooth, signal) {
+    cancelMotion();
+    if (scope.disposed || signal?.aborted || !lifetime || lifetime.disposed) return Promise.resolve(false);
+    if (!smooth || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)
+      return Promise.resolve(place(1));
+    const animation = lifetime.child();
+    motion = animation;
+    return new Promise(resolve => {
+      const finish = moved => {
+        resolve(moved);
+        if (motion === animation) motion = null;
+        animation.dispose();
+      };
+      animation.add(() => resolve(false));
+      animation.listen(signal, "abort", () => finish(false), { once: true });
+      const start = performance.now();
+      const frame = time => {
+        const progress = Math.min(1, Math.max(0, (time - start) / 360));
+        // Ease both ends so short passages do not jerk into motion or stop.
+        const eased = progress * progress * (3 - 2 * progress);
+        try {
+          if (!place(eased)) return finish(false);
+        } catch {
+          recordReaderDiagnostic("speech.followFailed");
+          return finish(false);
+        }
+        if (progress === 1) finish(true);
+        else animation.frame(frame);
+      };
+      animation.frame(frame);
+    });
+  }
   function resetCenter() {
+    cancelMotion();
     centered = false;
     const container = rendition?.manager?.container;
     if (container?.classList.contains("sg-speech-centered-scroll")) {
@@ -85,26 +119,46 @@ export function createSpeechPosition() {
     },
     clear,
     resetCenter,
-    suspendCenter() { centered = false; },
-    center() {
+    suspendCenter() { cancelMotion(); centered = false; },
+    async center({ smooth = false, signal } = {}) {
+      cancelMotion();
       const located = locate(), manager = rendition?.manager;
-      if (!located || !manager) return false;
+      if (!located || !manager || scope.disposed || signal?.aborted) return false;
       const fullsize = manager.settings?.fullsize === true;
       const height = fullsize ? window.innerHeight : manager.container?.clientHeight;
       const width = fullsize ? window.innerWidth : manager.container?.clientWidth;
       if (!height || !width) return false;
       if (manager.isPaginated) {
+        const frame = located.view.iframe.getBoundingClientRect();
+        const viewport = manager.container.getBoundingClientRect();
+        if (![...located.range.getClientRects()].some(r => r.width > 0 && r.height > 0 &&
+          frame.left + r.right > viewport.left + 1 && frame.left + r.left < viewport.right - 1)) return false;
+      }
+      if (manager.isPaginated) {
         // Shift only the rendered page viewport, not the publication's columns.
         // Extra scroll space is visual, so page counts and source CFIs stay put.
+        const previous = parseFloat(manager.container.style.getPropertyValue("--sg-speech-page-inset")) || 0;
         manager.container.style.setProperty("--sg-speech-page-inset", `${height / 2}px`);
         manager.container.classList.add("sg-speech-centered-page");
+        manager.container.scrollTop += height / 2 - previous;
+        manager.scrollTop = manager.container.scrollTop;
       } else if (!fullsize) {
         // Outer gutters make true centering possible at either book boundary,
         // without padding or rewriting any publication document.
         const horizontal = manager.settings?.axis === "horizontal";
-        manager.container.style.setProperty("--sg-speech-scroll-inset", `${(horizontal ? width : height) / 2}px`);
-        manager.container.classList.add("sg-speech-centered-scroll");
-        manager.container.classList.toggle("sg-speech-centered-scroll-x", horizontal);
+        const inset = (horizontal ? width : height) / 2;
+        const previous = parseFloat(manager.container.style.getPropertyValue("--sg-speech-scroll-inset")) || 0;
+        if (inset !== previous) {
+          const anchor = captureContinuousScrollPosition(rendition);
+          manager.container.style.setProperty("--sg-speech-scroll-inset", `${inset}px`);
+          manager.container.classList.add("sg-speech-centered-scroll");
+          manager.container.classList.toggle("sg-speech-centered-scroll-x", horizontal);
+          // Installing a book-edge gutter must not move the visible text first.
+          if (!anchor || !restoreContinuousScrollPosition(rendition, anchor)) {
+            if (horizontal) manager.container.scrollLeft += inset - previous;
+            else manager.container.scrollTop += inset - previous;
+          }
+        }
       }
       const rect = located.range.getBoundingClientRect();
       const rects = [...located.range.getClientRects()].filter(r => r.width > 0 && r.height > 0);
@@ -119,15 +173,25 @@ export function createSpeechPosition() {
       const targetWidth = rect.width <= width * 0.7 ? rect.width : first.width;
       if (manager.isPaginated) {
         const targetTop = bottom-top <= height*0.7 ? top : first.top;
-        manager.container.scrollTop += frame.top + targetTop + targetHeight/2 - (viewport.top+height/2);
-        manager.scrollTop = manager.container.scrollTop;
-        centered = true;
-        return true;
+        const from = manager.container.scrollTop;
+        const distance = frame.top + targetTop + targetHeight/2 - (viewport.top+height/2);
+        const moved = await slide(progress => {
+          manager.container.scrollTop = from + distance * progress;
+          manager.scrollTop = manager.container.scrollTop;
+          return true;
+        }, smooth && Math.abs(distance) > 1, signal);
+        centered = moved;
+        return moved;
       }
-      const moved = restoreContinuousScrollPosition(rendition, {
-        index: selected.spineIndex, contentCfi: selected.cfi, fullsize,
-        top: (height - targetHeight) / 2, left: (width - targetWidth) / 2,
-      });
+      const fromTop = frame.top + rect.top - viewport.top;
+      const fromLeft = frame.left + rect.left - viewport.left;
+      const toTop = (height - targetHeight) / 2, toLeft = (width - targetWidth) / 2;
+      const passage = selected;
+      const moved = await slide(progress => restoreContinuousScrollPosition(rendition, {
+        index: passage.spineIndex, contentCfi: passage.cfi, fullsize,
+        top: fromTop + (toTop - fromTop) * progress,
+        left: fromLeft + (toLeft - fromLeft) * progress,
+      }), smooth && Math.max(Math.abs(toTop - fromTop), Math.abs(toLeft - fromLeft)) > 1, signal);
       if (moved) {
         const owner = rendition;
         void Promise.resolve(owner.reportLocation?.()).catch(() => {
@@ -153,7 +217,7 @@ export function createSpeechPosition() {
       lifetime.on(next, "rendered", refresh);
       lifetime.on(next, "resized", () => {
         refresh();
-        if (centered) this.center();
+        if (centered || motion) void this.center().catch(() => recordReaderDiagnostic("speech.followFailed"));
       });
     },
     dispose: () => scope.dispose(),
