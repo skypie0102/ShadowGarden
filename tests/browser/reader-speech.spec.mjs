@@ -190,7 +190,10 @@ async function markedPosition(page) {
   },bootstrap);
 }
 test('English voices replace a saved non-English choice and the floating controls navigate passages', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('sg-reader-speech-settings', JSON.stringify({voice:'fr-FR-DeniseNeural',speed:1,follow:true})));
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('sg-reader-speech-settings'))
+      localStorage.setItem('sg-reader-speech-settings', JSON.stringify({voice:'fr-FR-DeniseNeural',speed:1,follow:true}));
+  });
   await open(page,'scrolled-doc');
   await expect(page.locator('#speechVoice')).toHaveValue('en-US-EmmaMultilingualNeural');
   expect(await page.locator('#speechVoice option').evaluateAll(options => options.map(o=>o.value).sort())).toEqual([
@@ -221,8 +224,8 @@ test('English voices replace a saved non-English choice and the floating control
       expect(box.width).toBeGreaterThanOrEqual(44);expect(box.height).toBeGreaterThanOrEqual(44);
       if(i)expect(box.left).toBeGreaterThanOrEqual(boxes[i-1].right);
     });
+    await test.info().attach(`speech-floating-controls-${width}`,{body:await page.screenshot(),contentType:'image/png'});
   }
-  await test.info().attach('speech-floating-controls',{body:await page.screenshot(),contentType:'image/png'});
   await page.locator('#speechMiniStop').click();
   await page.reload();
   await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
