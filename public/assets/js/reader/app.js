@@ -12,6 +12,7 @@ import { createBookSearchController } from "./book-search.js";
 import { createPageNavigationInput } from "./page-navigation-input.js";
 import { createImageFocusController } from "./image-focus.js";
 import { createCompletionController } from "./completion.js";
+import { createSpeechController } from "./speech-controller.js";
 import { createPaginatedController } from "./paginated.js";
 import { createContinuousController } from "./continuous.js";
 import { createReaderResumeController } from "./resume-controller.js";
@@ -55,6 +56,7 @@ function readerElements() {
     bookmarksPanel: $("#bookmarksPanel"),
     settingsToggle: $("#settingsToggle"),
     settingsDrawer: $("#settingsDrawer"),
+    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniPlay','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
     backdrop: $("#drawerBackdrop"),
     bookmarkButton: $("#bookmarkButton"),
     backLink: $("#backLink"),
@@ -136,7 +138,7 @@ async function initializeReader(session, scope) {
     pageMapRefreshTimer: 0
   };
   let settingsController, progressController, bookmarksController, pageInputController,
-    imageFocusController, paginatedController, continuousController, resumeController, completionController;
+    imageFocusController, paginatedController, continuousController, resumeController, completionController, speechController;
   scope.add(() => {
     state.renditionSerial++;
     disposeRenditionNavigation(state.rendition);
@@ -212,10 +214,11 @@ async function initializeReader(session, scope) {
     if (intent.targetIndex < intent.fromIndex) return index > intent.targetIndex;
     return false;
   }
-  function navigate(target, { operation } = {}) {
+  function navigate(target, { operation, speech = false } = {}) {
     if (scope.disposed) return Promise.resolve(false);
     const rendition = state.rendition;
     if (!target || !rendition) return Promise.resolve(false);
+    if (!speech) speechController?.stop();
     operation = operation || beginRenditionNavigation(rendition);
     if (!operation.isCurrent()) return Promise.resolve(false);
     const pending = { rendition, target, operation, promise: null };
@@ -268,6 +271,7 @@ async function initializeReader(session, scope) {
   }
   const bookSearchController = createBookSearchController({ getBook: () => state.book });
   own(bookSearchController);
+  speechController = own(createSpeechController({elements,getBook:()=>state.book,getCfi:()=>progressController?.currentCfi?.()||'',getSpineIndex:()=>state.currentSpineIndex,navigate,openDrawer}));
   tocController = createTocController({
     panel: elements.tocPanel,
     navigate,
@@ -378,6 +382,7 @@ async function initializeReader(session, scope) {
   });
   own(bookmarksController);
   function turn(direction) {
+    speechController?.stop();
     if (scope.disposed) return;
     if (settingsController.get().flow !== "paginated") return;
     paginatedController?.turn(direction);
@@ -439,6 +444,7 @@ async function initializeReader(session, scope) {
       return;
     }
     const spineIndex = locationSpineIndex(location);
+    speechController?.onLocation(spineIndex);
     if (Number.isFinite(spineIndex)) state.currentSpineIndex = spineIndex;
     const chapter = tocController.chapterForLocation(location);
     if (intent?.rendition === rendition) {
@@ -462,6 +468,7 @@ async function initializeReader(session, scope) {
     lifetime.hook(rendition.hooks.content, (contents) => themeController.prepare(contents));
     pageInputController.attachRendition(rendition);
     imageFocusController.attachRendition(rendition);
+    speechController.attachRendition(rendition);
     lifetime.on(rendition, "relocated", (location) => onRelocated(rendition, location));
     lifetime.on(rendition, "rendered", () => {
       if (rendition !== state.rendition) return;
@@ -475,6 +482,7 @@ async function initializeReader(session, scope) {
     });
   }
   async function openRendition(target) {
+    speechController?.stop();
     scope.signal.throwIfAborted();
     const serial = ++state.renditionSerial, flow = settingsController.get().flow;
     let operation;
@@ -644,6 +652,7 @@ async function initializeReader(session, scope) {
     scope.listen(elements.nextPage, "click", () => turn(1));
     scope.listen(elements.nextBottom, "click", () => turn(1));
     scope.listen(elements.progressRange, "input", (event) => {
+      speechController.stop();
       resetReaderInput();
       progressController.seekTo(Number(event.target.value) / 1e3);
     });
@@ -789,7 +798,8 @@ async function initializeReader(session, scope) {
     pageInput: pageInputController,
     imageFocus: imageFocusController,
     resume: resumeController,
-    completion: completionController
+    completion: completionController,
+    speech: speechController
   };
 }
 export {

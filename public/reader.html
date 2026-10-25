@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="/assets/css/reader-interface-themes.css?v=2.11.0">
   <link rel="stylesheet" href="/assets/css/reader-presentation.css?v=2.11.0">
   <link rel="stylesheet" href="/assets/css/reader-motion.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-speech.css?v=2.22.0">
   <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
   <script src="/assets/vendor/jszip.min.js?v=2.11.0"></script>
   <script src="/assets/vendor/epub.min.js?v=2.11.0"></script>
@@ -65,6 +66,7 @@
         <span id="chapterTitle"></span>
       </div>
       <div class="reader-actions">
+        <button id="speechToggle" class="reader-icon" type="button" aria-label="Read aloud" aria-controls="speechDrawer" aria-expanded="false" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="3" y="11" width="4" height="9" rx="2"/><rect x="17" y="11" width="4" height="9" rx="2"/></svg></button>
         <button id="bookmarkButton" class="reader-icon" type="button" title="Bookmark this location" aria-label="Bookmark this location" aria-pressed="false">◇</button>
         <button id="settingsToggle" class="reader-icon" type="button" aria-label="Reader settings" aria-controls="settingsDrawer" aria-expanded="false">Aa</button>
         <button id="fullscreenButton" class="reader-icon" type="button" aria-label="Fullscreen" aria-pressed="false">⛶</button>
@@ -101,6 +103,28 @@
         <button id="resetReader" class="reader-reset" type="button">Reset reader settings</button>
       </div>
     </aside>
+
+    <aside id="speechDrawer" class="reader-drawer drawer-right" aria-label="Read aloud settings" aria-hidden="true">
+      <div class="drawer-head"><strong>Read aloud</strong><button class="drawer-close" data-close="speechDrawer" type="button" aria-label="Close read aloud settings">×</button></div>
+      <div class="settings-panel speech-panel">
+        <p class="speech-description">Edge TTS · Online<br>Passages are sent to Microsoft to generate speech.</p>
+        <label><span>Voice</span><select id="speechVoice" aria-describedby="speechVoiceHint"><option value="en-US-EmmaMultilingualNeural">Emma · English (US)</option></select></label>
+        <p id="speechVoiceHint" class="speech-hint">English voices appear first. Other languages are available below.</p>
+        <button id="speechVoicesRetry" class="reader-reset" type="button" hidden>Reload voice list</button>
+        <label><span>Speed</span><select id="speechSpeed"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="1.75">1.75×</option><option value="2">2×</option></select></label>
+        <label class="reader-toggle-setting"><span>Follow reading position</span><input id="speechFollow" type="checkbox" checked></label>
+        <div class="speech-controls"><button id="speechPrevious" type="button" aria-label="Previous passage" disabled>◀</button><button id="speechPlay" class="speech-play" type="button">Play</button><button id="speechNext" type="button" aria-label="Next passage" disabled>▶</button><button id="speechStop" type="button" aria-label="Stop read aloud" disabled>■</button></div>
+        <button id="speechHere" class="reader-reset" type="button">Read from here</button>
+        <p id="speechStatus" class="speech-status" role="status" aria-live="polite">Ready to read from your current position.</p>
+        <p id="speechPassage" class="speech-passage"></p>
+      </div>
+    </aside>
+    <audio id="speechAudio" preload="none" hidden></audio>
+    <div id="speechMini" class="speech-mini" role="region" aria-label="Read aloud playback" hidden>
+      <button id="speechMiniPlay" type="button" aria-label="Pause read aloud">Ⅱ</button>
+      <button id="speechMiniSettings" class="speech-mini-detail" type="button" aria-label="Open read aloud settings"><span id="speechMiniLabel">Reading aloud</span></button>
+      <button id="speechMiniStop" type="button" aria-label="Stop read aloud">■</button>
+    </div>
 
     <main id="viewerShell" class="viewer-shell" tabindex="-1" aria-label="EPUB reading area">
       <button id="prevPage" class="page-hit page-prev" type="button" aria-label="Previous page">◀</button>

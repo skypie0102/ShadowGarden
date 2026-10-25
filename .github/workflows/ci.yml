@@ -134,6 +134,16 @@ jobs:
           name: browser-runtime-${{ matrix.engine }}
           path: ${{ runner.temp }}/browser-runtime.tar.gz
           retention-days: 1
+      - name: Check Reader speech before the full browser suite
+        run: npm run test:browser -- reader-speech.spec.mjs --project ${{ matrix.project }} --max-failures=1
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: reader-speech-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
       - name: Check Reader paragraph alignment before the full browser suite
         run: npm run test:browser -- reader-alignment.spec.mjs --project ${{ matrix.project }} --max-failures=1
       - uses: actions/upload-artifact@v4
