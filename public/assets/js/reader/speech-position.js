@@ -8,13 +8,28 @@ const NAME = "sg-reader-speech";
 // Custom Highlight preserves publisher markup, CFIs, selections and pagination.
 export function createSpeechPosition() {
   const scope = createReaderScope(), marks = new Map();
-  let rendition = null, lifetime = null, selected = null, fallback = "", centered = false, motion = null;
+  let rendition = null, lifetime = null, selected = null, fallback = "", centered = false, motion = null, followedPoint = null;
   function cancelMotion() { motion?.dispose(); motion = null; }
+  function rangePoint() {
+    const located = locate(), manager = rendition?.manager;
+    if (!located || !manager) return null;
+    const range = located.range.getBoundingClientRect(), frame = located.view.iframe.getBoundingClientRect();
+    const fullsize = manager.settings?.fullsize;
+    const viewport = fullsize ? {top:0,left:0} : manager.container.getBoundingClientRect();
+    return {cfi:selected.cfi,spineIndex:selected.spineIndex,top:frame.top+range.top-viewport.top,left:frame.left+range.left-viewport.left,
+      scrollTop:fullsize?window.scrollY:manager.container.scrollTop,scrollLeft:fullsize?window.scrollX:manager.container.scrollLeft};
+  }
   function slide(place, smooth, signal) {
     cancelMotion();
     if (scope.disposed || signal?.aborted || !lifetime || lifetime.disposed) return Promise.resolve(false);
+    const apply = progress => {
+      const moved = place(progress);
+      if (moved) followedPoint = rangePoint();
+      return moved;
+    };
+    followedPoint = rangePoint();
     if (!smooth || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)
-      return Promise.resolve(place(1));
+      return Promise.resolve(apply(1));
     const animation = lifetime.child();
     motion = animation;
     return new Promise(resolve => {
@@ -31,7 +46,7 @@ export function createSpeechPosition() {
         // Ease both ends so short passages do not jerk into motion or stop.
         const eased = progress * progress * (3 - 2 * progress);
         try {
-          if (!place(eased)) return finish(false);
+          if (!apply(eased)) return finish(false);
         } catch {
           recordReaderDiagnostic("speech.followFailed");
           return finish(false);
@@ -109,7 +124,7 @@ export function createSpeechPosition() {
     try { paint(); }
     catch { recordReaderDiagnostic("speech.highlightFailed"); }
   }
-  function clear() { selected = null; clearMarks(); resetCenter(); }
+  function clear() { selected = null; followedPoint = null; clearMarks(); resetCenter(); }
   scope.add(clear);
   return {
     show(passage) {
@@ -120,6 +135,16 @@ export function createSpeechPosition() {
     clear,
     resetCenter,
     suspendCenter() { cancelMotion(); centered = false; },
+    get moving() { return Boolean(motion); },
+    movedSinceFollow() {
+      if (!followedPoint || selected?.cfi !== followedPoint.cfi || selected?.spineIndex !== followedPoint.spineIndex) return false;
+      const current = rangePoint();
+      // Semantic viewport coordinates survive Continuous buffer prepends/trims;
+      // raw scrollTop changes from those owned operations are not browsing.
+      if (!current) return true;
+      const scrollMoved = Math.max(Math.abs(current.scrollTop-followedPoint.scrollTop),Math.abs(current.scrollLeft-followedPoint.scrollLeft)) > 1;
+      return scrollMoved && Math.max(Math.abs(current.top-followedPoint.top),Math.abs(current.left-followedPoint.left)) > 2;
+    },
     async center({ smooth = false, signal } = {}) {
       cancelMotion();
       const located = locate(), manager = rendition?.manager;
@@ -203,6 +228,7 @@ export function createSpeechPosition() {
       return moved;
     },
     attachRendition(next) {
+      followedPoint = null;
       resetCenter();
       clearMarks();
       lifetime?.dispose();

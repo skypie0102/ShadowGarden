@@ -543,6 +543,14 @@ export function createSpeechController({
       browse,
       { passive: true },
     );
+  // WebKit suppresses document callbacks inside script-disabled EPUB frames.
+  // Observe real viewport movement as well, excluding our own follow positions.
+  const observeScroll = event => {
+    if (!active() || !settings.follow || followSuspended || (followAbort && !position.moving)) return;
+    if (position.movedSinceFollow()) browse(event);
+  };
+  scope.listen(elements.viewer, "scroll", observeScroll, { capture: true, passive: true });
+  scope.listen(window, "scroll", observeScroll, { passive: true });
   if ("mediaSession" in navigator) {
     const actions = {
       play: () => {

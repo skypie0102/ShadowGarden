@@ -344,7 +344,8 @@ async function browseAway(page, { iframe = false, type = 'wheel' } = {}) {
     const doc=iframe?r.state.rendition.getContents()[0].document:document;
     const target=iframe?doc.body:document.getElementById('viewer');
     const win=doc.defaultView;
-    const event=type==='keydown'?new win.KeyboardEvent(type,{key:'PageDown',bubbles:true}):new win.Event(type,{bubbles:true});
+    const event=type==='keydown'?new win.KeyboardEvent(type,{key:'PageDown',bubbles:true}):
+      type==='wheel'?new win.WheelEvent(type,{bubbles:true,deltaY:160}):new win.Event(type,{bubbles:true});
     target.dispatchEvent(event);
     container.scrollTop+=160;
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -384,7 +385,7 @@ for(const flow of ['paginated','scrolled-doc'])
       const pauses=await page.evaluate(()=>window.__speechEvents.pauses);
       await browseAway(page,{iframe:true,type});
       expect((await speechState(page)).status).toBe('playing');
-      expect((await speechState(page)).following).toBe(false);
+      expect((await speechState(page)).following,`Browsing input: ${type}`).toBe(false);
       expect(await page.evaluate(()=>window.__speechEvents.pauses)).toBe(pauses);
       await page.locator('#speechMiniFollow').click();
       await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);

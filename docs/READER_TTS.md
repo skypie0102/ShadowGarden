@@ -15,8 +15,8 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   sections, skips image-only sections, and stops at the end of the volume.
 - Follow reading position centers the spoken passage in both Pages and Continuous.
   Its highlight follows Garden, Night, Black and Paper, including Adult rose.
-  Pausing keeps the highlight; Stop and leaving the reader remove it. Scrolling,
-  touching, dragging the scrollbar or using scroll keys inside the book suspends
+  Pausing keeps the highlight; Stop and leaving the reader remove it. Browsing
+  with touch, a wheel, the scrollbar or scroll keys inside the book suspends
   screen-following while narration and preloading continue. Following stays
   suspended across passage/chapter changes and Pause/Resume until the status
   control is tapped or Follow reading position is enabled in settings. The status
@@ -90,6 +90,12 @@ rendered range in the current chapter; chapter changes and off-page ranges retai
 EPUB display so background-return location and chapter state stay authoritative.
 Animation interpolates the semantic range position using owned scroll restoration,
 so viewport gutters and Continuous buffering do not introduce a preliminary jump.
+
+The parent viewport also detects browsing when a sandboxed EPUB suppresses
+document input callbacks, as WebKit does. It compares both the scroll offset and
+the spoken range's viewport position with the last owned placement. Follow
+navigation and animation are excluded; Continuous buffer prepends/trims that
+preserve the visible anchor are not browsing. EPUB scripts remain disabled.
 
 Position following has its own abortable navigation scope; suspended animation
 frames cannot block the audio queue. Pausing, hiding the page or stopping cancels
