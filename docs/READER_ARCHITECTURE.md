@@ -13,6 +13,10 @@ stop aborts the previous request and invalidates late continuations. The app's
 navigation owner receives an explicit speech-follow option; user navigation
 stops narration. Scrolling/touching the EPUB pauses it. Disposal releases audio,
 object URLs, requests, Media Session actions and rendition listeners.
+Position following owns an independent abort signal and never blocks audio on
+rendering. Hidden tabs cancel pending follow work and continue the audio queue;
+returning follows the current or final spoken passage. Pausing/stopping cancels
+both pending audio work and the controller's own navigation where applicable.
 
 `reader/speech-source.js` uses the existing section-source lease boundary to
 extract bounded semantic passages and CFIs, starting at the current location and

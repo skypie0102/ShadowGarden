@@ -372,7 +372,7 @@ export function createSpeechController({
       void resumeAudio(revision);
       return;
     }
-    void prepare({ fromCurrent: !cursor });
+    void prepare({ fromCurrent: !cursor || status === "complete" });
   }
   function move(direction) {
     unlock();
