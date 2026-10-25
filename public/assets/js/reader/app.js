@@ -56,7 +56,7 @@ function readerElements() {
     bookmarksPanel: $("#bookmarksPanel"),
     settingsToggle: $("#settingsToggle"),
     settingsDrawer: $("#settingsDrawer"),
-    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniPlay','speechMiniPrevious','speechMiniNext','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
+    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniFollow','speechMiniPlay','speechMiniPrevious','speechMiniNext','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
     backdrop: $("#drawerBackdrop"),
     bookmarkButton: $("#bookmarkButton"),
     backLink: $("#backLink"),

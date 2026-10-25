@@ -15,13 +15,22 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   sections, skips image-only sections, and stops at the end of the volume.
 - Follow reading position centers the spoken passage in both Pages and Continuous.
   Its highlight follows Garden, Night, Black and Paper, including Adult rose.
-  Pausing keeps the highlight; Stop and leaving the reader remove it. Manual navigation
-  stops narration; touching or scrolling EPUB content pauses narration. Closing
-  the speech drawer keeps playback controls in a compact floating bar, ordered
-  Play/Pause, Previous passage, settings, Next passage, Stop.
+  Pausing keeps the highlight; Stop and leaving the reader remove it. Scrolling,
+  touching, dragging the scrollbar or using scroll keys inside the book suspends
+  screen-following while narration and preloading continue. Following stays
+  suspended across passage/chapter changes and Pause/Resume until the status
+  control is tapped or Follow reading position is enabled in settings. The status
+  control smoothly returns to the current spoken passage and enables following
+  without restarting audio or resuming an explicitly paused recording. Explicit
+  TOC/seek navigation still stops narration. Closing the speech drawer keeps
+  controls in a floating bar, ordered status/return to passage, Previous,
+  Play/Pause, Next, Stop, settings cog. On narrow screens, the status occupies
+  the first row and five icon controls share the second; all targets remain 44px.
 - Following a loaded passage in the current chapter uses one eased scroll rather than navigating to its
   top and then centering it. Pause, Stop, manual input and newer navigation cancel
-  pending animation. Reduced-motion preferences use immediate positioning.
+  pending animation. Browsing suspension is separate from the persisted Follow
+  preference and resets for a new Read from here session. Reduced-motion
+  preferences use immediate positioning.
 - Starting or resuming playback closes the Read aloud options. Reopening options
   during playback keeps them open across automatic passage changes.
 - Voice, speed and follow preferences persist in `sg-reader-speech-settings`.

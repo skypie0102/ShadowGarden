@@ -54,6 +54,7 @@ export function createSpeechController({
     followTarget = "",
     followedCfi = "",
     followSpineIndex = null,
+    followSuspended = false,
     voiceLoad = null,
     voicesLoaded = false,
     closeOnPlay = false;
@@ -82,6 +83,8 @@ export function createSpeechController({
     elements.speechNext.disabled = !cursor;
     elements.speechMiniPrevious.disabled = !cursor;
     elements.speechMiniNext.disabled = !cursor;
+    elements.speechMiniFollow.disabled = !cursor;
+    elements.speechMiniFollow.dataset.following = String(settings.follow && !followSuspended);
     elements.speechStatus.textContent =
       message ||
       {
@@ -100,6 +103,8 @@ export function createSpeechController({
           : status === "paused"
             ? "Read aloud paused"
             : "Reading aloud";
+    elements.speechMiniFollow.setAttribute("aria-label",
+      `${elements.speechMiniLabel.textContent}. Return to current spoken passage and follow.`);
     elements.speechPassage.textContent = entry()?.text || "";
     audio.playbackRate = settings.speed;
     audio.preservesPitch = true;
@@ -150,6 +155,7 @@ export function createSpeechController({
     cursor = null;
     followedCfi = "";
     followSpineIndex = null;
+    followSuspended = false;
     status = "idle";
     releaseAudio();
     render(message);
@@ -204,14 +210,39 @@ export function createSpeechController({
     followAbort = null;
     followTarget = "";
   }
-  function followPassage() {
+  function browse(event) {
+    if (event.type === "keydown" &&
+      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) return;
+    if (!active() || followSuspended) return;
+    // The reader can browse independently while narration and preloading keep
+    // their own cursor. Only the status control or follow setting rejoins them.
+    followSuspended = true;
+    cancelFollow();
+    followedCfi = "";
+    render();
+  }
+  function followCurrent() {
+    if (!cursor) return;
+    cancelFollow();
+    followSuspended = false;
+    followedCfi = "";
+    followSpineIndex = null;
+    settings.follow = true;
+    elements.speechFollow.checked = true;
+    save();
+    render();
+    position.show({ cfi: entry().cfi, spineIndex: cursor.spineIndex });
+    followPassage({ force: true });
+  }
+  function followPassage({ force = false } = {}) {
     const selected = entry();
     if (
       !selected ||
-      (!objectUrl && status !== "complete") ||
+      (!force && !objectUrl && status !== "complete") ||
       !settings.follow ||
+      followSuspended ||
       document.hidden ||
-      !["playing", "paused", "complete"].includes(status) ||
+      (!force && !["playing", "paused", "complete"].includes(status)) ||
       followedCfi === selected.cfi ||
       (followAbort && followTarget === selected.cfi)
     )
@@ -285,6 +316,7 @@ export function createSpeechController({
     }
   }
   async function prepare({ fromCurrent = false, direction = 0 } = {}) {
+    if (fromCurrent || !cursor || status === "complete") followSuspended = false;
     invalidate({ keepBuffer: direction === 1 && !fromCurrent });
     releaseAudio();
     const serial = revision,
@@ -450,6 +482,7 @@ export function createSpeechController({
     openDrawer(elements.speechDrawer);
     void loadVoices();
   });
+  scope.listen(elements.speechMiniFollow, "click", followCurrent);
   scope.listen(elements.speechVoicesRetry, "click", () => void loadVoices());
   for (const button of [elements.speechPlay, elements.speechMiniPlay])
     scope.listen(button, "click", play);
@@ -490,25 +523,24 @@ export function createSpeechController({
   });
   scope.listen(elements.speechFollow, "change", () => {
     settings.follow = elements.speechFollow.checked;
+    followSuspended = false;
     followedCfi = "";
     if (settings.follow) followPassage();
     else { cancelFollow(); position.resetCenter(); }
     save();
+    render();
   });
   scope.listen(document, "visibilitychange", () => {
     if (document.hidden) cancelFollow();
     else followPassage();
   });
   scope.listen(window, "pagehide", () => pause());
-  // Only user input cancels follow. Relocation events can arrive late while a
-  // new chapter is loading and are not evidence of a manual navigation.
-  for (const type of ["wheel", "touchstart", "pointerdown"])
+  // Programmatic scrolling and late relocation events are not browsing input.
+  for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])
     scope.listen(
       elements.viewer,
       type,
-      () => {
-        if (wantPlay) pause();
-      },
+      browse,
       { passive: true },
     );
   if ("mediaSession" in navigator) {
@@ -558,13 +590,11 @@ export function createSpeechController({
         rendition.hooks.content,
         (contents) => {
           const lifetime = readerContentsScope(rendition, contents);
-          for (const type of ["wheel", "touchstart", "pointerdown"])
+          for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])
             lifetime.listen(
               contents.document,
               type,
-              () => {
-                if (wantPlay) pause();
-              },
+              browse,
               { passive: true },
             );
         },
@@ -576,6 +606,7 @@ export function createSpeechController({
         wantPlay,
         spineIndex: cursor?.spineIndex,
         index: cursor?.index,
+        following: settings.follow && !followSuspended,
         settings: { ...settings },
       };
     },
