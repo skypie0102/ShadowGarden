@@ -1,6 +1,14 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-25:** v2.23.0 centers and highlights spoken
+**Latest deployment — 2026-10-25:** v2.24.0 limits speech choices to English,
+smooths passage-following and adds floating Previous/Next controls. All 75 focused
+cases, 495 Node tests and 981 browser cases pass across five profiles, with nine
+existing skips and zero retries. Five candidate captures were reviewed; the tested
+application tree matches the merged release. Production preservation and live
+version/assets/voice/request guards pass with zero database writes.
+[Release evidence](reader-speech-controls-release-2.24.0.json) · [Read aloud guide](READER_TTS.md).
+
+**Previous reader deployment — 2026-10-25:** v2.23.0 centers and highlights spoken
 passages in both reading modes and closes Read aloud options on Start/Resume.
 All 55 focused cases, 494 Node tests and 961 full-suite browser cases pass across
 five profiles, with nine existing skips and zero retries. Eight candidate captures
@@ -55,7 +63,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.23.0; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.24.0; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The

@@ -1,0 +1,399 @@
+{
+  "version": "2.24.0",
+  "date": "2026-10-25",
+  "pullRequest": 65,
+  "source": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+  "applicationTree": "cdafb5056476e1ec7cdced5332365d0f26f21560",
+  "candidate": "5a88f51932fb43213dfda1d08d9e6913ac14cfb2",
+  "status": "verified",
+  "behavior": [
+    "English-only voice picker grouped by region; saved non-English voices normalize to Emma.",
+    "Single eased, cancellable scrolling within a rendered current narration chapter; authoritative chapter/page navigation retained.",
+    "Floating Play/Pause, Previous, settings, Next, Stop controls with 44px targets.",
+    "Reduced motion uses immediate positioning; audio progression remains independent of rendering."
+  ],
+  "ci": {
+    "prRun": 40192944888,
+    "mainRun": 40195102753,
+    "productionJob": 121180715283,
+    "unitTests": 495,
+    "browserPassed": 981,
+    "browserSkipped": 9,
+    "retries": 0,
+    "prProfiles": [
+      {
+        "job": 121167726254,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 195,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121167726228,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 198,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121167726240,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 198,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121167726241,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 194,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121167726246,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 196,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainProfiles": [
+      {
+        "job": 121174242051,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 195,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121174242017,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 198,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121174242052,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 198,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121174242036,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 194,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121174242035,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 196,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 15,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "focused": {
+    "passed": 75,
+    "skipped": 0,
+    "retries": 0,
+    "artifacts": [
+      {
+        "id": 12599375113,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:1fb275b25b458a29d087088bbc1ea7368b466b5fbd80af4b598017917b88dfcc"
+      },
+      {
+        "id": 12598524504,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:b2b542285d746ac644f2aca90d7ad4039e5d0563cd7432197fd48adb6efb660e"
+      },
+      {
+        "id": 12598524415,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:54d10650d3510c3a03e788ffd737ba37a97e6c7e1415b3703e08ba0d31e1b47c"
+      },
+      {
+        "id": 12598199951,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:ec6dc4d0677c2e996dbcdd6351cbabb734647abffb92275d022c9739b832588a"
+      },
+      {
+        "id": 12598184836,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:42c051b13a4aabff69e25bacdcd52c69dfe3f203c833c049b5cacdf9360b5e57"
+      }
+    ],
+    "mainArtifacts": [
+      {
+        "id": 12600115299,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:1047c643af74b42979e449156a992118b684018bb9938fbe342ecf853e6c1d8a"
+      },
+      {
+        "id": 12599780628,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:6c4754a40d945cbc54c65b0bc09cbbf4837def8e60da082ab9be5b2a77a0f475"
+      },
+      {
+        "id": 12599573311,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:66ac9394e7369c40088882c01a0b6767c80c45033c48e42567b8dd3f5240daad"
+      },
+      {
+        "id": 12599174312,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:f72acab091e62b6d9eeaec6bb11ed43dd9e697d6a735de2ccd9ef31e9c6576b6"
+      },
+      {
+        "id": 12598964712,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:36adbcd746d1509d0e5b7057965952263f99c4b2dd8e7286d79a45dc1f90a8c7"
+      }
+    ]
+  },
+  "local": {
+    "speechCases": 15,
+    "newFeatureAndBackgroundCases": 5,
+    "browser": "mobile-chromium",
+    "scope": "Isolated local Pages preview uses a network-interface shim outside the repository; CI uses the unchanged pinned environment."
+  },
+  "visualReview": [
+    {
+      "profile": "desktop-chromium",
+      "name": "speech-floating-controls-1280",
+      "sha256": "2abf7b406ed5b88917c1e0376eeab015085ddc68d730c94940e5bd395a2ee7d1",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-chromium",
+      "name": "speech-floating-controls-320",
+      "sha256": "b45d21561f8b3df19c664be1a0158ea2d9a839358cc84c527ea620a5d491ed84",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-firefox",
+      "name": "speech-floating-controls-393",
+      "sha256": "e12f7c9e49d293a62735286e36a7270610495dc06c58826506fec2208da33a8a",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-webkit",
+      "name": "speech-floating-controls-1280",
+      "sha256": "afdc2711ff0ea37e30a8328e44c916cd628d679e8054aca35bd8fd909a5dc9e0",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-webkit",
+      "name": "speech-floating-controls-393",
+      "sha256": "809b7b0564658b22ac5cb8660018ae5013e9df543cacf3baab8072639cc94269",
+      "reviewed": true
+    }
+  ],
+  "production": {
+    "artifact": {
+      "id": 12600727071,
+      "name": "production-verification",
+      "digest": "sha256:fb4b48e1bdc67aab4b8dfc00a1fbb3946e0cc0c52f015af5418c7af50ebe3cd9"
+    },
+    "report": {
+      "checkedAt": "2026-10-25T13:22:19.994Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "7215e3c8-29dc-4bb4-afda-83bb33f7ef2c",
+      "source": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+      "version": "2.24.0",
+      "baselineCheckedAt": "2026-10-25T13:22:18.900Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 329
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+          "version": "2.24.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/reader-speech.css",
+          "sha256": "8d613cdf0168b7f14eeafcda36e383387e39b89f3228b917d67d4ddf322d9b55",
+          "bytes": 2969
+        },
+        {
+          "path": "/assets/js/reader/app.js",
+          "sha256": "9444dda1e4aaf5f483ba2e27ee5e371cd46c1a41680d97d02b6696763402a4fd",
+          "bytes": 35428
+        },
+        {
+          "path": "/assets/js/reader/speech-controller.js",
+          "sha256": "cf92a3bc2985e67041d597338191e9ac96a73f71946949ad7642a4c5588da021",
+          "bytes": 19642
+        },
+        {
+          "path": "/assets/js/reader/speech-position.js",
+          "sha256": "07456214f3f86cfa9926b93c07bcacb2cab45ca495ab9af07e3bb3107ffb7412",
+          "bytes": 10819
+        }
+      ],
+      "rollbackDeploymentId": "c4ca9a98-4f32-4be7-993e-96b58a31e036",
+      "rollbackSource": "4de24e0b6f923f704e8341e0000027003fc940d5",
+      "beforeCheckedAt": "2026-10-25T13:22:10.406Z",
+      "readerSpeech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-EmmaMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "reportSource": "Completed production job log",
+    "cloudflareCanonical": {
+      "name": "shadowgarden",
+      "subdomain": "shadowgarden-bon.pages.dev",
+      "environment": "production",
+      "id": "7215e3c8-29dc-4bb4-afda-83bb33f7ef2c",
+      "source": "32af1ceb4f125afcf12517a87e76c3c426368ffd",
+      "status": "success"
+    },
+    "directBrowser": {
+      "status": "unavailable",
+      "reason": "The browser environment became unavailable after baseline inspection; production verified through the guarded release report and Cloudflare API."
+    }
+  },
+  "scope": "Browser profiles are emulated; physical Android/Soul acceptance is separate. Tests use disposable original EPUBs and audio. No production catalog, book object, backend, binding or migration changes."
+}
