@@ -3,6 +3,7 @@ import {resolve, dirname, relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {assertReleaseRoutes} from './pages-release-guard.mjs';
 process.chdir(fileURLToPath(new URL('../',import.meta.url)));
 const errors=[],warnings=[];
 async function walk(dir) {
@@ -43,6 +44,8 @@ for(const entry of provenance.files){
   if(sha!==entry.sha256)modified.push(entry.path);
 }
 const deliberate=new Set([
+  // v2.22.1: publish the reader speech endpoint through Pages Functions.
+  'public/_routes.json',
   // v2.18.13: ordered syntax/comment-equivalent Keeper and public CSS.
   'public/assets/css/admin-batch.css',
   'public/assets/css/admin-import-report.css',
@@ -171,7 +174,10 @@ for(const name of ['catalog','adult-catalog']){
     for(const v of [s,...s.volumes])for(const field of ['cover','coverThumb'])if(v[field])reference(`public/media/shadow-garden/data/${name}.json`,v[field]);
   }
 }
-for(const path of await walk('functions'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
+const functionFiles=(await walk('functions')).filter(path=>path.endsWith('.js'));
+const functionUrls=functionFiles.filter(path=>!path.endsWith('/_middleware.js')).map(path=>path.replace(/^functions/,'').replace(/\.js$/,'').replace(/\/index$/,'').replace(/\[\[?[^/]+?\]\]?/g,'__sg_route_probe__')||'/');
+try{assertReleaseRoutes(JSON.parse(await readFile('public/_routes.json','utf8')),functionUrls);}catch(error){errors.push(error.message);}
+for(const path of functionFiles)execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 for(const path of await walk('server'))if(path.endsWith('.js'))execFileSync(process.execPath,['--check',path],{stdio:'pipe'});
 // The owner confirmed these five books are disposable test fixtures, not a recovery gate.
 console.log(JSON.stringify({recoveredFiles:provenance.files.length,byteIdentical:provenance.files.length-modified.length-provenance.files.filter(entry=>retired.has(entry.path)).length,retiredRecoveredFiles:[...retired],documentedModifications:modified,routes:routes.length,literalReferences:references.length,series,volumes,warnings,errors},null,2));

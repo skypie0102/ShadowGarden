@@ -1,9 +1,24 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {assertReleaseBindings,readWorkerMetadata,assertDeployedBindings,assertCatalogUnchanged,assertCompatibility} from '../scripts/pages-release-guard.mjs';
+import {assertReleaseBindings,readWorkerMetadata,assertDeployedBindings,assertCatalogUnchanged,assertCompatibility,assertReleaseRoutes} from '../scripts/pages-release-guard.mjs';
 
 const config={name:'fixture-project',compatibility_date:'2026-09-23',d1_databases:[{binding:'DB',database_id:'11111111-1111-1111-1111-111111111111'}],vars:{B2_BUCKET_NAME:'fixture-bucket',B2_BUCKET_ID:'fixture-id'}};
 const bindings=[{name:'DB',type:'d1',id:config.d1_databases[0].database_id},{name:'B2_BUCKET_NAME',type:'plain_text',text:'fixture-bucket'},{name:'B2_BUCKET_ID',type:'plain_text',text:'fixture-id'}];
+
+test('Pages routing cannot silently omit a compiled Function',()=>{
+  const manifest={version:1,include:['/admin-api/*','/media/*'],exclude:[]};
+  const paths=['/admin-api/catalog','/media/book.epub','/tts'];
+  assert.throws(()=>assertReleaseRoutes(manifest,paths),/does not invoke Functions for \/tts/);
+  const published={...manifest,include:[...manifest.include,'/tts']};
+  assert.doesNotThrow(()=>assertReleaseRoutes(published,paths));
+  assert.throws(()=>assertReleaseRoutes(published,['/ttsomething']),/does not invoke/);
+});
+
+test('Pages exclusions take precedence over Function includes',()=>{
+  assert.throws(()=>assertReleaseRoutes({version:1,include:['/*'],exclude:['/tts']},['/tts']),/does not invoke/);
+  assert.doesNotThrow(()=>assertReleaseRoutes({version:1,include:['/tts'],exclude:['/assets/*']},['/tts']));
+  assert.throws(()=>assertReleaseRoutes({version:1,include:[null],exclude:[]},['/tts']),/invalid/);
+});
 
 test('a successful source compile without deployment bindings is rejected',async()=>{
   const form=new FormData();form.set('metadata',JSON.stringify({main_module:'worker.js'}));

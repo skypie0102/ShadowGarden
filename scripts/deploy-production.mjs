@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { captureProductionBaseline } from "./production-baseline.mjs";
 import { validateProductionBaseline, verifyProduction } from "./verify-production.mjs";
+import { verifyReaderSpeech } from "./verify-reader-speech.mjs";
 
 export const PRODUCTION = {
   accountId: "fa95f62f96a0ff3b92a45175d94a48b6",
@@ -227,6 +228,7 @@ export async function main() {
         mode: 0o600
       })
   });
+  report.readerSpeech = await verifyReaderSpeech();
   await writeFile(".wrangler/production-verification.json", JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify(report, null, 2));
 }

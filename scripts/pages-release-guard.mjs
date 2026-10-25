@@ -1,5 +1,13 @@
 // Validate deployment configuration as well as compiled source. A binding-free
 // Worker can return HTTP 200 while serving the recovered catalog instead of D1.
+export function assertReleaseRoutes(manifest,paths){
+  if(manifest?.version!==1||!Array.isArray(manifest.include)||!Array.isArray(manifest.exclude)||[...manifest.include,...manifest.exclude].some(p=>typeof p!=='string'||!p.startsWith('/')))throw Error('Pages route manifest is invalid.');
+  const matches=(pattern,path)=>new RegExp('^'+pattern.split('*').map(part=>part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('.*')+'$').test(path);
+  for(const path of paths){
+    if(!manifest.include.some(pattern=>matches(pattern,path))||manifest.exclude.some(pattern=>matches(pattern,path)))throw Error(`Pages route manifest does not invoke Functions for ${path}.`);
+  }
+}
+
 export function assertCompatibility(actual,config){
   const date=config?.compatibility_date;
   if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date)throw Error('Production compatibility date is invalid.');
