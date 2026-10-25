@@ -3,7 +3,27 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.24.0**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.25.0**, deployed on 2026-10-25 (Asia/Manila)
+from `e5fcf05` through [PR #67](https://github.com/skypie0102/ShadowGarden/pull/67).
+BrianMultilingual · Male is the default Edge voice; saved English choices remain
+selected. Read aloud prepares four upcoming passages across chapter boundaries
+with at most two background requests. Advancing reuses ready or in-flight audio
+and refills the window; Pause/Resume retains it. Stop, Previous, voice changes
+and restarting elsewhere cancel and clear it.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40206473400)
+passes 501 Node tests and 991 browser cases across five profiles,
+with 9 existing platform skips and zero retries. All 85 focused speech checks
+pass. The prior live release fails the four-passage buffer check; the candidate
+passes it in every profile. Two direct live Reader checks pass after deployment
+using a disposable original EPUB and mocked audio. Production preserves the
+immediate revision-18 catalog, all 17 snapshots and configuration, with zero
+database writes. All 5 version/catalog/asset checks and live voice/request guards
+pass, including Brian as the API default. Android/Soul hardware acceptance is
+separate. Startup or a depleted buffer can still require network preparation.
+[Read aloud guide](READER_TTS.md) · [Release evidence](reader-speech-buffer-release-2.25.0.json).
+
+The previous production release is **v2.24.0**, deployed on 2026-10-25 (Asia/Manila)
 from `32af1ce` through [PR #65](https://github.com/skypie0102/ShadowGarden/pull/65).
 Read aloud now offers English voices grouped by region, smooth passage-following,
 and floating Play/Pause, Previous, settings, Next and Stop controls. Saved non-English
