@@ -16,6 +16,8 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 - Main and age-gated libraries with series, volumes, covers and reading status.
 - Paginated and Continuous reading, chapter navigation, book search, bookmarks,
   saved progress, themes and layout preferences.
+- Edge TTS read aloud with voice/speed preferences, pause/resume, passage controls
+  and optional reading-position following.
 - Double-tap/double-click image focus with zoom and return-position preservation, plus standalone
   cover/illustration preparation and bounded local caches.
 - Protected book access through Turnstile sessions and object-specific tickets.
@@ -25,7 +27,26 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.21.0**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.22.1**, deployed on 2026-10-25 (Asia/Manila)
+from `4fb189a`. The reader implementation is [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62).
+The initial v2.22.0 publish omitted `/tts` from the Pages invocation manifest.
+v2.22.1 corrects that route and verifies voice availability and rejection guards
+during deployment.
+The reader now offers **Edge TTS read aloud** through a themed headphone control:
+voice and speed selection, pause/resume, previous/next passage, automatic chapter
+progression and optional position following. Preferences persist; reopening never
+starts speech automatically. Passages are sent to Microsoft for online speech.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40161223629)
+passes 494 Node tests and 931 browser cases across five profiles, with
+9 existing platform skips and zero retries. All 25 focused TTS checks pass,
+including native MP3 playback. Five captures were reviewed. Production preserves
+the immediate revision-18 catalog, 17 snapshots and
+configuration with zero database writes. The live voice endpoint and rejection
+guards pass. Offline providers are deferred.
+See the [read aloud guide](docs/READER_TTS.md) and [release evidence](docs/reader-edge-tts-release-2.22.1.json).
+
+An earlier production release is **v2.21.0**, deployed on 2026-10-25 (Asia/Manila)
 from `293090c` through [PR #61](https://github.com/skypie0102/ShadowGarden/pull/61).
 Reader settings now offer **Paragraph alignment: Default, Left, Justify and Right**.
 Default is the initial/reset choice and follows the EPUB's own alignment. Choices

@@ -1,7 +1,7 @@
 # Reader read aloud
 
 Edge TTS is the first and default speech provider. Optional offline models are
-deferred until this integration is verified. This is an unofficial online Read
+deferred to a later release. This is an unofficial online Read
 Aloud service, not an Azure Speech subscription, and it has no service guarantee.
 
 ## Reader behavior
@@ -58,7 +58,10 @@ not exposed because this endpoint does not support arbitrary SSML.
 
 ## Validation
 
-Run `npm run check` and the five-profile Playwright suite. The speech browser
+Run `npm run check` and the five-profile Playwright suite. The audit verifies
+that every Function is covered by the published Pages invocation manifest.
+Production acceptance also checks live voice metadata and the Garden Pass,
+text-length, origin and method rejection guards without book text or credentials. The speech browser
 fixture uses deterministic media events to check ownership and navigation;
 an additional native MP3 test checks decoding, paused offsets and invalid-media
 errors without replacing media methods. Firefox's headless test mutes output

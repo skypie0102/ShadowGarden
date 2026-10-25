@@ -1,6 +1,13 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-25:** v2.21.0 adds Paragraph alignment with
+**Latest deployment — 2026-10-25:** v2.22.1 adds Edge TTS read aloud with themed
+controls, persisted voice/speed preferences, pause/resume and chapter progression.
+All 25 focused cases, 494 Node tests and 931 full-suite browser cases pass
+across five profiles; 9 existing platform skips remain, with zero retries.
+Provider, native audio and production preservation checks are recorded in the
+[release evidence](reader-edge-tts-release-2.22.1.json) and [read aloud guide](READER_TTS.md).
+
+**Previous reader release — 2026-10-25:** v2.21.0 adds Paragraph alignment with
 Default, Left, Justify and Right. Default follows the EPUB and is restored by
 Reset. The same alignment helper serves live chapters and canonical measurement;
 page-map cache identities include the choice. The release passes 477 Node tests,
@@ -40,7 +47,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.21.0; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.22.1; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The

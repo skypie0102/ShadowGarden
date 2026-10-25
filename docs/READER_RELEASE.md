@@ -1,7 +1,29 @@
 # Reader releases
 
-**Current production baseline:** v2.21.0. Ongoing
+**Current production baseline:** v2.22.1. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.22.1 — Edge TTS read aloud
+
+**Live:** deployment `7fc9fbb0-c512-4f2e-b6b8-202c6243b43d`, source `4fb189af2cb50f01cd58562fd40a4a9254882265`,
+verified at 2026-10-25T04:40:27.888Z. [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62)
+adds the themed speech drawer and compact playback bar, online voice selection,
+speed, pause/resume, passage controls and optional following across chapters.
+Voice/speed/follow settings persist separately from EPUB layout settings.
+Actual user navigation/input owns cancellation; delayed relocations cannot stop
+the next chapter's speech. Audio requests, blobs and Media Session actions have
+explicit reader lifetimes. The API applies Garden Pass, origin and bounded-input
+guards without changing catalog, book storage or deployment bindings.
+v2.22.1 corrects the omitted Pages invocation route from the initial v2.22.0
+publish. Function coverage auditing and live TTS checks now gate deployment.
+
+Final release verification passes 494 Node tests and 931 browser cases, with
+9 existing skips and zero retries. All 25 focused cases pass; five captures
+were reviewed. Native decoding is separate from deterministic media state tests.
+Live Edge and Cloudflare probes returned valid 24 kHz mono MP3. Production
+preservation, served assets, voice metadata and rejection guards pass. Physical
+Android/Soul testing remains a separate acceptance step.
+[Read aloud guide](READER_TTS.md) · [Structured evidence](reader-edge-tts-release-2.22.1.json).
 
 ## Reader v2.21.0 — paragraph alignment
 

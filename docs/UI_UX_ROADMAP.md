@@ -11,7 +11,7 @@ palette; Adult keeps its rose palette.
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
 | 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
-| 3. Reader controls | Find and understand reading preferences and navigation | In progress — paragraph alignment delivered in v2.21.0 |
+| 3. Reader controls | Find and understand reading preferences and navigation | In progress — alignment and Edge TTS delivered (v2.21.0/v2.22.1) |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned — direct volume EPUB replacement delivered in v2.20.0 |
 
@@ -132,7 +132,7 @@ its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
 
-- [ ] Finish Edge TTS read aloud (v2.22.0 candidate, [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62)): themed controls, voice/speed preferences, current-passage playback, pause/resume, chapter progression and cancellation. Live Edge and Cloudflare egress probes return valid MP3; browser and release verification are in progress. See [Reader TTS](READER_TTS.md). Offline models are deferred.
+- [x] Add Edge TTS read aloud (v2.22.1, [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62)): themed voice/speed controls, pause/resume, current-passage playback, chapter progression and optional following. All 25 focused cases and five-profile release checks pass; live audio and production preservation are verified. [Guide](READER_TTS.md) · [Evidence](reader-edge-tts-release-2.22.1.json). Offline models are deferred.
 
 - [x] Add Paragraph alignment with Default (EPUB), Left, Justify and Right, persisted across both flows and included in canonical page measurement (v2.21.0).
 

@@ -1,0 +1,445 @@
+{
+  "version": "2.22.1",
+  "date": "2026-10-25",
+  "pullRequest": 62,
+  "source": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+  "applicationTree": "3e7a34d295a67774b1bc18edf1b440e5e3d1dbd4",
+  "candidate": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+  "featureCandidate": {
+    "head": "29d8045c076918012abe4ef7d48921df646ee302",
+    "tree": "abd4b1b490c484fc9d1078c878558cfb59bbe083",
+    "merge": "a4ce98ddaa0f505abeee2d1dd07cc523f18ff2d6",
+    "mainRun": 40159056515,
+    "unitTests": 488
+  },
+  "routingFix": {
+    "reason": "Published Pages invocation allow-list omitted /tts; fixed and guarded by Function coverage audit plus live TTS probes.",
+    "source": "53f765812529e584dd9f4aa9cb5e30e61e2a77c9",
+    "localNodeTests": 494,
+    "finalSource": "4fb189af2cb50f01cd58562fd40a4a9254882265"
+  },
+  "behavior": [
+    "Edge TTS is the default and only initial provider.",
+    "Themed headphone drawer, voice and speed preferences, current-passage playback, pause/resume, passage navigation, automatic chapter progression and optional position following.",
+    "Audio progression does not wait for rendering; returning to a visible tab follows the current or final spoken passage.",
+    "Manual navigation stops speech; actual reader input pauses it. Late relocation/layout events do not masquerade as user intent.",
+    "One current audio object and one prefetched passage; stopped/replaced sessions cannot resume from stale completions.",
+    "Voice/speed/follow preferences persist; reloading does not autoplay.",
+    "Same-origin, Garden Pass protected synthesis; bounded text, audio, timeout and rate limit. Audio and passage text are not persisted."
+  ],
+  "ci": {
+    "prRun": 40157562690,
+    "mainRun": 40161223629,
+    "unitTests": 494,
+    "featurePrUnitTests": 488,
+    "browserPassed": 931,
+    "browserSkipped": 9,
+    "retries": 0,
+    "prProfiles": [
+      {
+        "job": 121062163392,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 185,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121062163408,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 188,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121062163432,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 188,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121062163446,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 186,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121062163410,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 184,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      }
+    ],
+    "mainProfiles": [
+      {
+        "job": 121073084132,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 188,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121073084234,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 185,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121073084047,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 188,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121073084055,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 186,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      },
+      {
+        "job": 121073084056,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 184,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 5,
+          "skipped": 0,
+          "failed": 0
+        },
+        "conclusion": "success"
+      }
+    ]
+  },
+  "focused": {
+    "passed": 25,
+    "skipped": 0,
+    "retries": 0,
+    "artifacts": [
+      {
+        "id": 12585661625,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:3ea91eebfce10bcf2fbcafb8e82c5e6aae214f021c9f5a5dbf0cc982c2efe6a5"
+      },
+      {
+        "id": 12585487029,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:009e617ab1567854f0fc6aae5171ece23fdd18956730442fafdcaa1a4ab12341"
+      },
+      {
+        "id": 12584732293,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:5bb7e3f343085270e54476108b0b6f61eec179727683887c4640bfab7a43995d"
+      },
+      {
+        "id": 12584692346,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:f9a32707e68faccf4f3282e7529854f4ce171adaa08d2b68a6646cf9513350e9"
+      },
+      {
+        "id": 12584667394,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:5037bb3f8fb08116ea4208c1ead5b8fce9a8b95583786b6dc11dcd59560efa59"
+      }
+    ],
+    "mainArtifacts": [
+      {
+        "id": 12586368238,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:3d068014d87696b17f8ed76ed2ac02e35cbe5c3c011815d0714af7c8e5a2f7b2"
+      },
+      {
+        "id": 12586178552,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:d802265a27cd34b63e486a699cf6fb1f750c50c61a16d7e997f115d8717378ec"
+      },
+      {
+        "id": 12586073588,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:fbd7ba93c2ed33fc3c67bb107a9a7c3dd66026c025c94ac0a9d4721434629264"
+      },
+      {
+        "id": 12585898846,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:6c2d9e780386d82adf2ab07c9babac5c567e67a4208708dd70429b51e20fe5b3"
+      },
+      {
+        "id": 12585848918,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:215cbd0824238631b7d8f660b8fb0869df04a224db5a9bedcf93bcea8b03cf3a"
+      }
+    ],
+    "scope": "Original disposable EPUB; deterministic media events for state/navigation and suspended background rendering plus native MP3 decoding, paused offset and malformed-media checks. Firefox native playback is muted in headless CI to avoid requiring an OS output device."
+  },
+  "visualReview": [
+    {
+      "profile": "desktop-webkit",
+      "name": "speech-drawer-paginated",
+      "sha256": "3bf2acd842f8cee993c550c3162414a8f78e9f6b80ea7d6eb59fe9e6a12247f5",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-webkit",
+      "name": "speech-paginated",
+      "sha256": "c66127c2654376ec783c399832bb24c3479a6050d93de0d494f9e02a7b68a9ba",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-firefox",
+      "name": "speech-drawer-paginated",
+      "sha256": "22169493f1336aaeaad6ea92e5e78b05251911149e1aa9122ca5918a9cf3435a",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-chromium",
+      "name": "speech-drawer-paginated",
+      "sha256": "37beb07565c5e50843a331892b119131a7ceaef4cc025ff016f15119b05312aa",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-chromium",
+      "name": "speech-drawer-paginated",
+      "sha256": "5c6447a533b2cca4748cff82b95814c47d2e2dbb03f6e645a225c4759285c6bf",
+      "reviewed": true
+    }
+  ],
+  "visualScope": "The reader assets match the reviewed feature candidate; the route correction changes invocation configuration and release guards.",
+  "providerProbe": {
+    "checkedAt": "2026-10-25T01:42:13.804Z",
+    "status": 200,
+    "voices": "318",
+    "bytes": 27792,
+    "contentType": "audio/mpeg",
+    "format": {
+      "codec": "mp3",
+      "sampleRate": 24000,
+      "channels": 1,
+      "durationSeconds": 4.632
+    },
+    "temporaryWorkerDeleted": true
+  },
+  "production": {
+    "artifact": {
+      "id": 12587001544,
+      "name": "production-verification",
+      "digest": "sha256:f70946763d975032b5580c7f067a91874f5e59f4a3999f3d2ad3248ee0748e79"
+    },
+    "report": {
+      "checkedAt": "2026-10-25T04:40:27.888Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "7fc9fbb0-c512-4f2e-b6b8-202c6243b43d",
+      "source": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+      "version": "2.22.1",
+      "baselineCheckedAt": "2026-10-25T04:40:27.191Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 152
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+          "version": "2.22.1"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/library-footer-version.js",
+          "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+          "bytes": 1042
+        }
+      ],
+      "rollbackDeploymentId": "22dfa037-48b6-4272-adb7-047c7d307a0b",
+      "rollbackSource": "a4ce98ddaa0f505abeee2d1dd07cc523f18ff2d6",
+      "beforeCheckedAt": "2026-10-25T04:40:19.033Z",
+      "readerSpeech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-EmmaMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "ttsRoutes": {
+      "ok": true,
+      "checkedAt": "2026-10-25T04:42:03.082289+00:00",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "source": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+      "version": "2.22.1",
+      "voiceCount": 318,
+      "defaultVoice": "en-US-EmmaMultilingualNeural",
+      "defaultVoiceAvailable": true,
+      "voiceCacheControl": "public, max-age=3600",
+      "guards": [
+        {
+          "name": "missing-garden-pass",
+          "status": 428,
+          "expected": 428,
+          "ok": true,
+          "error": {
+            "ok": false,
+            "code": "human_verification_required",
+            "error": "Reopen the volume to renew your Garden Pass before reading aloud."
+          }
+        },
+        {
+          "name": "text-limit",
+          "status": 400,
+          "expected": 400,
+          "ok": true,
+          "error": {
+            "ok": false,
+            "code": "invalid_tts_text",
+            "error": "Choose a shorter passage to read aloud."
+          }
+        },
+        {
+          "name": "cross-origin",
+          "status": 403,
+          "expected": 403,
+          "ok": true,
+          "error": {
+            "ok": false,
+            "code": "cross_origin",
+            "error": "Cross-origin requests are not allowed."
+          }
+        },
+        {
+          "name": "method",
+          "status": 405,
+          "expected": 405,
+          "ok": true,
+          "error": {
+            "ok": false,
+            "code": "method_not_allowed",
+            "error": "Method not allowed."
+          }
+        }
+      ],
+      "catalogWrites": 0,
+      "synthesizedProtectedBookText": false
+    }
+  },
+  "scope": "Browser profiles are emulated; no new physical Android/Soul acceptance is claimed. Live Edge/Cloudflare probes use fixed original test text. Production probes use read-only voice metadata and rejected unauthenticated/invalid requests; they do not transmit protected EPUB text or write catalog data. Offline models remain deferred."
+}
