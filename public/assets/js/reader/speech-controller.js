@@ -250,6 +250,7 @@ export function createSpeechController({
           return false;
         return navigate(selected.cfi, {
           speech: true,
+          speechSpineIndex: cursor.spineIndex,
           signal: controller.signal,
           followSpeech: signal => position.center({ smooth: true, signal }),
         });

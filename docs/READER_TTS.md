@@ -18,7 +18,7 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   stops narration; touching or scrolling EPUB content pauses narration. Closing
   the speech drawer keeps playback controls in a compact floating bar, ordered
   Play/Pause, Previous passage, settings, Next passage, Stop.
-- Following a loaded passage uses one eased scroll rather than navigating to its
+- Following a loaded passage in the current chapter uses one eased scroll rather than navigating to its
   top and then centering it. Pause, Stop, manual input and newer navigation cancel
   pending animation. Reduced-motion preferences use immediate positioning.
 - Starting or resuming playback closes the Read aloud options. Reopening options
@@ -52,7 +52,8 @@ Pages temporarily offset the rendered viewport. Continuous adds outer viewport
 gutters so the first and last passages can be centered too. Those offsets/gutters
 are released when following is disabled, speech stops or the rendition closes.
 The navigation owner first asks the position controller to follow an already
-rendered range; only unloaded chapters or off-page ranges need EPUB display.
+rendered range in the current chapter; chapter changes and off-page ranges retain
+EPUB display so background-return location and chapter state stay authoritative.
 Animation interpolates the semantic range position using owned scroll restoration,
 so viewport gutters and Continuous buffering do not introduce a preliminary jump.
 
