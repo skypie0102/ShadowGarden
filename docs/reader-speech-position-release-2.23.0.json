@@ -1,0 +1,558 @@
+{
+  "version": "2.23.0",
+  "date": "2026-10-25",
+  "pullRequest": 63,
+  "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+  "applicationTree": "c8ffe09ddb9c0667a5e78af1727e8a619c51079c",
+  "candidate": "01500429765761f8323a443a60b312c098e22a2c",
+  "status": "verified",
+  "behavior": [
+    "Centered narration in Pages and Continuous with source layout and canonical page map preserved.",
+    "Theme-aware live range highlighting, including Adult rose, with SVG compatibility painting.",
+    "Auto-close speech options after successful start/resume, while automatic transitions respect user-reopened options.",
+    "Precise original-text CFIs for normalized long-paragraph chunks.",
+    "First and last passages center in both flows, including books without covers or trailing content.",
+    "Pause keeps the spoken highlight; Stop, following disabled and disposal release temporary viewport positioning. Audio progression remains independent of rendering."
+  ],
+  "ci": {
+    "prRun": 40175347879,
+    "mainRun": 40177121119,
+    "unitTests": 494,
+    "browserPassed": 961,
+    "browserSkipped": 9,
+    "retries": 0,
+    "prProfiles": [
+      {
+        "job": 121114749891,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 194,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121114749905,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 194,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121114749943,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 191,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121114749900,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 192,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121114749865,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 190,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainProfiles": [
+      {
+        "job": 121120178802,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 191,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121120178758,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 194,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121120178736,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 194,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121120178747,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 192,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121120178730,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 190,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 11,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "additionalPushRun": {
+      "run": 40175345201,
+      "mobileWebkitJob": 121114753180,
+      "artifactId": 12592370159,
+      "result": "failure",
+      "case": "a series moved to Main opens with its original identity and correct reader context",
+      "observation": "The trace remains on Series after a click, before any reader module or EPUB request. The absent #readerLoading satisfies toBeHidden before the #bookTitle timeout. The unchanged case passes in the independent full PR mobile-WebKit job on the same source. No TTS playback was started. Retained separately from the green five-profile PR run.",
+      "automaticRetries": 0,
+      "mainMobileWebkitCasePassed": true
+    }
+  },
+  "focused": {
+    "passed": 55,
+    "skipped": 0,
+    "retries": 0,
+    "artifacts": [
+      {
+        "id": 12592047348,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:0168c357219c641a96efd6165230f07b4808898ccb9459d513706ec7ec623c40"
+      },
+      {
+        "id": 12592023006,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:8dfb0a4086bc4ed1b59f487d3f0131616c616877a25afe2a0fb047412d01c897"
+      },
+      {
+        "id": 12591998157,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:1277e83c28b7dfbbbf356df54c3108191b2ae40095a61b0ed0efb37fc0e516ee"
+      },
+      {
+        "id": 12591683736,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:8f9df3f5e9355366136e2efc7ac30d95d12a00850a83da6121020ef61aed2d3c"
+      },
+      {
+        "id": 12591409203,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:e29e30eb5e5070b6d27511c7779dcddb714dfc306aa384a8e8267e19b8430afa"
+      }
+    ],
+    "mainArtifacts": [
+      {
+        "id": 12593146548,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:e2d462dd9efa8602b89de7d70e11588d348af5ef31300393d5a93a3e389d850c"
+      },
+      {
+        "id": 12593111757,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:82032f0c361528b875c5fd7a8e744f87ef4eb2a273a8f75915abd0de97437959"
+      },
+      {
+        "id": 12593086732,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:239669496d5ab27af510f0772248fa35a25b6d04da9e30d35045a2e0ee76d671"
+      },
+      {
+        "id": 12592507011,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:9e7d46eaefc1790cc7a325e86c152237b7f5d7f78360402eb10d8c59a104f771"
+      },
+      {
+        "id": 12592437361,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:2c141057fcabf29e3d07d4cb5f89258f4416e23405bb538a03431dba171753c0"
+      }
+    ]
+  },
+  "boundaryReproduction": {
+    "before": "No-cover Continuous first passage remained 307px from viewport center.",
+    "after": "First and last passages pass in both modes with temporary outer viewport gutters."
+  },
+  "visualReview": [
+    {
+      "profile": "desktop-chromium",
+      "name": "speech-highlight-paginated-garden",
+      "sha256": "964d9586ea761cb5f12b96dda64865d1552b8c65f82a5e362b43349fc61683c9",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-chromium",
+      "name": "speech-highlight-scrolled-doc-paper",
+      "sha256": "723ca5e59c870c5cb6f00cf76d0e5cb440fd75fb05552b5fa46ef8781a5bdf8e",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-firefox",
+      "name": "speech-highlight-scrolled-doc-night",
+      "sha256": "e560480b9d6fd11ac71a21d186212a7fc55ff864f01fda18828eadaf9f5ff062",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-webkit",
+      "name": "speech-adult-black",
+      "sha256": "610465e329abbe4bb30e522d522c7c03879f83fb928ff501ab2994c775a05ee9",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-webkit",
+      "name": "speech-compatible-paper",
+      "sha256": "f23dc2c393cadfce0396d3d868d0163a35e84446ed9e7ba83f1cc477a22c1c77",
+      "reviewed": true
+    },
+    {
+      "profile": "desktop-webkit",
+      "name": "speech-highlight-scrolled-doc-black",
+      "sha256": "a6f170916a7f09cf092fc6ea5b724c72c2ca27ec98fbabb01b5c482dcde4dbf3",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-chromium",
+      "name": "speech-boundary-scrolled-doc-first",
+      "sha256": "fce7901761c87f1b271080e5d71e79c362d5a42836257463226012850125d334",
+      "reviewed": true
+    },
+    {
+      "profile": "mobile-webkit",
+      "name": "speech-boundary-scrolled-doc-last",
+      "sha256": "91dbee9aba410c14d4a80706b222298781130fbd8b445dced6b1b5eab7365343",
+      "reviewed": true
+    }
+  ],
+  "production": {
+    "artifact": {
+      "id": 12592628741,
+      "name": "production-verification",
+      "digest": "sha256:61b57623b362fec7740b86d7e7707d96a06c602fac97d2a7edc81a576f538645"
+    },
+    "report": {
+      "checkedAt": "2026-10-25T09:01:09.275Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "c4ca9a98-4f32-4be7-993e-96b58a31e036",
+      "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+      "version": "2.23.0",
+      "baselineCheckedAt": "2026-10-25T09:01:08.233Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 105
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+          "version": "2.23.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/css/reader-speech.css",
+          "sha256": "6f6e39736b05af046c3e216a78ef98f62efe10039b148691d5e371dff912dc8e",
+          "bytes": 2929
+        },
+        {
+          "path": "/assets/js/reader/app.js",
+          "sha256": "fa5db9587adf1e8aa67ce11215ff377af4c36a664b29a8c70c819fc0a6f65aac",
+          "bytes": 34789
+        },
+        {
+          "path": "/assets/js/reader/speech-controller.js",
+          "sha256": "7c3d41d2c071959811ad27a8322d8e266af45a72258a9a37bbe6ec6f5982ae43",
+          "bytes": 18990
+        },
+        {
+          "path": "/assets/js/reader/speech-position.js",
+          "sha256": "1733af9413b42e1f56327d439d14d6b336ea99ad91a03d157c83de5b8b939b67",
+          "bytes": 7480
+        },
+        {
+          "path": "/assets/js/reader/speech-source.js",
+          "sha256": "4ebea5e88a3364b7c119488ee645bab5d17359657402aaac36d5f39742596fe4",
+          "bytes": 5485
+        },
+        {
+          "path": "/assets/js/reader/theme.js",
+          "sha256": "c33758d0d2e055c318908fde4ee85e80560a51c6e67e23afadf99c5694ba35ab",
+          "bytes": 17358
+        }
+      ],
+      "rollbackDeploymentId": "7fc9fbb0-c512-4f2e-b6b8-202c6243b43d",
+      "rollbackSource": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+      "beforeCheckedAt": "2026-10-25T09:01:01.335Z",
+      "readerSpeech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-EmmaMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "cloudflareCanonicalVerified": true,
+    "independentBefore": {
+      "checkedAt": "2026-10-25T08:21:41.496Z",
+      "deployment": {
+        "id": "7fc9fbb0-c512-4f2e-b6b8-202c6243b43d",
+        "source": "4fb189af2cb50f01cd58562fd40a4a9254882265",
+        "environment": "production",
+        "status": "success"
+      },
+      "revision": 18,
+      "updatedAt": "2026-10-24T23:13:42.622Z",
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshotCount": 17,
+      "snapshotsSha256": "296343d693bbe5f3ea33bc35b805ad7ce71de071fd1d4c4aabe66cc6961cea0d",
+      "snapshotChecksumsValid": true,
+      "actualConfigurationSha256": "5ef99cd11b737cfdaca63b9aed297c986d114eae614f75b5740daf9a7a2d7a7f",
+      "savedConfigurationSha256": "5ef99cd11b737cfdaca63b9aed297c986d114eae614f75b5740daf9a7a2d7a7f",
+      "databaseWrites": 0
+    },
+    "independentAfter": {
+      "checkedAt": "2026-10-25T09:01:36.086Z",
+      "deployment": {
+        "id": "c4ca9a98-4f32-4be7-993e-96b58a31e036",
+        "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+        "environment": "production",
+        "status": "success"
+      },
+      "revision": 18,
+      "updatedAt": "2026-10-24T23:13:42.622Z",
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshotCount": 17,
+      "snapshotsSha256": "296343d693bbe5f3ea33bc35b805ad7ce71de071fd1d4c4aabe66cc6961cea0d",
+      "snapshotChecksumsValid": true,
+      "actualConfigurationSha256": "5ef99cd11b737cfdaca63b9aed297c986d114eae614f75b5740daf9a7a2d7a7f",
+      "savedConfigurationSha256": "5ef99cd11b737cfdaca63b9aed297c986d114eae614f75b5740daf9a7a2d7a7f",
+      "databaseWrites": 0
+    },
+    "preservationMatches": {
+      "revision": true,
+      "updatedAt": true,
+      "documentSha256": true,
+      "snapshotCount": true,
+      "snapshotsSha256": true,
+      "actualConfigurationSha256": true,
+      "savedConfigurationSha256": true
+    },
+    "independentLive": {
+      "checkedAt": "2026-10-25T09:02:13.622Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "version": "2.23.0",
+      "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+      "assets": [
+        {
+          "path": "assets/css/reader-speech.css",
+          "sha256": "6f6e39736b05af046c3e216a78ef98f62efe10039b148691d5e371dff912dc8e",
+          "bytes": 2929
+        },
+        {
+          "path": "assets/js/reader/app.js",
+          "sha256": "fa5db9587adf1e8aa67ce11215ff377af4c36a664b29a8c70c819fc0a6f65aac",
+          "bytes": 34789
+        },
+        {
+          "path": "assets/js/reader/speech-controller.js",
+          "sha256": "7c3d41d2c071959811ad27a8322d8e266af45a72258a9a37bbe6ec6f5982ae43",
+          "bytes": 18990
+        },
+        {
+          "path": "assets/js/reader/speech-position.js",
+          "sha256": "1733af9413b42e1f56327d439d14d6b336ea99ad91a03d157c83de5b8b939b67",
+          "bytes": 7480
+        },
+        {
+          "path": "assets/js/reader/speech-source.js",
+          "sha256": "4ebea5e88a3364b7c119488ee645bab5d17359657402aaac36d5f39742596fe4",
+          "bytes": 5485
+        },
+        {
+          "path": "assets/js/reader/theme.js",
+          "sha256": "c33758d0d2e055c318908fde4ee85e80560a51c6e67e23afadf99c5694ba35ab",
+          "bytes": 17358
+        }
+      ],
+      "speech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-EmmaMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "liveReader": {
+      "source": "4de24e0b6f923f704e8341e0000027003fc940d5",
+      "profile": "mobile-chromium",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0,
+      "scope": "Deployed production HTML and reader assets with an original disposable EPUB and deterministic audio responses intercepted only inside the isolated browser context. No production books or catalog writes.",
+      "checks": [
+        "first and last passages center in Pages",
+        "first and last passages center in Continuous",
+        "Pages centers spoken text, follows all themes and closes options",
+        "Continuous centers spoken text, follows all themes and closes options",
+        "Adult rose highlight remains while paused and clears on Stop",
+        "SVG compatibility highlighting follows the theme"
+      ]
+    }
+  },
+  "scope": "Browser profiles are emulated. No physical Android/Soul acceptance is claimed. Tests use original disposable EPUBs and audio. No production catalog, book object, binding or migration changes."
+}
