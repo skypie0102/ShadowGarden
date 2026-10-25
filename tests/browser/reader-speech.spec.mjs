@@ -834,7 +834,8 @@ test("hidden-tab narration advances without rendering and follows the final pass
     "true",
     { timeout: 30000 },
   );
-  await page.evaluate(() => {
+  const visibleSpineIndex = await page.evaluate(async (bootstrap) => {
+    const reader = (await import(bootstrap)).readerRuntime.current;
     const raf = window.requestAnimationFrame.bind(window),
       cancel = window.cancelAnimationFrame.bind(window),
       frames = new Map();
@@ -863,7 +864,11 @@ test("hidden-tab narration advances without rendering and follows the final pass
       document.dispatchEvent(new Event("visibilitychange"));
     };
     document.dispatchEvent(new Event("visibilitychange"));
-  });
+    // Centering can leave the viewport's tracking line in the preceding cover.
+    // Hidden playback must preserve that actual visible position, whichever
+    // chapter the viewport tracks when the tab is hidden.
+    return reader.state.currentSpineIndex;
+  }, bootstrap);
   await ended(page);
   await expect
     .poll(() => speechState(page).then((s) => s.status))
@@ -886,7 +891,7 @@ test("hidden-tab narration advances without rendering and follows the final pass
         (await import(bootstrap)).readerRuntime.current.state.currentSpineIndex,
       bootstrap,
     ),
-  ).toBe(1);
+  ).toBe(visibleSpineIndex);
   await page.evaluate(() => window.__showSpeechTab());
   await expect
     .poll(
