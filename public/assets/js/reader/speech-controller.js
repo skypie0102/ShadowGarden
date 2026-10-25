@@ -7,9 +7,10 @@ import { readJSON, writeJSON } from "./storage.js";
 import { createSpeechSource } from "./speech-source.js";
 import { recordReaderDiagnostic } from "./diagnostics.js";
 import { createSpeechPosition } from "./speech-position.js";
+import { createSpeechBuffer } from "./speech-buffer.js";
 
 const KEY = "sg-reader-speech-settings",
-  DEFAULT_VOICE = "en-US-EmmaMultilingualNeural";
+  DEFAULT_VOICE = "en-US-BrianMultilingualNeural";
 const SILENCE =
   "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAAAAA==";
 export function speechSettings(value = {}) {
@@ -38,6 +39,7 @@ export function createSpeechController({
   const scope = createReaderScope(),
     audio = elements.speechAudio;
   const source = createSpeechSource({ getBook, getCfi, getSpineIndex });
+  const buffer = createSpeechBuffer({ source, fetchAudio });
   const position = createSpeechPosition();
   scope.add(() => position.dispose());
   let settings = speechSettings(readJSON(KEY, {})),
@@ -54,8 +56,7 @@ export function createSpeechController({
     followSpineIndex = null,
     voiceLoad = null,
     voicesLoaded = false,
-    closeOnPlay = false,
-    ahead = null;
+    closeOnPlay = false;
   const entry = () => cursor?.entries[cursor.index];
   const active = () =>
     ["loading", "playing", "paused", "error"].includes(status);
@@ -133,14 +134,13 @@ export function createSpeechController({
     if (objectUrl) URL.revokeObjectURL(objectUrl);
     objectUrl = "";
   }
-  function invalidate() {
+  function invalidate({ keepBuffer = false } = {}) {
     revision++;
     cancelFollow();
     request?.abort();
     request = null;
     pending = null;
-    ahead?.controller.abort();
-    ahead = null;
+    if (!keepBuffer) buffer.clear();
   }
   function stop(message) {
     invalidate();
@@ -197,30 +197,6 @@ export function createSpeechController({
     if (!blob.size || blob.size > 1024 * 1024)
       throw new Error("Edge TTS returned invalid audio. Try again.");
     return blob;
-  }
-  const keyFor = (position, voice) =>
-    `${position.spineIndex}:${position.index}:${voice}`;
-  function prefetch() {
-    ahead?.controller.abort();
-    ahead = null;
-    if (!cursor || cursor.index + 1 >= cursor.entries.length || !wantPlay)
-      return;
-    const next = { ...cursor, index: cursor.index + 1 },
-      controller = new AbortController();
-    const candidate = {
-      key: keyFor(next, settings.voice),
-      controller,
-      promise: null,
-    };
-    candidate.promise = fetchAudio(
-      next.entries[next.index].text,
-      settings.voice,
-      controller.signal,
-    ).then(
-      (blob) => ({ blob }),
-      () => ({ blob: null }),
-    );
-    ahead = candidate;
   }
   function cancelFollow() {
     followAbort?.abort();
@@ -294,7 +270,7 @@ export function createSpeechController({
         if (closeOnPlay && elements.speechDrawer.classList.contains("open"))
           closeDrawers?.();
         closeOnPlay = false;
-        prefetch();
+        buffer.prefetch(cursor, settings.voice);
         followPassage();
       }
     } catch (error) {
@@ -309,15 +285,11 @@ export function createSpeechController({
     }
   }
   async function prepare({ fromCurrent = false, direction = 0 } = {}) {
-    const cached = ahead;
-    ahead = null;
-    invalidate();
+    invalidate({ keepBuffer: direction === 1 && !fromCurrent });
     releaseAudio();
     const serial = revision,
       controller = new AbortController();
     request = controller;
-    const cancelCached = () => cached?.controller.abort();
-    controller.signal.addEventListener("abort", cancelCached, { once: true });
     const current = () =>
       serial === revision && !scope.disposed && !controller.signal.aborted;
     status = "loading";
@@ -334,6 +306,7 @@ export function createSpeechController({
               : cursor;
         if (!current()) return;
         if (!next) {
+          buffer.clear();
           wantPlay = false;
           status = direction < 0 ? "paused" : "complete";
           render(
@@ -348,13 +321,9 @@ export function createSpeechController({
         }
         cursor = next;
         render();
-        const selected = entry(),
-          voice = settings.voice;
-        const matching = cached?.key === keyFor(cursor, voice);
-        if (cached && !matching) cached.controller.abort();
-        const blob =
-          (matching ? (await cached.promise).blob : null) ||
-          (await fetchAudio(selected.text, voice, controller.signal));
+        const blob = await buffer.read(cursor, settings.voice, {
+          signal: controller.signal, preload: wantPlay,
+        });
         if (!current()) return;
         objectUrl = URL.createObjectURL(blob);
         audio.src = objectUrl;
@@ -367,12 +336,11 @@ export function createSpeechController({
         }
       } catch (error) {
         if (!current()) return;
+        buffer.clear();
         wantPlay = false;
         status = "error";
         render(error.message || "Edge TTS is unavailable. Try again.");
       } finally {
-        controller.signal.removeEventListener("abort", cancelCached);
-        if (cached && cached !== ahead) cached.controller.abort();
         if (serial === revision) {
           request = null;
           pending = null;
