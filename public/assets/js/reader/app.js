@@ -394,8 +394,9 @@ async function initializeReader(session, scope) {
     toast
   });
   own(bookmarksController);
-  function turn(direction) {
-    speechController?.stop();
+  function turn(direction, { browsing = false } = {}) {
+    if (browsing) speechController?.suspendFollowing();
+    else speechController?.stop();
     if (scope.disposed) return;
     if (settingsController.get().flow !== "paginated") return;
     paginatedController?.turn(direction);
@@ -403,7 +404,7 @@ async function initializeReader(session, scope) {
   pageInputController = createPageNavigationInput({
     getFlow: () => settingsController.get().flow,
     getSwipeTurns: () => settingsController.get().swipeTurns,
-    turn
+    turn: direction => turn(direction, { browsing: true })
   });
   own(pageInputController);
   imageFocusController = createImageFocusController({

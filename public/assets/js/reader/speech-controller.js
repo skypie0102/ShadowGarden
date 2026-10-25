@@ -213,6 +213,9 @@ export function createSpeechController({
   function browse(event) {
     if (event.type === "keydown" &&
       !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) return;
+    suspendFollowing();
+  }
+  function suspendFollowing() {
     if (!active() || followSuspended) return;
     // The reader can browse independently while narration and preloading keep
     // their own cursor. Only the status control or follow setting rejoins them.
@@ -545,9 +548,9 @@ export function createSpeechController({
     );
   // WebKit suppresses document callbacks inside script-disabled EPUB frames.
   // Observe real viewport movement as well, excluding our own follow positions.
-  const observeScroll = event => {
+  const observeScroll = () => {
     if (!active() || !settings.follow || followSuspended || (followAbort && !position.moving)) return;
-    if (position.movedSinceFollow()) browse(event);
+    if (position.movedSinceFollow()) suspendFollowing();
   };
   scope.listen(elements.viewer, "scroll", observeScroll, { capture: true, passive: true });
   scope.listen(window, "scroll", observeScroll, { passive: true });
@@ -591,6 +594,7 @@ export function createSpeechController({
   return {
     stop,
     pause,
+    suspendFollowing,
     dispose: () => scope.dispose(),
     attachRendition(rendition) {
       position.attachRendition(rendition);

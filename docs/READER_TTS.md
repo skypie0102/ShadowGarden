@@ -22,7 +22,8 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   control is tapped or Follow reading position is enabled in settings. The status
   control smoothly returns to the current spoken passage and enables following
   without restarting audio or resuming an explicitly paused recording. Explicit
-  TOC/seek navigation still stops narration. Closing the speech drawer keeps
+  page buttons and TOC/seek navigation still stop narration; Pages-mode wheel
+  and swipe browsing keep it playing. Closing the speech drawer keeps
   controls in a floating bar, ordered status/return to passage, Previous,
   Play/Pause, Next, Stop, settings cog. On narrow screens, the status occupies
   the first row and five icon controls share the second; all targets remain 44px.

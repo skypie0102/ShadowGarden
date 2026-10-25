@@ -400,14 +400,20 @@ for(const flow of ['paginated','scrolled-doc'])
     await page.locator('#speechMiniStop').click();
   });
 
-test('native scrolling stays detached through narration chapter changes until the status control is tapped',async({page})=>{
+test('native scrolling stays detached through narration chapter changes until the status control is tapped',async({page,browserName,isMobile})=>{
   await open(page,'scrolled-doc');
   await pressSpeech(page,'speechPlay');
   await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
   const bounds=await page.locator('#viewer').boundingBox();
   const pauses=await page.evaluate(()=>window.__speechEvents.pauses);
-  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
-  await page.mouse.wheel(0,500);
+  if(browserName==='webkit' && isMobile) {
+    // Mobile WebKit exposes no mouse-wheel input in Playwright. Exercise its
+    // native scroll event path without an EPUB document callback instead.
+    await page.locator('#viewer .epub-container').evaluate(container=>container.scrollBy(0,500));
+  } else {
+    await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+    await page.mouse.wheel(0,500);
+  }
   await expect.poll(()=>speechState(page).then(s=>s.following)).toBe(false);
   expect((await speechState(page)).status).toBe('playing');
   expect(await page.evaluate(()=>window.__speechEvents.pauses)).toBe(pauses);
