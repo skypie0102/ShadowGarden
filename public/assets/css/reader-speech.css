@@ -1,18 +1,99 @@
 /* Read aloud uses the reader's current palette, including adult rose accents. */
-#speechToggle[aria-pressed="true"] { color:var(--leaf); border-color:var(--sg-ui-accent-line); }
-.speech-panel { gap:16px; }
-.speech-description,.speech-hint,.speech-status { margin:0; color:var(--muted); font-size:.75rem; line-height:1.6; }
-.speech-hint { font-size:.68rem; margin-top:-8px; }
-.speech-panel select { width:100%; min-width:0; max-width:100%; }
-.speech-controls { display:grid; grid-template-columns:44px minmax(0,1fr) 44px 44px; gap:8px; }
-.speech-controls button,.speech-mini button { min-height:44px; border:1px solid var(--line); border-radius:9px; background:var(--sg-ui-control); color:var(--text); cursor:pointer; }
-.speech-controls .speech-play { border-color:var(--sg-ui-accent-line); color:var(--leaf); }
-.speech-controls button:disabled { opacity:.4; cursor:default; }
-.speech-controls button:focus-visible,.speech-mini button:focus-visible { outline:2px solid var(--leaf); outline-offset:2px; }
-.speech-passage { margin:0; padding:14px; border-left:2px solid var(--sg-ui-accent-line); background:var(--sg-ui-panel-2); color:var(--text); font-size:.8rem; line-height:1.75; overflow-wrap:anywhere; }
-.speech-passage:empty { display:none; }
-.speech-mini { position:fixed; z-index:25; left:50%; bottom:60px; transform:translateX(-50%); display:grid; grid-template-columns:44px minmax(0,1fr) 44px; gap:4px; width:min(360px,calc(100vw - 32px)); padding:5px; border:1px solid var(--sg-ui-accent-line); border-radius:14px; background:var(--sg-ui-chrome); box-shadow:0 6px 24px #0003; }
-.speech-mini[hidden] { display:none; }
-.speech-mini button { background:transparent; border-color:transparent; color:var(--leaf); }
-.speech-mini .speech-mini-detail { color:var(--text); font-size:.76rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-body.reader-flow-scrolled .speech-mini { bottom:max(12px,env(safe-area-inset-bottom)); }
+#speechToggle[aria-pressed="true"] {
+  color: var(--leaf);
+  border-color: var(--sg-ui-accent-line);
+}
+.speech-panel {
+  gap: 16px;
+}
+.speech-description,
+.speech-hint,
+.speech-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.speech-hint {
+  font-size: 0.68rem;
+  margin-top: -8px;
+}
+.speech-panel select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.speech-controls {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
+  gap: 8px;
+}
+.speech-controls button,
+.speech-mini button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--sg-ui-control);
+  color: var(--text);
+  cursor: pointer;
+}
+.speech-controls .speech-play {
+  border-color: var(--sg-ui-accent-line);
+  color: var(--leaf);
+}
+.speech-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.speech-controls button:focus-visible,
+.speech-mini button:focus-visible {
+  outline: 2px solid var(--leaf);
+  outline-offset: 2px;
+}
+.speech-passage {
+  margin: 0;
+  padding: 14px;
+  border-left: 2px solid var(--sg-ui-accent-line);
+  background: var(--sg-ui-panel-2);
+  color: var(--text);
+  font-size: 0.8rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.speech-passage:empty {
+  display: none;
+}
+.speech-mini {
+  position: fixed;
+  z-index: 25;
+  left: 50%;
+  bottom: 60px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 4px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 5px;
+  border: 1px solid var(--sg-ui-accent-line);
+  border-radius: 14px;
+  background: var(--sg-ui-chrome);
+  box-shadow: 0 6px 24px #0003;
+}
+.speech-mini[hidden] {
+  display: none;
+}
+.speech-mini button {
+  background: transparent;
+  border-color: transparent;
+  color: var(--leaf);
+}
+.speech-mini .speech-mini-detail {
+  color: var(--text);
+  font-size: 0.76rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.reader-flow-scrolled .speech-mini {
+  bottom: max(12px, env(safe-area-inset-bottom));
+}

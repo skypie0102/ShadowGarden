@@ -20,6 +20,7 @@ returned in error payloads. Success payloads include `revision` when applicable.
 | `/admin-access` | GET, POST, DELETE | `admin/auth-session.js`: challenge `{siteKey,action}`; POST `{adminToken,turnstileToken}`; DELETE revokes cookie/session |
 | `/human-access` | GET, POST | `book-access.js`: POST `{token}`; Siteverify action/hostname validation; 12-hour human cookie |
 | `/book-access` | POST | `book-access.js`: `{bookId}` or same-origin `{book}`; `{url,bookId,expiresAt,ttlSeconds}`; 428 challenge; 503 missing config/mapping |
+| `/tts` | GET, POST | GET returns sanitized Edge voice metadata, cached for an hour. POST `{text,voice}` requires same-origin JSON and a current human session; returns private `audio/mpeg`. 1,200-character text, 12 KB body, 1 MiB audio and 45-second limits; 240 synthesis requests per ten minutes per client. No text/audio persistence. See [Reader TTS](READER_TTS.md). |
 | `/media/:path*` | GET, HEAD | Public main/adult catalogs and covers; object-scoped ticket required for EPUBs; supports one byte range |
 | `/admin-api/status` | POST | `admin/core.js`: validates bearer + session, returns configuration status and `catalogReadable`; damaged catalog data does not prevent authenticated recovery |
 | `/admin-api/library` | GET, POST | `admin/library-workflow.js`, `admin/volume-replacement.js`: `{main,adult,counts}`; update/delete series or volume; replace a volume's EPUB; deletion moves metadata to trash |

@@ -20,6 +20,7 @@
     let openDrawer=null;
     drawers.forEach(drawer=>{
       const open=drawer.classList.contains('open');
+      if(drawer===speechDrawer)drawer.inert=!open;
       drawer.setAttribute('aria-hidden',open?'false':'true');
       triggerFor(drawer)?.setAttribute('aria-expanded',open?'true':'false');
       if(open)openDrawer=drawer;

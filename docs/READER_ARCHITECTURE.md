@@ -5,6 +5,22 @@ The [vendor contract](READER_VENDOR_CONTRACT.md) records supported adaptation;
 [code review](READER_CODE_REVIEW.md) records the baseline. Original phased work
 remains in [the refactor history](READER_REFACTOR_ROADMAP.md).
 
+## Read aloud
+
+`reader/speech-controller.js` owns the Edge audio player, speech drawer, local
+voice/speed preferences and a single prefetched passage. Each replacement or
+stop aborts the previous request and invalidates late continuations. The app's
+navigation owner receives an explicit speech-follow option; user navigation
+stops narration. Scrolling/touching the EPUB pauses it. Disposal releases audio,
+object URLs, requests, Media Session actions and rendition listeners.
+
+`reader/speech-source.js` uses the existing section-source lease boundary to
+extract bounded semantic passages and CFIs, starting at the current location and
+skipping image-only spine sections. It never rewrites EPUB source or participates
+in canonical page measurement. `server/edge-speech.js` owns the remote protocol;
+`server/tts.js` owns HTTP validation, Garden Pass and existing rate-limit storage.
+See [Reader TTS](READER_TTS.md) for service limits and verification boundaries.
+
 ## Paragraph alignment
 
 `reader/settings.js` owns the persisted `alignment` preference: `default`,
