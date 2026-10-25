@@ -1,4 +1,22 @@
 /* Read aloud uses the reader's current palette, including adult rose accents. */
+.sg-reader-speech-highlight {
+  fill: var(--leaf) !important;
+  fill-opacity: 0.26 !important;
+  mix-blend-mode: normal !important;
+  pointer-events: none !important;
+}
+.sg-speech-centered-page > .epub-view {
+  translate: 0 var(--sg-speech-page-inset);
+}
+.sg-speech-centered-page::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + var(--sg-speech-page-inset) * 2);
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
 #speechToggle[aria-pressed="true"] {
   color: var(--leaf);
   border-color: var(--sg-ui-accent-line);

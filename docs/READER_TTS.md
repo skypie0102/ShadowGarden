@@ -7,13 +7,17 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
 ## Reader behavior
 
 - Open the themed headphone control to select a voice and speed, then Play.
-- Play starts at the current paragraph. Read from here restarts from the current
+- Play starts at the current passage. Read from here restarts from the current
   reading position. Pause/Resume retains the current audio offset.
 - Previous/Next changes passages. Playback advances through linear EPUB spine
   sections, skips image-only sections, and stops at the end of the volume.
-- Follow reading position navigates to each spoken paragraph. Manual navigation
+- Follow reading position centers the spoken passage in both Pages and Continuous.
+  Its highlight follows Garden, Night, Black and Paper, including Adult rose.
+  Pausing keeps the highlight; Stop and leaving the reader remove it. Manual navigation
   stops narration; touching or scrolling EPUB content pauses narration. Closing
   the speech drawer keeps playback controls in a compact floating bar.
+- Starting or resuming playback closes the Read aloud options. Reopening options
+  during playback keeps them open across automatic passage changes.
 - Voice, speed and follow preferences persist in `sg-reader-speech-settings`.
   Reloading never starts playback automatically. Speech does not use or override
   paragraph alignment, typography, or page-map settings.
@@ -28,13 +32,20 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
 `speech-source.js` reads leased EPUB section sources and emits paragraph CFIs
 and bounded text chunks. It excludes scripts, ruby pronunciation, hidden markup,
 navigation and semantic footnotes. Long paragraphs split at sentence/word
-boundaries without splitting Unicode surrogate pairs. Source extraction is
+boundaries without splitting Unicode surrogate pairs. Each chunk has its own
+original-text CFI range, including normalized whitespace and inline markup. Source extraction is
 semantic; it cannot resolve every arbitrary publisher CSS visibility rule.
 
 `speech-controller.js` owns one audio element, an abort/revision boundary, the
 active blob and at most one prefetched passage. Late fetches and playback
 promises cannot resume a stopped/replaced session. No synthesized audio is
 persisted to local storage or sent to object storage.
+`speech-position.js` paints live ranges with Custom Highlight, with the existing
+EPUB SVG annotation API as its compatibility fallback. It leaves publisher text,
+source CFIs and page measurement intact. Continuous uses owned scroll restoration;
+Pages temporarily offset the rendered viewport and release that offset when
+following is disabled, speech stops or the rendition closes.
+
 Position following has its own abortable navigation scope; suspended animation
 frames cannot block the audio queue. Pausing, hiding the page or stopping cancels
 an in-flight follow without cancelling speech merely because layout is delayed.

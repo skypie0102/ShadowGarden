@@ -275,7 +275,7 @@ async function initializeReader(session, scope) {
   }
   const bookSearchController = createBookSearchController({ getBook: () => state.book });
   own(bookSearchController);
-  speechController = own(createSpeechController({elements,getBook:()=>state.book,getCfi:()=>progressController?.currentCfi?.()||'',getSpineIndex:()=>state.currentSpineIndex,navigate,openDrawer}));
+  speechController = own(createSpeechController({elements,getBook:()=>state.book,getCfi:()=>progressController?.currentCfi?.()||'',getSpineIndex:()=>state.currentSpineIndex,navigate,openDrawer,closeDrawers}));
   tocController = createTocController({
     panel: elements.tocPanel,
     navigate,

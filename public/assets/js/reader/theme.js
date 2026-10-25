@@ -232,6 +232,7 @@ export function createThemeController({ getSettings, isAdult }) {
       paper: { bg: "#ffffff", text: "#292a25", link: "#536e55" }
     };
     const theme = themes[settings.theme] || themes.garden;
+    const speechColor = solid(theme.link);
     const paginated = settings.flow === "paginated";
     const body = {
       background: `${theme.bg} !important`,
@@ -337,6 +338,12 @@ export function createThemeController({ getSettings, isAdult }) {
       body,
       p: { "line-height": `${settings.lineHeight} !important` },
       a: { color: `${theme.link} !important` },
+      ...(globalThis.CSS?.supports?.("selector(::highlight(sg-reader-speech))") ? {
+        "::highlight(sg-reader-speech)": {
+          "background-color": `rgba(${speechColor.r}, ${speechColor.g}, ${speechColor.b}, 0.28)`,
+          color: theme.text,
+        },
+      } : {}),
       ...(paginated ? {} : {
         "div, section, article, aside, main, table, td, th": blockCap,
         "body figure, body picture": mediaBleedBlock,

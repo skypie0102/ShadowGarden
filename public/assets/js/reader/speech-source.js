@@ -60,19 +60,47 @@ export function speechPassages(document, section) {
     current.nodes.push(node);
   }
   return groups.flatMap(({ nodes }) => {
-    const range = document.createRange();
-    range.setStart(nodes[0], 0);
-    range.setEnd(nodes.at(-1), nodes.at(-1).nodeValue.length);
-    let cfi;
-    try {
-      cfi = section.cfiFromRange(range);
-    } catch {
-      return [];
+    // Map normalized speech back to the original text nodes. Each long-paragraph
+    // chunk needs its own range; a shared paragraph CFI cannot follow or mark it.
+    const raw = nodes.map((n) => n.nodeValue).join(""), spans = [];
+    let normalized = "";
+    for (const match of raw.matchAll(/\s+|\S+/g)) {
+      const space = /^\s/.test(match[0]);
+      if (space && !normalized) continue;
+      spans.push({ start: normalized.length, raw: match.index, space });
+      normalized += space ? " " : match[0];
     }
-    // Do not read ruby pronunciation, hidden notes or illustration alt text.
-    return splitSpeechText(nodes.map((n) => n.nodeValue).join("")).map(
-      (text) => ({ text, cfi }),
-    );
+    normalized = normalized.trimEnd();
+    const rawOffset = (offset) => {
+      let low = 0, high = spans.length - 1;
+      while (low < high) {
+        const mid = Math.ceil((low + high) / 2);
+        if (spans[mid].start <= offset) low = mid;
+        else high = mid - 1;
+      }
+      const span = spans[low];
+      return span.raw + (span.space ? 0 : offset - span.start);
+    };
+    const point = (offset, end) => {
+      let start = 0;
+      for (const node of nodes) {
+        const stop = start + node.nodeValue.length;
+        if (end ? offset <= stop : offset < stop)
+          return [node, offset - start];
+        start = stop;
+      }
+      return [nodes.at(-1), nodes.at(-1).nodeValue.length];
+    };
+    let offset = 0;
+    return splitSpeechText(normalized).flatMap((text) => {
+      const start = normalized.indexOf(text, offset);
+      offset = start + text.length;
+      const range = document.createRange();
+      range.setStart(...point(rawOffset(start), false));
+      range.setEnd(...point(rawOffset(offset - 1) + 1, true));
+      try { return [{ text, cfi: section.cfiFromRange(range) }]; }
+      catch { return []; }
+    });
   });
 }
 export function createSpeechSource({ getBook, getCfi, getSpineIndex }) {

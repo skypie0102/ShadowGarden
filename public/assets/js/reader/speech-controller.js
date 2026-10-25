@@ -6,6 +6,7 @@ import {
 import { readJSON, writeJSON } from "./storage.js";
 import { createSpeechSource } from "./speech-source.js";
 import { recordReaderDiagnostic } from "./diagnostics.js";
+import { createSpeechPosition } from "./speech-position.js";
 
 const KEY = "sg-reader-speech-settings",
   DEFAULT_VOICE = "en-US-EmmaMultilingualNeural";
@@ -32,10 +33,13 @@ export function createSpeechController({
   getSpineIndex,
   navigate,
   openDrawer,
+  closeDrawers,
 }) {
   const scope = createReaderScope(),
     audio = elements.speechAudio;
   const source = createSpeechSource({ getBook, getCfi, getSpineIndex });
+  const position = createSpeechPosition();
+  scope.add(() => position.dispose());
   let settings = speechSettings(readJSON(KEY, {})),
     cursor = null,
     status = "idle",
@@ -49,6 +53,7 @@ export function createSpeechController({
     followedCfi = "",
     voiceLoad = null,
     voicesLoaded = false,
+    closeOnPlay = false,
     ahead = null;
   const entry = () => cursor?.entries[cursor.index];
   const active = () =>
@@ -137,6 +142,8 @@ export function createSpeechController({
   function stop(message) {
     invalidate();
     wantPlay = false;
+    closeOnPlay = false;
+    position.clear();
     cursor = null;
     followedCfi = "";
     status = "idle";
@@ -146,8 +153,10 @@ export function createSpeechController({
   function pause() {
     if (!active()) return;
     cancelFollow();
+    position.suspendCenter();
     followedCfi = "";
     wantPlay = false;
+    closeOnPlay = false;
     audio.pause();
     status = "paused";
     render();
@@ -242,8 +251,10 @@ export function createSpeechController({
         });
       })
       .then((moved) => {
-        if (moved && serial === revision && !controller.signal.aborted)
+        if (moved && serial === revision && !controller.signal.aborted) {
+          position.center();
           followedCfi = selected.cfi;
+        }
       })
       .catch(() => {
         if (!scope.disposed && !controller.signal.aborted)
@@ -268,6 +279,10 @@ export function createSpeechController({
       } else status = "playing";
       render();
       if (wantPlay) {
+        position.show({ cfi: entry().cfi, spineIndex: cursor.spineIndex });
+        if (closeOnPlay && elements.speechDrawer.classList.contains("open"))
+          closeDrawers?.();
+        closeOnPlay = false;
         prefetch();
         followPassage();
       }
@@ -363,6 +378,7 @@ export function createSpeechController({
     }
     unlock();
     wantPlay = true;
+    closeOnPlay = true;
     if (pending) {
       status = "loading";
       render();
@@ -377,6 +393,7 @@ export function createSpeechController({
   function move(direction) {
     unlock();
     wantPlay = true;
+    closeOnPlay = true;
     void prepare({ direction });
   }
   async function loadVoices() {
@@ -463,6 +480,7 @@ export function createSpeechController({
   scope.listen(elements.speechHere, "click", () => {
     unlock();
     wantPlay = true;
+    closeOnPlay = true;
     void prepare({ fromCurrent: true });
   });
   scope.listen(elements.speechNext, "click", () => move(1));
@@ -492,8 +510,9 @@ export function createSpeechController({
   });
   scope.listen(elements.speechFollow, "change", () => {
     settings.follow = elements.speechFollow.checked;
+    followedCfi = "";
     if (settings.follow) followPassage();
-    else cancelFollow();
+    else { cancelFollow(); position.resetCenter(); }
     save();
   });
   scope.listen(document, "visibilitychange", () => {
@@ -554,6 +573,7 @@ export function createSpeechController({
     pause,
     dispose: () => scope.dispose(),
     attachRendition(rendition) {
+      position.attachRendition(rendition);
       readerInstanceScope(rendition).hook(
         rendition.hooks.content,
         (contents) => {
