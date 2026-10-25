@@ -1,5 +1,5 @@
 import { createReaderScope, readerInstanceScope, readerContentsScope } from "./lifecycle.js";
-import { restoreContinuousScrollPosition } from "./rendition.js";
+import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from "./rendition.js";
 import { recordReaderDiagnostic } from "./diagnostics.js";
 
 const NAME = "sg-reader-speech";
@@ -12,6 +12,18 @@ export function createSpeechPosition() {
   function resetCenter() {
     centered = false;
     const container = rendition?.manager?.container;
+    if (container?.classList.contains("sg-speech-centered-scroll")) {
+      const anchor = captureContinuousScrollPosition(rendition);
+      const horizontal = rendition.manager.settings?.axis === "horizontal";
+      const offset = horizontal ? container.scrollLeft : container.scrollTop;
+      const gutter = parseFloat(container.style.getPropertyValue("--sg-speech-scroll-inset")) || 0;
+      container.classList.remove("sg-speech-centered-scroll", "sg-speech-centered-scroll-x");
+      container.style.removeProperty("--sg-speech-scroll-inset");
+      if (!anchor || !restoreContinuousScrollPosition(rendition, anchor)) {
+        if (horizontal) container.scrollLeft = Math.max(0, offset - gutter);
+        else container.scrollTop = Math.max(0, offset - gutter);
+      }
+    }
     if (container?.classList.contains("sg-speech-centered-page")) {
       container.classList.remove("sg-speech-centered-page");
       container.style.removeProperty("--sg-speech-page-inset");
@@ -80,11 +92,19 @@ export function createSpeechPosition() {
       const fullsize = manager.settings?.fullsize === true;
       const height = fullsize ? window.innerHeight : manager.container?.clientHeight;
       const width = fullsize ? window.innerWidth : manager.container?.clientWidth;
+      if (!height || !width) return false;
       if (manager.isPaginated) {
         // Shift only the rendered page viewport, not the publication's columns.
         // Extra scroll space is visual, so page counts and source CFIs stay put.
         manager.container.style.setProperty("--sg-speech-page-inset", `${height / 2}px`);
         manager.container.classList.add("sg-speech-centered-page");
+      } else if (!fullsize) {
+        // Outer gutters make true centering possible at either book boundary,
+        // without padding or rewriting any publication document.
+        const horizontal = manager.settings?.axis === "horizontal";
+        manager.container.style.setProperty("--sg-speech-scroll-inset", `${(horizontal ? width : height) / 2}px`);
+        manager.container.classList.add("sg-speech-centered-scroll");
+        manager.container.classList.toggle("sg-speech-centered-scroll-x", horizontal);
       }
       const rect = located.range.getBoundingClientRect();
       const rects = [...located.range.getClientRects()].filter(r => r.width > 0 && r.height > 0);
@@ -92,7 +112,7 @@ export function createSpeechPosition() {
       const viewport = fullsize ? {top:0,left:0,right:width} : manager.container.getBoundingClientRect();
       const visible = manager.isPaginated ? rects.filter(r => frame.left+r.right>viewport.left+1 && frame.left+r.left<viewport.right-1) : rects;
       const first = visible[0] || rects[0] || rect;
-      if (!height || !width || !rect.height) return false;
+      if (!rect.height) return false;
       const top = visible.length ? Math.min(...visible.map(r=>r.top)) : rect.top;
       const bottom = visible.length ? Math.max(...visible.map(r=>r.bottom)) : rect.bottom;
       const targetHeight = bottom-top <= height * 0.7 ? bottom-top : first.height;

@@ -186,6 +186,31 @@ async function markedPosition(page) {
     return null;
   },bootstrap);
 }
+for(const flow of ['paginated','scrolled-doc'])
+  test(`${flow}: the first and last spoken passages can be centered without cover or trailing content`,async({page})=>{
+    test.setTimeout(90000);
+    const zip=await createReaderZip();
+    await zip.loadAsync(await createReaderEpub({chapterCount:2,paragraphCount:1}));
+    zip.file('book.opf',(await zip.file('book.opf').async('string')).replace('<itemref idref="cover"/>',''));
+    zip.file('chapter0.xhtml','<html xmlns="http://www.w3.org/1999/xhtml"><head><title>First</title></head><body><h1>First boundary heading</h1><p>First original boundary passage.</p></body></html>');
+    zip.file('chapter1.xhtml','<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Last</title></head><body><h1>Final boundary heading</h1><p>Final original boundary passage.</p></body></html>');
+    await open(page,flow,{epub:await zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'})});
+    await pressSpeech(page,'speechPlay');
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    while((await speechState(page)).index>0){await pressSpeech(page,'speechPrevious');await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');}
+    await expect(page.locator('#speechPassage')).toHaveText('First boundary heading');
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance),{timeout:10000}).toBeLessThan(8);
+    await test.info().attach(`speech-boundary-${flow}-first`,{body:await page.screenshot(),contentType:'image/png'});
+    for(let step=0;step<4 && ((await speechState(page)).spineIndex<1 || (await speechState(page)).index<1);step++){
+      await ended(page);await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    }
+    await expect(page.locator('#speechPassage')).toHaveText('Final original boundary passage.');
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance),{timeout:10000}).toBeLessThan(8);
+    await test.info().attach(`speech-boundary-${flow}-last`,{body:await page.screenshot(),contentType:'image/png'});
+    await page.locator('#speechMiniStop').click();
+    expect(await markedPosition(page)).toBeNull();
+    await expect(page.locator('.sg-speech-centered-page,.sg-speech-centered-scroll')).toHaveCount(0);
+  });
 async function ended(page) {
   await page
     .locator("#speechAudio")

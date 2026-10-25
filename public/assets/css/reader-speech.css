@@ -17,6 +17,20 @@
   height: 1px;
   pointer-events: none;
 }
+.sg-speech-centered-scroll::before,
+.sg-speech-centered-scroll::after {
+  content: "";
+  display: block;
+  height: var(--sg-speech-scroll-inset);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.sg-speech-centered-scroll-x::before,
+.sg-speech-centered-scroll-x::after {
+  display: inline-block;
+  width: var(--sg-speech-scroll-inset);
+  height: 1px;
+}
 #speechToggle[aria-pressed="true"] {
   color: var(--leaf);
   border-color: var(--sg-ui-accent-line);

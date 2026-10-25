@@ -43,8 +43,9 @@ persisted to local storage or sent to object storage.
 `speech-position.js` paints live ranges with Custom Highlight, with the existing
 EPUB SVG annotation API as its compatibility fallback. It leaves publisher text,
 source CFIs and page measurement intact. Continuous uses owned scroll restoration;
-Pages temporarily offset the rendered viewport and release that offset when
-following is disabled, speech stops or the rendition closes.
+Pages temporarily offset the rendered viewport. Continuous adds outer viewport
+gutters so the first and last passages can be centered too. Those offsets/gutters
+are released when following is disabled, speech stops or the rendition closes.
 
 Position following has its own abortable navigation scope; suspended animation
 frames cannot block the audio queue. Pausing, hiding the page or stopping cancels
