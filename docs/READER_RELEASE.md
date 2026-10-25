@@ -1,7 +1,28 @@
 # Reader releases
 
-**Current production baseline:** v2.23.0. Ongoing
+**Current production baseline:** v2.24.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.24.0 — English voices and smooth playback controls
+
+**Live:** deployment `7215e3c8-29dc-4bb4-afda-83bb33f7ef2c`, source `32af1ceb4f125afcf12517a87e76c3c426368ffd`,
+verified at 2026-10-25T13:22:19.994Z. [PR #65](https://github.com/skypie0102/ShadowGarden/pull/65)
+limits the voice picker to English regions and normalizes saved non-English voices
+to Emma. The floating bar is Play/Pause, Previous, settings, Next, Stop and retains
+44px controls on 320px screens. Following an already rendered passage in the current
+chapter performs one eased movement rather than a top-then-center navigation.
+Pause, Stop, manual input, newer navigation and disposal cancel remaining frames.
+Reduced motion uses immediate positioning. Speech owns its chapter boundary;
+chapter/page changes retain authoritative navigation and hidden-tab return behavior.
+
+Candidate and main validation pass 495 Node tests and 981 browser cases, with nine
+existing platform skips and zero retries. All 75 focused cases pass, including real
+intermediate scroll positions, cancellation, voice persistence, all reader themes,
+native audio and background rendering. Five candidate captures were reviewed.
+The merged application tree matches the tested candidate. Production preserves the
+catalog, snapshots and configuration; all 7 version/catalog/asset checks and live
+speech metadata/request guards pass. Physical Android/Soul acceptance is separate.
+[Guide](READER_TTS.md) · [Structured evidence](reader-speech-controls-release-2.24.0.json).
 
 ## Reader v2.23.0 — centered, themed narration
 

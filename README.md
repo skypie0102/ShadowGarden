@@ -27,7 +27,23 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.23.0**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.24.0**, deployed on 2026-10-25 (Asia/Manila)
+from `32af1ce` through [PR #65](https://github.com/skypie0102/ShadowGarden/pull/65).
+Read aloud now offers English voices grouped by region, smooth passage-following,
+and floating Play/Pause, Previous, settings, Next and Stop controls. Saved non-English
+voices fall back to Emma. Scrolling is cancellable and respects reduced-motion
+preferences; chapter navigation and background listening retain their regressions.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40195102753)
+passes 495 Node tests and 981 browser cases across five profiles, with nine
+existing platform skips and zero retries. All 75 focused speech checks pass.
+Five candidate captures were reviewed, including narrow 320px controls. Production
+preserves the immediate revision-18 catalog, all 17 snapshots and configuration,
+with zero database writes. All 7 version/catalog/asset checks and live voice/request
+guards pass. Physical Android/Soul acceptance is separate.
+[Read aloud guide](docs/READER_TTS.md) · [Release evidence](docs/reader-speech-controls-release-2.24.0.json).
+
+The previous production release is **v2.23.0**, deployed on 2026-10-25 (Asia/Manila)
 from `4de24e0` through [PR #63](https://github.com/skypie0102/ShadowGarden/pull/63).
 Read aloud now centers the spoken passage in Pages and Continuous, highlights it
 using the selected reader theme, and closes options on Start/Resume. Long paragraphs

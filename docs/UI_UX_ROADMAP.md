@@ -132,6 +132,8 @@ its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
 
+- [x] Limit Read aloud to English voices, smoothly follow spoken passages with cancellation/reduced-motion support, and add floating Previous/Next controls (v2.24.0, [PR #65](https://github.com/skypie0102/ShadowGarden/pull/65)). All 75 focused checks and five-profile regressions pass, with live preservation verified. [Evidence](reader-speech-controls-release-2.24.0.json).
+
 - [x] Center and highlight spoken passages using the active reader theme, including first/last passages, and close Read aloud options on Start/Resume (v2.23.0, [PR #63](https://github.com/skypie0102/ShadowGarden/pull/63)). All 55 focused checks and five-profile regressions pass; production preservation and served assets are verified. [Evidence](reader-speech-position-release-2.23.0.json).
 
 - [x] Add Edge TTS read aloud (v2.22.1, [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62)): themed voice/speed controls, pause/resume, current-passage playback, chapter progression and optional following. All 25 focused cases and five-profile release checks pass; live audio and production preservation are verified. [Guide](READER_TTS.md) · [Evidence](reader-edge-tts-release-2.22.1.json). Offline models are deferred.
