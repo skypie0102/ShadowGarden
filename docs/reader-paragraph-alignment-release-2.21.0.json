@@ -1,0 +1,290 @@
+{
+  "version": "2.21.0",
+  "source": "293090c128e0b4680885f68245f4d47e5801feaf",
+  "candidate": "c75e45ca98f49fcda2e15f75cfc2013fccabed11",
+  "tree": "b61bd0fcb5a205d514c2298b5fa49b988f619dbd",
+  "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/61",
+  "behavior": [
+    "Default, Left, Justify and Right are offered under Paragraph alignment.",
+    "Missing/invalid preferences and Reset select Default, which makes no new alignment declarations.",
+    "Returning to Default restores original inline values/priorities so authored and inherited alignment resume.",
+    "Explicit choices persist, apply to new chapters and both flows, and use existing semantic relayout.",
+    "Headings and artwork-only paragraphs retain their alignment.",
+    "Canonical measurement uses the same helper and alignment participates in the page-map fingerprint."
+  ],
+  "localVerification": {
+    "check": "npm run check",
+    "tests": 477,
+    "passed": 477,
+    "failed": 0
+  },
+  "prCi": {
+    "run": 40144776664,
+    "conclusion": "success",
+    "nodeTests": 477,
+    "profiles": [
+      {
+        "profile": "desktop-chromium",
+        "jobId": 121023748196,
+        "passed": 183,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-chromium",
+        "jobId": 121023748271,
+        "passed": 183,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-firefox",
+        "jobId": 121023748194,
+        "passed": 180,
+        "skipped": 3,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-webkit",
+        "jobId": 121023748119,
+        "passed": 181,
+        "skipped": 2,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-webkit",
+        "jobId": 121023748190,
+        "passed": 179,
+        "skipped": 4,
+        "retries": 0,
+        "flaky": 0
+      }
+    ]
+  },
+  "mainCi": {
+    "run": 40146284677,
+    "conclusion": "success",
+    "nodeTests": 477,
+    "profiles": [
+      {
+        "profile": "desktop-chromium",
+        "jobId": 121028312705,
+        "passed": 183,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-chromium",
+        "jobId": 121028312640,
+        "passed": 183,
+        "skipped": 0,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-firefox",
+        "jobId": 121028312648,
+        "passed": 180,
+        "skipped": 3,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "desktop-webkit",
+        "jobId": 121028312652,
+        "passed": 181,
+        "skipped": 2,
+        "retries": 0,
+        "flaky": 0
+      },
+      {
+        "profile": "mobile-webkit",
+        "jobId": 121028312617,
+        "passed": 179,
+        "skipped": 4,
+        "retries": 0,
+        "flaky": 0
+      }
+    ]
+  },
+  "focusedControls": {
+    "cases": 10,
+    "reports": {
+      "reader-alignment-final-desktop-chromium-summary": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "reader-alignment-final-desktop-firefox-summary": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "reader-alignment-final-desktop-webkit-summary": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "reader-alignment-final-mobile-chromium-summary": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      },
+      "reader-alignment-final-mobile-webkit-summary": {
+        "total": 2,
+        "expected": 2,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0,
+        "ok": true
+      }
+    }
+  },
+  "visualEvidence": {
+    "reviewed": [
+      {
+        "file": "reader-alignment-final-desktop-chromium-alignment-paginated.png",
+        "sha256": "81d8fabebe8b1b0cdbadddd04fe6799f5e7d5c709ef5010130e21e2dacdd4204"
+      },
+      {
+        "file": "reader-alignment-final-mobile-chromium-alignment-paginated.png",
+        "sha256": "b5e3e3cf055596a92882ddd0d6153e70d52c3e3cbc6c4901efe94885ea5f5961"
+      },
+      {
+        "file": "reader-alignment-final-mobile-webkit-alignment-scrolled-doc.png",
+        "sha256": "e074b2803da921b865753ee36d5ac212b8b0b30122daa65e15fde51dd8a66711"
+      },
+      {
+        "file": "reader-alignment-final-desktop-firefox-alignment-paginated.png",
+        "sha256": "2511fdd293e4f9b5f7d955cfc0960d192db3c7f000b57970ced6de4dcd8ef8e9"
+      },
+      {
+        "file": "reader-alignment-final-desktop-webkit-alignment-scrolled-doc.png",
+        "sha256": "caea26a20ddb6825a2124a6c9b2e35a9800ea899285c87e497a35dcdb86985c9"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 12580475730,
+        "name": "reader-alignment-mobile-webkit",
+        "digest": "sha256:1929b47cca10cae744b8c4f2548c9fd30ab3111fe1483d09b74cfa44890d7830"
+      },
+      {
+        "id": 12579739528,
+        "name": "reader-alignment-desktop-firefox",
+        "digest": "sha256:4c92862e71d4357551db149f9200acad658f4c27fc2b04396b1c61acb57336de"
+      },
+      {
+        "id": 12579734369,
+        "name": "reader-alignment-desktop-webkit",
+        "digest": "sha256:cb62c2a3f52cc5e0cfe111cb4f40571402345d451d4989963208910352d8738d"
+      },
+      {
+        "id": 12579714251,
+        "name": "reader-alignment-desktop-chromium",
+        "digest": "sha256:a679bbb6831c9c64eb5a6a8bfb3219f52d0c041ec7d1bc328a2bd80528b3e65e"
+      },
+      {
+        "id": 12579689544,
+        "name": "reader-alignment-mobile-chromium",
+        "digest": "sha256:3cedd0a124e29cee97199e42f41db3791bd2b9e52a89d6e8a44361be64965714"
+      }
+    ]
+  },
+  "validationCorrections": [
+    "Browser selector uses the combobox accessible role; the control's accessible name was already correct."
+  ],
+  "production": {
+    "artifact": {
+      "id": 12580269655,
+      "digest": "sha256:41986b1d827746d28cba679cdbcbb753831deb1f39c74c352fadab0ce5ad0cc7"
+    },
+    "report": {
+      "checkedAt": "2026-10-25T00:43:15.637Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "ef337f69-167b-4dd1-8e2a-9bd6b18924bb",
+      "source": "293090c128e0b4680885f68245f4d47e5801feaf",
+      "version": "2.21.0",
+      "baselineCheckedAt": "2026-10-25T00:43:14.019Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 326
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "293090c128e0b4680885f68245f4d47e5801feaf",
+          "version": "2.21.0"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/reader/app.js",
+          "sha256": "33c3b0e3e07d653f00fd4cf17fa9b65417e6344d53872d65b2f92750903a31da",
+          "bytes": 33626
+        },
+        {
+          "path": "/assets/js/reader/page-map-measurement.js",
+          "sha256": "8fa0decdaabba68cc6ff9f987ac4bcaff911f81013af385b458b6580cb648a29",
+          "bytes": 10080
+        },
+        {
+          "path": "/assets/js/reader/page-map.js",
+          "sha256": "f8e6611d43548c8ff8f928eef5dc211885be225eb21329eadc4b8d8325802c20",
+          "bytes": 18122
+        },
+        {
+          "path": "/assets/js/reader/paragraph-alignment.js",
+          "sha256": "d9c9a1aa4206f948e1ec79f5993b9fd74d7c7c50108c2e0f87ffb18014bc9f7c",
+          "bytes": 1466
+        },
+        {
+          "path": "/assets/js/reader/settings.js",
+          "sha256": "3748f60a2eb5a1b10a2f398d241243a46f701a2a5c75f5f2b5abd012e9cfe9b6",
+          "bytes": 6396
+        },
+        {
+          "path": "/assets/js/reader/theme.js",
+          "sha256": "7ac5e8ca90ea899d2e3c32e105b9cea7c42dcff9fcdbb8edbdaa2cb48c4c259b",
+          "bytes": 17035
+        }
+      ],
+      "rollbackDeploymentId": "05e5c82d-30fb-465c-9b9b-8167ef63e97e",
+      "rollbackSource": "d4ac4b23560b4dbeb5a1ee7137e85c3ec225cd86",
+      "beforeCheckedAt": "2026-10-25T00:43:07.825Z"
+    }
+  },
+  "verificationScope": "Reader interactions use an original disposable EPUB and mocked book-access/media responses. Mobile checks use pinned emulated profiles; no new physical Android/Soul pass is claimed. Production preservation and asset checks are read-only."
+}

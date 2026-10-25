@@ -1,7 +1,25 @@
 # Reader releases
 
-**Current production baseline:** v2.14.1. Ongoing
+**Current production baseline:** v2.21.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.21.0 — paragraph alignment
+
+**Live:** deployment `ef337f69-167b-4dd1-8e2a-9bd6b18924bb`, source `293090c128e0b4680885f68245f4d47e5801feaf`,
+verified at 2026-10-25T00:43:15.637Z. [PR #61](https://github.com/skypie0102/ShadowGarden/pull/61)
+adds Default, Left, Justify and Right to Reading settings. Default preserves
+EPUB alignment and restores the original declarations after an override.
+The preference persists and resets to Default. Both reading flows, newly loaded
+chapters and canonical page-number measurement use the selected choice.
+
+The PR and main release pass 477 Node tests and 906 browser cases, with
+9 existing platform skips and zero retries. Ten focused checks cover authored
+stylesheet/inline-important/inherited alignment, Default restoration, persistence,
+reset, chapter/flow changes and canonical measurement. Five captures were reviewed.
+All 9 production checks pass; the immediate catalog, snapshots and configuration
+baseline is preserved with zero DB writes. Interaction tests use a disposable EPUB;
+physical Android/Soul acceptance from older releases remains historical.
+[Structured release evidence](reader-paragraph-alignment-release-2.21.0.json).
 
 ## Reader v2.14.1 — deliberate image activation
 

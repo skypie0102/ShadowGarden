@@ -25,7 +25,21 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.20.1**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.21.0**, deployed on 2026-10-25 (Asia/Manila)
+from `293090c` through [PR #61](https://github.com/skypie0102/ShadowGarden/pull/61).
+Reader settings now offer **Paragraph alignment: Default, Left, Justify and Right**.
+Default is the initial/reset choice and follows the EPUB's own alignment. Choices
+persist across reopening and reading modes; returning to Default restores the
+publication's declarations. Page-number measurement follows the selected alignment.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40146284677)
+passes 477 Node tests and 906 browser cases across five profiles, with 9
+existing platform skips and zero retries. All ten focused alignment checks pass;
+five captures were reviewed. All 9 production checks pass, preserving the
+immediate revision-18 catalog, 17 snapshots and configuration with
+zero database writes. See [release evidence](docs/reader-paragraph-alignment-release-2.21.0.json).
+
+The preceding production release is **v2.20.1**, deployed on 2026-10-25 (Asia/Manila)
 from `d4ac4b2` through [PR #60](https://github.com/skypie0102/ShadowGarden/pull/60).
 Keeper's Series Editor now opens **Translation provenance** with only saved
 credits. When there are none, the list stays empty until **Add translator** is

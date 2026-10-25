@@ -11,7 +11,7 @@ palette; Adult keeps its rose palette.
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
 | 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
-| 3. Reader controls | Find and understand reading preferences and navigation | Planned |
+| 3. Reader controls | Find and understand reading preferences and navigation | In progress — paragraph alignment delivered in v2.21.0 |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned — direct volume EPUB replacement delivered in v2.20.0 |
 
@@ -131,6 +131,14 @@ completed series, missing/unreadable volume and long titles. Read again retains
 its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
+
+- [x] Add Paragraph alignment with Default (EPUB), Left, Justify and Right, persisted across both flows and included in canonical page measurement (v2.21.0).
+
+[PR #61](https://github.com/skypie0102/ShadowGarden/pull/61) ships alignment controls
+from `293090c`. All ten focused cases pass across five profiles; five settings
+captures were reviewed. The complete release passes 477 Node tests and 906
+browser cases with 9 existing skips and zero retries. Production preservation
+and served-asset checks pass. [Release evidence](reader-paragraph-alignment-release-2.21.0.json).
 
 - [ ] Review live reader screens and group settings by mode, typography, layout and appearance.
 - [ ] Make current choices and Reset behavior understandable before applying changes.

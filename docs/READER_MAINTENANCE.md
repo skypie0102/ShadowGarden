@@ -1,6 +1,13 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-19:** v2.14.1 requires double tap on touch devices
+**Latest deployment — 2026-10-25:** v2.21.0 adds Paragraph alignment with
+Default, Left, Justify and Right. Default follows the EPUB and is restored by
+Reset. The same alignment helper serves live chapters and canonical measurement;
+page-map cache identities include the choice. The release passes 477 Node tests,
+906 browser cases and ten focused alignment checks across five profiles.
+See the [release record](READER_RELEASE.md) and [evidence](reader-paragraph-alignment-release-2.21.0.json).
+
+**Previous reader release — 2026-10-19:** v2.14.1 requires double tap on touch devices
 and double click with a mouse to open and dismiss image focus. Single input is
 inert; X and Escape remain available. The image controller owns touch transport
 for EPUB contents and WebKit hit surfaces, replacing the global fallback observer
@@ -33,7 +40,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.14.1; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.21.0; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
