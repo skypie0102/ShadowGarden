@@ -13,11 +13,13 @@ export async function verifyReaderSpeech({fetchImpl=fetch}={}){
     });
     if(response.status!==expected){await response.body?.cancel();throw Error(`Reader speech ${method} returned HTTP ${response.status}; expected ${expected}.`);}
     if(!/^application\/json(?:\s*;|$)/i.test(response.headers.get('content-type')||'')){await response.body?.cancel();throw Error('Reader speech did not return JSON.');}
-    const bytes=await boundedBytes(response,1024*1024);
+    // fetch can decode compression while retaining the wire Content-Length.
+    // Bound the decoded stream without treating that header as its byte count.
+    const bytes=await boundedBytes(new Response(response.body),1024*1024);
     try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('Reader speech returned invalid JSON.');}
   };
   const voices=await request('GET',undefined,undefined,200);
-  if(voices?.ok!==true||voices.provider!=='edge'||!Array.isArray(voices.voices)||!voices.voices.some(v=>v.id===voices.defaultVoice))throw Error('Reader speech default voice is unavailable.');
+  if(voices?.ok!==true||voices.provider!=='edge'||typeof voices.defaultVoice!=='string'||!voices.defaultVoice||!Array.isArray(voices.voices)||!voices.voices.some(v=>v.id===voices.defaultVoice))throw Error('Reader speech default voice is unavailable.');
   checks.push({method:'GET',status:200});
   const passage={text:'Original release verification text.',voice:voices.defaultVoice};
   for(const [name,method,body,origin,status,code] of [

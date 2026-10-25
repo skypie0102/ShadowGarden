@@ -35,6 +35,11 @@ test('missing routes, provider failures, HTML and missing default voices cannot 
   }
 });
 
+test('decoded HTTP bodies are checked independently of retained compressed Content-Length',async()=>{
+  const f=fixture(options=>options.method==='GET'?Response.json({ok:true,provider:'edge',defaultVoice:voice,voices:[{id:voice}]},{headers:{'content-encoding':'gzip','content-length':'1'}}):undefined);
+  assert.equal((await verifyReaderSpeech(f)).voiceCount,1);
+});
+
 test('unexpected synthesis access or a mismatched rejection code fails release verification',async()=>{
   for(const response of [()=>Response.json({ok:true}),()=>Response.json({ok:false,code:'wrong_guard'},{status:428})]){
     const f=fixture(options=>options.method==='POST'?response():undefined);
