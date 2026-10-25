@@ -3,10 +3,11 @@
   const $=selector=>document.querySelector(selector);
   const tocToggle=$('#tocToggle'),settingsToggle=$('#settingsToggle');
   const tocDrawer=$('#tocDrawer'),settingsDrawer=$('#settingsDrawer');
-  const drawers=[tocDrawer,settingsDrawer].filter(Boolean);
+  const speechToggle=$('#speechToggle'),speechDrawer=$('#speechDrawer');
+  const drawers=[tocDrawer,settingsDrawer,speechDrawer].filter(Boolean);
   let returnTarget=null;
 
-  const triggerFor=drawer=>drawer===tocDrawer?tocToggle:drawer===settingsDrawer?settingsToggle:null;
+  const triggerFor=drawer=>drawer===tocDrawer?tocToggle:drawer===settingsDrawer?settingsToggle:drawer===speechDrawer?speechToggle:null;
   const focusable=drawer=>{
     if(drawer===tocDrawer&&drawer.querySelector('.toc-search-toggle[aria-expanded="true"]')){
       const search=drawer.querySelector('.toc-search');
@@ -19,6 +20,7 @@
     let openDrawer=null;
     drawers.forEach(drawer=>{
       const open=drawer.classList.contains('open');
+      if(drawer===speechDrawer)drawer.inert=!open;
       drawer.setAttribute('aria-hidden',open?'false':'true');
       triggerFor(drawer)?.setAttribute('aria-expanded',open?'true':'false');
       if(open)openDrawer=drawer;
@@ -34,6 +36,7 @@
 
   tocToggle?.addEventListener('click',()=>{returnTarget=tocToggle},{capture:true});
   settingsToggle?.addEventListener('click',()=>{returnTarget=settingsToggle},{capture:true});
+  speechToggle?.addEventListener('click',()=>{returnTarget=speechToggle},{capture:true});
   drawers.forEach(drawer=>new MutationObserver(syncDrawers).observe(drawer,{attributes:true,attributeFilter:['class']}));
   syncDrawers();
 

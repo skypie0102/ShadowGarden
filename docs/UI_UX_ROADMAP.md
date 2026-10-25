@@ -132,6 +132,8 @@ its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
 
+- [ ] Finish Edge TTS read aloud (v2.22.0 candidate, [PR #62](https://github.com/skypie0102/ShadowGarden/pull/62)): themed controls, voice/speed preferences, current-passage playback, pause/resume, chapter progression and cancellation. Live Edge and Cloudflare egress probes return valid MP3; browser and release verification are in progress. See [Reader TTS](READER_TTS.md). Offline models are deferred.
+
 - [x] Add Paragraph alignment with Default (EPUB), Left, Justify and Right, persisted across both flows and included in canonical page measurement (v2.21.0).
 
 [PR #61](https://github.com/skypie0102/ShadowGarden/pull/61) ships alignment controls
