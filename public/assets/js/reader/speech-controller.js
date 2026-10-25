@@ -51,6 +51,7 @@ export function createSpeechController({
     followAbort = null,
     followTarget = "",
     followedCfi = "",
+    followSpineIndex = null,
     voiceLoad = null,
     voicesLoaded = false,
     closeOnPlay = false,
@@ -148,6 +149,7 @@ export function createSpeechController({
     position.clear();
     cursor = null;
     followedCfi = "";
+    followSpineIndex = null;
     status = "idle";
     releaseAudio();
     render(message);
@@ -241,6 +243,11 @@ export function createSpeechController({
     cancelFollow();
     const controller = new AbortController(),
       serial = revision;
+    // A centered viewport can include the previous chapter above the speech.
+    // Follow the narration's chapter boundary rather than that tracking line.
+    const previousSpineIndex = followSpineIndex ?? getSpineIndex();
+    const speechChapterChange = previousSpineIndex != null && previousSpineIndex !== cursor.spineIndex;
+    followSpineIndex = cursor.spineIndex;
     followAbort = controller;
     followTarget = selected.cfi;
     // Audio does not await rendering: animation frames may stop in a hidden tab.
@@ -250,7 +257,7 @@ export function createSpeechController({
           return false;
         return navigate(selected.cfi, {
           speech: true,
-          speechSpineIndex: cursor.spineIndex,
+          speechChapterChange,
           signal: controller.signal,
           followSpeech: signal => position.center({ smooth: true, signal }),
         });

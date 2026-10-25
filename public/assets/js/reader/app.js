@@ -214,7 +214,7 @@ async function initializeReader(session, scope) {
     if (intent.targetIndex < intent.fromIndex) return index > intent.targetIndex;
     return false;
   }
-  function navigate(target, { operation, speech = false, speechSpineIndex, signal, followSpeech } = {}) {
+  function navigate(target, { operation, speech = false, speechChapterChange = false, signal, followSpeech } = {}) {
     if (scope.disposed || signal?.aborted) return Promise.resolve(false);
     const rendition = state.rendition;
     if (!target || !rendition) return Promise.resolve(false);
@@ -231,7 +231,7 @@ async function initializeReader(session, scope) {
       // Keep navigation ownership while following a loaded passage directly.
       // Displaying it first would snap to its top before the centered movement.
       const current = () => !scope.disposed && rendition === state.rendition && operation.isCurrent();
-      if (speech && speechSpineIndex === state.currentSpineIndex &&
+      if (speech && !speechChapterChange &&
         await followSpeech?.(operation.signal)) return current();
       if (!current() || !await displayTarget(rendition, target, operation)) return false;
       if (speech && followSpeech) return await followSpeech(operation.signal) && current();
