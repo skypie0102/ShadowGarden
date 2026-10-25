@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {verifyReaderSpeech} from '../scripts/verify-reader-speech.mjs';
 import {PRODUCTION_ORIGIN} from '../scripts/verify-production.mjs';
 
-const voice='en-US-EmmaMultilingualNeural';
+const voice='en-US-BrianMultilingualNeural';
 const metadata=()=>Response.json({ok:true,provider:'edge',defaultVoice:voice,voices:[{id:voice}]});
 const codes={428:'human_verification_required',400:'invalid_tts_text',403:'cross_origin',405:'method_not_allowed'};
 function fixture(override){

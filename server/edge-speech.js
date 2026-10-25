@@ -8,7 +8,7 @@ const VERSION = "143.0.3650.75";
 const MAX_AUDIO_BYTES = 1024 * 1024;
 const decoder = new TextDecoder();
 export const EDGE_TEXT_LIMIT = 1200;
-export const EDGE_DEFAULT_VOICE = "en-US-EmmaMultilingualNeural";
+export const EDGE_DEFAULT_VOICE = "en-US-BrianMultilingualNeural";
 const voicePattern =
   /^[a-z]{2,3}-[A-Z]{2}-(?:[A-Za-z0-9]+-)?[A-Za-z0-9]+Neural$/;
 export function validEdgeVoice(value) {

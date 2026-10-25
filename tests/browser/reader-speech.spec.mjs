@@ -11,6 +11,7 @@ import {
 
 const bootstrap = "/assets/js/reader-bootstrap.js?v=2.11.0";
 const voices = [
+  { id: "en-US-BrianMultilingualNeural", locale: "en-US", gender: "Male" },
   { id: "en-US-EmmaMultilingualNeural", locale: "en-US", gender: "Female" },
   { id: "en-US-GuyNeural", locale: "en-US", gender: "Male" },
   { id: "en-GB-SoniaNeural", locale: "en-GB", gender: "Female" },
@@ -101,7 +102,7 @@ async function open(page, flow, { mockMedia = true, epub, adult = false } = {}) 
     "aria-hidden",
     "false",
   );
-  await expect(page.locator("#speechVoice option")).toHaveCount(3);
+  await expect(page.locator("#speechVoice option")).toHaveCount(4);
 }
 async function position(page, id) {
   return page.evaluate(
@@ -195,9 +196,9 @@ test('English voices replace a saved non-English choice and the floating control
       localStorage.setItem('sg-reader-speech-settings', JSON.stringify({voice:'fr-FR-DeniseNeural',speed:1,follow:true}));
   });
   await open(page,'scrolled-doc');
-  await expect(page.locator('#speechVoice')).toHaveValue('en-US-EmmaMultilingualNeural');
+  await expect(page.locator('#speechVoice')).toHaveValue('en-US-BrianMultilingualNeural');
   expect(await page.locator('#speechVoice option').evaluateAll(options => options.map(o=>o.value).sort())).toEqual([
-    'en-GB-SoniaNeural','en-US-EmmaMultilingualNeural','en-US-GuyNeural',
+    'en-GB-SoniaNeural','en-US-BrianMultilingualNeural','en-US-EmmaMultilingualNeural','en-US-GuyNeural',
   ]);
   await page.locator('#speechVoice').selectOption('en-GB-SoniaNeural');
   await pressSpeech(page,'speechPlay');
@@ -325,6 +326,76 @@ async function ended(page) {
     .locator("#speechAudio")
     .evaluate((audio) => audio.dispatchEvent(new Event("ended")));
 }
+
+test('Brian is the default and four ready passages play through a chapter boundary after the network fails', async ({page}) => {
+  await open(page, 'scrolled-doc');
+  await expect(page.locator('#speechVoice')).toHaveValue('en-US-BrianMultilingualNeural');
+  const calls = [], ready = new Set();
+  let online = true;
+  await page.route('**/tts', async route => {
+    if(route.request().method() === 'GET') return route.fulfill({json:{voices}});
+    const body = route.request().postDataJSON();
+    calls.push(body);
+    if(!online) return route.fulfill({status:503,json:{error:'Network unavailable'}});
+    await route.fulfill({contentType:'audio/mpeg',body:testAudio});
+    ready.add(body.text);
+  });
+  await pressSpeech(page, 'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  const all = ['Chapter zero', 'First spoken paragraph. Emphasis remains readable.',
+    'Second spoken paragraph with 漢字 and café.', 'Last paragraph of chapter zero.',
+    'Chapter two', 'Final spoken paragraph.'];
+  const start = all.indexOf(await page.locator('#speechPassage').textContent());
+  expect(start).toBeGreaterThanOrEqual(0);
+  const ahead = all.slice(start + 1, start + 5);
+  expect(ahead).toContain('Chapter two');
+  await expect.poll(()=>ahead.every(text=>ready.has(text))).toBe(true);
+  expect(calls).toHaveLength(1 + ahead.length);
+  expect(calls.every(c=>c.voice === 'en-US-BrianMultilingualNeural')).toBe(true);
+  online = false;
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect(calls).toHaveLength(1 + ahead.length);
+  for(const text of ahead) {
+    await ended(page);
+    await expect(page.locator('#speechPassage')).toHaveText(text);
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    expect(calls.filter(c=>c.text === text)).toHaveLength(1);
+  }
+  await page.locator('#speechMiniStop').click();
+});
+
+test('pause and resume retain in-flight preloads and advancement waits for the original request', async ({page}) => {
+  await open(page, 'scrolled-doc');
+  const calls = [];
+  let release;
+  const gate = new Promise(resolve=>{release = resolve;});
+  await page.route('**/tts', async route => {
+    if(route.request().method() === 'GET') return route.fulfill({json:{voices}});
+    calls.push(route.request().postDataJSON().text);
+    if(calls.length > 1) await gate;
+    await route.fulfill({contentType:'audio/mpeg',body:testAudio}).catch(()=>{});
+  });
+  await pressSpeech(page, 'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await expect.poll(()=>calls.length).toBe(3);
+  const next = calls[1];
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect(calls).toHaveLength(3);
+  await ended(page);
+  await expect(page.locator('#speechPassage')).toHaveText(next);
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('loading');
+  expect(calls.filter(text=>text === next)).toHaveLength(1);
+  release();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect(calls.filter(text=>text === next)).toHaveLength(1);
+  await page.locator('#speechMiniStop').click();
+});
 
 for(const flow of ['paginated','scrolled-doc'])
   test(`${flow}: spoken passages stay centered, follow the theme and close options on start/resume`,async({page})=>{
@@ -592,7 +663,7 @@ test("stopping pending audio and navigation cannot restart stale speech; provide
       .catch(() => {});
   });
   await pressSpeech(page, "speechPlay");
-  await expect.poll(() => requests).toBe(1);
+  await expect.poll(() => requests).toBe(3);
   await pressSpeech(page, "speechStop");
   release();
   await expect.poll(() => speechState(page).then((s) => s.status)).toBe("idle");

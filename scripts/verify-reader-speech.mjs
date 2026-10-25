@@ -1,5 +1,6 @@
 import { boundedBytes } from '../server/http.js';
 import { PRODUCTION_ORIGIN } from './verify-production.mjs';
+import { EDGE_DEFAULT_VOICE } from '../server/edge-speech.js';
 
 // Only public metadata and requests rejected before synthesis/rate-limit writes.
 // No Garden Pass cookie or publication text is used by release verification.
@@ -19,7 +20,7 @@ export async function verifyReaderSpeech({fetchImpl=fetch}={}){
     try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('Reader speech returned invalid JSON.');}
   };
   const voices=await request('GET',undefined,undefined,200);
-  if(voices?.ok!==true||voices.provider!=='edge'||typeof voices.defaultVoice!=='string'||!voices.defaultVoice||!Array.isArray(voices.voices)||!voices.voices.some(v=>v.id===voices.defaultVoice))throw Error('Reader speech default voice is unavailable.');
+  if(voices?.ok!==true||voices.provider!=='edge'||voices.defaultVoice!==EDGE_DEFAULT_VOICE||!Array.isArray(voices.voices)||!voices.voices.some(v=>v.id===voices.defaultVoice))throw Error('Reader speech default voice is unavailable.');
   checks.push({method:'GET',status:200});
   const passage={text:'Original release verification text.',voice:voices.defaultVoice};
   for(const [name,method,body,origin,status,code] of [

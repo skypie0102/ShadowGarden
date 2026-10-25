@@ -7,7 +7,8 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
 ## Reader behavior
 
 - Open the themed headphone control to select an English voice and speed, then Play.
-  Voices are grouped by region. Saved non-English voices fall back to Emma.
+  Voices are grouped by region. BrianMultilingual · Male is the default. Saved
+  English selections are retained; invalid or non-English selections fall back to Brian.
 - Play starts at the current passage. Read from here restarts from the current
   reading position. Pause/Resume retains the current audio offset.
 - Previous/Next changes passages. Playback advances through linear EPUB spine
@@ -32,6 +33,21 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   Browser background/Bluetooth playback depends on the browser/OS. Media Session
   exposes play, pause, previous passage, next passage and stop where supported.
 
+## Preparing speech
+
+The Reader extracts bounded text passages from the EPUB and sends each passage
+with its selected voice to the same-origin `POST /tts` Function. The Function
+requests an MP3 from Microsoft's online Edge Read Aloud service, waits for a complete
+audio turn, then returns the clip to the Reader's single reusable audio element.
+The following passages are generated in parallel with listening and held only in
+this narration session. They are not downloaded as a whole audiobook.
+
+“Preparing speech” means the current clip is still being fetched or loaded for
+playback. The initial passage, a restarted position or a new voice can still need
+a network round trip. If playback exhausts the four-passage buffer because the
+network/provider is slower than narration, preparation will still be visible.
+Preloading reduces those waits; it cannot guarantee uninterrupted or gapless audio.
+
 ## Boundaries
 
 `speech-source.js` reads leased EPUB section sources and emits paragraph CFIs
@@ -42,9 +58,18 @@ original-text CFI range, including normalized whitespace and inline markup. Sour
 semantic; it cannot resolve every arbitrary publisher CSS visibility rule.
 
 `speech-controller.js` owns one audio element, an abort/revision boundary, the
-active blob and at most one prefetched passage. Late fetches and playback
+active blob. `speech-buffer.js` maintains a rolling window of four upcoming
+passages, with at most two background synthesis requests at once. Preloading starts
+while the current passage is being prepared and crosses linear chapter boundaries,
+including illustration-only sections. Advancing consumes an existing ready or
+in-flight request and immediately refills the window. Pause/Resume and speed
+changes retain buffered audio. Previous, Read from here, voice changes, Stop and
+disposal cancel and clear it. A failed speculative request is retried only when
+playback reaches that passage, without stopping the current audio. Late fetches and playback
 promises cannot resume a stopped/replaced session. No synthesized audio is
-persisted to local storage or sent to object storage.
+persisted to local storage or sent to object storage. At most four queued
+1 MiB blobs plus the current blob are retained. Chapter extraction and audio
+preparation do not await rendition navigation or animation frames.
 `speech-position.js` paints live ranges with Custom Highlight, with the existing
 EPUB SVG annotation API as its compatibility fallback. It leaves publisher text,
 source CFIs and page measurement intact. Continuous uses owned scroll restoration;

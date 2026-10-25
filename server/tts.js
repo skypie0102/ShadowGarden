@@ -13,7 +13,7 @@ export async function tts(context) {
   method(request, ["GET", "POST"]);
   sameOrigin(request);
   if (request.method === "GET") {
-    const key = new Request(new URL("/tts-voices-v1", request.url));
+    const key = new Request(new URL("/tts-voices-v2", request.url));
     const cache = globalThis.caches?.default,
       cached = await cache?.match(key);
     if (cached) return cached;

@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { edgeToken } from "../server/edge-token.js";
 import {
+  EDGE_DEFAULT_VOICE,
   audioFrame,
   listEdgeVoices,
   speechMessages,
@@ -202,6 +203,30 @@ test("TTS endpoint rejects cross-origin, unauthenticated and unbounded requests 
     env.DB.sqlite.prepare("SELECT COUNT(*) count FROM rate_limits").get().count,
     0,
   );
+});
+test("voice metadata publishes Brian as the default without reusing the old cached default", async (t) => {
+  const env = fixture();
+  t.after(() => env.DB.sqlite.close());
+  let cacheKey = "";
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, "caches");
+  t.after(() => {
+    if (descriptor) Object.defineProperty(globalThis, "caches", descriptor);
+    else delete globalThis.caches;
+  });
+  Object.defineProperty(globalThis, "caches", { configurable: true, value: { default: {
+    async match(key) { cacheKey = key.url; return undefined; },
+    async put() {},
+  } } });
+  t.mock.method(globalThis, "fetch", async () => Response.json([
+    { ShortName: EDGE_DEFAULT_VOICE, Locale: "en-US", Gender: "Male" },
+  ]));
+  const background = [];
+  const response = await endpoint(tts)({ ...context(env, "/tts"), waitUntil: task => background.push(task) });
+  await Promise.all(background);
+  const body = await response.json();
+  assert.equal(body.defaultVoice, "en-US-BrianMultilingualNeural");
+  assert.ok(body.voices.some(v => v.id === body.defaultVoice && v.gender === "Male"));
+  assert.equal(new URL(cacheKey).pathname, "/tts-voices-v2");
 });
 test("authenticated TTS returns private audio and increments only the speech rate limit", async (t) => {
   const env = fixture();
