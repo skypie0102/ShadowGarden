@@ -23,5 +23,26 @@ not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
 
+## Saved-progress context
+
+`public/reading-progress.js` formats the same saved-record summary for the Library
+banner, Recently Added, Series hero and volume metadata. A finite stored
+percentage is rounded and bounded to 0–100. Missing, null, blank, boolean and
+non-finite percentages stay unknown; page counts are not converted into a
+percentage. Unknown progress has no percentage rail or synthetic `0%` badge.
+
+Positive saved page numbers appear as **Saved page N**, with **of total** only
+when the stored total is valid and at least N. These describe the last saved
+layout, rather than a new measurement for the current device. Available chapter
+text follows the numeric context. Missing numeric data can retain its chapter
+or the plain **Saved reading position** fallback. Chapter text is escaped as
+text by each renderer and wraps without a progress-context line clamp.
+
+Legacy records without an update timestamp still qualify for Continue reading;
+explicit timestamps retain their existing ordering priority. Recently Added
+links expose the complete summary as their accessible description. Existing
+cross-tab storage events refresh Library and Series summaries. Viewing or
+formatting progress never rewrites saved progress, Finished state or bookmarks.
+
 Current source changes are tracked in the [UI/UX plan](../plans/UI_UX_ROADMAP.md).
 Source tests, merge and live acceptance are recorded separately.

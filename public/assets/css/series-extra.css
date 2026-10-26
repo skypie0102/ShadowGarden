@@ -310,6 +310,10 @@
   margin-top: 15px;
   line-height: 1.55;
 }
+.series-reading-context,
+.volume-meta {
+  overflow-wrap: anywhere;
+}
 .series-translator-summary {
   margin-top: 8px;
 }

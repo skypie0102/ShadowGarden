@@ -1,5 +1,6 @@
 /* Shadow Garden R3 — Library render ownership. */
 import { volumeActionFor } from "./public/volume-actions.js";
+import { readingProgressSummary } from "./public/reading-progress.js";
 import { addedTime, seriesCover, volumeCover } from "./library-model.js";
 
 const arr = value => Array.isArray(value) ? value : [];
@@ -16,7 +17,8 @@ export function seriesCard(series, index, { readingState, preferences, urls, for
   const entries = readingState.volumeEntries(series);
   const finished = entries.length > 0 && entries.every(entry => entry.state === readingState.STATES.FINISHED);
   const active = entries.find(entry => entry.state === readingState.STATES.IN_PROGRESS) || null;
-  const activePercent = active ? Math.max(1, Math.min(99, Math.round((Number(active.progress?.percentage) || 0) * 100))) : 0;
+  const savedPercent = active ? readingProgressSummary(active.progress).percent : null;
+  const activePercent = savedPercent === null ? 0 : Math.max(1, Math.min(99, savedPercent));
   const visualProgress = finished ? 100 : activePercent;
   const pinned = preferences.isPinned(series?.id);
   const href = urls.seriesUrl(series?.id,{adult:series?.nsfw});
@@ -55,8 +57,8 @@ function formatDate(value, format) {
   catch { return String(value || ""); }
 }
 
-function recentCopy(series, title, added, esc, format) {
-  return `<div class="recent-volume-copy"><strong>${esc(title)}</strong><span class="recent-volume-series">${esc(series?.title || "Untitled series")}</span><span class="recent-volume-added">Added ${esc(formatDate(added, format))}</span></div>`;
+function recentCopy(series, title, added, esc, format, progress = "", progressId = "") {
+  return `<div class="recent-volume-copy"><strong>${esc(title)}</strong><span class="recent-volume-series">${esc(series?.title || "Untitled series")}</span>${progress ? `<span id="${esc(progressId)}" class="recent-volume-progress">${esc(progress)}</span>` : ""}<span class="recent-volume-added">Added ${esc(formatDate(added, format))}</span></div>`;
 }
 
 export function recentVolumeCard(entry, index, { readingState, urls, format }, context) {
@@ -64,15 +66,18 @@ export function recentVolumeCard(entry, index, { readingState, urls, format }, c
   const { series, volume, volumeIndex } = entry;
   const cover = volumeCover(series, volume);
   const title = volume?.title || `Volume ${volume?.number ?? "—"}`;
-  const copy = recentCopy(series, title, volume?.added, esc, format);
   if (!volume?.file) {
+    const copy = recentCopy(series, title, volume?.added, esc, format);
     return `<a class="recent-volume" href="${urls.seriesUrl(series?.id,{adult:series?.nsfw})}"><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">NEW</span></div>${copy}</a>`;
   }
   const action = volumeActionFor(series, volume, volumeIndex, context);
   const progress = readingState.volumeProgress(series?.id, volume, volumeIndex);
-  const percent = Math.round((Number(progress?.percentage) || 0) * 100);
-  const badge = action.state === readingState.STATES.FINISHED ? "✓ FINISHED" : action.state === readingState.STATES.IN_PROGRESS ? `CONTINUE · ${percent}%` : volume?.number != null ? `VOL ${volume.number}` : "READ";
-  return `<a class="recent-volume" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)} — ${esc(series?.title)}"><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">${esc(badge)}</span></div>${copy}</a>`;
+  const summary = readingProgressSummary(progress);
+  const inProgress = action.state === readingState.STATES.IN_PROGRESS;
+  const progressId = `recent-volume-progress-${index}`;
+  const copy = recentCopy(series, title, volume?.added, esc, format, inProgress ? summary.text : "", progressId);
+  const badge = action.state === readingState.STATES.FINISHED ? "✓ FINISHED" : inProgress ? `CONTINUE${summary.percent === null ? "" : ` · ${summary.percent}%`}` : volume?.number != null ? `VOL ${volume.number}` : "READ";
+  return `<a class="recent-volume" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)} — ${esc(series?.title)}"${inProgress ? ` aria-describedby="${esc(progressId)}"` : ""}><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">${esc(badge)}</span></div>${copy}</a>`;
 }
 
 export function renderRecentlyAdded(section, container, entries, dependencies) {
@@ -107,12 +112,12 @@ export function renderReadingBanner(panel, intro, current, { readingState, forma
   const cover = volumeCover(series, volume);
   const title = String(volume?.title || `Volume ${volume?.number ?? index + 1}`);
   const number = String(volume?.number ?? index + 1);
-  const percent = Math.max(0, Math.min(100, Math.round((Number(progress?.percentage) || 0) * 100)));
+  const summary = readingProgressSummary(progress);
   const mode = current.mode === "suggestion" ? "suggestion" : "continue";
   const next = mode === "suggestion" && current.suggestion === "next";
   const heading = mode === "continue" ? "Continue reading" : next ? "Next in series" : "Reading suggestion";
   const seriesContext = series?.title && series.title !== title ? `${series.title} · ` : "";
-  const context = `${seriesContext}Volume ${number}${mode === "continue" ? ` · ${percent}% complete` : ""}`;
+  const context = `${seriesContext}Volume ${number}${state === readingState.STATES.IN_PROGRESS ? ` · ${summary.text}` : ""}`;
   const label = action.label;
   panel.dataset.readingState = state;
   panel.dataset.readingMode = mode;

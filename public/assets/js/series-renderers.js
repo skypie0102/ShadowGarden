@@ -1,6 +1,7 @@
 /* Shadow Garden R3 — Series hero and volume-card render ownership. */
 import {isAdultSeries} from "./domain/catalog.js";
 import { volumeActionFor } from "./public/volume-actions.js";
+import { readingProgressSummary } from "./public/reading-progress.js";
 
 const arr = value => Array.isArray(value) ? value : [];
 
@@ -62,12 +63,12 @@ function volumeCard(series, entry, dependencies, context) {
   const { volume, index, state, progress } = entry;
   const action = volumeActionFor(series, volume, index, context);
   const cover = volume?.coverThumb || volume?.cover || series?.coverThumb || series?.cover || "";
-  const percent = progress ? Math.max(0, Math.min(100, Math.round((Number(progress?.percentage) || 0) * 100))) : 0;
+  const summary = readingProgressSummary(progress);
   const finished = state === readingState.STATES.FINISHED;
   const inProgress = state === readingState.STATES.IN_PROGRESS;
   const upNext = index === context.nextIndex;
-  const visualProgress = finished ? 100 : inProgress ? Math.max(1, Math.min(99, percent)) : 0;
-  const stateMeta = finished ? "Finished" : inProgress ? `${percent}% complete` : "Unread";
+  const visualProgress = finished ? 100 : inProgress && summary.percent !== null ? Math.max(1, Math.min(99, summary.percent)) : 0;
+  const stateMeta = finished ? "Finished" : inProgress ? summary.text : "Unread";
   const stateLabel = finished ? "✓ Finished" : inProgress ? "In progress" : "Unread";
   const title = volume?.title || `Volume ${index + 1}`;
   const number = volume?.number ?? index + 1;
@@ -80,7 +81,7 @@ function volumeCard(series, entry, dependencies, context) {
     </a>
     <p class="volume-order">${esc(order)}${upNext ? " · Up next" : ""}</p>
     <div class="volume-title-row"><h3 class="volume-title">${esc(title)}</h3><span class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}">${esc(stateLabel)}</span></div>
-    <p class="volume-meta">${[volume?.date || "", format.formatBytes(volume?.size), stateMeta].filter(Boolean).join(" · ")}</p>
+    <p class="volume-meta">${[volume?.date || "", format.formatBytes(volume?.size), stateMeta].filter(Boolean).map(esc).join(" · ")}</p>
     ${overrideMarkup}
     <div class="volume-actions">
       <a class="read" ${attrs(action, esc)} href="${action.href}">${esc(action.label)}</a>
@@ -99,6 +100,8 @@ export function seriesMarkup(series, dependencies) {
   const context = readingState.seriesReadingContext(series);
   const { entries, preferred: startEntry } = context;
   const startAction = startEntry ? volumeActionFor(series, startEntry.volume, startEntry.index, context) : null;
+  const savedContext = startEntry?.state === readingState.STATES.IN_PROGRESS
+    ? `Volume ${startEntry.volume?.number ?? startEntry.index + 1} · ${readingProgressSummary(startEntry.progress).text}` : "";
   const audioAlignedUrl = series?.audioAlignedUrl || volumes.find(volume => volume?.audioAlignedUrl)?.audioAlignedUrl || "";
   const cover = series?.cover || first?.cover || series?.coverThumb || first?.coverThumb || "";
   const backdrop = volumeArtwork(series, selectBannerVolume(series, identity, bannerRandom)) || series?.coverThumb || first?.coverThumb || cover;
@@ -114,7 +117,7 @@ export function seriesMarkup(series, dependencies) {
           <div class="series-heading">
             <p class="kicker">${series?.nsfw ? "ADULT · " : ""}${esc((series?.status || "SERIES").toUpperCase())}</p>
             <h1>${esc(series?.title)}</h1>
-            <p class="series-byline">${esc(series?.author || "Unknown author")} ${series?.year ? `<span class="series-year">· ${series.year}</span>` : ""}${finishedCount ? ` <span class="series-year">· ${finishedCount}/${volumes.length} finished</span>` : ""}</p>
+            <p class="series-byline">${esc(series?.author || "Unknown author")} ${series?.year ? `<span class="series-year">· ${series.year}</span>` : ""}${finishedCount ? ` <span class="series-year">· ${finishedCount}/${volumes.length} finished</span>` : ""}${savedContext ? `<br><span class="series-reading-context series-year">${esc(savedContext)}</span>` : ""}</p>
             ${translatorSummary}
           </div>
           <div class="series-actions">
