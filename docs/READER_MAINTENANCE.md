@@ -1,6 +1,19 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-26:** v2.26.2 replaces Read Aloud text glyphs with
+**Latest deployment — 2026-10-26:** v2.27.0 keeps supported MPEG narration on
+one native media timeline, with a bounded rolling decoder queue fed by the
+existing four-passage synthesis buffer and eviction at each append. Clip fallback
+avoids explicit resets at natural boundaries; Media Session persists during
+preparation and optional Audio Session declares playback. All 125 focused speech
+checks, 510 Node tests and 1,031 full browser cases pass with 9 existing skips and
+zero Playwright retries. One desktop WebKit workflow job was rerun after its
+30-minute timeout. The old live source fails stable-source reproduction; eight
+new direct live cases, version/assets/voice/guards and preservation pass with zero
+DB writes. Physical Android/Soul/iOS screen-lock testing remains separate;
+browser/OS and device suspension cannot be overridden by a website.
+[Guide](READER_TTS.md) · [Evidence](reader-speech-background-release-2.27.0.json).
+
+**Previous reader deployment — 2026-10-26:** v2.26.2 replaces Read Aloud text glyphs with
 theme-colored SVG Play/Pause, Previous/Next skip icons and Exit X controls in the
 drawer and floating bar. State changes preserve SVGs and update labels/tooltips;
 order and 44px responsive targets remain. All 110 focused speech checks,
@@ -107,7 +120,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.26.2; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.27.0; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The

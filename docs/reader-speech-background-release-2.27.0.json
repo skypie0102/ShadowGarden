@@ -4,7 +4,7 @@
   "pullRequest": 75,
   "candidate": "70d1a5ce8e9dad3dc11800b34771fef509d3627f",
   "applicationTree": "273b98de91165531c77c6af0819558c3f8a922f7",
-  "status": "pending-production-retry",
+  "status": "verified",
   "behavior": [
     "Feature-detected MPEG Media Source playback appends current plus four future passages to one native media timeline; audio source remains stable across automatic passage/chapter boundaries.",
     "Media time advances the speech cursor/highlight. Every append evicts consumed decoder audio while retaining one second of prior audio, including after slow synthesis; the existing four-passage synthesis window and two background requests remain bounded.",
@@ -177,7 +177,140 @@
       "reason": "30-minute job timeout; full suite reached case 189 with no test failure; all 25 focused speech checks passed.",
       "runAttempt": 1
     },
-    "mainRunAttempt": 2
+    "mainRunAttempt": 2,
+    "mainProfiles": [
+      {
+        "profile": "desktop-chromium",
+        "job": 121449336434,
+        "latestJob": 121487282005,
+        "full": {
+          "passed": 208,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-chromium",
+        "job": 121449336421,
+        "latestJob": 121487281801,
+        "full": {
+          "passed": 208,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-firefox",
+        "job": 121449336391,
+        "latestJob": 121487282044,
+        "full": {
+          "passed": 205,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-webkit",
+        "job": 121487280668,
+        "latestJob": 121487280668,
+        "full": {
+          "passed": 206,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-webkit",
+        "job": 121449336354,
+        "latestJob": 121487282780,
+        "full": {
+          "passed": 204,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainUnitJob": 121449184750,
+    "mainUnitTests": 510,
+    "productionArtifact": {
+      "id": 12640630338,
+      "digest": "sha256:5674e13a8290c44e20f1a8116d6d7e77215615038f4fc3fc2e71e69a928ad41e",
+      "name": "production-verification"
+    },
+    "mainRunConclusion": "success",
+    "mainSpeechArtifacts": [
+      {
+        "id": 12639352692,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:d7598d664dd3c8d22c7089a07ca874d19c80c9437daddaedeaf388239dfcf34f",
+        "createdAt": "2026-10-26T09:15:04Z"
+      },
+      {
+        "id": 12634680158,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:3f7b5c4de00afa3084c00e328d52dff131ab43f6cf187c750bffc0c171e8a259",
+        "createdAt": "2026-10-26T07:31:30Z"
+      },
+      {
+        "id": 12634625232,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:a2f43841e103ddab480ddfe895325837d957e8dee2e69ef30c11989ef0f7cfb6",
+        "createdAt": "2026-10-26T07:32:28Z"
+      },
+      {
+        "id": 12634280957,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:03423c629bf565253998c48b036a0f0c02c7e60ab892d04b55a86f44ef162837",
+        "createdAt": "2026-10-26T07:30:09Z"
+      },
+      {
+        "id": 12634127749,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:820e87156f7e6753a2f30c311742a97867570cdb98c61daf81200859ec4791f0",
+        "createdAt": "2026-10-26T07:30:23Z"
+      },
+      {
+        "id": 12633659136,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:3252d7ead56b442401422c7ef3ba180d17dcb912def4582c7c6ce384310f7d17",
+        "createdAt": "2026-10-26T07:30:17Z"
+      }
+    ]
   },
   "local": {
     "check": {
@@ -220,7 +353,105 @@
       "candidate": "70d1a5ce8e9dad3dc11800b34771fef509d3627f"
     }
   },
-  "production": null,
+  "production": {
+    "checkedAt": "2026-10-26T09:34:28.457Z",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "deploymentId": "8991bd15-0a0c-4d8a-8387-cd7de88ed7c2",
+    "source": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+    "version": "2.27.0",
+    "baselineCheckedAt": "2026-10-26T09:34:27.251Z",
+    "revision": 18,
+    "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+    "snapshots": 17,
+    "preservationChecked": true,
+    "databaseWrites": 0,
+    "versionCheck": {
+      "attempts": 1,
+      "elapsedMs": 347
+    },
+    "checks": [
+      {
+        "path": "/data/version.json",
+        "source": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+        "version": "2.27.0"
+      },
+      {
+        "path": "/media/shadow-garden/data/catalog.json",
+        "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/media/shadow-garden/data/adult-catalog.json",
+        "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/assets/js/reader/diagnostics.js",
+        "sha256": "38483c62ee592a7b8a5e0b851d1279653d332fb6082896d17ecb03b2bf03a731",
+        "bytes": 4629
+      },
+      {
+        "path": "/assets/js/reader/speech-buffer.js",
+        "sha256": "6816c443868f9d2267e61b5ba0c0756db683f3f317b1e320bc666054dc7a55be",
+        "bytes": 5354
+      },
+      {
+        "path": "/assets/js/reader/speech-controller.js",
+        "sha256": "561974381176c4c53f67328d024c21021b81f69cf210c47c421a78757b9819a1",
+        "bytes": 24030
+      },
+      {
+        "path": "/assets/js/reader/speech-stream.js",
+        "sha256": "aa881b18c0ec8327300216dc8b8ed3898c8aa7cb1eaa1d4c3d9a30e7fa7a8aac",
+        "bytes": 4559
+      }
+    ],
+    "rollbackDeploymentId": "466a601d-23d9-456d-b49c-ec68c20d5984",
+    "rollbackSource": "c6060f4af43eacbb6123b04e210fd31f2ae0452e",
+    "beforeCheckedAt": "2026-10-26T09:34:19.186Z",
+    "readerSpeech": {
+      "voiceCount": 318,
+      "defaultVoice": "en-US-BrianMultilingualNeural",
+      "checks": [
+        {
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "name": "garden-pass",
+          "method": "POST",
+          "status": 428,
+          "code": "human_verification_required"
+        },
+        {
+          "name": "text-limit",
+          "method": "POST",
+          "status": 400,
+          "code": "invalid_tts_text"
+        },
+        {
+          "name": "ornament-text",
+          "method": "POST",
+          "status": 400,
+          "code": "invalid_tts_text"
+        },
+        {
+          "name": "origin",
+          "method": "POST",
+          "status": 403,
+          "code": "cross_origin"
+        },
+        {
+          "name": "method",
+          "method": "PUT",
+          "status": 405,
+          "code": "method_not_allowed"
+        }
+      ]
+    }
+  },
   "live": {
     "before": {
       "version": "2.26.2",
@@ -230,6 +461,164 @@
       "expectedFailures": 1,
       "observed": "Natural narration replaced the audio src, failing the stable-source assertion.",
       "checkedAt": "2026-10-26T06:39:31.627Z"
+    },
+    "metadata": {
+      "checkedAt": "2026-10-26T09:35:57.394Z",
+      "version": {
+        "name": "Shadow Garden",
+        "version": "2.27.0",
+        "releaseVersion": "2.27.0",
+        "commit": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+        "shortCommit": "20c7fc0",
+        "branch": "main",
+        "builtAt": "2026-10-26T09:34:16.700Z",
+        "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+      },
+      "voiceStatus": 200,
+      "voiceCount": 318,
+      "defaultVoice": "en-US-BrianMultilingualNeural",
+      "default": {
+        "id": "en-US-BrianMultilingualNeural",
+        "name": "Microsoft BrianMultilingual Online (Natural) - English (United States)",
+        "locale": "en-US",
+        "gender": "Male"
+      }
+    },
+    "after": {
+      "stats": {
+        "startTime": "2026-10-26T09:36:14.935Z",
+        "duration": 180201.859,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "native audio decodes MP3 and resumes its paused offset without regenerating speech",
+          "profile": "desktop-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 21268
+            }
+          ]
+        },
+        {
+          "title": "native narration keeps its media session across hidden passage and chapter boundaries",
+          "profile": "desktop-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 26263
+            }
+          ]
+        },
+        {
+          "title": "media controls preserve buffering intent and classify narration as playback until Exit",
+          "profile": "desktop-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 19517
+            }
+          ]
+        },
+        {
+          "title": "native queued speech finishes ready audio and retries the unread passage after a future failure",
+          "profile": "desktop-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 20340
+            }
+          ]
+        },
+        {
+          "title": "native audio decodes MP3 and resumes its paused offset without regenerating speech",
+          "profile": "mobile-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 29712
+            }
+          ]
+        },
+        {
+          "title": "native narration keeps its media session across hidden passage and chapter boundaries",
+          "profile": "mobile-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 23694
+            }
+          ]
+        },
+        {
+          "title": "media controls preserve buffering intent and classify narration as playback until Exit",
+          "profile": "mobile-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 18054
+            }
+          ]
+        },
+        {
+          "title": "native queued speech finishes ready audio and retries the unread passage after a future failure",
+          "profile": "mobile-chromium",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 19372
+            }
+          ]
+        }
+      ],
+      "reportSha256": "e592802cd21b00c171bef5d68e986c486aa4cee7818a617a4426ecbec007c7e0",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "nativeMP3Cases": 6,
+      "deterministicMediaCases": 2,
+      "metadata": {
+        "checkedAt": "2026-10-26T09:35:57.394Z",
+        "version": {
+          "name": "Shadow Garden",
+          "version": "2.27.0",
+          "releaseVersion": "2.27.0",
+          "commit": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+          "shortCommit": "20c7fc0",
+          "branch": "main",
+          "builtAt": "2026-10-26T09:34:16.700Z",
+          "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+        },
+        "voiceStatus": 200,
+        "voiceCount": 318,
+        "defaultVoice": "en-US-BrianMultilingualNeural",
+        "default": {
+          "id": "en-US-BrianMultilingualNeural",
+          "name": "Microsoft BrianMultilingual Online (Natural) - English (United States)",
+          "locale": "en-US",
+          "gender": "Male"
+        }
+      },
+      "source": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+      "fixtures": "Actual production HTML/CSS/JS/vendor, disposable original EPUB and original 3-second MP3 tone; catalog, book access, EPUB and /tts responses mocked. No real book/synthesis writes."
     }
   },
   "limits": [
