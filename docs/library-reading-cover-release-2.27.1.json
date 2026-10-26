@@ -1,0 +1,149 @@
+{
+  "version": "2.27.1",
+  "date": "2026-10-26",
+  "pullRequest": 77,
+  "candidate": "96900402ef31d607b1cfc7d739c858bf56ded5f6",
+  "applicationTree": "4ce3f77ca42fc8943bdd55bcfeb6c7611597ec34",
+  "base": "40859d6a05a6e422197b73789cab651430f2ae37",
+  "status": "pending-full-matrix-and-deployment",
+  "behavior": [
+    "At widths through 720px, the reading-banner cover spans the full text/action content height, with a responsive 80–112px column instead of the fixed 42px column and 63px height.",
+    "The image fills that frame with the existing object-fit cover, preserving pixel proportions. Main midnight and Adult rose palettes remain.",
+    "Desktop uses the existing 48×72px cover; no-cover fallback and 44px action targets remain."
+  ],
+  "ci": {
+    "unitTests": 510,
+    "prRun": 40320264162,
+    "pushRun": 40320259963,
+    "expectedFullPassed": 1041,
+    "expectedExistingSkips": 9,
+    "browserJobBudget": {
+      "beforeMinutes": 30,
+      "afterMinutes": 45,
+      "reason": "The previous release's desktop WebKit job reached its 30-minute limit at case 189; focused and full checks plus per-test deadlines are retained."
+    }
+  },
+  "local": {
+    "check": {
+      "passed": 510,
+      "failed": 0,
+      "skipped": 0,
+      "auditWarnings": [],
+      "auditErrors": [],
+      "buildAndBindingCompile": true
+    },
+    "discoveryRegressionPassed": 10,
+    "finalCoverCasesPassed": 4,
+    "profiles": [
+      "desktop-chromium",
+      "mobile-chromium"
+    ],
+    "widths": [
+      320,
+      393,
+      720,
+      761,
+      1280
+    ],
+    "fixtureCorrection": "Geometry now waits for viewport paint after each resize and reads related edges in one DOM snapshot; provisional resize measurements initially caused local fixture failures.",
+    "baseline": {
+      "base": "40859d6a05a6e422197b73789cab651430f2ae37",
+      "startTime": "2026-10-26T12:06:18.406Z",
+      "expectedFailures": 1,
+      "observedTopGapPx": 23.5,
+      "reason": "Old CSS leaves the 63px cover vertically centered instead of filling the content height."
+    },
+    "captures": [
+      {
+        "name": "reading-cover-main-393",
+        "contentType": "image/png",
+        "path": "data/5a896d919146ada712768da608c083b3cf049d02.png",
+        "sha256": "e92a6b4fff857500c6f989e182429abea76267fb0d953f8445ea65bd588e15d6",
+        "reviewed": false
+      },
+      {
+        "name": "reading-cover-main-1280",
+        "contentType": "image/png",
+        "path": "data/c185c9999bd7df50c63beffef6dc1c5c16acf306.png",
+        "sha256": "afd58b03d95ed3b22fc713de3cfde876a2b9c51c5b22c25c15b4b8d2430e9576",
+        "reviewed": true
+      },
+      {
+        "name": "long-reading-cover",
+        "contentType": "image/png",
+        "path": "data/5cbf89e33bb84173072067468a70ee3ed2122b24.png",
+        "sha256": "8047485c404dc89b9cce813e731b9d5537a921efbe0fe585f3bc7d1d801e4bbd",
+        "reviewed": false
+      },
+      {
+        "name": "reading-cover-adult-393",
+        "contentType": "image/png",
+        "path": "data/51e6668419b95e42eae08ee1198ac9dc3d56b85d.png",
+        "sha256": "804b6def42e6b149504dfccc13566a8958680a15b23b7e45daa424a794c50105",
+        "reviewed": false
+      },
+      {
+        "name": "reading-cover-adult-1280",
+        "contentType": "image/png",
+        "path": "data/e39532ee8b1c81da768256a6b86a3d9576eb5c33.png",
+        "sha256": "5431869f2527a0f115f723269903a6cfcc8f35e47b4f52b7d98fb80c20121e6c",
+        "reviewed": false
+      },
+      {
+        "name": "long-reading-cover",
+        "contentType": "image/png",
+        "path": "data/d602338004925dec6c1dc7b2ff184362e36a2d99.png",
+        "sha256": "1f524eb3969211e9e50cfe5d83fb5c0535dc413821832126300d25a317ad1be7",
+        "reviewed": false
+      },
+      {
+        "name": "reading-cover-main-393",
+        "contentType": "image/png",
+        "path": "data/70a8d4a48825c2b908ded8f68449a4f225c404f9.png",
+        "sha256": "5805b539011cf203df64d6a0a3e1143ee69c720384981e892d2c43bccb78b279",
+        "reviewed": true
+      },
+      {
+        "name": "reading-cover-main-1280",
+        "contentType": "image/png",
+        "path": "data/f4486c20716bda34b1da994da742b8afd316ee05.png",
+        "sha256": "ae02e16b7e08480c45c4d0d0a19d18451f2d2e2e1d9261b42bc5fdc54cda58ab",
+        "reviewed": false
+      },
+      {
+        "name": "long-reading-cover",
+        "contentType": "image/png",
+        "path": "data/2c2e7da5b5b749c41ad43f8d2a07303d71a7cd8a.png",
+        "sha256": "edd4eb9f98ca706cd33150ecca868b4aec4046ce62b21540cd4abbfbe4fbac65",
+        "reviewed": false
+      },
+      {
+        "name": "reading-cover-adult-393",
+        "contentType": "image/png",
+        "path": "data/631e1241770f928dd3cd8ebaedb13c669e38c757.png",
+        "sha256": "ac31624495db1f4858c406cdc6eb7eb6e8fb25078121b352ebc840d3d518c84d",
+        "reviewed": true
+      },
+      {
+        "name": "reading-cover-adult-1280",
+        "contentType": "image/png",
+        "path": "data/ac64b94952ff5c37d93eff73d3ed8585b08886cd.png",
+        "sha256": "a066f9c509a219f0e297a4c01b5a18c890a0eef1cfbc6c026b12925856975f00",
+        "reviewed": false
+      },
+      {
+        "name": "long-reading-cover",
+        "contentType": "image/png",
+        "path": "data/0538e17f0a27f86172f24b997294bbe16080c6ef.png",
+        "sha256": "531b7b4346a09a6f40784d9e06db2ad730cb7251107b3719a3cd8418b02ddaa5",
+        "reviewed": true
+      }
+    ]
+  },
+  "production": null,
+  "live": null,
+  "limits": [
+    "Browser profiles emulate mobile; no physical Android/Soul acceptance is claimed.",
+    "Layout fixtures use an original SVG cover, mocked catalogs and disposable local progress. No real book content or catalog writes."
+  ]
+}
