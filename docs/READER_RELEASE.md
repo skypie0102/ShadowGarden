@@ -1,7 +1,31 @@
 # Reader releases
 
-**Current production baseline:** v2.26.1. Ongoing
+**Current production baseline:** v2.26.2. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.26.2 — themed SVG playback controls
+
+**Live:** deployment `466a601d-23d9-456d-b49c-ec68c20d5984`, source `c6060f4af43eacbb6123b04e210fd31f2ae0452e`,
+verified at 2026-10-26T05:26:04.472Z. Font-based playback glyphs are replaced by matching
+currentColor SVGs in both control surfaces. Play has a triangle, Pause has two
+bars, Previous/Next use skip shapes with end bars, and Exit uses an X. The options
+close button uses the same X style. Rendering changes labels/state while keeping
+SVG nodes intact across Play/Pause/Resume/Retry. Accessible names and tooltips
+describe the current action. Order, 44px targets and responsive layout remain.
+The icons follow all four Reader palettes and Adult rose.
+
+Candidate and main pass 504 Node tests, 1,016 full browser cases and all 110
+focused speech checks, with 9 existing skips and zero retries. The exact merged
+application tree matches the candidate. The background-tab fixture waits for
+visible follow and relocation to finish before freezing frames, retaining its
+hidden-position and final-passage assertions. Eight local visual cases and eight
+direct live Reader checks pass on desktop/mobile Chromium with original EPUBs
+and mocked audio. Playing/paused/drawer controls and 320px/393px/1280px layouts
+are reviewed across Garden/Night/Paper/Black and Adult rose. Served assets,
+version/Brian metadata, request guards and preservation pass with zero database
+writes. Physical Android/Soul acceptance remains separate.
+[PR #73](https://github.com/skypie0102/ShadowGarden/pull/73) ·
+[Guide](READER_TTS.md) · [Evidence](reader-speech-svg-release-2.26.2.json).
 
 ## Reader v2.26.1 — decorative separator speech fix
 
