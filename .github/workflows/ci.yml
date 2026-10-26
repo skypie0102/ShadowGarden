@@ -80,7 +80,8 @@ jobs:
   browser:
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Focused checks plus the full suite can exceed 30 minutes on WebKit.
+    timeout-minutes: 45
     # Keep the image version/digest aligned with the pinned @playwright/test.
     # Browsers and OS dependencies are preinstalled; no per-job apt downloads.
     container:
