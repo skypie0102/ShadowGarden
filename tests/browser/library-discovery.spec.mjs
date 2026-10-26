@@ -155,47 +155,42 @@ for (const adult of [false, true]) {
     await panel.locator('img').evaluate(image => image.decode());
     for (const width of [320, 393, 720, 761, 1280]) {
       await page.setViewportSize({ width, height: 850 });
-      await page.evaluate(() => new Promise(resolve =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve))));
-      await expect.poll(() => panel.evaluate(panel =>
-        panel.querySelector('.continue-mark').getBoundingClientRect().right <=
-        panel.querySelector('.continue-copy').getBoundingClientRect().left
-      )).toBe(true);
-      const geometry = await panel.evaluate(panel => {
-        const box = element => { const b = element.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, width: b.width, height: b.height }; };
-        const style = getComputedStyle(panel), mark = panel.querySelector('.continue-cover');
-        return { panel: box(panel), mark: box(mark), image: box(mark.querySelector('img')),
-          copy: box(panel.querySelector('.continue-copy')), action: box(panel.querySelector('.continue-actions')),
-          inset: parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth), fit: getComputedStyle(mark.querySelector('img')).objectFit };
-      });
-      await noOverflow(page);
-      expect(geometry.action.right).toBeLessThanOrEqual(geometry.panel.right);
-      expect(geometry.action.height).toBeGreaterThanOrEqual(44);
-      if (width <= 720) {
-        expect(Math.abs(geometry.mark.top - geometry.panel.top - geometry.inset)).toBeLessThan(1);
-        expect(Math.abs(geometry.mark.bottom - geometry.panel.bottom + geometry.inset)).toBeLessThan(1);
-        expect(geometry.mark.right).toBeLessThan(geometry.copy.left);
-        for (const edge of ['left', 'right', 'top', 'bottom'])
-          expect(Math.abs(geometry.image[edge] - geometry.mark[edge])).toBeLessThan(1);
-        expect(geometry.fit).toBe('cover');
-      } else {
-        expect(geometry.mark.width).toBe(48);
-        expect(geometry.mark.height).toBe(72);
-      }
+      // A resize acknowledgement can precede media-query layout. Wait for the
+      // visible contract, rather than assuming a fixed number of paint frames.
+      await expect(async () => {
+        const geometry = await panel.evaluate(panel => {
+          const box = element => { const b = element.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, width: b.width, height: b.height }; };
+          const style = getComputedStyle(panel), mark = panel.querySelector('.continue-cover');
+          return { panel: box(panel), mark: box(mark), image: box(mark.querySelector('img')),
+            copy: box(panel.querySelector('.continue-copy')), action: box(panel.querySelector('.continue-actions')),
+            inset: parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth), fit: getComputedStyle(mark.querySelector('img')).objectFit };
+        });
+        await noOverflow(page);
+        expect(geometry.action.right).toBeLessThanOrEqual(geometry.panel.right);
+        expect(geometry.action.height).toBeGreaterThanOrEqual(44);
+        if (width <= 720) {
+          expect(Math.abs(geometry.mark.top - geometry.panel.top - geometry.inset)).toBeLessThan(1);
+          expect(Math.abs(geometry.mark.bottom - geometry.panel.bottom + geometry.inset)).toBeLessThan(1);
+          expect(geometry.mark.right).toBeLessThan(geometry.copy.left);
+          for (const edge of ['left', 'right', 'top', 'bottom'])
+            expect(Math.abs(geometry.image[edge] - geometry.mark[edge])).toBeLessThan(1);
+          expect(geometry.fit).toBe('cover');
+        } else {
+          expect(geometry.mark.width).toBe(48);
+          expect(geometry.mark.height).toBe(72);
+        }
+      }).toPass({ timeout: 5000 });
       if (width === 393 || width === 1280) await info.attach(`reading-cover-${adult ? 'adult' : 'main'}-${width}`, {
         body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png'
       });
     }
     // Taller text must stretch the cover too, without squeezing the action off-screen.
     await page.setViewportSize({ width: 320, height: 850 });
-    await page.evaluate(() => new Promise(resolve =>
-      requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await panel.locator('strong').evaluate(element => { element.textContent = 'A much longer book title for this narrow reading card'; });
     await panel.locator('.continue-context').evaluate(element => { element.textContent = 'A longer series name with additional volume context · Volume 12 · 42% complete'; });
-    const bottomDifference = await panel.evaluate(panel => Math.abs(
+    await expect.poll(() => panel.evaluate(panel => Math.abs(
       panel.querySelector('.continue-cover').getBoundingClientRect().bottom -
-      panel.querySelector('.continue-actions').getBoundingClientRect().bottom));
-    expect(bottomDifference).toBeLessThan(1);
+      panel.querySelector('.continue-actions').getBoundingClientRect().bottom))).toBeLessThan(1);
     await noOverflow(page);
     await info.attach('long-reading-cover', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
     expect(errors).toEqual([]);
