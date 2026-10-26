@@ -27,7 +27,28 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.26.0**, deployed on 2026-10-26 (Asia/Taipei)
+The latest production release is **v2.26.1**, deployed on 2026-10-26 (Asia/Manila)
+from `29bdf47` through [PR #71](https://github.com/skypie0102/ShadowGarden/pull/71).
+Read aloud skips decorative-only passages and chapters such as `❦`, `✦` and
+`***`, so they cannot stop playback or fill the preload window. A shared text
+helper cleans inline ornaments, incompatible XML characters and discretionary
+word breaks in the synthesis copy. Unicode prose, punctuation, units, currency
+and math remain; the book text, markup and highlight ranges stay intact.
+Readable provider failures still surface for Retry.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40255303191)
+passes 504 Node tests, 1,016 full browser cases and all 110 focused speech
+checks across five profiles, with 9 existing skips and zero Playwright retries.
+One desktop WebKit workflow job was rerun after a background-tab position
+assertion failed. Four direct live Reader checks pass across desktop/mobile
+Chromium with original EPUB fixtures and a mocked provider rejecting ornaments.
+Actual production rejects symbol-only text before synthesis. Served assets and
+voice/request guards pass; catalog revision 18, all 17 snapshots and
+configuration are preserved with zero database writes. Physical Android/Soul
+acceptance is separate.
+[Guide](docs/READER_TTS.md) · [Evidence](docs/reader-speech-text-release-2.26.1.json).
+
+The previous production release is **v2.26.0**, deployed on 2026-10-26 (Asia/Taipei)
 from `a453fb3` through [PR #69](https://github.com/skypie0102/ShadowGarden/pull/69).
 Scrolling away suspends screen-following while narration and preloading continue.
 Tap the floating status to return to the spoken passage and resume following,

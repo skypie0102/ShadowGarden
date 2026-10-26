@@ -1,6 +1,18 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-26:** v2.26.0 keeps speech playing while scrolling
+**Latest deployment — 2026-10-26:** v2.26.1 skips decorative-only passages and
+chapters during speech/preloading. Shared synthesis-only preparation cleans
+inline ornaments and XML-incompatible text while preserving Unicode prose and
+original text/markup/highlight ranges. Symbol-only API input is rejected before
+authorization/rate-limit writes or synthesis. All 110 focused speech checks,
+504 Node tests and 1,016 full browser cases pass, with 9 existing skips and
+zero Playwright retries. One desktop WebKit workflow job was rerun after a
+background-tab tracking assertion failed. Four direct live checks, the actual
+symbol-only guard, assets and preservation pass with zero database writes.
+Physical Android/Soul acceptance is separate.
+[Guide](READER_TTS.md) · [Evidence](reader-speech-text-release-2.26.1.json).
+
+**Previous reader deployment — 2026-10-26:** v2.26.0 keeps speech playing while scrolling
 and wheel/swipe browsing suspend screen-following. Tap status to return/follow
 without restarting audio or resuming an explicit pause. Floating order is status,
 Previous, Play/Pause, Next, Stop, settings cog, with two rows on narrow screens
@@ -84,7 +96,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.26.0; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.26.1; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
