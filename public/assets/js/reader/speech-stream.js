@@ -31,6 +31,11 @@ export function createSpeechStream({ audio, signal, readNext, onPassage }) {
   async function append(cursor, blob) {
     const bytes = await blob.arrayBuffer();
     lifetime.throwIfAborted();
+    // Playback can advance while a slow future clip is being fetched. Trim
+    // again at every append, even when a single pump spans many passages.
+    const cutoff = Math.max(0, (records[0]?.start || 0) - 1);
+    if (cutoff && source.buffered.length && source.buffered.start(0) < cutoff)
+      await wait(source, "updateend", () => source.remove(0, cutoff));
     const start = records.at(-1)?.end || 0;
     await wait(source, "updateend", () => source.appendBuffer(bytes));
     lifetime.throwIfAborted();
@@ -50,9 +55,6 @@ export function createSpeechStream({ audio, signal, readNext, onPassage }) {
   function pump() {
     if (working || finished || lifetime.aborted) return;
     working = (async () => {
-      const cutoff = Math.max(0, records[0].start - 1);
-      if (cutoff && source.buffered.length && source.buffered.start(0) < cutoff)
-        await wait(source, "updateend", () => source.remove(0, cutoff));
       // The same four-passage synthesis window feeds the native decoder. It
       // does not generate a second queue or download the entire publication.
       while (!finished && records.length < 5) {

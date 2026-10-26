@@ -12,8 +12,8 @@ function mediaType(t, Type) {
   Object.defineProperty(globalThis,'MediaSource',{configurable:true,writable:true,value:Type});
   t.after(()=>{if(original)Object.defineProperty(globalThis,'MediaSource',original);else delete globalThis.MediaSource;});
 }
-function fixture(t, { count=10, failAt=-1, hold=false }={}) {
-  const state={urls:[],revoked:[],appends:0,removes:[],ended:0,selected:[],reads:[]};
+function fixture(t, { count=10, failAt=-1, hold=false, slowAt=[] }={}) {
+  const state={urls:[],revoked:[],appends:0,removes:[],ended:0,selected:[],reads:[],release:{}};
   class Source extends EventTarget {
     start=0; end=0; updating=false; mode='segments';
     buffered={length:0,start:()=>this.start,end:()=>this.end};
@@ -43,7 +43,7 @@ function fixture(t, { count=10, failAt=-1, hold=false }={}) {
   const audio=new Audio(),controller=new AbortController();
   const cursor=index=>({index,spineIndex:index<4?1:3,entries:[{text:'Original test passage'}]});
   const stream=createSpeechStream({audio,signal:controller.signal,
-    readNext:async(from,signal)=>{signal.throwIfAborted();const index=from.index+1;state.reads.push(index);if(index===failAt)return {cursor:cursor(index),error:new Error('Provider unavailable')};return index<count?{cursor:cursor(index),blob:new Blob(['tone'])}:null;},
+    readNext:async(from,signal)=>{signal.throwIfAborted();const index=from.index+1;state.reads.push(index);if(slowAt.includes(index))await new Promise(resolve=>{state.release[index]=resolve;});if(index===failAt)return {cursor:cursor(index),error:new Error('Provider unavailable')};return index<count?{cursor:cursor(index),blob:new Blob(['tone'])}:null;},
     onPassage:next=>state.selected.push(next.index),
   });
   t.after(()=>stream.dispose());
@@ -79,4 +79,15 @@ test('disposal aborts source opening and late media events cannot advance or ref
 test('unsupported MPEG streaming leaves the audio element untouched for clip fallback',t=>{
   mediaType(t,class{static isTypeSupported(){return false;}});
   assert.equal(createSpeechStream({}),null);
+});
+test('slow synthesis evicts consumed audio at each append while one pump stays active',async t=>{
+  const f=fixture(t,{count:4,slowAt:[2,3]});await f.start();
+  await until(()=>!!f.state.release[2]);
+  f.audio.currentTime=3.2;f.audio.dispatchEvent(new Event('timeupdate'));
+  f.state.release[2]();await until(()=>!!f.state.release[3]);
+  assert.deepEqual(f.state.removes,[[0,2]]);
+  f.audio.currentTime=6.2;f.audio.dispatchEvent(new Event('timeupdate'));
+  f.state.release[3]();await until(()=>f.state.ended===1);
+  assert.deepEqual(f.state.removes,[[0,2],[0,5]]);
+  assert.equal(f.audio.changes,1);assert.equal(f.state.appends,4);
 });

@@ -71,7 +71,9 @@ clips are appended to one native media timeline. The element keeps the same
 source across automatic passage and chapter boundaries, allowing buffered speech
 to continue without a JavaScript `ended`/reload/play handoff for every paragraph.
 Passage highlighting follows media time. The decoder holds the current passage
-plus up to four upcoming passages and evicts older audio; it shares the existing
+plus up to four upcoming passages and one second of retained prior audio.
+It evicts older audio before each append, including after slow synthesis,
+and shares the existing
 synthesis buffer. Unsupported engines retain clip playback, with no explicit
 pause, source removal or `load()` at natural passage boundaries.
 Decorative-only paragraphs and chapters, including scene breaks such as `❦`,
@@ -123,7 +125,8 @@ passage instead of skipping prose. Late fetches and playback
 promises cannot resume a stopped/replaced session. No synthesized audio is
 persisted to local storage or sent to object storage. At most four queued
 1 MiB blobs plus the current blob are retained, with at most five passages in
-the native decoder's rolling buffer. Chapter extraction and audio
+the native decoder's rolling buffer, plus one second of retained prior audio.
+Chapter extraction and audio
 preparation do not await rendition navigation or animation frames.
 `speech-position.js` paints live ranges with Custom Highlight, with the existing
 EPUB SVG annotation API as its compatibility fallback. It leaves publisher text,
