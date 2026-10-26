@@ -1,0 +1,236 @@
+{
+  "version": "2.27.0",
+  "date": "2026-10-26",
+  "pullRequest": 75,
+  "candidate": "70d1a5ce8e9dad3dc11800b34771fef509d3627f",
+  "applicationTree": "273b98de91165531c77c6af0819558c3f8a922f7",
+  "status": "pending-full-matrix-and-deployment",
+  "behavior": [
+    "Feature-detected MPEG Media Source playback appends current plus four future passages to one native media timeline; audio source remains stable across automatic passage/chapter boundaries.",
+    "Media time advances the speech cursor/highlight. Every append evicts consumed decoder audio while retaining one second of prior audio, including after slow synthesis; the existing four-passage synthesis window and two background requests remain bounded.",
+    "Fallback clip playback avoids explicit pause/source removal/load at natural boundaries.",
+    "Media Session playing intent persists during preparation. Optional Audio Session category is playback and restored on Exit/completion/error/disposal.",
+    "Future preparation failures finish appended speech then offer Retry at the unread passage; explicit moves, Pause/Resume and Exit retain cancellation/cleanup."
+  ],
+  "ci": {
+    "unitTests": 510,
+    "expectedFocusedPerProfile": 25,
+    "previousCandidate": {
+      "candidate": "e7b681857c02738934f7cf4323bb8afc3f6213b0",
+      "prRun": 40280993234,
+      "pushRun": 40280989521,
+      "reason": "Final review added eviction at every append after slow synthesis; initial candidate was not merged or deployed.",
+      "speechArtifacts": [
+        {
+          "id": 12632660223,
+          "name": "reader-speech-desktop-webkit",
+          "digest": "sha256:4c2cecf50348c2403409deab38deb8c5425ef81eabf1a9ce28e02e4dd0afc70c",
+          "size": 5053791
+        },
+        {
+          "id": 12632285797,
+          "name": "reader-speech-desktop-chromium",
+          "digest": "sha256:50b95a4483634aec2347650b7d2cd951a2654179e1db4528dcee3b4a81717129",
+          "size": 1920887
+        },
+        {
+          "id": 12631964877,
+          "name": "reader-speech-mobile-webkit",
+          "digest": "sha256:2b213137fa570bef9664abab526bf0c9172232a5e9191038e3e9b23b7bddac28",
+          "size": 4553676
+        },
+        {
+          "id": 12631749848,
+          "name": "reader-speech-mobile-chromium",
+          "digest": "sha256:9aa31f8a7ae4f9c10f0ba27992440b36c72e3010773f8c89ff5f85c1c56aec14",
+          "size": 4124699
+        },
+        {
+          "id": 12631149509,
+          "name": "reader-speech-desktop-firefox",
+          "digest": "sha256:41fe97a47b8187de711cb16b5a5054fec6515c53475c636e1adee3615944ca68",
+          "size": 2417376
+        }
+      ]
+    },
+    "prRun": 40283261232,
+    "pushRun": 40283257109,
+    "prProfiles": [
+      {
+        "profile": "desktop-chromium",
+        "job": 121441169508,
+        "full": {
+          "passed": 208,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-chromium",
+        "job": 121441169384,
+        "full": {
+          "passed": 208,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-firefox",
+        "job": 121441169463,
+        "full": {
+          "passed": 205,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-webkit",
+        "job": 121441169397,
+        "full": {
+          "passed": 206,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-webkit",
+        "job": 121441169378,
+        "full": {
+          "passed": 204,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 25,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "prSpeechArtifacts": [
+      {
+        "id": 12633173103,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:b6ecc86977ecf9c4b8e576dfeb16e5781b48f6d4a207ac46c93d1aaa1176671c",
+        "size": 1921395
+      },
+      {
+        "id": 12632992370,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:38afb3b06450cc6933cf154234a7e946b38db6c6fa46c0bc64bb075cf2272025",
+        "size": 5058907
+      },
+      {
+        "id": 12632838862,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:af276b6b83286aa6e39aa414802acc17f3901c0be74c6de2f33a0904f19417fe",
+        "size": 4636154
+      },
+      {
+        "id": 12632663801,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:6c550c69b4175eab17b06b4281cff87c4315e988ef4705403660ef0addd6352c",
+        "size": 4063604
+      },
+      {
+        "id": 12632324796,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:268eb78dac68c2ee6501272078dd00346ad6c7ba5714fc709cca853346e4c813",
+        "size": 2394835
+      }
+    ],
+    "prRunAttempt": 1,
+    "mainRun": 40285848200
+  },
+  "local": {
+    "check": {
+      "tests": 510,
+      "passed": 510,
+      "failed": 0,
+      "skipped": 0,
+      "auditWarnings": [],
+      "auditErrors": [],
+      "bindingAwareCompile": true
+    },
+    "speechRegression": {
+      "passed": 48,
+      "failed": 0,
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ]
+    },
+    "finalNativeAndActions": {
+      "passed": 6,
+      "failed": 0
+    },
+    "futureFailureAndRetry": {
+      "passed": 2,
+      "failed": 0
+    },
+    "initialFixtureCorrection": "The new native case reached natural completion, then cleanup clicked disabled Exit. Both local profiles timed out in cleanup; cleanup now restores RAF in finally and calls controller stop after completion. No product change was made for that cleanup error.",
+    "slowSynthesisEviction": {
+      "unitTest": "slow synthesis evicts consumed audio at each append while one pump stays active",
+      "passed": true
+    },
+    "finalNativeAcceptance": {
+      "passed": 8,
+      "failed": 0,
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "candidate": "70d1a5ce8e9dad3dc11800b34771fef509d3627f"
+    }
+  },
+  "production": null,
+  "live": {
+    "before": {
+      "version": "2.26.2",
+      "source": "c6060f4af43eacbb6123b04e210fd31f2ae0452e",
+      "test": "native narration keeps its media session across hidden passage and chapter boundaries",
+      "profile": "desktop-chromium",
+      "expectedFailures": 1,
+      "observed": "Natural narration replaced the audio src, failing the stable-source assertion.",
+      "checkedAt": "2026-10-26T06:39:31.627Z"
+    }
+  },
+  "limits": [
+    "No physical Android/Soul/iOS screen-lock testing is claimed.",
+    "A website cannot override OS/browser tab suspension, forced closure, audio-focus interruption or device power restrictions.",
+    "MPEG streaming is feature-detected; unsupported engines retain clip playback.",
+    "Tests use disposable original EPUBs and original generated tone MP3s, with mocked catalog/book access/synthesis; no production book text or synthesis writes."
+  ],
+  "mergedSource": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+  "mergedApplicationTree": "273b98de91165531c77c6af0819558c3f8a922f7"
+}
