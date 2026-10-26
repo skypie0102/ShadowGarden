@@ -5,7 +5,7 @@
   "candidate": "92813a86a93e262d64f62338d15eea85a6addf65",
   "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
   "applicationTree": "275fd99ec21a3f98136eece1f49a8f256cb8365e",
-  "status": "awaiting-production",
+  "status": "verified",
   "behavior": [
     "Ornament-only passages and chapters are omitted from speech and preloading.",
     "Common inline ornaments, incompatible XML characters and discretionary word breaks are cleaned only in the synthesis copy.",
@@ -185,6 +185,22 @@
         },
         "retries": 0,
         "conclusion": "success"
+      },
+      {
+        "job": 121381298286,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 203,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
       }
     ],
     "browserPassed": 1016,
@@ -194,7 +210,7 @@
       {
         "job": 121355864288,
         "profile": "desktop-webkit",
-        "reason": "Hidden-tab fixture captured tracking chapter 0 before a late relocation report updated it to the already spoken chapter 1. The narration had progressed to chapter 3. Focused speech checks passed; one full-suite workflow job rerun requested.",
+        "reason": "Background-tab fixture expected its captured tracking spine 0, but observed 1 (the original spoken chapter) after narration reached the later chapter. A late relocation report is the likely timing cause. One workflow job rerun was requested; no application code changed.",
         "test": "hidden-tab narration advances without rendering and follows the final passage on return",
         "expectedTrackingSpine": 0,
         "actualTrackingSpine": 1,
@@ -203,7 +219,44 @@
         "artifact": {
           "id": 12623041695,
           "digest": "sha256:6f32b82d7113bcc6adf9b25e6734a69d4ce122d5216d610b23d2ed514a0ac6df"
-        }
+        },
+        "rerunJob": 121381298286,
+        "conclusion": "success"
+      }
+    ],
+    "mainAttempt": 2,
+    "mainSuccessfulJobs": [
+      {
+        "id": 121381298286,
+        "name": "browser (desktop-webkit, webkit)"
+      },
+      {
+        "id": 121381298806,
+        "name": "Check production access"
+      },
+      {
+        "id": 121381299197,
+        "name": "browser (desktop-firefox, firefox)"
+      },
+      {
+        "id": 121381299650,
+        "name": "browser (mobile-webkit, webkit)"
+      },
+      {
+        "id": 121381332160,
+        "name": "verify"
+      },
+      {
+        "id": 121381335850,
+        "name": "browser (mobile-chromium, chromium)"
+      },
+      {
+        "id": 121381340879,
+        "name": "browser (desktop-chromium, chromium)"
+      },
+      {
+        "id": 121386889084,
+        "name": "Deploy live ShadowGarden"
       }
     ]
   },
@@ -212,8 +265,175 @@
     "source": "a453fb39586391cbd5f333983b5691b156352b8b",
     "origin": "https://shadowgarden-bon.pages.dev",
     "profile": "mobile-chromium",
-    "expectedFailure": "Previous Reader stops on standalone ❦ instead of reaching following prose when a fixture provider rejects ornament text.",
+    "expectedFailure": "Previous Reader stops on standalone \u2766 instead of reaching following prose when a fixture provider rejects ornament text.",
     "data": "Disposable original EPUB and mocked synthesis rejection; no actual provider synthesis or production writes."
   },
-  "scope": "Browser profiles are emulated; physical Android/Soul acceptance is separate. Provider adapter and TTS validation updated; no catalog, book object, binding, migration or persistent-storage changes."
+  "scope": "Browser profiles are emulated; physical Android/Soul acceptance is separate. Provider adapter and TTS validation updated; no catalog, book object, binding, migration or persistent-storage changes.",
+  "production": {
+    "job": 121386889084,
+    "report": {
+      "checkedAt": "2026-10-26T03:44:15.253Z",
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "deploymentId": "92a7ad18-4567-40ed-8316-6abc29222138",
+      "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+      "version": "2.26.1",
+      "baselineCheckedAt": "2026-10-26T03:44:14.052Z",
+      "revision": 18,
+      "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+      "snapshots": 17,
+      "preservationChecked": true,
+      "databaseWrites": 0,
+      "versionCheck": {
+        "attempts": 1,
+        "elapsedMs": 194
+      },
+      "checks": [
+        {
+          "path": "/data/version.json",
+          "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+          "version": "2.26.1"
+        },
+        {
+          "path": "/media/shadow-garden/data/catalog.json",
+          "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/media/shadow-garden/data/adult-catalog.json",
+          "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+          "series": 1,
+          "volumes": 1
+        },
+        {
+          "path": "/assets/js/reader/speech-controller.js",
+          "sha256": "08d8a4b20333502db0f52f4620ed3be32df02d95d45c4ae38ff1e9112f06cca4",
+          "bytes": 20795
+        },
+        {
+          "path": "/assets/js/reader/speech-source.js",
+          "sha256": "09256a6b7c7ccc5991def90a98dbf4e1a23e9929df43a990a7c24248c7593b5c",
+          "bytes": 5586
+        },
+        {
+          "path": "/assets/js/reader/speech-text.js",
+          "sha256": "4be36fd5b4b4c2dc454f38b5b3bc3e53198751ff9ff1776ef2eea17dc4d6a0ab",
+          "bytes": 952
+        }
+      ],
+      "rollbackDeploymentId": "30b73dd6-7ecf-406a-be65-e1a796a9c521",
+      "rollbackSource": "a453fb39586391cbd5f333983b5691b156352b8b",
+      "beforeCheckedAt": "2026-10-26T03:44:02.445Z",
+      "readerSpeech": {
+        "voiceCount": 318,
+        "defaultVoice": "en-US-BrianMultilingualNeural",
+        "checks": [
+          {
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "garden-pass",
+            "method": "POST",
+            "status": 428,
+            "code": "human_verification_required"
+          },
+          {
+            "name": "text-limit",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "ornament-text",
+            "method": "POST",
+            "status": 400,
+            "code": "invalid_tts_text"
+          },
+          {
+            "name": "origin",
+            "method": "POST",
+            "status": 403,
+            "code": "cross_origin"
+          },
+          {
+            "name": "method",
+            "method": "PUT",
+            "status": 405,
+            "code": "method_not_allowed"
+          }
+        ]
+      }
+    },
+    "artifacts": [
+      {
+        "id": 12626535553,
+        "name": "production-verification",
+        "digest": "sha256:e76b70d88361969bee12af0d1f72b0b71f5ce4cac9b715ec9e6e73aaab41c6bd"
+      }
+    ],
+    "canonical": {
+      "name": "shadowgarden",
+      "subdomain": "shadowgarden-bon.pages.dev",
+      "environment": "production",
+      "id": "92a7ad18-4567-40ed-8316-6abc29222138",
+      "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+      "status": "success"
+    },
+    "directBrowser": {
+      "origin": "https://shadowgarden-bon.pages.dev",
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "browserVersion": "153.0.8010.12",
+      "stats": {
+        "startTime": "2026-10-26T03:45:12.351Z",
+        "duration": 70568.691,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "checks": [
+        "Both Pages and Continuous advance across standalone \u2766, stars, asterisks and punctuation-only blocks.",
+        "Decoration-only chapters are skipped by the speech/preload cursor.",
+        "Inline ornaments are absent from synthesis requests; accents, CJK, units and currency remain.",
+        "Original displayed passage, CFI highlight text and emphasized publisher markup remain intact."
+      ],
+      "scope": "Actual live Reader HTML/CSS/JS/vendor with disposable original EPUBs and mocked catalog/book/audio responses; the fixture provider rejects ornament text. No actual provider synthesis or production catalog writes."
+    },
+    "publicMetadata": {
+      "version": {
+        "name": "Shadow Garden",
+        "version": "2.26.1",
+        "releaseVersion": "2.26.1",
+        "commit": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+        "shortCommit": "29bdf47",
+        "branch": "main",
+        "builtAt": "2026-10-26T03:44:00.134Z",
+        "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+      },
+      "provider": "edge",
+      "defaultVoice": "en-US-BrianMultilingualNeural",
+      "voice": {
+        "id": "en-US-BrianMultilingualNeural",
+        "name": "Microsoft BrianMultilingual Online (Natural) - English (United States)",
+        "locale": "en-US",
+        "gender": "Male"
+      },
+      "voiceCount": 318
+    }
+  },
+  "testRuntime": {
+    "source": "4269d126f829530a112a72789d80cad68324177e",
+    "run": 40264546400,
+    "artifact": {
+      "id": 12626010996,
+      "name": "reader-chromium-headless-1.63.0",
+      "digest": "sha256:aebbf22d78a4f752532c85df9eaf2d92d3e8fe1a4dde089e067404bd6140eacd"
+    },
+    "verifiedArchive": true,
+    "frameworkVersion": "1.63.0"
+  }
 }

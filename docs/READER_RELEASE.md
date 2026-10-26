@@ -1,7 +1,33 @@
 # Reader releases
 
-**Current production baseline:** v2.26.0. Ongoing
+**Current production baseline:** v2.26.1. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.26.1 — decorative separator speech fix
+
+**Live:** deployment `92a7ad18-4567-40ed-8316-6abc29222138`, source `29bdf47a4120266db06dd3afac36b2fa9279616c`,
+verified at 2026-10-26T03:44:15.253Z. The source omits ornament-only passages and
+chapters from playback and preloading. Common inline fleurons/star ornaments,
+incompatible XML characters and discretionary word breaks are cleaned by a
+shared synthesis-only helper used by browser requests and the provider adapter.
+All scripts' letters/numbers and meaningful punctuation/units/currency/math in
+readable prose remain. Original text, markup and CFI ranges remain intact.
+The endpoint rejects unspeakable text before authorization/rate-limit writes or
+provider connections. Readable provider/network failures retain Retry behavior.
+
+Candidate and main pass 504 Node tests, 1,016 full browser cases and all 110
+focused speech checks across five profiles, with 9 existing skips and zero Playwright
+retries. Main's desktop WebKit workflow job was rerun once after a background-tab
+tracking assertion saw 1 rather than its captured 0; narration had reached the
+later chapter. The rerun passes. The exact merged tree matches the candidate.
+The previous source reproduces the stop at `❦` with a rejecting fixture provider.
+Four direct live checks pass across desktop/mobile Chromium, covering both flows,
+preload, a decorative chapter, inline ornaments and original ranges/markup.
+Fixtures use disposable original EPUBs and mocked synthesis. Actual production's
+symbol-only 400 guard, voice/request guards, served assets and preservation pass
+with zero database writes. Physical Android/Soul acceptance remains separate.
+[PR #71](https://github.com/skypie0102/ShadowGarden/pull/71) ·
+[Guide](READER_TTS.md) · [Evidence](reader-speech-text-release-2.26.1.json).
 
 ## Reader v2.26.0 — independent browsing and floating controls
 

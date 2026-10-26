@@ -11,7 +11,7 @@ palette; Adult keeps its rose palette.
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
 | 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
-| 3. Reader controls | Find and understand reading preferences and navigation | In progress — alignment, Edge TTS and independent speech browsing delivered (through v2.26.0) |
+| 3. Reader controls | Find and understand reading preferences and navigation | In progress — alignment, Edge TTS and independent speech browsing delivered (through v2.26.1) |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned — direct volume EPUB replacement delivered in v2.20.0 |
 
@@ -131,6 +131,8 @@ completed series, missing/unreadable volume and long titles. Read again retains
 its explicit confirmation and existing bookmarks.
 
 ## Phase 3 — Reader controls
+
+- [x] Keep speech/preload moving past decorative separators and clean only the synthesis copy, preserving Unicode prose and original highlight ranges (v2.26.1, [PR #71](https://github.com/skypie0102/ShadowGarden/pull/71)). All 110 focused speech checks and five-profile regressions pass; four direct live checks, symbol-only rejection and production preservation pass. [Evidence](reader-speech-text-release-2.26.1.json).
 
 - [x] Keep narration playing while browsing; tap status to return/follow. Reorder floating controls to status, Previous, Play/Pause, Next, Stop, settings cog, with responsive 44px targets (v2.26.0, [PR #69](https://github.com/skypie0102/ShadowGarden/pull/69)). All 100 focused speech checks and five-profile regressions pass; eight direct live checks and production preservation pass. [Evidence](reader-speech-browsing-release-2.26.0.json).
 
