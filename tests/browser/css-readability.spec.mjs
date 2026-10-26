@@ -89,7 +89,11 @@ for (const adult of [false, true]) test(`shared/public CSS preserves ${adult ? '
     await compare(page, `${adult ? 'adult' : 'main'}-library-${width}`);
   }
   await page.setViewportSize(viewport); await loadLibrary(); await page.locator('.brand-mark').click();
-  await expect(page.locator('.brand-mark')).toHaveAttribute('aria-expanded', 'true'); await compare(page, `${adult ? 'adult' : 'main'}-navigation`);
+  await expect(page.locator('.brand-mark')).toHaveAttribute('aria-expanded', 'true');
+  // Navigation transfers focus after opening. Capture the settled interaction
+  // state rather than comparing frames on either side of that timer.
+  await expect(page.locator('#siteNav a[href]').first()).toBeFocused();
+  await compare(page, `${adult ? 'adult' : 'main'}-navigation`);
   await page.goto(`/series?id=css-public&scope=${adult ? 'adult' : 'main'}`);
   await expect(page.locator('#seriesRoot h1')).toHaveText(item.title); await settleCssComparison(page);
   await compare(page, `${adult ? 'adult' : 'main'}-series`);
