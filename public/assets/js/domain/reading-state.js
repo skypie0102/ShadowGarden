@@ -114,10 +114,10 @@ export function volumeState(seriesId, volume, index = -1, extra = []) {
   return progressAtBeginning(volumeProgress(seriesId, volume, index, extra)) ? STATES.UNREAD : STATES.IN_PROGRESS;
 }
 
-export function actionLabelForState(state) {
-  if (state === STATES.FINISHED) return "Read Again";
-  if (state === STATES.IN_PROGRESS) return "Continue";
-  return "Read";
+export function actionLabelForState(state, { next = false } = {}) {
+  if (state === STATES.FINISHED) return "Read again";
+  if (state === STATES.IN_PROGRESS) return "Continue reading";
+  return next ? "Read next volume" : "Start reading";
 }
 
 export function clearProgressAliases(ids) {
@@ -153,10 +153,30 @@ export function volumeEntries(series) {
 }
 
 export function preferredSeriesEntry(series) {
+  return seriesReadingContext(series).preferred;
+}
+
+function nextUnreadEntry(entries) {
+  if (entries.some(entry => entry.state === STATES.IN_PROGRESS)) return null;
+  let lastFinished = -1;
+  for (const entry of entries) if (entry.state === STATES.FINISHED) lastFinished = entry.index;
+  const next = entries[lastFinished + 1];
+  return lastFinished >= 0 && next?.state === STATES.UNREAD && readableEntry(next) ? next : null;
+}
+
+// Renderers share this snapshot so every entry point uses the same destination
+// and action copy without re-reading the entire series for each volume card.
+export function seriesReadingContext(series) {
   const entries = volumeEntries(series);
-  const inProgress = entries.filter(entry => entry.state === STATES.IN_PROGRESS)
+  const readable = entries.filter(readableEntry);
+  const inProgress = readable.filter(entry => entry.state === STATES.IN_PROGRESS)
     .sort((a, b) => (Number(b.progress?.updatedAt) || 0) - (Number(a.progress?.updatedAt) || 0));
-  return inProgress[0] || entries.find(entry => entry.state === STATES.UNREAD) || entries.find(entry => entry.state === STATES.FINISHED) || null;
+  const next = nextUnreadEntry(entries);
+  return {
+    entries,
+    preferred: inProgress[0] || next || readable.find(entry => entry.state === STATES.UNREAD) || readable[0] || null,
+    nextIndex: next?.index ?? -1
+  };
 }
 
 function entrySnapshots(seriesList) {
@@ -167,7 +187,7 @@ function latestActiveFromSnapshots(snapshots) {
   const candidates = [];
   for (const { series, entries } of snapshots) {
     for (const entry of entries) {
-      if (!entry.progress?.updatedAt || entry.state === STATES.FINISHED) continue;
+      if (!entry.progress?.updatedAt || entry.state !== STATES.IN_PROGRESS || !readableEntry(entry)) continue;
       candidates.push({ series, ...entry, updatedAt: Number(entry.progress.updatedAt) || 0 });
     }
   }
@@ -197,16 +217,13 @@ function finishedAt(seriesId, entry, finishedState) {
 function nextStartedFromSnapshots(snapshots, finishedState) {
   const candidates = [];
   for (const { series, entries } of snapshots) {
-    if (!entries.length || entries.some(entry => entry.state === STATES.IN_PROGRESS)) continue;
-    let lastFinished = -1, activityAt = 0;
+    const next = nextUnreadEntry(entries);
+    if (!next) continue;
+    let activityAt = 0;
     for (const entry of entries) {
       if (entry.state !== STATES.FINISHED) continue;
-      lastFinished = Math.max(lastFinished, entry.index);
       activityAt = Math.max(activityAt, finishedAt(series?.id, entry, finishedState), Number(entry.progress?.updatedAt) || 0);
     }
-    if (lastFinished < 0) continue;
-    const next = entries[lastFinished + 1];
-    if (!next || next.state !== STATES.UNREAD || !readableEntry(next)) continue;
     candidates.push({ series, ...next, updatedAt: activityAt, suggestion: "next" });
   }
   candidates.sort((a, b) => b.updatedAt - a.updatedAt || String(a.series?.title || "").localeCompare(String(b.series?.title || "")));
