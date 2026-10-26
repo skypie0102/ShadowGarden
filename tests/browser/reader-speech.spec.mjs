@@ -212,21 +212,31 @@ test('English voices replace a saved non-English choice and the floating control
   await expect(page.locator('#speechPassage')).toHaveText('Chapter zero');
   await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
   expect(await page.locator('#speechMini > button').evaluateAll(buttons=>buttons.map(b=>b.id))).toEqual([
-    'speechMiniPlay','speechMiniPrevious','speechMiniSettings','speechMiniNext','speechMiniStop',
+    'speechMiniFollow','speechMiniPrevious','speechMiniPlay','speechMiniNext','speechMiniStop','speechMiniSettings',
   ]);
   for(const width of [320,393,1280]) {
     await page.setViewportSize({width,height:800});
     const boxes=await page.locator('#speechMini > button').evaluateAll(buttons=>buttons.map(b=>{
-      const r=b.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};
+      const r=b.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};
     }));
     expect(boxes[0].left).toBeGreaterThanOrEqual(0);
     expect(boxes.at(-1).right).toBeLessThanOrEqual(width);
     boxes.forEach((box,i)=>{
       expect(box.width).toBeGreaterThanOrEqual(44);expect(box.height).toBeGreaterThanOrEqual(44);
-      if(i)expect(box.left).toBeGreaterThanOrEqual(boxes[i-1].right);
+      expect(box.left).toBeGreaterThanOrEqual(0);expect(box.right).toBeLessThanOrEqual(width);
+      if(i && box.top < boxes[i-1].bottom)expect(box.left).toBeGreaterThanOrEqual(boxes[i-1].right);
     });
+    if(width<420)expect(boxes[1].top).toBeGreaterThanOrEqual(boxes[0].bottom);
+    else expect(boxes.every(box=>box.top===boxes[0].top)).toBe(true);
     await test.info().attach(`speech-floating-controls-${width}`,{body:await page.screenshot(),contentType:'image/png'});
   }
+  await page.locator('#speechMiniFollow').focus();
+  for(const id of ['speechMiniPrevious','speechMiniPlay','speechMiniNext','speechMiniStop','speechMiniSettings']) {
+    await page.keyboard.press('Tab');await expect(page.locator('#'+id)).toBeFocused();
+  }
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#speechDrawer')).toHaveAttribute('aria-hidden','false');
+  await closeOptions(page);
   await page.locator('#speechMiniStop').click();
   await page.reload();
   await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
@@ -326,6 +336,100 @@ async function ended(page) {
     .locator("#speechAudio")
     .evaluate((audio) => audio.dispatchEvent(new Event("ended")));
 }
+
+async function browseAway(page, { iframe = false, type = 'wheel' } = {}) {
+  return page.evaluate(async ({bootstrap,iframe,type}) => {
+    const r=(await import(bootstrap)).readerRuntime.current;
+    const container=r.state.rendition.manager.container;
+    const doc=iframe?r.state.rendition.getContents()[0].document:document;
+    const target=iframe?doc.body:document.getElementById('viewer');
+    const win=doc.defaultView;
+    const event=type==='keydown'?new win.KeyboardEvent(type,{key:'PageDown',bubbles:true}):
+      type==='wheel'?new win.WheelEvent(type,{bubbles:true,deltaY:160}):new win.Event(type,{bubbles:true});
+    target.dispatchEvent(event);
+    container.scrollTop+=160;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    return {top:container.scrollTop,source:document.getElementById('speechAudio').getAttribute('src'),...window.__speechEvents};
+  },{bootstrap,iframe,type});
+}
+for(const flow of ['paginated','scrolled-doc'])
+  test(`${flow}: browsing keeps speech playing and the status control rejoins the current passage`,async({page})=>{
+    await open(page,flow,{epub:await positionPublication()});
+    await pressSpeech(page,'speechPlay');
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    const original=await page.locator('#speechAudio').getAttribute('src');
+    const pauses=await page.evaluate(()=>window.__speechEvents.pauses);
+    const away=await browseAway(page);
+    await expect.poll(()=>speechState(page).then(s=>s.following)).toBe(false);
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    expect(away.source).toBe(original);expect(away.pauses).toBe(pauses);
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeGreaterThan(60);
+    const spoken=await page.locator('#speechPassage').textContent();
+    await ended(page);
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    await expect(page.locator('#speechPassage')).not.toHaveText(spoken);
+    expect((await markedPosition(page)).scrollTop).toBeCloseTo(away.top,0);
+    const beforeReturn=await page.evaluate(()=>({source:document.getElementById('speechAudio').getAttribute('src'),...window.__speechEvents}));
+    await page.locator('#speechMiniFollow').click();
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    expect((await speechState(page)).following).toBe(true);
+    await expect(page.locator('#speechDrawer')).toHaveAttribute('aria-hidden','true');
+    expect(await page.locator('#speechAudio').getAttribute('src')).toBe(beforeReturn.source);
+    expect(await page.evaluate(()=>window.__speechEvents.plays)).toBe(beforeReturn.plays);
+    expect(await page.evaluate(()=>window.__speechEvents.pauses)).toBe(beforeReturn.pauses);
+    await ended(page);
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    // EPUB documents have their own event boundary. Touch, pointer, wheel and
+    // keyboard input must all detach following without changing playback.
+    for(const type of ['wheel','touchstart','pointerdown','keydown']) {
+      const pauses=await page.evaluate(()=>window.__speechEvents.pauses);
+      await browseAway(page,{iframe:true,type});
+      expect((await speechState(page)).status).toBe('playing');
+      expect((await speechState(page)).following,`Browsing input: ${type}`).toBe(false);
+      expect(await page.evaluate(()=>window.__speechEvents.pauses)).toBe(pauses);
+      await page.locator('#speechMiniFollow').click();
+      await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    }
+    await browseAway(page);
+    await page.locator('#speechMiniPlay').click();
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+    await browseAway(page);
+    await page.locator('#speechMiniFollow').click();
+    await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+    expect((await speechState(page)).status).toBe('paused');
+    await page.locator('#speechMiniStop').click();
+  });
+
+test('native scrolling stays detached through narration chapter changes until the status control is tapped',async({page,browserName,isMobile})=>{
+  await open(page,'scrolled-doc');
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+  const bounds=await page.locator('#viewer').boundingBox();
+  const pauses=await page.evaluate(()=>window.__speechEvents.pauses);
+  if(browserName==='webkit' && isMobile) {
+    // Mobile WebKit exposes no mouse-wheel input in Playwright. Exercise its
+    // native scroll event path without an EPUB document callback instead.
+    await page.locator('#viewer .epub-container').evaluate(container=>container.scrollBy(0,500));
+  } else {
+    await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
+    await page.mouse.wheel(0,500);
+  }
+  await expect.poll(()=>speechState(page).then(s=>s.following)).toBe(false);
+  expect((await speechState(page)).status).toBe('playing');
+  expect(await page.evaluate(()=>window.__speechEvents.pauses)).toBe(pauses);
+  const start=await speechState(page);
+  for(let i=0;i<5 && (await speechState(page)).spineIndex===start.spineIndex;i++) {
+    await ended(page);await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  }
+  expect((await speechState(page)).spineIndex).toBeGreaterThan(start.spineIndex);
+  expect((await speechState(page)).following).toBe(false);
+  await page.locator('#speechMiniFollow').click();
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance),{timeout:15000}).toBeLessThan(8);
+  expect((await speechState(page)).following).toBe(true);
+  await page.locator('#speechMiniSettings').click();
+  await expect(page.locator('#speechDrawer')).toHaveAttribute('aria-hidden','false');
+  expect((await speechState(page)).status).toBe('playing');
+});
 
 test('Brian is the default and four ready passages play through a chapter boundary after the network fails', async ({page}) => {
   await open(page, 'scrolled-doc');
@@ -664,6 +768,14 @@ test("stopping pending audio and navigation cannot restart stale speech; provide
   });
   await pressSpeech(page, "speechPlay");
   await expect.poll(() => requests).toBe(3);
+  await closeOptions(page);
+  await browseAway(page);
+  expect((await speechState(page)).status).toBe('loading');
+  expect((await speechState(page)).wantPlay).toBe(true);
+  await page.locator('#speechMiniFollow').click();
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance)).toBeLessThan(8);
+  expect((await speechState(page)).status).toBe('loading');
+  expect(requests).toBe(3);
   await pressSpeech(page, "speechStop");
   release();
   await expect.poll(() => speechState(page).then((s) => s.status)).toBe("idle");
@@ -722,7 +834,8 @@ test("hidden-tab narration advances without rendering and follows the final pass
     "true",
     { timeout: 30000 },
   );
-  await page.evaluate(() => {
+  const visibleSpineIndex = await page.evaluate(async (bootstrap) => {
+    const reader = (await import(bootstrap)).readerRuntime.current;
     const raf = window.requestAnimationFrame.bind(window),
       cancel = window.cancelAnimationFrame.bind(window),
       frames = new Map();
@@ -751,7 +864,11 @@ test("hidden-tab narration advances without rendering and follows the final pass
       document.dispatchEvent(new Event("visibilitychange"));
     };
     document.dispatchEvent(new Event("visibilitychange"));
-  });
+    // Centering can leave the viewport's tracking line in the preceding cover.
+    // Hidden playback must preserve that actual visible position, whichever
+    // chapter the viewport tracks when the tab is hidden.
+    return reader.state.currentSpineIndex;
+  }, bootstrap);
   await ended(page);
   await expect
     .poll(() => speechState(page).then((s) => s.status))
@@ -774,7 +891,7 @@ test("hidden-tab narration advances without rendering and follows the final pass
         (await import(bootstrap)).readerRuntime.current.state.currentSpineIndex,
       bootstrap,
     ),
-  ).toBe(1);
+  ).toBe(visibleSpineIndex);
   await page.evaluate(() => window.__showSpeechTab());
   await expect
     .poll(

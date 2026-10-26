@@ -121,11 +121,12 @@
     </aside>
     <audio id="speechAudio" preload="none" hidden></audio>
     <div id="speechMini" class="speech-mini" role="region" aria-label="Read aloud playback" hidden>
-      <button id="speechMiniPlay" type="button" aria-label="Pause read aloud">Ⅱ</button>
+      <button id="speechMiniFollow" class="speech-mini-detail" type="button" title="Return to current spoken passage and follow"><span id="speechMiniLabel">Reading aloud</span></button>
       <button id="speechMiniPrevious" type="button" aria-label="Previous passage">‹</button>
-      <button id="speechMiniSettings" class="speech-mini-detail" type="button" aria-label="Open read aloud settings"><span id="speechMiniLabel">Reading aloud</span></button>
+      <button id="speechMiniPlay" type="button" aria-label="Pause read aloud">Ⅱ</button>
       <button id="speechMiniNext" type="button" aria-label="Next passage">›</button>
       <button id="speechMiniStop" type="button" aria-label="Stop read aloud">■</button>
+      <button id="speechMiniSettings" type="button" aria-label="Open read aloud settings" title="Read aloud settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9.5 3-.7 2.3-2 .9-2.2-.6-2.5 4.3 1.6 1.7v2.3l-1.6 1.7 2.5 4.3 2.2-.6 2 .9.7 2.3h5l.7-2.3 2-.9 2.2.6 2.5-4.3-1.6-1.7v-2.3l1.6-1.7-2.5-4.3-2.2.6-2-.9-.7-2.3z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
 
     <main id="viewerShell" class="viewer-shell" tabindex="-1" aria-label="EPUB reading area">

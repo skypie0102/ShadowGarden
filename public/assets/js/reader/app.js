@@ -56,7 +56,7 @@ function readerElements() {
     bookmarksPanel: $("#bookmarksPanel"),
     settingsToggle: $("#settingsToggle"),
     settingsDrawer: $("#settingsDrawer"),
-    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniPlay','speechMiniPrevious','speechMiniNext','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
+    ...Object.fromEntries(['speechToggle','speechDrawer','speechAudio','speechVoice','speechSpeed','speechFollow','speechPlay','speechStop','speechHere','speechNext','speechPrevious','speechStatus','speechPassage','speechMini','speechMiniFollow','speechMiniPlay','speechMiniPrevious','speechMiniNext','speechMiniStop','speechMiniSettings','speechMiniLabel','speechVoicesRetry','speechVoiceHint'].map(id=>[id,$(`#${id}`)])),
     backdrop: $("#drawerBackdrop"),
     bookmarkButton: $("#bookmarkButton"),
     backLink: $("#backLink"),
@@ -394,8 +394,9 @@ async function initializeReader(session, scope) {
     toast
   });
   own(bookmarksController);
-  function turn(direction) {
-    speechController?.stop();
+  function turn(direction, { browsing = false } = {}) {
+    if (browsing) speechController?.suspendFollowing();
+    else speechController?.stop();
     if (scope.disposed) return;
     if (settingsController.get().flow !== "paginated") return;
     paginatedController?.turn(direction);
@@ -403,7 +404,7 @@ async function initializeReader(session, scope) {
   pageInputController = createPageNavigationInput({
     getFlow: () => settingsController.get().flow,
     getSwipeTurns: () => settingsController.get().swipeTurns,
-    turn
+    turn: direction => turn(direction, { browsing: true })
   });
   own(pageInputController);
   imageFocusController = createImageFocusController({
