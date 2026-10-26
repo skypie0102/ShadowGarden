@@ -30,14 +30,14 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The latest released application is **v2.27.1**. The Library discovery phase,
+The released baseline for this work is **v2.27.1**. The Library discovery phase,
 Reader maintenance, Website refactor and October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
 journey, Reader controls, visual consistency and Keeper feedback work. The
-reading-action increment on this branch is awaiting merge and publication;
-source implementation and live acceptance are recorded separately.
+source implements the reading-action increment for **v2.28.0**. The PR and guarded
+release workflow record source validation and live acceptance separately.
 
 ## Local development
 

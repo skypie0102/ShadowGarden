@@ -17,8 +17,9 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 
 ## Phase 2 — Reading journey
 
-The current increment implements the first two items below on this branch. It
-still needs the complete browser gate, merge and a separately verified release.
+The current source implements the first two items below for v2.28.0. Checkmarks
+identify implementation; the PR and guarded release record validation and live
+acceptance separately.
 
 - [x] Use consistent Start reading / Continue reading / Read next volume / Read again actions across the Library banner, Recently Added, Series hero and volume links.
 - [x] Show explicit volume order and Unread / In progress / Finished states on Series pages. Keep the next-volume indication separate from reading state.
