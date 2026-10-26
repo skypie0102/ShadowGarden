@@ -50,7 +50,8 @@ const messages=Object.freeze({
   'progress.seekFailed':'The requested reading position could not be opened.',
   'progress.locationsFailed':'Exact EPUB locations could not be generated.',
   'note.hookUnavailable':'EPUB footnote handling could not be installed.',
-  'completion.contextUnavailable':null
+  'completion.contextUnavailable':null,
+  'speech.streamFallback':null
 });
 const numericFields=new Set(['durationMs','sections','pages','views','sources','assets','converted','scanned','hits']);
 const events=[],counts=Object.create(null),limit=64;

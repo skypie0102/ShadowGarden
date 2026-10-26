@@ -125,3 +125,18 @@ test("stopping during a slow chapter lookup cannot enqueue late speech", async (
   await setImmediate();
   assert.deepEqual(calls, ["Current"]);
 });
+
+test('streaming peeks reuse the four-passage window without advancing or regenerating it',async()=>{
+  const {buffer,positions,calls}=fixture(),signal=new AbortController().signal;
+  const current=buffer.read(positions[0],voice,{signal});
+  await until(()=>calls.length===3);calls[0].resolve();await current;
+  calls[1].resolve();calls[2].resolve();await until(()=>calls.length===5);
+  calls[3].resolve();calls[4].resolve();
+  for(const position of positions.slice(1,5))
+    assert.equal(await(await buffer.peek(position,voice,{signal})).text(),`${voice}:${position.entries[position.index].text}`);
+  assert.equal(calls.length,5);
+  assert.equal(await(await buffer.read(positions[1],voice,{signal})).text(),`${voice}:1/1`);
+  await until(()=>calls.length===6);
+  assert.equal(calls.filter(c=>c.text==='1/1').length,1);
+  buffer.clear();
+});
