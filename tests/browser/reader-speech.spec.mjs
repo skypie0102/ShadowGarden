@@ -203,6 +203,17 @@ test('English voices replace a saved non-English choice and the floating control
   await page.locator('#speechVoice').selectOption('en-GB-SoniaNeural');
   await pressSpeech(page,'speechPlay');
   await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await expect(page.locator('#speechMiniPlay .speech-icon-pause')).toBeVisible();
+  await expect(page.locator('#speechMiniPlay .speech-icon-play')).toBeHidden();
+  await expect(page.locator('#speechMiniPlay')).toHaveAccessibleName('Pause read aloud');
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+  await expect(page.locator('#speechMiniPlay .speech-icon-play')).toBeVisible();
+  await expect(page.locator('#speechMiniPlay .speech-icon-pause')).toBeHidden();
+  await expect(page.locator('#speechMiniPlay')).toHaveAccessibleName('Resume read aloud');
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await expect(page.locator('#speechMiniPlay .speech-icon-pause')).toBeVisible();
   while((await speechState(page)).index>0){await page.locator('#speechMiniPrevious').click();await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');}
   await expect(page.locator('#speechPassage')).toHaveText('Chapter zero');
   await page.locator('#speechMiniNext').click();
@@ -236,8 +247,15 @@ test('English voices replace a saved non-English choice and the floating control
   }
   await page.keyboard.press('Enter');
   await expect(page.locator('#speechDrawer')).toHaveAttribute('aria-hidden','false');
+  await expect(page.locator('#speechPlay .speech-icon-pause')).toBeVisible();
+  await expect(page.locator('#speechPlay .speech-icon-play')).toBeHidden();
+  await expect(page.locator('#speechPlay .speech-play-label')).toHaveText('Pause');
+  await expect(page.locator('#speechStop')).toHaveAccessibleName('Exit read aloud');
+  await expect(page.locator('#speechMiniStop')).toHaveAccessibleName('Exit read aloud');
   await closeOptions(page);
   await page.locator('#speechMiniStop').click();
+  await expect(page.locator('#speechMini')).toBeHidden();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('idle');
   await page.reload();
   await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
   await page.locator('#speechToggle').click();
@@ -884,6 +902,27 @@ test("hidden-tab narration advances without rendering and follows the final pass
     "true",
     { timeout: 30000 },
   );
+  // Finish the last visible follow and its relocation report before freezing
+  // animation frames. A late report of the old chapter is not hidden narration.
+  await expect.poll(()=>markedPosition(page).then(p=>p?.distance??Infinity),{timeout:30000}).toBeLessThan(2);
+  await page.evaluate(async bootstrap=>{
+    const rendition=(await import(bootstrap)).readerRuntime.current.state.rendition;
+    const container=rendition.manager.container;
+    await new Promise(resolve=>{
+      let previous,stable=0;
+      function settle(){
+        const top=container.scrollTop;
+        stable=top===previous?stable+1:0;
+        previous=top;
+        if(stable>=4)resolve();else requestAnimationFrame(settle);
+      }
+      requestAnimationFrame(settle);
+    });
+    await new Promise(resolve=>{
+      rendition.once('relocated',resolve);
+      rendition.reportLocation();
+    });
+  },bootstrap);
   const visibleSpineIndex = await page.evaluate(async (bootstrap) => {
     const reader = (await import(bootstrap)).readerRuntime.current;
     const raf = window.requestAnimationFrame.bind(window),

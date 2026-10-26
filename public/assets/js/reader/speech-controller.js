@@ -38,7 +38,8 @@ export function createSpeechController({
   closeDrawers,
 }) {
   const scope = createReaderScope(),
-    audio = elements.speechAudio;
+    audio = elements.speechAudio,
+    playLabel = elements.speechPlay.querySelector(".speech-play-label");
   const source = createSpeechSource({ getBook, getCfi, getSpineIndex });
   const buffer = createSpeechBuffer({ source, fetchAudio });
   const position = createSpeechPosition();
@@ -64,17 +65,21 @@ export function createSpeechController({
     ["loading", "playing", "paused", "error"].includes(status);
   function render(message) {
     const running = wantPlay && ["playing", "loading"].includes(status);
-    elements.speechPlay.textContent = running
+    const action = running
       ? "Pause"
       : status === "paused"
         ? "Resume"
         : status === "error"
           ? "Retry"
           : "Play";
-    elements.speechMiniPlay.textContent = running ? "Ⅱ" : "▶";
+    playLabel.textContent = action;
+    for (const button of [elements.speechPlay, elements.speechMiniPlay]) {
+      button.dataset.speechPlaying = String(running);
+      button.title = `${action} read aloud`;
+    }
     elements.speechMiniPlay.setAttribute(
       "aria-label",
-      running ? "Pause read aloud" : "Resume read aloud",
+      `${action} read aloud`,
     );
     elements.speechToggle.setAttribute("aria-pressed", String(active()));
     elements.speechMini.hidden = !active();

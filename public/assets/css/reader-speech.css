@@ -73,6 +73,30 @@
   border-color: var(--sg-ui-accent-line);
   color: var(--leaf);
 }
+.speech-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#speechDrawer .drawer-close {
+  display: grid;
+  place-items: center;
+}
+.speech-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.speech-icon-pause,
+[data-speech-playing="true"] .speech-icon-play {
+  display: none;
+}
+[data-speech-playing="true"] .speech-icon-pause {
+  display: block;
+}
 .speech-controls button:disabled,
 .speech-mini button:disabled {
   opacity: 0.4;
@@ -126,10 +150,6 @@
 .speech-mini #speechMiniPlay {
   background: var(--sg-ui-control);
   border-color: var(--sg-ui-accent-line);
-}
-.speech-mini button:not(.speech-mini-detail) {
-  font-size: 1.15rem;
-  line-height: 1;
 }
 .speech-mini .speech-mini-detail {
   display: block;
