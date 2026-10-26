@@ -9,6 +9,7 @@ import { recordReaderDiagnostic } from "./diagnostics.js";
 import { createSpeechPosition } from "./speech-position.js";
 import { createSpeechBuffer } from "./speech-buffer.js";
 import { prepareSpeechText } from "./speech-text.js";
+import { createSpeechStream } from "./speech-stream.js";
 
 const KEY = "sg-reader-speech-settings",
   DEFAULT_VOICE = "en-US-BrianMultilingualNeural";
@@ -51,6 +52,8 @@ export function createSpeechController({
     revision = 0,
     request = null,
     objectUrl = "",
+    stream = null,
+    audioSessionType = null,
     pending = null,
     followAbort = null,
     followTarget = "",
@@ -116,7 +119,7 @@ export function createSpeechController({
     audio.preservesPitch = true;
     if ("mediaSession" in navigator) {
       navigator.mediaSession.playbackState =
-        status === "playing"
+        running
           ? "playing"
           : status === "paused"
             ? "paused"
@@ -140,10 +143,30 @@ export function createSpeechController({
   }
   function releaseAudio() {
     audio.pause();
+    if (stream?.url === objectUrl) objectUrl = "";
+    stream?.dispose();
+    stream = null;
     audio.removeAttribute("src");
     audio.load();
     if (objectUrl) URL.revokeObjectURL(objectUrl);
     objectUrl = "";
+  }
+  function claimAudioSession() {
+    // Safari exposes this independently of Media Session. AudioSession is an
+    // optional enhancement; an unsupported/rejected setter must not block TTS.
+    try {
+      if (navigator.audioSession) {
+        audioSessionType ??= navigator.audioSession.type;
+        navigator.audioSession.type = "playback";
+      }
+    } catch {}
+  }
+  function releaseAudioSession() {
+    try {
+      if (audioSessionType !== null && navigator.audioSession?.type === "playback")
+        navigator.audioSession.type = audioSessionType;
+    } catch {}
+    audioSessionType = null;
   }
   function invalidate({ keepBuffer = false } = {}) {
     revision++;
@@ -164,6 +187,7 @@ export function createSpeechController({
     followSuspended = false;
     status = "idle";
     releaseAudio();
+    releaseAudioSession();
     render(message);
   }
   function pause() {
@@ -178,6 +202,7 @@ export function createSpeechController({
     render();
   }
   function unlock() {
+    claimAudioSession();
     // Reuse one media element across chunks, including mobile gesture priming.
     if (audio.getAttribute("src")) return;
     audio.src = SILENCE;
@@ -299,6 +324,7 @@ export function createSpeechController({
   async function resumeAudio(serial) {
     if (!wantPlay || serial !== revision || scope.disposed) return;
     try {
+      claimAudioSession();
       await audio.play();
       if (serial !== revision || scope.disposed) return;
       // A pause can arrive while play() is waiting for the browser.
@@ -319,6 +345,7 @@ export function createSpeechController({
       if (serial !== revision || scope.disposed) return;
       wantPlay = false;
       status = error.name === "NotAllowedError" ? "paused" : "error";
+      if (status === "error") releaseAudioSession();
       render(
         error.name === "NotAllowedError"
           ? "Tap Resume to allow audio playback."
@@ -326,10 +353,12 @@ export function createSpeechController({
       );
     }
   }
-  async function prepare({ fromCurrent = false, direction = 0 } = {}) {
+  async function prepare({ fromCurrent = false, direction = 0, advancing = false } = {}) {
     if (fromCurrent || !cursor || status === "complete") followSuspended = false;
     invalidate({ keepBuffer: direction === 1 && !fromCurrent });
-    releaseAudio();
+    // Clip-only engines retain their native media session at natural passage
+    // boundaries. Explicit seeks/restarts still release the replaced recording.
+    if (!advancing) releaseAudio();
     const serial = revision,
       controller = new AbortController();
     request = controller;
@@ -352,6 +381,8 @@ export function createSpeechController({
           buffer.clear();
           wantPlay = false;
           status = direction < 0 ? "paused" : "complete";
+          releaseAudio();
+          releaseAudioSession();
           render(
             direction < 0
               ? "Beginning of the volume."
@@ -368,8 +399,45 @@ export function createSpeechController({
           signal: controller.signal, preload: wantPlay,
         });
         if (!current()) return;
-        objectUrl = URL.createObjectURL(blob);
-        audio.src = objectUrl;
+        const previousUrl = objectUrl;
+        if (wantPlay && !advancing) {
+          const selectedVoice = settings.voice;
+          stream = createSpeechStream({
+            audio, signal: controller.signal,
+            readNext: async (from, signal) => {
+              const next = await source.move(from, 1, { signal });
+              if (!next) return null;
+              try {
+                const blob = await buffer.peek(next, selectedVoice, { signal });
+                return { cursor: next, blob };
+              } catch (error) { return { cursor: next, error }; }
+            },
+            onPassage: next => {
+              if (!current()) return;
+              cursor = next;
+              buffer.prefetch(cursor, selectedVoice);
+              position.show({ cfi: entry().cfi, spineIndex: cursor.spineIndex });
+              render();
+              followPassage();
+            },
+          });
+          if (stream) {
+            objectUrl = stream.url;
+            try { await stream.start(cursor, blob); }
+            catch (error) {
+              if (!current()) return;
+              stream.dispose();
+              stream = null;
+              objectUrl = "";
+              recordReaderDiagnostic("speech.streamFallback");
+            }
+          }
+        }
+        if (!stream) {
+          objectUrl = URL.createObjectURL(blob);
+          audio.src = objectUrl;
+        }
+        if (previousUrl && previousUrl !== objectUrl) URL.revokeObjectURL(previousUrl);
         audio.playbackRate = settings.speed;
         if (status === "error") return;
         if (wantPlay) await resumeAudio(serial);
@@ -382,6 +450,7 @@ export function createSpeechController({
         buffer.clear();
         wantPlay = false;
         status = "error";
+        releaseAudioSession();
         render(error.message || "Edge TTS is unavailable. Try again.");
       } finally {
         if (serial === revision) {
@@ -510,13 +579,23 @@ export function createSpeechController({
   for (const button of [elements.speechPrevious, elements.speechMiniPrevious])
     scope.listen(button, "click", () => move(-1));
   scope.listen(audio, "ended", () => {
-    if (wantPlay && objectUrl && !pending) void prepare({ direction: 1 });
+    if (!wantPlay || !objectUrl || pending) return;
+    if (stream) {
+      wantPlay = false;
+      status = stream.error ? "error" : "complete";
+      if (stream.failedCursor) cursor = stream.failedCursor;
+      render(stream.error?.message);
+      releaseAudioSession();
+      if (status === "complete") { buffer.clear(); followPassage(); }
+    } else void prepare({ direction: 1, advancing: true });
   });
   scope.listen(audio, "error", () => {
     if (objectUrl && audio.currentSrc === objectUrl && status !== "idle") {
       wantPlay = false;
       status = "error";
+      if (stream?.failedCursor) cursor = stream.failedCursor;
       render("Audio could not play. Tap Retry.");
+      releaseAudioSession();
     }
   });
   scope.listen(elements.speechVoice, "change", () => {
@@ -596,6 +675,7 @@ export function createSpeechController({
   scope.add(() => {
     invalidate();
     releaseAudio();
+    releaseAudioSession();
     elements.speechMini.hidden = true;
     elements.speechToggle.setAttribute("aria-pressed", "false");
   });

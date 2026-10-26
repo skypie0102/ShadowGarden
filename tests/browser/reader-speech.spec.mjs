@@ -47,6 +47,9 @@ async function publication() {
 }
 async function mediaFixture(page) {
   await page.addInitScript(() => {
+    // These cases drive deterministic clip events. Real streaming/decoder
+    // behavior has its own native-media cases below.
+    if (window.MediaSource) MediaSource.isTypeSupported = () => false;
     window.__speechEvents = { plays: 0, pauses: 0, revoked: [] };
     HTMLMediaElement.prototype.play = function () {
       if (this.id === "speechAudio") {
@@ -1040,6 +1043,14 @@ test("native audio decodes MP3 and resumes its paused offset without regeneratin
   expect(await page.locator("#speechAudio").evaluate((a) => a.src)).toBe(
     paused.source,
   );
+  const beforeSkip=(await speechState(page)).index;
+  await page.locator('#speechMiniNext').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect((await speechState(page)).index).toBe(beforeSkip+1);
+  expect(await page.locator('#speechAudio').evaluate(a=>a.src)).not.toBe(paused.source);
+  await page.locator('#speechMiniPrevious').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  expect((await speechState(page)).index).toBe(beforeSkip);
   await pressSpeech(page, "speechStop");
   expect(await page.locator("#speechAudio").getAttribute("src")).toBeNull();
   await page.route("**/tts", (route) =>
@@ -1058,4 +1069,112 @@ test("native audio decodes MP3 and resumes its paused offset without regeneratin
     "Audio could not play.",
   );
   await pressSpeech(page, "speechStop");
+});
+
+test('native narration keeps its media session across hidden passage and chapter boundaries', async ({page,browserName})=>{
+  test.setTimeout(120000);
+  await open(page,'scrolled-doc',{mockMedia:false});
+  if(browserName==='firefox')await page.locator('#speechAudio').evaluate(a=>{a.muted=true;});
+  await page.locator('#speechFollow').uncheck();
+  await page.locator('#speechSpeed').selectOption('2');
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  const initial=await page.evaluate(()=>{
+    const audio=document.querySelector('#speechAudio');
+    window.__nativeSpeech={empty:0};
+    audio.addEventListener('emptied',()=>window.__nativeSpeech.empty++);
+    window.__savedSpeechRaf=window.requestAnimationFrame;
+    window.requestAnimationFrame=()=>0;
+    Object.defineProperty(document,'hidden',{configurable:true,value:true});
+    document.dispatchEvent(new Event('visibilitychange'));
+    return {src:audio.src,streaming:!!window.MediaSource?.isTypeSupported('audio/mpeg')};
+  });
+  // Real decoder time/events, with no synthesized 'ended' event, no animation
+  // frames and no visible-page follow. This is not a physical screen-lock test.
+  try {
+  await expect.poll(()=>speechState(page).then(s=>s.spineIndex),{timeout:45000}).toBe(3);
+  if(initial.streaming){
+    expect(await page.locator('#speechAudio').evaluate(a=>a.src)).toBe(initial.src);
+    expect(await page.evaluate(()=>window.__nativeSpeech.empty)).toBe(0);
+  }
+  if(await page.evaluate(()=>!!navigator.mediaSession))
+    expect(await page.evaluate(()=>navigator.mediaSession.playbackState)).toBe('playing');
+  await expect.poll(()=>speechState(page).then(s=>s.status),{timeout:20000}).toBe('complete');
+  await expect(page.locator('#speechPassage')).toHaveText('Final spoken paragraph.');
+  } finally {
+    await page.evaluate(()=>{window.requestAnimationFrame=window.__savedSpeechRaf;Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));});
+  }
+  await page.evaluate(async bootstrap=>(await import(bootstrap)).readerRuntime.current.speech.stop(),bootstrap);
+  expect(await page.locator('#speechAudio').getAttribute('src')).toBeNull();
+});
+
+test('media controls preserve buffering intent and classify narration as playback until Exit',async({page})=>{
+  await page.addInitScript(()=>{
+    const actions={};window.__speechMedia={actions,states:[],type:'auto'};
+    Object.defineProperty(navigator,'audioSession',{configurable:true,value:{get type(){return window.__speechMedia.type;},set type(value){window.__speechMedia.type=value;}}});
+    Object.defineProperty(navigator,'mediaSession',{configurable:true,value:{metadata:null,
+      get playbackState(){return window.__speechMedia.states.at(-1)||'none';},
+      set playbackState(value){window.__speechMedia.states.push(value);},
+      setActionHandler(name,handler){actions[name]=handler;},
+    }});
+  });
+  await open(page,'paginated');
+  let release;
+  const held=new Promise(resolve=>{release=resolve;});
+  await page.route('**/tts',async route=>{
+    if(route.request().method()==='GET')return route.fulfill({json:{voices}});
+    await held;await route.fulfill({contentType:'audio/mpeg',body:testAudio});
+  });
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('loading');
+  expect(await page.evaluate(()=>navigator.mediaSession.playbackState)).toBe('playing');
+  expect(await page.evaluate(()=>navigator.audioSession.type)).toBe('playback');
+  await page.evaluate(()=>window.__speechMedia.actions.pause());
+  expect(await page.evaluate(()=>navigator.mediaSession.playbackState)).toBe('paused');
+  release();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('paused');
+  await page.evaluate(()=>window.__speechMedia.actions.play());
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await page.evaluate(()=>window.__speechMedia.actions.nexttrack());
+  await expect.poll(()=>speechState(page).then(s=>s.index)).toBe(1);
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await page.evaluate(()=>window.__speechMedia.actions.previoustrack());
+  await expect.poll(()=>speechState(page).then(s=>s.index)).toBe(0);
+  await page.evaluate(()=>window.__speechMedia.actions.stop());
+  expect((await speechState(page)).status).toBe('idle');
+  expect(await page.evaluate(()=>navigator.audioSession.type)).toBe('auto');
+  expect(await page.evaluate(()=>navigator.mediaSession.metadata)).toBeNull();
+  await expect(page.locator('#speechMini')).toBeHidden();
+  // An optional platform API rejecting its category must not break playback.
+  await page.evaluate(()=>Object.defineProperty(navigator,'audioSession',{configurable:true,value:{get type(){return 'auto';},set type(value){throw new DOMException('Unsupported','NotSupportedError');}}}));
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await page.locator('#speechMiniStop').click();
+  expect((await speechState(page)).status).toBe('idle');
+});
+
+test('native queued speech finishes ready audio and retries the unread passage after a future failure',async({page,browserName})=>{
+  test.setTimeout(60000);
+  await open(page,'paginated',{mockMedia:false});
+  if(browserName==='firefox')await page.locator('#speechAudio').evaluate(a=>{a.muted=true;});
+  await page.locator('#speechFollow').uncheck();
+  await page.locator('#speechSpeed').selectOption('2');
+  let unavailable=true;
+  await page.route('**/tts',route=>{
+    if(route.request().method()==='GET')return route.fulfill({json:{voices}});
+    if(unavailable&&route.request().postDataJSON().text.startsWith('First spoken paragraph'))
+      return route.fulfill({status:503,json:{error:'Temporary provider failure'}});
+    return route.fulfill({contentType:'audio/mpeg',body:testAudio});
+  });
+  await pressSpeech(page,'speechPlay');
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await expect(page.locator('#speechPassage')).toHaveText('Chapter zero');
+  await expect.poll(()=>speechState(page).then(s=>s.status),{timeout:15000}).toBe('error');
+  await expect(page.locator('#speechPassage')).toHaveText('First spoken paragraph. Emphasis remains readable.');
+  unavailable=false;
+  await page.locator('#speechMiniPlay').click();
+  await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+  await expect(page.locator('#speechPassage')).toHaveText('First spoken paragraph. Emphasis remains readable.');
+  await page.locator('#speechMiniStop').click();
+  expect(await page.locator('#speechAudio').getAttribute('src')).toBeNull();
 });

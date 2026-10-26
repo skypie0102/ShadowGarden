@@ -44,8 +44,21 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
 - Leaving/disposal closes requests, pauses audio and revokes object URLs.
   Audio advancement does not await page rendering. Hidden tabs defer position
   following until visible again, including the final passage after completion.
-  Browser background/Bluetooth playback depends on the browser/OS. Media Session
-  exposes play, pause, previous passage, next passage and stop where supported.
+  Hiding the page or locking the screen does not explicitly pause narration.
+  Media Session exposes the book title, play, pause, previous passage, next
+  passage and stop where supported, including lock-screen/headset controls.
+  A requested playback session stays marked playing during preparation rather
+  than briefly disappearing between passages. The optional Audio Session API
+  declares narration as `playback`; Exit, completion, errors and disposal restore
+  its prior type. Pause retains the session and audio offset.
+  Background playback still depends on the browser/OS. A website cannot override
+  a browser that suspends its tab, a force-closed browser, calls/audio-focus
+  interruptions or device power restrictions. Physical Android/Soul and iOS
+  screen-lock acceptance is separate from browser emulation.
+
+Platform contracts: [Media Session](https://www.w3.org/TR/mediasession/),
+[Audio Session](https://www.w3.org/TR/audio-session/) and
+[MPEG audio byte streams](https://w3c.github.io/mse-byte-stream-format-mpeg-audio/).
 
 ## Preparing speech
 
@@ -53,6 +66,14 @@ The Reader extracts bounded text passages from the EPUB and sends each passage
 with its selected voice to the same-origin `POST /tts` Function. The Function
 requests an MP3 from Microsoft's online Edge Read Aloud service, waits for a complete
 audio turn, then returns the clip to the Reader's single reusable audio element.
+When the browser supports MPEG audio through Media Source Extensions, successive
+clips are appended to one native media timeline. The element keeps the same
+source across automatic passage and chapter boundaries, allowing buffered speech
+to continue without a JavaScript `ended`/reload/play handoff for every paragraph.
+Passage highlighting follows media time. The decoder holds the current passage
+plus up to four upcoming passages and evicts older audio; it shares the existing
+synthesis buffer. Unsupported engines retain clip playback, with no explicit
+pause, source removal or `load()` at natural passage boundaries.
 Decorative-only paragraphs and chapters, including scene breaks such as `❦`,
 `✦` and `***`, are omitted from the speech cursor and preload window. Inline
 fleurons/star ornaments are removed from the synthesis copy. Discretionary
@@ -83,18 +104,26 @@ boundaries without splitting Unicode surrogate pairs. Each chunk has its own
 original-text CFI range, including normalized whitespace and inline markup. Source extraction is
 semantic; it cannot resolve every arbitrary publisher CSS visibility rule.
 
-`speech-controller.js` owns one audio element, an abort/revision boundary, the
-active blob. `speech-buffer.js` maintains a rolling window of four upcoming
+`speech-controller.js` owns one audio element, an abort/revision boundary and the
+active blob or stream. `speech-stream.js` owns the feature-detected MPEG timeline,
+serialized append/remove operations, passage timestamps and its disposable URL.
+It does not use animation frames or visible-page layout to feed playback.
+`speech-buffer.js` maintains a rolling window of four upcoming
 passages, with at most two background synthesis requests at once. Preloading starts
 while the current passage is being prepared and crosses linear chapter boundaries,
 including illustration-only sections. Advancing consumes an existing ready or
 in-flight request and immediately refills the window. Pause/Resume and speed
 changes retain buffered audio. Previous, Read from here, voice changes, Stop and
-disposal cancel and clear it. A failed speculative request is retried only when
-playback reaches that passage, without stopping the current audio. Late fetches and playback
+disposal cancel and clear it. In clip playback, a failed speculative request is
+retried when playback reaches that passage, without stopping the current audio. Streaming
+reads the same four future entries without advancing the synthesis anchor; only
+audible passage advancement refills that window. A future stream preparation
+failure lets already appended speech finish, then offers Retry at the unread
+passage instead of skipping prose. Late fetches and playback
 promises cannot resume a stopped/replaced session. No synthesized audio is
 persisted to local storage or sent to object storage. At most four queued
-1 MiB blobs plus the current blob are retained. Chapter extraction and audio
+1 MiB blobs plus the current blob are retained, with at most five passages in
+the native decoder's rolling buffer. Chapter extraction and audio
 preparation do not await rendition navigation or animation frames.
 `speech-position.js` paints live ranges with Custom Highlight, with the existing
 EPUB SVG annotation API as its compatibility fallback. It leaves publisher text,
@@ -143,7 +172,13 @@ Production acceptance also checks live voice metadata and the Garden Pass,
 text-length, origin and method rejection guards without book text or credentials. The speech browser
 fixture uses deterministic media events to check ownership and navigation;
 an additional native MP3 test checks decoding, paused offsets and invalid-media
-errors without replacing media methods. Firefox's headless test mutes output
+errors without replacing media methods. A native hidden-page case also plays
+through passage/chapter boundaries with animation frames frozen, checking a
+stable source on streaming engines and final-passage progression on fallback
+engines. Platform action/category tests verify buffering intent, remote controls,
+Exit cleanup and safe behavior if the optional audio category setter rejects.
+These checks cannot simulate an operating system locking a physical device.
+Firefox's headless test mutes output
 to avoid requiring a physical audio device. These are distinct from real
 provider/audio checks. A successful live provider
 probe must also verify the voice list and generated MP3, then a deployed Pages

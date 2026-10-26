@@ -67,7 +67,7 @@ export function createSpeechBuffer({ source, fetchAudio }) {
     planning = controller;
     // A speculative failure is retried only if playback reaches that passage.
     // It must not stop the audio that is already playing.
-    void (async () => {
+    controller.done = (async () => {
       // Continue from the retained tail so Resume and each short line do not
       // repeatedly extract a chapter whose passages are already queued.
       let next = [...entries.values()].at(-1)?.cursor || cursor;
@@ -93,6 +93,25 @@ export function createSpeechBuffer({ source, fetchAudio }) {
   }
   return {
     clear,
+    async peek(cursor, selectedVoice, { signal }) {
+      // Streaming reads the existing future window without advancing its
+      // anchor. Playback, rather than decoder appends, owns the speech cursor.
+      signal.throwIfAborted();
+      const key = keyFor(cursor, selectedVoice);
+      if (!entries.has(key)) await planning?.done;
+      signal.throwIfAborted();
+      const cached = entries.get(key);
+      if (!cached || voice !== selectedVoice)
+        throw new Error("Speech buffer is unavailable. Tap Retry.");
+      const blob = await new Promise((resolve, reject) => {
+        const aborted = () => { signal.removeEventListener("abort", aborted); reject(signal.reason); };
+        signal.addEventListener("abort", aborted, { once: true });
+        cached.promise.then(blob => { signal.removeEventListener("abort", aborted); resolve(blob); });
+      });
+      signal.throwIfAborted();
+      if (!blob) throw new Error("Speech could not be prepared. Tap Retry.");
+      return blob;
+    },
     prefetch(cursor, selectedVoice) {
       align(cursor, selectedVoice);
       fill(cursor);
