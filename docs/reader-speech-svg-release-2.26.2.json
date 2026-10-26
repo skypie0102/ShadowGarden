@@ -1,0 +1,249 @@
+{
+  "version": "2.26.2",
+  "date": "2026-10-26",
+  "pullRequest": 73,
+  "candidate": "43153bfb2a58582bdc0696ea3cfd24801d339576",
+  "applicationTree": "a95ab055a66ff6d20619cd9be850c0fd13e11a08",
+  "status": "awaiting-production",
+  "behavior": [
+    "Drawer and floating playback controls use matching currentColor SVGs: Play triangle, Pause bars, Previous/Next skip icons with end bars, Exit X, settings cog.",
+    "The options drawer close control uses the matching SVG X.",
+    "Play/Pause/Resume/Retry updates retain SVG nodes and update the label, state and accessible floating action.",
+    "Button order and 44px responsive targets remain; icons inherit Garden/Night/Paper/Black and Adult rose colors."
+  ],
+  "ci": {
+    "unitTests": 504,
+    "expectedFocusedPerProfile": 22,
+    "prProfiles": [
+      {
+        "job": 121397615689,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 202,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121397615657,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121397615612,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121397615672,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 203,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121397615690,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 201,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "previousCandidate": {
+      "candidate": "7b5720bf4460bf766f2532fa734ccddc0674ab7a",
+      "run": 40268130748,
+      "focusedChecks": "All 110 pass",
+      "failure": {
+        "job": 121395011632,
+        "test": "shared/public CSS preserves Adult library, navigation, series and Garden Pass",
+        "expectedFocus": "BUTTON",
+        "observedFocus": "A",
+        "cause": "The navigation intentionally focuses its first link after 60ms; the fixture captured before and after that timer.",
+        "artifact": {
+          "id": 12627517210,
+          "digest": "sha256:d7a30973766726f250cded1ff50c9c1b7dd54ef1584d274189c6be16ef37ac4e"
+        }
+      },
+      "change": "Only the CSS snapshot fixture now waits for the intended first link to be focused; Read Aloud implementation unchanged."
+    },
+    "prRun": 40268997937,
+    "prVerify": {
+      "job": 121397521152,
+      "counts": {
+        "tests": 504,
+        "pass": 504,
+        "fail": 0,
+        "skipped": 0
+      },
+      "functionsCompiled": true
+    },
+    "prFocusedArtifacts": [
+      {
+        "id": 12627638072,
+        "name": "reader-speech-mobile-chromium",
+        "digest": "sha256:5ff5e52fc257ad732284e4df5c59dad31d744d66bb0ec3ec7631da1cedd6923c"
+      },
+      {
+        "id": 12627468481,
+        "name": "reader-speech-desktop-firefox",
+        "digest": "sha256:0e60bd68e9431c3d600a37a89192b356005baca3f9ced1290d4a626a270c023b"
+      },
+      {
+        "id": 12627314012,
+        "name": "reader-speech-desktop-webkit",
+        "digest": "sha256:11347a159a59c7714b24a3d11f6dd0e58b52fe93d539064efd6c99f85f41f4a8"
+      },
+      {
+        "id": 12626859166,
+        "name": "reader-speech-mobile-webkit",
+        "digest": "sha256:c64ef8a758c72ed5db9c9fe2371a7568faf0b591adb957876e1fc8e0bc26cf85"
+      },
+      {
+        "id": 12626819062,
+        "name": "reader-speech-desktop-chromium",
+        "digest": "sha256:71cc0f96655038bd50420a87884e6a5b6900b71ac7ae49f72da62078ee710eea"
+      }
+    ],
+    "browserPassed": 1016,
+    "browserSkipped": 9,
+    "retries": 0,
+    "mainProfiles": [],
+    "mainRun": 40271510568
+  },
+  "local": {
+    "focused": {
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "passed": 4,
+      "unexpected": 0
+    },
+    "visual": {
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "stats": {
+        "startTime": "2026-10-26T04:13:03.266Z",
+        "duration": 63729.152,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "reviewedCaptures": [
+        {
+          "name": "playing-desktop-chromium-1280.png",
+          "sha256": "f5da8ffc19e71ac460e96416bae6d01477e967dca986b055f0179724ca179382",
+          "reviewed": true
+        },
+        {
+          "name": "playing-mobile-chromium-320.png",
+          "sha256": "cc4cbf4f17e6aa9e648cf1eea9f2ce4c670dc06be153928c091f5153518b38bc",
+          "reviewed": true
+        },
+        {
+          "name": "paused-mobile-chromium.png",
+          "sha256": "22294b67c0668191129903c969eab904d0bfa65ef9899a9e17ae77dbb41e8003",
+          "reviewed": true
+        },
+        {
+          "name": "drawer-desktop-chromium.png",
+          "sha256": "139393398e0bff67b988a8445c896cbc62c9372b3623aeb3aeb9f8d8ed9d4135",
+          "reviewed": true
+        },
+        {
+          "name": "theme-desktop-chromium-scrolled-doc-paper.png",
+          "sha256": "21cfbd4b6b5e765b25fa79bfe980d6c74920e13822f2a106430bc4248441d212",
+          "reviewed": true
+        },
+        {
+          "name": "theme-desktop-chromium-scrolled-doc-night.png",
+          "sha256": "ff699e719c99ea02444a21cc47cdb30b4e500a7d93a935bb002629cbe3c67660",
+          "reviewed": true
+        },
+        {
+          "name": "theme-desktop-chromium-paginated-black.png",
+          "sha256": "bc6a350067a3424d09d00c30b09837b016a1a66d56bc2e41c75587502076dfaa",
+          "reviewed": true
+        },
+        {
+          "name": "adult-desktop-chromium-garden.png",
+          "sha256": "05a72ad12b65edf64c6cb3bac3f28e9dcfff54812cc17bb9690ab2b73c816ce2",
+          "reviewed": true
+        }
+      ]
+    },
+    "runtime": {
+      "framework": "1.63.0",
+      "chromium": "153.0.8010.12",
+      "artifact": 12626010996,
+      "digest": "sha256:aebbf22d78a4f752532c85df9eaf2d92d3e8fe1a4dde089e067404bd6140eacd"
+    },
+    "cssFocus": {
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "passed": 4,
+      "unexpected": 0
+    }
+  },
+  "testFixture": "Background-tab narration now waits for the last visible follow to settle and emit relocation before freezing frames; the unchanged assertion still verifies no hidden chapter movement and final-passage following on return. CSS navigation comparisons also wait for the intended first-link focus after opening, retaining the full style/pixel/focus comparison.",
+  "baseline": {
+    "version": "2.26.1",
+    "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+    "deployment": "92a7ad18-4567-40ed-8316-6abc29222138"
+  },
+  "scope": "Client UI only. Browser profiles are emulated; physical Android/Soul acceptance is separate. Disposable EPUB/audio fixtures; no provider, backend, catalog, book object, binding, migration or persistent-storage changes.",
+  "verificationBranch": "checkpoint/read-aloud-svg-2.26.2",
+  "source": "c6060f4af43eacbb6123b04e210fd31f2ae0452e"
+}
