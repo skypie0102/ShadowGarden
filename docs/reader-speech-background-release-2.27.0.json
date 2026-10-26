@@ -4,7 +4,7 @@
   "pullRequest": 75,
   "candidate": "70d1a5ce8e9dad3dc11800b34771fef509d3627f",
   "applicationTree": "273b98de91165531c77c6af0819558c3f8a922f7",
-  "status": "pending-full-matrix-and-deployment",
+  "status": "pending-production-retry",
   "behavior": [
     "Feature-detected MPEG Media Source playback appends current plus four future passages to one native media timeline; audio source remains stable across automatic passage/chapter boundaries.",
     "Media time advances the speech cursor/highlight. Every append evicts consumed decoder audio while retaining one second of prior audio, including after slow synthesis; the existing four-passage synthesis window and two background requests remain bounded.",
@@ -170,7 +170,14 @@
       }
     ],
     "prRunAttempt": 1,
-    "mainRun": 40285848200
+    "mainRun": 40285848200,
+    "mainInitialTimeout": {
+      "job": 121449336592,
+      "conclusion": "cancelled",
+      "reason": "30-minute job timeout; full suite reached case 189 with no test failure; all 25 focused speech checks passed.",
+      "runAttempt": 1
+    },
+    "mainRunAttempt": 2
   },
   "local": {
     "check": {
