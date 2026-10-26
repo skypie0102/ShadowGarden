@@ -1,0 +1,219 @@
+{
+  "version": "2.26.1",
+  "date": "2026-10-26",
+  "pullRequest": 71,
+  "candidate": "92813a86a93e262d64f62338d15eea85a6addf65",
+  "source": "29bdf47a4120266db06dd3afac36b2fa9279616c",
+  "applicationTree": "275fd99ec21a3f98136eece1f49a8f256cb8365e",
+  "status": "awaiting-production",
+  "behavior": [
+    "Ornament-only passages and chapters are omitted from speech and preloading.",
+    "Common inline ornaments, incompatible XML characters and discretionary word breaks are cleaned only in the synthesis copy.",
+    "Original book text, markup and CFI/highlight ranges remain intact; Unicode letters/numbers, punctuation, units, currency and math in readable text remain.",
+    "Browser requests and provider adapter share preparation; symbol-only input is rejected before authorization/rate-limit writes or provider connections.",
+    "Real provider/network failures on readable text still surface for Retry."
+  ],
+  "ci": {
+    "prRun": 40252991995,
+    "mainRun": 40255303191,
+    "unitTests": 504,
+    "expectedFocusedPerProfile": 22,
+    "prVerify": {
+      "job": 121348705903,
+      "counts": {
+        "tests": 504,
+        "pass": 504,
+        "fail": 0,
+        "skipped": 0
+      },
+      "functionsCompiled": true
+    },
+    "mainVerify": {
+      "job": 121355756138,
+      "counts": {
+        "tests": 504,
+        "pass": 504,
+        "fail": 0,
+        "skipped": 0
+      },
+      "functionsCompiled": true
+    },
+    "productionAccessJob": 121355756274,
+    "prProfiles": [
+      {
+        "job": 121348817625,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 202,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121348817635,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 201,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121348817690,
+        "profile": "desktop-webkit",
+        "full": {
+          "passed": 203,
+          "skipped": 2,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121348817695,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121348817730,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainProfiles": [
+      {
+        "job": 121355864313,
+        "profile": "desktop-firefox",
+        "full": {
+          "passed": 202,
+          "skipped": 3,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121355864322,
+        "profile": "desktop-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121355864345,
+        "profile": "mobile-chromium",
+        "full": {
+          "passed": 205,
+          "skipped": 0,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "job": 121355864349,
+        "profile": "mobile-webkit",
+        "full": {
+          "passed": 201,
+          "skipped": 4,
+          "failed": 0
+        },
+        "focused": {
+          "passed": 22,
+          "skipped": 0,
+          "failed": 0
+        },
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "browserPassed": 1016,
+    "browserSkipped": 9,
+    "playwrightRetries": 0,
+    "workflowReruns": [
+      {
+        "job": 121355864288,
+        "profile": "desktop-webkit",
+        "reason": "Hidden-tab fixture captured tracking chapter 0 before a late relocation report updated it to the already spoken chapter 1. The narration had progressed to chapter 3. Focused speech checks passed; one full-suite workflow job rerun requested.",
+        "test": "hidden-tab narration advances without rendering and follows the final passage on return",
+        "expectedTrackingSpine": 0,
+        "actualTrackingSpine": 1,
+        "fullPassedBeforeFailure": 170,
+        "skipped": 2,
+        "artifact": {
+          "id": 12623041695,
+          "digest": "sha256:6f32b82d7113bcc6adf9b25e6734a69d4ce122d5216d610b23d2ed514a0ac6df"
+        }
+      }
+    ]
+  },
+  "baseline": {
+    "version": "2.26.0",
+    "source": "a453fb39586391cbd5f333983b5691b156352b8b",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "profile": "mobile-chromium",
+    "expectedFailure": "Previous Reader stops on standalone ❦ instead of reaching following prose when a fixture provider rejects ornament text.",
+    "data": "Disposable original EPUB and mocked synthesis rejection; no actual provider synthesis or production writes."
+  },
+  "scope": "Browser profiles are emulated; physical Android/Soul acceptance is separate. Provider adapter and TTS validation updated; no catalog, book object, binding, migration or persistent-storage changes."
+}
