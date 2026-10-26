@@ -297,7 +297,14 @@ a.tag:focus-visible {
     font-size: 0.54rem;
   }
   .continue-mark.continue-cover {
-    height: 63px;
+    position: relative;
+    align-self: stretch;
+    width: clamp(80px, 24vw, 112px);
+    height: auto;
+  }
+  .continue-mark.continue-cover img {
+    position: absolute;
+    inset: 0;
   }
   .library-intro > .intro-banner-art {
     right: calc(50% - 50vw);

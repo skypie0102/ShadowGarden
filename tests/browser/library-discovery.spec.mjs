@@ -138,3 +138,61 @@ test('banner distinguishes saved progress, next volume and read-again confirmati
   expect(await page.evaluate(identity => JSON.parse(localStorage.getItem(`sg-progress:${identity}`)).percentage, book(0))).toBe(0.42);
   expect(errors).toEqual([]);
 });
+
+for (const adult of [false, true]) {
+  test(`${adult ? 'Adult' : 'Main'} mobile reading cover fills the banner content height`, async ({ page }, info) => {
+    const cover = '/media/shadow-garden/covers/discovery-layout.svg';
+    await page.route('**/covers/discovery-layout.svg', route => route.fulfill({
+      contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600"><rect width="400" height="600" fill="#45385e"/><path d="M0 450L200 100L400 450Z" fill="#b8abd9"/><text x="200" y="520" text-anchor="middle" fill="#fff" font-size="26">Original cover fixture</text></svg>'
+    }));
+    await page.addInitScript(identity => localStorage.setItem(`sg-progress:${identity}`,
+      JSON.stringify({ percentage: 0.42, page: 12, updatedAt: Date.now() })), book(0));
+    const series = { ...items[0], nsfw: adult, cover, title: 'The Villainess Malfoy',
+      volumes: items[0].volumes.map(volume => ({ ...volume, title: 'The Villainess Malfoy' })) };
+    const errors = await library(page, adult, [series]);
+    const panel = page.locator('#continuePanel');
+    await expect(panel.locator('img')).toBeVisible();
+    await panel.locator('img').evaluate(image => image.decode());
+    for (const width of [320, 393, 720, 761, 1280]) {
+      await page.setViewportSize({ width, height: 850 });
+      // A resize acknowledgement can precede media-query layout. Wait for the
+      // visible contract, rather than assuming a fixed number of paint frames.
+      await expect(async () => {
+        const geometry = await panel.evaluate(panel => {
+          const box = element => { const b = element.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, width: b.width, height: b.height }; };
+          const style = getComputedStyle(panel), mark = panel.querySelector('.continue-cover');
+          return { panel: box(panel), mark: box(mark), image: box(mark.querySelector('img')),
+            copy: box(panel.querySelector('.continue-copy')), action: box(panel.querySelector('.continue-actions')),
+            inset: parseFloat(style.paddingTop) + parseFloat(style.borderTopWidth), fit: getComputedStyle(mark.querySelector('img')).objectFit };
+        });
+        await noOverflow(page);
+        expect(geometry.action.right).toBeLessThanOrEqual(geometry.panel.right);
+        expect(geometry.action.height).toBeGreaterThanOrEqual(44);
+        if (width <= 720) {
+          expect(Math.abs(geometry.mark.top - geometry.panel.top - geometry.inset)).toBeLessThan(1);
+          expect(Math.abs(geometry.mark.bottom - geometry.panel.bottom + geometry.inset)).toBeLessThan(1);
+          expect(geometry.mark.right).toBeLessThan(geometry.copy.left);
+          for (const edge of ['left', 'right', 'top', 'bottom'])
+            expect(Math.abs(geometry.image[edge] - geometry.mark[edge])).toBeLessThan(1);
+          expect(geometry.fit).toBe('cover');
+        } else {
+          expect(geometry.mark.width).toBe(48);
+          expect(geometry.mark.height).toBe(72);
+        }
+      }).toPass({ timeout: 5000 });
+      if (width === 393 || width === 1280) await info.attach(`reading-cover-${adult ? 'adult' : 'main'}-${width}`, {
+        body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png'
+      });
+    }
+    // Taller text must stretch the cover too, without squeezing the action off-screen.
+    await page.setViewportSize({ width: 320, height: 850 });
+    await panel.locator('strong').evaluate(element => { element.textContent = 'A much longer book title for this narrow reading card'; });
+    await panel.locator('.continue-context').evaluate(element => { element.textContent = 'A longer series name with additional volume context · Volume 12 · 42% complete'; });
+    await expect.poll(() => panel.evaluate(panel => Math.abs(
+      panel.querySelector('.continue-cover').getBoundingClientRect().bottom -
+      panel.querySelector('.continue-actions').getBoundingClientRect().bottom))).toBeLessThan(1);
+    await noOverflow(page);
+    await info.attach('long-reading-cover', { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    expect(errors).toEqual([]);
+  });
+}

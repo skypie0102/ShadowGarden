@@ -406,7 +406,7 @@ body.adult-library .volume-cover {
     font-size: 0.69rem;
   }
   .continue-panel {
-    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 9px;
     padding: 12px;
   }
