@@ -211,8 +211,10 @@ Use disposable fixtures for catalog mutations.
 ## Release discipline
 
 Run the asset/Node/build/Functions checks and relevant browser cases before a PR.
-Review representative desktop/mobile captures. The full five-profile CI suite
-must pass before merging. Checked main publishes through the existing guarded
+Review representative desktop/mobile captures. The [CI checks gate](CI.md) must
+pass before merging: listed presentation-only files use focused checks in all
+five profiles; code, dependencies, shared styles and unknown paths use the full
+five-profile suite. Checked main publishes through the existing guarded
 production workflow; record canonical source/version, served assets and
 catalog/configuration preservation separately from the merge. No production
 seeding or migration is part of these presentation releases.

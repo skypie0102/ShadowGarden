@@ -1,27 +1,50 @@
 name: ShadowGarden checks
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
+  # Full regression backstop for changes eligible for focused presentation checks.
+  schedule:
+    - cron: '17 3 * * 1'
 permissions:
   contents: read
+concurrency:
+  # Replace stale PR checks; main releases keep running through publication.
+  group: shadowgarden-checks-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+      pattern: ${{ steps.plan.outputs.pattern }}
+      profile: ${{ steps.plan.outputs.profile }}
+      deploy: ${{ steps.plan.outputs.deploy }}
     env:
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
+      - name: Select checks from the complete change set
+        id: plan
+        run: node scripts/plan-ci.mjs
       - run: npm ci
+        if: steps.plan.outputs.mode != 'docs'
       - run: npm run check
+        if: steps.plan.outputs.mode != 'docs'
 
   production-access:
     name: Check production access
-    if: github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: verify
+    if: needs.verify.outputs.deploy == 'true' && github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -79,9 +102,10 @@ jobs:
 
   browser:
     needs: verify
+    if: needs.verify.outputs.mode != 'docs'
+    name: browser (${{ matrix.project }}, ${{ matrix.engine }}, ${{ matrix.shard }}/${{ matrix.shards }})
     runs-on: ubuntu-latest
-    # Focused checks plus the full suite can exceed 30 minutes on WebKit.
-    timeout-minutes: 45
+    timeout-minutes: 20
     # Keep the image version/digest aligned with the pinned @playwright/test.
     # Browsers and OS dependencies are preinstalled; no per-job apt downloads.
     container:
@@ -89,20 +113,10 @@ jobs:
       options: --user 1001 --init --ipc=host
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - project: desktop-chromium
-            engine: chromium
-          - project: mobile-chromium
-            engine: chromium
-          - project: desktop-firefox
-            engine: firefox
-          - project: desktop-webkit
-            engine: webkit
-          - project: mobile-webkit
-            engine: webkit
+      matrix: ${{ fromJSON(needs.verify.outputs.matrix) }}
     env:
       WRANGLER_SEND_METRICS: 'false'
+      CI_BROWSER_PATTERN: ${{ needs.verify.outputs.pattern }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -127,57 +141,20 @@ jobs:
       # Optional public runtime export permits reproducing a CI failure when the
       # local network cannot reach Playwright's CDN. No app data is included.
       - name: Archive browser runtime for reproduction
-        if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
+        if: github.event_name == 'push' && matrix.shard == 1 && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
         run: tar -czf "$RUNNER_TEMP/browser-runtime.tar.gz" -C / ms-playwright
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push' && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
+        if: github.event_name == 'push' && matrix.shard == 1 && startsWith(matrix.project, 'desktop-') && contains(github.event.head_commit.message, '[export-browser-runtime]')
         with:
           name: browser-runtime-${{ matrix.engine }}
           path: ${{ runner.temp }}/browser-runtime.tar.gz
           retention-days: 1
-      - name: Check Reader speech before the full browser suite
-        run: npm run test:browser -- reader-speech.spec.mjs --project ${{ matrix.project }} --max-failures=1
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: reader-speech-${{ matrix.project }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-      - name: Check Reader paragraph alignment before the full browser suite
-        run: npm run test:browser -- reader-alignment.spec.mjs --project ${{ matrix.project }} --max-failures=1
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: reader-alignment-${{ matrix.project }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-      - name: Check Keeper EPUB replacement before the full browser suite
-        run: npm run test:browser -- keeper-volume-replacement.spec.mjs --project ${{ matrix.project }} --max-failures=1
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: keeper-volume-replacement-${{ matrix.project }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-      - name: Check Series header layout before the full browser suite
-        run: npm run test:browser -- series-layout.spec.mjs --project ${{ matrix.project }} --max-failures=1
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: series-layout-${{ matrix.project }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-      - run: npm run test:browser -- --project ${{ matrix.project }} --max-failures=1
+      # Build/start one isolated app per shard; each selected test runs once.
+      - run: npm run build
+      - name: Run selected browser tests
+        run: npx playwright test "$CI_BROWSER_PATTERN" --project ${{ matrix.project }} --shard ${{ matrix.shard }}/${{ matrix.shards }} --max-failures=1
       - name: Profile Library module startup
-        if: ${{ !cancelled() && matrix.project == 'desktop-chromium' && github.event_name == 'pull_request' }}
+        if: ${{ success() && needs.verify.outputs.profile == 'true' && matrix.project == 'desktop-chromium' && matrix.shard == 1 && github.event_name == 'pull_request' }}
         env:
           SG_STARTUP_BASELINE_REF: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -186,17 +163,37 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: browser-report-${{ matrix.project }}
+          name: browser-report-${{ matrix.project }}-${{ matrix.shard }}
           path: |
             playwright-report/
             test-results/
             library-startup-results/
           retention-days: 7
 
+  checks:
+    name: CI checks
+    needs: [verify, browser]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    env:
+      VERIFY_RESULT: ${{ needs.verify.result }}
+      BROWSER_RESULT: ${{ needs.browser.result }}
+      CHECK_MODE: ${{ needs.verify.outputs.mode }}
+    steps:
+      - name: Require every selected check to pass
+        run: |
+          test "$VERIFY_RESULT" = success
+          if [ "$CHECK_MODE" = docs ]; then
+            test "$BROWSER_RESULT" = skipped
+          else
+            test "$BROWSER_RESULT" = success
+          fi
+
   production:
     name: Deploy live ShadowGarden
-    needs: [verify, browser, production-access]
-    if: github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: [verify, checks, production-access]
+    if: needs.verify.outputs.deploy == 'true' && github.repository == 'skypie0102/ShadowGarden' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:

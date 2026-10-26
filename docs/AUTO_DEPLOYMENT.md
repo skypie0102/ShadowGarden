@@ -28,13 +28,17 @@ encrypted settings.
 
 ## Trigger and checks
 
-`.github/workflows/ci.yml` adds **Deploy live ShadowGarden** after the verification
-job, all five browser jobs and the main-only **Check production access** job succeed.
+`.github/workflows/ci.yml` adds **Deploy live ShadowGarden** after verification,
+the aggregate **CI checks** gate and the main-only **Check production access** job
+succeed. [Check selection](CI.md) uses focused five-profile browser checks for
+listed presentation-only changes, and the full five-profile suite in three
+isolated shards per profile for code, dependencies and unrecognized changes.
 The early access job issues only the fixed project GET and catalog-revision SELECT;
 it prints sanitized status/error details without token values, project settings or
 catalog documents. The full guarded production baseline remains required. It runs only for this repository's `main`
-pushes or an explicit main workflow retry. PRs and other branches cannot run the
-production job. Existing `[skip ci]` documentation commits do not start a new run.
+pushes or an explicit main workflow retry. PRs, scheduled checks and other branches
+cannot run the production job. Documentation-only changes skip browser checks and
+publication without needing `[skip ci]` in the commit message.
 
 The production job serializes releases without cancelling an upload in progress.
 It fetches current main and skips a superseded application revision. Changes only

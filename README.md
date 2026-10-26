@@ -11,6 +11,9 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 [Website refactor](docs/WEBSITE_REFACTOR_ROADMAP.md) ·
 [Reader maintenance](docs/READER_MAINTENANCE.md)
 
+[GitHub check selection and workflow timing](docs/CI.md) documents focused
+presentation checks, full regression shards and the stable required check.
+
 ## Features
 
 - Main and age-gated libraries with series, volumes, covers and reading status.
