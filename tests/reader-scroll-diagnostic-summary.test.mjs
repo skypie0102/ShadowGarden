@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {summarizeScrollDiagnostics} from '../scripts/summarize-reader-scroll-diagnostics.mjs';
 
 test('scroll diagnostic summary retains the known original failure without transaction data',async()=>{
-  const witness=JSON.parse(await readFile(new URL('../docs/reader-scroll-stress-m5a.json',import.meta.url),'utf8'));
+  const witness=JSON.parse(await readFile(new URL('../docs/archive/evidence/reader-scroll-stress-m5a.json',import.meta.url),'utf8'));
   const report={suites:[{title:'original M5a witness',results:[{attachments:[{name:'visible-passage-trace',
     body:Buffer.from(JSON.stringify(witness.trace)).toString('base64')}]}]}]};
   const summary=summarizeScrollDiagnostics(report);

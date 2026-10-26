@@ -56,26 +56,29 @@ function translatorLink(series, credit, urls, format, translations, className = 
   return `<a class="${className}" href="${translatorFilterHref(series, label, urls)}" title="Show ${esc(label)} in the ${series?.nsfw ? "Adult Library" : "Library"}">${esc(label)}</a>`;
 }
 
-function volumeCard(series, entry, dependencies, preferredIndex = -1) {
+function volumeCard(series, entry, dependencies, context) {
   const { readingState, format, urls, translations } = dependencies;
   const esc = format.escapeHtml;
   const { volume, index, state, progress } = entry;
-  const action = volumeActionFor(series, volume, index);
+  const action = volumeActionFor(series, volume, index, context);
   const cover = volume?.coverThumb || volume?.cover || series?.coverThumb || series?.cover || "";
-  const percent = progress ? Math.round((Number(progress?.percentage) || 0) * 100) : 0;
+  const percent = progress ? Math.max(0, Math.min(100, Math.round((Number(progress?.percentage) || 0) * 100))) : 0;
   const finished = state === readingState.STATES.FINISHED;
   const inProgress = state === readingState.STATES.IN_PROGRESS;
-  const upNext = !finished && !inProgress && index === preferredIndex;
+  const upNext = index === context.nextIndex;
   const visualProgress = finished ? 100 : inProgress ? Math.max(1, Math.min(99, percent)) : 0;
-  const stateMeta = finished ? "Finished" : inProgress ? `${percent}% read` : "Unread";
-  const stateLabel = finished ? "✓ Finished" : inProgress ? "Continue" : upNext ? "Up next" : "Unread";
+  const stateMeta = finished ? "Finished" : inProgress ? `${percent}% complete` : "Unread";
+  const stateLabel = finished ? "✓ Finished" : inProgress ? "In progress" : "Unread";
   const title = volume?.title || `Volume ${index + 1}`;
+  const number = volume?.number ?? index + 1;
+  const order = `Volume ${number}${Number(number) === index + 1 ? " of" : ` · ${index + 1} of`} ${context.entries.length}`;
   const overrides = translations.normalizeTranslations(volume?.translations);
   const overrideMarkup = overrides.length ? `<p class="volume-translator"><span>TL override</span> ${overrides.map(credit => translatorLink(series, credit, urls, format, translations, "volume-translator-link")).join(" · ")}</p>` : "";
   return `<article class="volume-card ${finished ? "is-finished" : ""} ${upNext ? "is-up-next" : ""} ${inProgress ? "is-in-progress" : ""}" data-volume-index="${index}" data-reading-state="${esc(state)}">
     <a class="volume-cover-link" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)}" title="${esc(action.label)} ${esc(title)}">
       <div class="volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="lazy" decoding="async" fetchpriority="low">` : ""}${finished ? '<span class="finished-volume-badge" title="Finished" aria-label="Finished">✓</span>' : ""}${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}</div>
     </a>
+    <p class="volume-order">${esc(order)}${upNext ? " · Up next" : ""}</p>
     <div class="volume-title-row"><h3 class="volume-title">${esc(title)}</h3><span class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}">${esc(stateLabel)}</span></div>
     <p class="volume-meta">${[volume?.date || "", format.formatBytes(volume?.size), stateMeta].filter(Boolean).join(" · ")}</p>
     ${overrideMarkup}
@@ -93,10 +96,9 @@ export function seriesMarkup(series, dependencies) {
   const first = volumes[0];
   const pinned = preferences.isPinned(series?.id);
   const finishedCount = readingState.finishedCount(series) || 0;
-  const entries = readingState.volumeEntries(series);
-  const startEntry = readingState.preferredSeriesEntry(series);
-  const preferredIndex = startEntry && startEntry.state !== readingState.STATES.FINISHED ? startEntry.index : -1;
-  const startAction = startEntry ? volumeActionFor(series, startEntry.volume, startEntry.index) : null;
+  const context = readingState.seriesReadingContext(series);
+  const { entries, preferred: startEntry } = context;
+  const startAction = startEntry ? volumeActionFor(series, startEntry.volume, startEntry.index, context) : null;
   const audioAlignedUrl = series?.audioAlignedUrl || volumes.find(volume => volume?.audioAlignedUrl)?.audioAlignedUrl || "";
   const cover = series?.cover || first?.cover || series?.coverThumb || first?.coverThumb || "";
   const backdrop = volumeArtwork(series, selectBannerVolume(series, identity, bannerRandom)) || series?.coverThumb || first?.coverThumb || cover;
@@ -127,7 +129,7 @@ export function seriesMarkup(series, dependencies) {
     <section class="series-body">
       ${series?.description ? `<p class="series-description">${esc(series.description)}</p>` : ""}
       <div class="series-section-head"><h2>Volumes</h2><span>${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"}</span></div>
-      <div class="volume-grid">${entries.map(entry => volumeCard(series, entry, dependencies, preferredIndex)).join("")}</div>
+      <div class="volume-grid">${entries.map(entry => volumeCard(series, entry, dependencies, context)).join("")}</div>
     </section>
     <button id="seriesBackToTop" class="series-back-to-top" type="button" aria-label="Back to top" hidden>↑ Back to top</button>`;
 }

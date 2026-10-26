@@ -4,18 +4,20 @@ import { catalog, readingState, urls } from "../domain/index.js";
 let pendingConfirmation = null;
 let installed = false;
 
-export function volumeActionFor(series, volume, index = -1) {
+export function volumeActionFor(series, volume, index = -1, context = readingState.seriesReadingContext(series)) {
+  const entry = context.entries.find(entry => entry.volume === volume);
+  if (index < 0 && entry) index = entry.index;
   const seriesId = String(series?.id || "");
   const bookId = String(volume?.file || volume?.bookId || "");
   const title = String(volume?.title || `Volume ${index >= 0 ? index + 1 : volume?.number || ""}`).trim() || "this volume";
-  const state = readingState.volumeState(seriesId, volume, index);
+  const state = entry?.state || readingState.volumeState(seriesId, volume, index);
   return {
     seriesId,
     bookId,
     title,
     index,
     state,
-    label: readingState.actionLabelForState(state),
+    label: readingState.actionLabelForState(state, { next: index >= 0 && context.nextIndex === index }),
     href: bookId ? urls.readerUrl(bookId, seriesId,{adult:catalog.isAdultSeries(series)}) : "#"
   };
 }

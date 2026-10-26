@@ -59,7 +59,7 @@ function recentCopy(series, title, added, esc, format) {
   return `<div class="recent-volume-copy"><strong>${esc(title)}</strong><span class="recent-volume-series">${esc(series?.title || "Untitled series")}</span><span class="recent-volume-added">Added ${esc(formatDate(added, format))}</span></div>`;
 }
 
-export function recentVolumeCard(entry, index, { readingState, urls, format }) {
+export function recentVolumeCard(entry, index, { readingState, urls, format }, context) {
   const esc = format.escapeHtml;
   const { series, volume, volumeIndex } = entry;
   const cover = volumeCover(series, volume);
@@ -68,7 +68,7 @@ export function recentVolumeCard(entry, index, { readingState, urls, format }) {
   if (!volume?.file) {
     return `<a class="recent-volume" href="${urls.seriesUrl(series?.id,{adult:series?.nsfw})}"><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">NEW</span></div>${copy}</a>`;
   }
-  const action = volumeActionFor(series, volume, volumeIndex);
+  const action = volumeActionFor(series, volume, volumeIndex, context);
   const progress = readingState.volumeProgress(series?.id, volume, volumeIndex);
   const percent = Math.round((Number(progress?.percentage) || 0) * 100);
   const badge = action.state === readingState.STATES.FINISHED ? "✓ FINISHED" : action.state === readingState.STATES.IN_PROGRESS ? `CONTINUE · ${percent}%` : volume?.number != null ? `VOL ${volume.number}` : "READ";
@@ -82,7 +82,11 @@ export function renderRecentlyAdded(section, container, entries, dependencies) {
     section.classList.add("hidden");
     return;
   }
-  container.innerHTML = entries.map((entry, index) => recentVolumeCard(entry, index, dependencies)).join("");
+  const contexts = new Map();
+  container.innerHTML = entries.map((entry, index) => {
+    if (!contexts.has(entry.series)) contexts.set(entry.series, dependencies.readingState.seriesReadingContext(entry.series));
+    return recentVolumeCard(entry, index, dependencies, contexts.get(entry.series));
+  }).join("");
   section.classList.remove("hidden");
 }
 
@@ -109,7 +113,7 @@ export function renderReadingBanner(panel, intro, current, { readingState, forma
   const heading = mode === "continue" ? "Continue reading" : next ? "Next in series" : "Reading suggestion";
   const seriesContext = series?.title && series.title !== title ? `${series.title} · ` : "";
   const context = `${seriesContext}Volume ${number}${mode === "continue" ? ` · ${percent}% complete` : ""}`;
-  const label = mode === "continue" ? "Continue reading" : next ? "Read next volume" : state === readingState.STATES.FINISHED ? "Read again" : "Start reading";
+  const label = action.label;
   panel.dataset.readingState = state;
   panel.dataset.readingMode = mode;
   const reroll = mode === "suggestion" && current.suggestion === "random" && current.suggestionCount > 1 ? `<button class="another-suggestion" type="button" data-another-suggestion aria-label="Show another reading suggestion" title="Another suggestion">↻</button>` : "";

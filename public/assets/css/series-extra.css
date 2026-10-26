@@ -464,6 +464,13 @@
   line-height: 1.35;
   font-variant-numeric: tabular-nums;
 }
+.volume-order {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.65rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
 .volume-translator {
   line-height: 1.35;
 }
@@ -477,6 +484,14 @@
     background 0.14s ease,
     color 0.14s ease,
     transform 0.14s ease;
+}
+.volume-actions a.read {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
 }
 .volume-actions a:hover,
 .volume-actions a:focus-visible {
@@ -562,10 +577,11 @@
     padding: 7px;
     border-radius: 10px;
   }
-  .volume-title-row {
+  .volume-card .volume-title-row {
     margin-top: 8px;
     min-height: 0;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 5px;
   }
   .volume-state-pill {
