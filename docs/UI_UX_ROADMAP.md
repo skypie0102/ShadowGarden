@@ -10,7 +10,7 @@ palette; Adult keeps its rose palette.
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books sooner and understand filters and reading suggestions | Complete — v2.19.0 |
-| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow corrected; themed pin control in v2.19.4 |
+| 2. Reading journey | Recognize saved progress and the next volume across Library and Series | In progress — mobile Series flow, themed pins and full-height mobile reading covers (through v2.27.1) |
 | 3. Reader controls | Find and understand reading preferences and navigation | In progress — alignment, Edge TTS and independent speech browsing delivered (through v2.27.0) |
 | 4. Visual consistency | Read labels and operate controls comfortably across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand upload destinations, duplicate decisions and per-file results | Planned — direct volume EPUB replacement delivered in v2.20.0 |
@@ -63,6 +63,8 @@ compatible. New interaction/layout controls replace visual-equivalence claims
 for intentionally redesigned styles.
 
 ## Phase 2 — Reading journey
+
+- [x] Fill mobile reading-banner content height with the cover, retaining proportions, Main/Adult palettes and usable actions with long text (v2.27.1, [PR #77](https://github.com/skypie0102/ShadowGarden/pull/77)). Ten new cover checks and the five-profile suite pass; four direct live checks and production preservation pass. [Evidence](library-reading-cover-release-2.27.1.json).
 
 - [ ] Use consistent Start reading / Continue reading / Read next volume / Read again actions.
 - [ ] Show volume order and Unread / In progress / Finished states clearly on Series pages.
