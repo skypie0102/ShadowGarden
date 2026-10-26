@@ -2,8 +2,8 @@
   "version": "2.27.1",
   "date": "2026-10-26",
   "pullRequest": 77,
-  "candidate": "96900402ef31d607b1cfc7d739c858bf56ded5f6",
-  "applicationTree": "4ce3f77ca42fc8943bdd55bcfeb6c7611597ec34",
+  "candidate": "ab8ff912e47fc73294bbeb318532914d4b07523a",
+  "applicationTree": "910e2f596bbeaffda67d0466037576da71ef22a0",
   "base": "40859d6a05a6e422197b73789cab651430f2ae37",
   "status": "pending-full-matrix-and-deployment",
   "behavior": [
@@ -13,15 +13,24 @@
   ],
   "ci": {
     "unitTests": 510,
-    "prRun": 40320264162,
-    "pushRun": 40320259963,
     "expectedFullPassed": 1041,
     "expectedExistingSkips": 9,
     "browserJobBudget": {
       "beforeMinutes": 30,
       "afterMinutes": 45,
       "reason": "The previous release's desktop WebKit job reached its 30-minute limit at case 189; focused and full checks plus per-test deadlines are retained."
-    }
+    },
+    "previousCandidate": {
+      "candidate": "96900402ef31d607b1cfc7d739c858bf56ded5f6",
+      "prRun": 40320264162,
+      "pushRun": 40320259963,
+      "failedJob": 121563282772,
+      "artifact": 12649510998,
+      "artifactDigest": "sha256:557875031ac09bd3e9dfbf9698d044d31c635c4addf2fcd520d1308ae097a0c2",
+      "reason": "The new resize fixture read mobile 112px geometry immediately after entering a desktop width. CI capture shows the settled 48px desktop cover. All geometry assertions now wait for the rendered contract."
+    },
+    "prRun": 40322038602,
+    "pushRun": 40322030729
   },
   "local": {
     "check": {
@@ -45,7 +54,7 @@
       761,
       1280
     ],
-    "fixtureCorrection": "Geometry now waits for viewport paint after each resize and reads related edges in one DOM snapshot; provisional resize measurements initially caused local fixture failures.",
+    "fixtureCorrection": "Web-first geometry assertions wait for the rendered responsive contract at each width; they retain every height, edge, touch-target and overflow assertion. Fixed frame counts were insufficient under CI.",
     "baseline": {
       "base": "40859d6a05a6e422197b73789cab651430f2ae37",
       "startTime": "2026-10-26T12:06:18.406Z",
@@ -138,7 +147,8 @@
         "sha256": "531b7b4346a09a6f40784d9e06db2ad730cb7251107b3719a3cd8418b02ddaa5",
         "reviewed": true
       }
-    ]
+    ],
+    "finalDiscoveryPassed": 14
   },
   "production": null,
   "live": null,
