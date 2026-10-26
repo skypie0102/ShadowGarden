@@ -2,6 +2,22 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { splitSpeechText } from "../public/assets/js/reader/speech-source.js";
 import { speechSettings } from "../public/assets/js/reader/speech-controller.js";
+import { prepareSpeechText } from "../public/assets/js/reader/speech-text.js";
+
+test("speech skips decorative-only text while keeping every script and meaningful symbols", () => {
+  for (const text of ["❦", "❧ ☙ ✦ ⁂", "***", "— … —", "😀", "\u0301", "\u0000\ud800\uffff", " "])
+    assert.equal(prepareSpeechText(text), "");
+  for (const text of ["café — ‘hello’…", "e\u0301", "漢字。العربية हिन्दी", "𐐀", "Ⅻ ⑴", "20°C, $5, 2 × 3 = 6 & 25%", "Hello 😀!"])
+    assert.equal(prepareSpeechText(text), text);
+  assert.equal(prepareSpeechText("After ❦ the ❧ divider."), "After the divider.");
+  assert.equal(prepareSpeechText("Hello❦\ufe0fworld"), "Hello world");
+});
+test("speech removes incompatible XML characters and joins discretionary word breaks", () => {
+  assert.equal(prepareSpeechText("A\u0000B\u000bC\ud800D\udc00E\ufffeF\uffffG"), "A B C D E F G");
+  assert.equal(prepareSpeechText("Inter\u00adna\u200btional\u2060\ufeff text.\nNext\tline."), "International text. Next line.");
+  assert.equal(prepareSpeechText(null), "");
+  assert.equal(prepareSpeechText(42), "");
+});
 
 test("speech chunks preserve text, bound long paragraphs and avoid broken surrogate pairs", () => {
   for (const text of [

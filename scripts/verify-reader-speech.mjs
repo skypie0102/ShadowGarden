@@ -26,6 +26,7 @@ export async function verifyReaderSpeech({fetchImpl=fetch}={}){
   for(const [name,method,body,origin,status,code] of [
     ['garden-pass','POST',passage,PRODUCTION_ORIGIN,428,'human_verification_required'],
     ['text-limit','POST',{...passage,text:'a'.repeat(1201)},PRODUCTION_ORIGIN,400,'invalid_tts_text'],
+    ['ornament-text','POST',{...passage,text:'❦ ✦ ***'},PRODUCTION_ORIGIN,400,'invalid_tts_text'],
     ['origin','POST',passage,'https://example.com',403,'cross_origin'],
     ['method','PUT',undefined,undefined,405,'method_not_allowed']
   ]){

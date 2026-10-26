@@ -8,6 +8,7 @@ import { createSpeechSource } from "./speech-source.js";
 import { recordReaderDiagnostic } from "./diagnostics.js";
 import { createSpeechPosition } from "./speech-position.js";
 import { createSpeechBuffer } from "./speech-buffer.js";
+import { prepareSpeechText } from "./speech-text.js";
 
 const KEY = "sg-reader-speech-settings",
   DEFAULT_VOICE = "en-US-BrianMultilingualNeural";
@@ -183,6 +184,8 @@ export function createSpeechController({
       .catch(() => {});
   }
   async function fetchAudio(text, voice, signal) {
+    text = prepareSpeechText(text);
+    if (!text) throw new Error("This passage has no readable text.");
     const response = await fetch("/tts", {
       method: "POST",
       credentials: "same-origin",

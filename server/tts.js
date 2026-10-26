@@ -1,5 +1,6 @@
 import { bodyJson, fail, json, method, sameOrigin } from "./http.js";
 import { cookies, HUMAN_COOKIE, verified, rateLimit } from "./security.js";
+import { prepareSpeechText } from "../public/assets/js/reader/speech-text.js";
 import {
   EDGE_DEFAULT_VOICE,
   EDGE_TEXT_LIMIT,
@@ -44,7 +45,7 @@ export async function tts(context) {
   const body = await bodyJson(request, 12000);
   if (
     typeof body.text !== "string" ||
-    !body.text.trim() ||
+    !prepareSpeechText(body.text) ||
     body.text.length > EDGE_TEXT_LIMIT
   )
     fail(400, "invalid_tts_text", "Choose a shorter passage to read aloud.");

@@ -1,4 +1,5 @@
 import { withSectionSource } from "./section-source.js";
+import { prepareSpeechText } from "./speech-text.js";
 
 const BLOCKS = "p,h1,h2,h3,h4,h5,h6,li,blockquote,figcaption,td,th,div";
 const SKIP =
@@ -95,6 +96,7 @@ export function speechPassages(document, section) {
     return splitSpeechText(normalized).flatMap((text) => {
       const start = normalized.indexOf(text, offset);
       offset = start + text.length;
+      if (!prepareSpeechText(text)) return [];
       const range = document.createRange();
       range.setStart(...point(rawOffset(start), false));
       range.setEnd(...point(rawOffset(offset - 1) + 1, true));
