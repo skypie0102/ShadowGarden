@@ -1,7 +1,36 @@
 # Reader releases
 
-**Current production baseline:** v2.26.2. Ongoing
+**Current production baseline:** v2.27.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.27.0 — continuous media playback for background narration
+
+**Live:** deployment `8991bd15-0a0c-4d8a-8387-cd7de88ed7c2`, source `20c7fc001b43427c63d92ed8e1cfb638f42f35f5`,
+verified at 2026-10-26T09:34:28.457Z. Supported MPEG Media Source engines append narration to
+one native audio timeline across passage/chapter boundaries. Media time selects
+the spoken passage. The same four-passage synthesis queue supplies the rolling
+decoder buffer; every append evicts consumed audio while retaining one second
+of prior audio, including after slow synthesis. Unsupported engines use clips
+without explicit pause/remove/load at natural boundaries. Media Session preserves
+playing intent through preparation. Optional Audio Session uses playback and
+restores its prior type at Exit/completion/error/disposal. Future preparation
+errors finish appended audio, then Retry targets the unread passage.
+
+Candidate and main pass 510 Node tests, 1,031 full browser cases and all 125
+focused speech checks with 9 existing skips and zero Playwright retries. One
+desktop WebKit workflow job was rerun after its 30-minute timeout at case 189;
+no test failure preceded the timeout. The checked and merged application trees
+match. The previous live source fails stable-source reproduction; eight direct
+live desktop/mobile Chromium cases pass after deployment. They use original
+EPUBs, native MP3 decoding and mocked catalog/book access/TTS. No production book
+text or synthesis requests are used. Hidden-page checks freeze animation frames;
+media controls, Pause/Resume offsets, manual skips, future-failure Retry and Exit
+cleanup pass. Served assets, version/default voice, rejection guards and immediate
+catalog/snapshot/configuration preservation pass with zero DB writes. These are
+browser checks, not physical device screen-lock acceptance. Websites cannot
+override browser/OS suspension, forced closure, audio-focus interruptions or
+device power restrictions. [PR #75](https://github.com/skypie0102/ShadowGarden/pull/75) ·
+[Guide](READER_TTS.md) · [Evidence](reader-speech-background-release-2.27.0.json).
 
 ## Reader v2.26.2 — themed SVG playback controls
 

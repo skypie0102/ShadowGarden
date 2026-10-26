@@ -17,7 +17,7 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 - Paginated and Continuous reading, chapter navigation, book search, bookmarks,
   saved progress, themes and layout preferences.
 - Edge TTS read aloud with English voices, Brian as the default, four-passage
-  preloading, speed preferences, pause/resume, passage controls and position following.
+  preloading, browser media controls, speed preferences, pause/resume, passage controls and position following.
 - Double-tap/double-click image focus with zoom and return-position preservation, plus standalone
   cover/illustration preparation and bounded local caches.
 - Protected book access through Turnstile sessions and object-specific tickets.
@@ -27,7 +27,31 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.26.2**, deployed on 2026-10-26 (Asia/Manila)
+The latest production release is **v2.27.0**, deployed on 2026-10-26 (Asia/Manila)
+from `20c7fc0` through [PR #75](https://github.com/skypie0102/ShadowGarden/pull/75).
+Read Aloud uses a continuous native MPEG media timeline where supported,
+keeping its source across passage/chapter boundaries. The existing four-passage
+synthesis queue feeds the decoder. Every append evicts consumed audio, retaining
+one second of prior audio, including after slow synthesis. Other engines retain
+clip playback without explicit pause/remove/load at natural boundaries. Media
+Session stays playing during preparation; optional Audio Session declares
+playback and restores its prior category when narration ends. Existing
+Pause/Resume, passage controls, browsing, highlighting and Exit remain.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40285848200)
+passes 510 Node tests, 1,031 full browser cases and all 125 focused speech
+checks across five profiles, with 9 existing skips and zero Playwright retries.
+One desktop WebKit workflow job was rerun after reaching its 30-minute timeout.
+The old live source fails stable-source reproduction; eight direct live cases
+pass on the new release with original EPUBs/tone MP3s and mocked catalog/book
+access/synthesis. Native decoding, hidden-page progression, Pause/Resume/skip,
+media controls, future-failure Retry and Exit cleanup pass. Served assets,
+version/Brian metadata, request guards and production preservation pass with zero
+database writes. Physical Android/Soul/iOS screen-lock acceptance is separate;
+websites cannot override browser/OS suspension or device power restrictions.
+[Guide](docs/READER_TTS.md) · [Evidence](docs/reader-speech-background-release-2.27.0.json).
+
+The previous production release is **v2.26.2**, deployed on 2026-10-26 (Asia/Manila)
 from `c6060f4` through [PR #73](https://github.com/skypie0102/ShadowGarden/pull/73).
 Read Aloud now uses matching theme-colored SVG controls in the drawer and floating
 bar: a Play triangle, two Pause bars, Previous/Next skip icons with end bars, and
