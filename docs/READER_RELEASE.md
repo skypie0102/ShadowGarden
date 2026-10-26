@@ -1,6 +1,7 @@
 # Reader releases
 
-**Current production baseline:** v2.27.0. Ongoing
+**Current Reader behavior baseline:** v2.27.0. Site release v2.27.1 updates
+[mobile Library reading covers](library-reading-cover-release-2.27.1.json). Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
 
 ## Reader v2.27.0 — continuous media playback for background narration

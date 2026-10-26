@@ -3,7 +3,26 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.27.0**, deployed on 2026-10-26 (Asia/Manila)
+The latest production release is **v2.27.1**, deployed on 2026-10-26 (Asia/Manila)
+from `19890cf` through [PR #77](https://github.com/skypie0102/ShadowGarden/pull/77).
+On mobile, reading-banner covers now fill the height of the text and action area
+with a wider responsive column. The image keeps its proportions through the
+existing cover fit. Main midnight and Adult rose both support the layout,
+including taller cards with long titles/context. The existing 720px breakpoint
+scopes the change; desktop retains its 48×72px cover.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40326287039)
+passes 510 Node tests and 1,041 full browser cases across five profiles, with
+9 existing skips and zero Playwright retries. All ten new cover-layout cases
+pass across those profiles. The old CSS fails the same height check, and four
+direct live Main/Adult checks pass on desktop/mobile Chromium. Captures are
+reviewed at mobile/desktop sizes and with long content. Version/served assets,
+request guards and immediate catalog/snapshot/configuration preservation pass
+with zero database writes. The browser job budget is now 45 minutes after the
+previous WebKit timeout; all checks and per-test deadlines remain.
+[Evidence](library-reading-cover-release-2.27.1.json).
+
+The previous production release is **v2.27.0**, deployed on 2026-10-26 (Asia/Manila)
 from `20c7fc0` through [PR #75](https://github.com/skypie0102/ShadowGarden/pull/75).
 Read Aloud uses a continuous native MPEG media timeline where supported,
 keeping its source across passage/chapter boundaries. The existing four-passage

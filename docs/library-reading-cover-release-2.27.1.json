@@ -5,11 +5,11 @@
   "candidate": "ab8ff912e47fc73294bbeb318532914d4b07523a",
   "applicationTree": "910e2f596bbeaffda67d0466037576da71ef22a0",
   "base": "40859d6a05a6e422197b73789cab651430f2ae37",
-  "status": "merged-awaiting-production",
+  "status": "verified",
   "behavior": [
-    "At widths through 720px, the reading-banner cover spans the full text/action content height, with a responsive 80–112px column instead of the fixed 42px column and 63px height.",
+    "At widths through 720px, the reading-banner cover spans the full text/action content height, with a responsive 80\u2013112px column instead of the fixed 42px column and 63px height.",
     "The image fills that frame with the existing object-fit cover, preserving pixel proportions. Main midnight and Adult rose palettes remain.",
-    "Desktop uses the existing 48×72px cover; no-cover fallback and 44px action targets remain."
+    "Desktop uses the existing 48\u00d772px cover; no-cover fallback and 44px action targets remain."
   ],
   "ci": {
     "unitTests": 510,
@@ -122,7 +122,103 @@
     ],
     "prRunAttempt": 1,
     "prConclusion": "success",
-    "mainRun": 40326287039
+    "mainRun": 40326287039,
+    "mainProfiles": [
+      {
+        "profile": "desktop-chromium",
+        "job": 121583892919,
+        "full": {
+          "passed": 210,
+          "skipped": 0,
+          "failed": 0
+        },
+        "coverPassed": 2,
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-chromium",
+        "job": 121583892512,
+        "full": {
+          "passed": 210,
+          "skipped": 0,
+          "failed": 0
+        },
+        "coverPassed": 2,
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-firefox",
+        "job": 121583892459,
+        "full": {
+          "passed": 207,
+          "skipped": 3,
+          "failed": 0
+        },
+        "coverPassed": 2,
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "desktop-webkit",
+        "job": 121583892491,
+        "full": {
+          "passed": 208,
+          "skipped": 2,
+          "failed": 0
+        },
+        "coverPassed": 2,
+        "retries": 0,
+        "conclusion": "success"
+      },
+      {
+        "profile": "mobile-webkit",
+        "job": 121583892430,
+        "full": {
+          "passed": 206,
+          "skipped": 4,
+          "failed": 0
+        },
+        "coverPassed": 2,
+        "retries": 0,
+        "conclusion": "success"
+      }
+    ],
+    "mainArtifacts": [
+      {
+        "id": 12654655742,
+        "name": "browser-report-desktop-webkit",
+        "digest": "sha256:32061833f5389560ec1be418da64f1f7a58e59df97f703a5470c40f8f7c7e540"
+      },
+      {
+        "id": 12653856962,
+        "name": "browser-report-mobile-webkit",
+        "digest": "sha256:2bdf98106677dde277de8a0138bf5422795351c51649aa10d3610707a47727b6"
+      },
+      {
+        "id": 12653755740,
+        "name": "browser-report-desktop-firefox",
+        "digest": "sha256:1df086e009e7618f913a9d3e1f77317e7c2e9d4d7a6a945b3aa51d67e3c7342f"
+      },
+      {
+        "id": 12652920571,
+        "name": "browser-report-desktop-chromium",
+        "digest": "sha256:95736661a843390e5900b64b6ba57a432dcd1ed09bca15f9ababf5c27142aed6"
+      },
+      {
+        "id": 12652810809,
+        "name": "browser-report-mobile-chromium",
+        "digest": "sha256:bda52ae53f4d273fccf7ad270afc502bf9992afaf8ef781bd92e8e5fc25aa879"
+      }
+    ],
+    "mainRunAttempt": 1,
+    "mainConclusion": "success",
+    "productionArtifact": {
+      "id": 12654266586,
+      "digest": "sha256:a5543208af6cf44f50fd84515521de6c488dafe94221d55f74f2f0948cc060f9",
+      "downloadVerified": true
+    }
   },
   "local": {
     "check": {
@@ -248,11 +344,266 @@
     ],
     "finalDiscoveryPassed": 14
   },
-  "production": null,
-  "live": null,
+  "production": {
+    "checkedAt": "2026-10-26T13:22:53.213Z",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "deploymentId": "c96f2ed3-046b-47a9-8ff7-e6bed0f773bd",
+    "source": "19890cfe3397178118f11b5ee3c1ef82b360737c",
+    "version": "2.27.1",
+    "baselineCheckedAt": "2026-10-26T13:22:52.015Z",
+    "revision": 18,
+    "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+    "snapshots": 17,
+    "preservationChecked": true,
+    "databaseWrites": 0,
+    "versionCheck": {
+      "attempts": 1,
+      "elapsedMs": 270
+    },
+    "checks": [
+      {
+        "path": "/data/version.json",
+        "source": "19890cfe3397178118f11b5ee3c1ef82b360737c",
+        "version": "2.27.1"
+      },
+      {
+        "path": "/media/shadow-garden/data/catalog.json",
+        "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/media/shadow-garden/data/adult-catalog.json",
+        "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+        "series": 1,
+        "volumes": 1
+      },
+      {
+        "path": "/assets/css/public-artwork.css",
+        "sha256": "d59bb15162e8985cf966c2592eadf4b40e21a20b40396bc954144d293b723845",
+        "bytes": 8762
+      },
+      {
+        "path": "/assets/css/public-components.css",
+        "sha256": "766ec9ae3f9f7e69c8dea32ed8d6f37f75fdf626d366f18efd5e3faab82d9731",
+        "bytes": 12864
+      }
+    ],
+    "rollbackDeploymentId": "8991bd15-0a0c-4d8a-8387-cd7de88ed7c2",
+    "rollbackSource": "20c7fc001b43427c63d92ed8e1cfb638f42f35f5",
+    "beforeCheckedAt": "2026-10-26T13:22:42.544Z",
+    "readerSpeech": {
+      "voiceCount": 318,
+      "defaultVoice": "en-US-BrianMultilingualNeural",
+      "checks": [
+        {
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "name": "garden-pass",
+          "method": "POST",
+          "status": 428,
+          "code": "human_verification_required"
+        },
+        {
+          "name": "text-limit",
+          "method": "POST",
+          "status": 400,
+          "code": "invalid_tts_text"
+        },
+        {
+          "name": "ornament-text",
+          "method": "POST",
+          "status": 400,
+          "code": "invalid_tts_text"
+        },
+        {
+          "name": "origin",
+          "method": "POST",
+          "status": 403,
+          "code": "cross_origin"
+        },
+        {
+          "name": "method",
+          "method": "PUT",
+          "status": 405,
+          "code": "method_not_allowed"
+        }
+      ]
+    }
+  },
+  "live": {
+    "stats": {
+      "startTime": "2026-10-26T13:27:09.359Z",
+      "duration": 72418.03600000001,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "cases": [
+      {
+        "title": "Main mobile reading cover fills the banner content height",
+        "profile": "desktop-chromium",
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 17197
+      },
+      {
+        "title": "Adult mobile reading cover fills the banner content height",
+        "profile": "desktop-chromium",
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 16814
+      },
+      {
+        "title": "Main mobile reading cover fills the banner content height",
+        "profile": "mobile-chromium",
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 18243
+      },
+      {
+        "title": "Adult mobile reading cover fills the banner content height",
+        "profile": "mobile-chromium",
+        "status": "passed",
+        "retry": 0,
+        "durationMs": 18109
+      }
+    ],
+    "resultsSha256": "9ba1511cf982d749a9815dec4aa0a6963bb11467b0016ca8f752d27293710af0",
+    "metadata": {
+      "checkedAt": "2026-10-26T13:27:01.876Z",
+      "version": {
+        "name": "Shadow Garden",
+        "version": "2.27.1",
+        "releaseVersion": "2.27.1",
+        "commit": "19890cfe3397178118f11b5ee3c1ef82b360737c",
+        "shortCommit": "19890cf",
+        "branch": "main",
+        "builtAt": "2026-10-26T13:22:39.772Z",
+        "recoveredFromCommit": "12e27d7468f1a259419d2ed76aec95a289e7af9f"
+      },
+      "browserVersion": "153.0.8010.12",
+      "actualMain": {
+        "width": 412,
+        "coverWidth": 98.875,
+        "coverHeight": 110.015625,
+        "contentHeight": 110.015625,
+        "topGap": 0,
+        "bottomGap": 0,
+        "heading": "Continue reading",
+        "horizontalOverflow": false
+      }
+    },
+    "actualMainCapture": {
+      "file": "actual-main.png",
+      "sha256": "cff81e6c11512ddaa3781b60c627e3ad86356f7dab1b0ee0983811f44bd35bce",
+      "reviewed": true
+    },
+    "captures": [
+      {
+        "profile": "desktop-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "reading-cover-main-393",
+        "file": "desktop-chromium-main-reading-cover-main-393.png",
+        "sha256": "e92a6b4fff857500c6f989e182429abea76267fb0d953f8445ea65bd588e15d6",
+        "reviewed": false
+      },
+      {
+        "profile": "desktop-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "reading-cover-main-1280",
+        "file": "desktop-chromium-main-reading-cover-main-1280.png",
+        "sha256": "afd58b03d95ed3b22fc713de3cfde876a2b9c51c5b22c25c15b4b8d2430e9576",
+        "reviewed": true
+      },
+      {
+        "profile": "desktop-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "long-reading-cover",
+        "file": "desktop-chromium-main-long-reading-cover.png",
+        "sha256": "8047485c404dc89b9cce813e731b9d5537a921efbe0fe585f3bc7d1d801e4bbd",
+        "reviewed": false
+      },
+      {
+        "profile": "desktop-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "reading-cover-adult-393",
+        "file": "desktop-chromium-adult-reading-cover-adult-393.png",
+        "sha256": "804b6def42e6b149504dfccc13566a8958680a15b23b7e45daa424a794c50105",
+        "reviewed": false
+      },
+      {
+        "profile": "desktop-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "reading-cover-adult-1280",
+        "file": "desktop-chromium-adult-reading-cover-adult-1280.png",
+        "sha256": "5431869f2527a0f115f723269903a6cfcc8f35e47b4f52b7d98fb80c20121e6c",
+        "reviewed": false
+      },
+      {
+        "profile": "desktop-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "long-reading-cover",
+        "file": "desktop-chromium-adult-long-reading-cover.png",
+        "sha256": "05bba14597731f589a83d62806a546b4f50a38c2c1688c1332e5741ad559068b",
+        "reviewed": false
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "reading-cover-main-393",
+        "file": "mobile-chromium-main-reading-cover-main-393.png",
+        "sha256": "5805b539011cf203df64d6a0a3e1143ee69c720384981e892d2c43bccb78b279",
+        "reviewed": false
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "reading-cover-main-1280",
+        "file": "mobile-chromium-main-reading-cover-main-1280.png",
+        "sha256": "ae02e16b7e08480c45c4d0d0a19d18451f2d2e2e1d9261b42bc5fdc54cda58ab",
+        "reviewed": false
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Main mobile reading cover fills the banner content height",
+        "name": "long-reading-cover",
+        "file": "mobile-chromium-main-long-reading-cover.png",
+        "sha256": "edd4eb9f98ca706cd33150ecca868b4aec4046ce62b21540cd4abbfbe4fbac65",
+        "reviewed": false
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "reading-cover-adult-393",
+        "file": "mobile-chromium-adult-reading-cover-adult-393.png",
+        "sha256": "ac31624495db1f4858c406cdc6eb7eb6e8fb25078121b352ebc840d3d518c84d",
+        "reviewed": true
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "reading-cover-adult-1280",
+        "file": "mobile-chromium-adult-reading-cover-adult-1280.png",
+        "sha256": "a066f9c509a219f0e297a4c01b5a18c890a0eef1cfbc6c026b12925856975f00",
+        "reviewed": false
+      },
+      {
+        "profile": "mobile-chromium",
+        "case": "Adult mobile reading cover fills the banner content height",
+        "name": "long-reading-cover",
+        "file": "mobile-chromium-adult-long-reading-cover.png",
+        "sha256": "531b7b4346a09a6f40784d9e06db2ad730cb7251107b3719a3cd8418b02ddaa5",
+        "reviewed": true
+      }
+    ]
+  },
   "limits": [
     "Browser profiles emulate mobile; no physical Android/Soul acceptance is claimed.",
-    "Layout fixtures use an original SVG cover, mocked catalogs and disposable local progress. No real book content or catalog writes."
+    "Layout fixtures use an original SVG cover, mocked catalogs and disposable local progress. A separate read-only check uses the real public Main cover. No book text was opened and no catalog writes were made."
   ],
   "mergedSource": "19890cfe3397178118f11b5ee3c1ef82b360737c",
   "mergedApplicationTree": "910e2f596bbeaffda67d0466037576da71ef22a0"
