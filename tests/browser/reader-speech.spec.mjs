@@ -245,6 +245,56 @@ test('English voices replace a saved non-English choice and the floating control
   await expect(page.locator('#speechMini')).toBeHidden();
 });
 
+async function ornamentPublication() {
+  const zip = await createReaderZip();
+  await zip.loadAsync(await createReaderEpub({chapterCount:3,paragraphCount:1}));
+  zip.file('chapter0.xhtml', '<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Dividers</title></head><body><h1>Readable start</h1><p>Before the divider.</p><p>❦</p><p>✦ ❧ ⁂</p><p>***</p><p>— … —</p><p id="ornament-prose">After ❦ the <em>divider</em>: café, 漢字, 20°C &amp; $5.</p></body></html>');
+  zip.file('chapter1.xhtml', '<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Scene break</title></head><body><p>❦ ❧</p><p>※</p></body></html>');
+  zip.file('chapter2.xhtml', '<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Readable end</title></head><body><h1>Next readable chapter</h1><p>Final paragraph.</p></body></html>');
+  return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
+}
+for (const flow of ['paginated','scrolled-doc'])
+  test(`${flow}: ornamental dividers never interrupt speech or preload and original highlighting stays intact`, async ({page}) => {
+    test.setTimeout(120000);
+    await open(page,flow,{epub:await ornamentPublication()});
+    const requests=[];
+    await page.route('**/tts', async route => {
+      if(route.request().method()==='GET')return route.fallback();
+      const {text}=route.request().postDataJSON();
+      requests.push(text);
+      // Model the reported provider failure instead of returning audio for
+      // every input: standalone separators and inline fleurons get no audio.
+      if(!/[\p{L}\p{N}]/u.test(text)||/[❦❧✦⁂※]/u.test(text))
+        return route.fulfill({status:503,json:{error:'No speech audio received'}});
+      return route.fulfill({contentType:'audio/mpeg',body:testAudio});
+    });
+    await pressSpeech(page,'speechPlay');
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    while((await speechState(page)).index>0) {
+      await page.locator('#speechMiniPrevious').click();
+      await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+    }
+    const original='After ❦ the divider: café, 漢字, 20°C & $5.';
+    for(const text of ['Readable start','Before the divider.',original,'Next readable chapter','Final paragraph.']) {
+      await expect(page.locator('#speechPassage')).toHaveText(text);
+      await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('playing');
+      if(text===original)await expect.poll(()=>markedPosition(page).then(p=>p?.text)).toBe(original);
+      if(text==='Next readable chapter')expect((await speechState(page)).spineIndex).toBe(3);
+      await ended(page);
+    }
+    await expect.poll(()=>speechState(page).then(s=>s.status)).toBe('complete');
+    expect(requests).toContain('After the divider: café, 漢字, 20°C & $5.');
+    expect(requests.every(text=>/[\p{L}\p{N}]/u.test(text)&&!/[❦❧✦⁂※]/u.test(text))).toBe(true);
+    expect(await page.evaluate(async bootstrap=>{
+      const reader=(await import(bootstrap)).readerRuntime.current;
+      const {withSectionSource}=await import('/assets/js/reader/section-source.js');
+      return withSectionSource(reader.state.book.spine.get('chapter0.xhtml'),reader.state.book.load.bind(reader.state.book),doc=>{
+        const paragraph=doc.getElementById('ornament-prose');
+        return {text:paragraph.textContent,emphasis:paragraph.querySelector('em')?.textContent};
+      });
+    },bootstrap)).toEqual({text:original,emphasis:'divider'});
+  });
+
 async function followMotion(page, {pause = false} = {}) {
   return page.evaluate(async ({bootstrap,pause}) => {
     const r=(await import(bootstrap)).readerRuntime.current;

@@ -65,7 +65,7 @@ test("speech escapes EPUB text, accepts regional voices, and parses only bounded
     "zh-CN-liaoning-XiaobeiNeural",
   );
   assert.match(commands[1], /zh-CN-liaoning, XiaobeiNeural/);
-  assert.match(commands[1], /&lt;voice name=&quot;bad&quot;&gt; &amp; café /);
+  assert.match(commands[1], /&lt;voice name=&quot;bad&quot;&gt; &amp; café<\/prosody>/);
   assert.deepEqual([...audioFrame(frame())], [1, 2, 3]);
   assert.throws(() => audioFrame(new Uint8Array([1]).buffer));
   assert.throws(() => audioFrame(new Uint8Array([255, 255, 1]).buffer));
@@ -85,6 +85,14 @@ test("speech waits for turn.end, assembles frames and releases the socket", asyn
   assert.deepEqual([...audio], [1, 2, 3, 4]);
   assert.equal(socket.closed, true);
   assert.equal(socket.binaryType, "arraybuffer");
+});
+test("unspeakable input is rejected before opening a provider connection", async () => {
+  let connections = 0;
+  for (const text of ["❦", "✦ ❧ ⁂", "***", "\u0000\ud800", "a".repeat(1201)])
+    await assert.rejects(synthesizeEdgeSpeech(text, EDGE_DEFAULT_VOICE, {
+      fetcher: async () => { connections++; throw Error("Unexpected connection"); },
+    }), TypeError);
+  assert.equal(connections, 0);
 });
 test("speech fails closed on early close, no audio, oversized audio and timeout", async () => {
   for (const scenario of ["close", "empty", "large", "timeout"]) {
@@ -178,6 +186,8 @@ test("TTS endpoint rejects cross-origin, unauthenticated and unbounded requests 
     403,
   );
   assert.equal((await call(context(env, "/tts", "POST", body))).status, 428);
+  for (const text of ["❦", "✦ ❧ ⁂", "***", "\u0000\ud800"])
+    assert.equal((await call(context(env, "/tts", "POST", { ...body, text }))).status, 400);
   assert.equal(
     (
       await call(
@@ -246,13 +256,15 @@ test("authenticated TTS returns private audio and increments only the speech rat
       env,
       "/tts",
       "POST",
-      { text: "Hello", voice: "en-US-EmmaMultilingualNeural" },
+      { text: "❦ Hello\u0000 ❧", voice: "en-US-EmmaMultilingualNeural" },
       { cookie: `${HUMAN_COOKIE}=${human}` },
     ),
   );
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.equal(response.headers.get("content-type"), "audio/mpeg");
+  assert.match(socket.commands[1], />Hello<\/prosody>/);
+  assert.doesNotMatch(socket.commands[1], /[❦❧\u0000]/u);
   assert.deepEqual(
     [...new Uint8Array(await response.arrayBuffer())],
     [1, 2, 3],

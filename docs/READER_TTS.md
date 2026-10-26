@@ -49,6 +49,18 @@ The Reader extracts bounded text passages from the EPUB and sends each passage
 with its selected voice to the same-origin `POST /tts` Function. The Function
 requests an MP3 from Microsoft's online Edge Read Aloud service, waits for a complete
 audio turn, then returns the clip to the Reader's single reusable audio element.
+Decorative-only paragraphs and chapters, including scene breaks such as `❦`,
+`✦` and `***`, are omitted from the speech cursor and preload window. Inline
+fleurons/star ornaments are removed from the synthesis copy. Discretionary
+hyphens and invisible word breaks are joined, incompatible XML characters are
+removed, and ordinary punctuation, accents, non-Latin letters, numbers, units,
+currency and mathematical symbols in readable text are preserved. The original
+publication text, markup and highlight/CFI ranges stay intact. The same text
+preparation runs before browser requests and in the provider adapter; requests
+with no readable text are rejected before authentication/rate-limit writes or
+opening a synthesis connection. Genuine provider/network errors still surface
+for Retry rather than silently skipping readable content.
+
 The following passages are generated in parallel with listening and held only in
 this narration session. They are not downloaded as a whole audiobook.
 

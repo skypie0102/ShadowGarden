@@ -11,7 +11,8 @@ function fixture(override){
   const fetchImpl=async(url,options)=>{
     calls.push({url,options});
     if(options.method==='GET')return override?.(options)||metadata();
-    const status=options.method==='PUT'?405:options.headers.origin!==PRODUCTION_ORIGIN?403:JSON.parse(options.body).text.length>1200?400:428;
+    const text=options.body?JSON.parse(options.body).text:'';
+    const status=options.method==='PUT'?405:options.headers.origin!==PRODUCTION_ORIGIN?403:text.length>1200||text==='❦ ✦ ***'?400:428;
     return override?.(options,status)||Response.json({ok:false,code:codes[status]}, {status});
   };
   return {calls,fetchImpl};
@@ -19,7 +20,8 @@ function fixture(override){
 
 test('release checks prove public voice availability and rejected synthesis without book text or credentials',async()=>{
   const f=fixture(),report=await verifyReaderSpeech(f);
-  assert.equal(report.voiceCount,1);assert.equal(report.defaultVoice,voice);assert.equal(report.checks.length,5);
+  assert.equal(report.voiceCount,1);assert.equal(report.defaultVoice,voice);assert.equal(report.checks.length,6);
+  assert.deepEqual(report.checks.find(check=>check.name==='ornament-text'),{name:'ornament-text',method:'POST',status:400,code:'invalid_tts_text'});
   for(const {url,options} of f.calls){
     assert.equal(url,PRODUCTION_ORIGIN+'/tts');assert.equal(options.redirect,'manual');
     assert.equal(options.headers.cookie,undefined);assert.equal(options.headers.authorization,undefined);

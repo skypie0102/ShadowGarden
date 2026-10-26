@@ -1,4 +1,5 @@
 import { EDGE_CLIENT_TOKEN, edgeToken } from "./edge-token.js";
+import { prepareSpeechText } from "../public/assets/js/reader/speech-text.js";
 
 // Public Edge Read Aloud protocol. This is an online, unofficial service; keep
 // it isolated so provider changes do not affect reader navigation or EPUB data.
@@ -53,7 +54,7 @@ export function speechMessages(text, voice) {
   const timestamp = new Date().toUTCString();
   return [
     `X-Timestamp:${timestamp}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n${JSON.stringify({ context: { synthesis: { audio: { metadataoptions: { sentenceBoundaryEnabled: "false", wordBoundaryEnabled: "false" }, outputFormat: "audio-24khz-48kbitrate-mono-mp3" } } } })}\r\n`,
-    `X-RequestId:${uid()}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${timestamp}Z\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${locale}'><voice name='Microsoft Server Speech Text to Speech Voice (${locale}, ${name})'><prosody pitch='+0Hz' rate='+0%' volume='+0%'>${escape(text.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, " "))}</prosody></voice></speak>`,
+    `X-RequestId:${uid()}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${timestamp}Z\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${locale}'><voice name='Microsoft Server Speech Text to Speech Voice (${locale}, ${name})'><prosody pitch='+0Hz' rate='+0%' volume='+0%'>${escape(prepareSpeechText(text))}</prosody></voice></speak>`,
   ];
 }
 export function audioFrame(data) {
@@ -145,7 +146,10 @@ export async function synthesizeEdgeSpeech(
   voice,
   { signal, fetcher = fetch, timeout = 45000 } = {},
 ) {
-  if (!text?.trim() || text.length > EDGE_TEXT_LIMIT || !validEdgeVoice(voice))
+  if (typeof text !== "string" || text.length > EDGE_TEXT_LIMIT || !validEdgeVoice(voice))
+    throw new TypeError("Invalid speech request");
+  text = prepareSpeechText(text);
+  if (!text)
     throw new TypeError("Invalid speech request");
   const controller = new AbortController();
   const abort = () => controller.abort(signal.reason);
