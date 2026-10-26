@@ -27,7 +27,26 @@ Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
 
 ## Project status
 
-The latest production release is **v2.25.0**, deployed on 2026-10-25 (Asia/Manila)
+The latest production release is **v2.26.0**, deployed on 2026-10-26 (Asia/Taipei)
+from `a453fb3` through [PR #69](https://github.com/skypie0102/ShadowGarden/pull/69).
+Scrolling away suspends screen-following while narration and preloading continue.
+Tap the floating status to return to the spoken passage and resume following,
+without restarting audio or resuming an explicit pause. Pages-mode wheel/swipe
+browsing keeps narration playing. Controls are status/return, Previous,
+Play/Pause, Next, Stop, settings cog. Narrow screens use two rows with 44px targets.
+WebKit viewport observation supports script-disabled EPUB frames.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40248916576)
+passes 501 Node tests, 1,006 full browser cases and all 100 focused speech checks
+across five profiles, with nine existing skips and zero retries. Eight direct
+live Reader checks pass across desktop/mobile Chromium with disposable original
+EPUBs and mocked speech; 320px/1280px toolbar captures are reviewed. The verified
+merged tree matches the candidate. Production preserves catalog revision 18,
+all 17 snapshots and configuration, with zero database writes. Served assets,
+voice metadata and request guards pass. Physical Android/Soul acceptance is separate.
+[Guide](docs/READER_TTS.md) · [Evidence](docs/reader-speech-browsing-release-2.26.0.json).
+
+The previous production release is **v2.25.0**, deployed on 2026-10-25 (Asia/Manila)
 from `e5fcf05` through [PR #67](https://github.com/skypie0102/ShadowGarden/pull/67).
 BrianMultilingual · Male is the default Edge voice; saved English choices remain
 selected. Read aloud prepares four upcoming passages across chapter boundaries

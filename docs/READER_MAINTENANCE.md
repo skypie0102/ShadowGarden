@@ -1,6 +1,17 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-25:** v2.25.0 makes BrianMultilingual · Male the
+**Latest deployment — 2026-10-26:** v2.26.0 keeps speech playing while scrolling
+and wheel/swipe browsing suspend screen-following. Tap status to return/follow
+without restarting audio or resuming an explicit pause. Floating order is status,
+Previous, Play/Pause, Next, Stop, settings cog, with two rows on narrow screens
+and 44px targets. The WebKit parent-viewport fallback preserves the EPUB sandbox.
+All 100 focused speech cases, 501 Node tests and 1,006 full browser cases pass,
+with nine existing skips and zero retries. Eight direct live checks, assets,
+voice/request guards and preservation pass with zero database writes.
+Physical Android/Soul acceptance is separate.
+[Guide](READER_TTS.md) · [Evidence](reader-speech-browsing-release-2.26.0.json).
+
+**Previous reader deployment — 2026-10-25:** v2.25.0 makes BrianMultilingual · Male the
 default and preloads four future passages across chapters with two background
 requests. Pause/Resume retains ready and in-flight audio; advancing refills from
 the retained chapter source. All 85 focused speech cases, 501 Node tests and
@@ -73,7 +84,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.25.0; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.26.0; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
