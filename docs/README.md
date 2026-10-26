@@ -3,7 +3,27 @@
 [Focused UI/UX roadmap](UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
-The latest production release is **v2.26.1**, deployed on 2026-10-26 (Asia/Manila)
+The latest production release is **v2.26.2**, deployed on 2026-10-26 (Asia/Manila)
+from `c6060f4` through [PR #73](https://github.com/skypie0102/ShadowGarden/pull/73).
+Read Aloud now uses matching theme-colored SVG controls in the drawer and floating
+bar: a Play triangle, two Pause bars, Previous/Next skip icons with end bars, and
+an X labeled Exit read aloud. Playback updates preserve the SVGs and update the
+drawer label, floating accessible action and tooltips. The existing order and
+44px targets remain, including narrow screens. The options close control uses
+the matching SVG X. Garden/Night/Paper/Black and Adult rose palettes are supported.
+
+The [release run](https://github.com/skypie0102/ShadowGarden/actions/runs/40271510568)
+passes 504 Node tests, 1,016 full browser cases and all 110 focused speech
+checks across five profiles, with 9 existing skips and zero retries. Eight direct
+live Reader checks pass across desktop/mobile Chromium with disposable original
+EPUBs and mocked speech; playing/paused/drawer controls and all palettes are
+reviewed at 320px/393px/1280px. The candidate and merged application trees match.
+Served assets, public version/Brian metadata and request guards pass. Catalog
+revision 18, all 17 snapshots and configuration are preserved with zero database
+writes. Physical Android/Soul acceptance is separate.
+[Guide](READER_TTS.md) · [Evidence](reader-speech-svg-release-2.26.2.json).
+
+The previous production release is **v2.26.1**, deployed on 2026-10-26 (Asia/Manila)
 from `29bdf47` through [PR #71](https://github.com/skypie0102/ShadowGarden/pull/71).
 Read aloud skips decorative-only passages and chapters such as `❦`, `✦` and
 `***`, so they cannot stop playback or fill the preload window. A shared text

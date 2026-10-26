@@ -1,6 +1,17 @@
 # Reader maintenance roadmap
 
-**Latest deployment — 2026-10-26:** v2.26.1 skips decorative-only passages and
+**Latest deployment — 2026-10-26:** v2.26.2 replaces Read Aloud text glyphs with
+theme-colored SVG Play/Pause, Previous/Next skip icons and Exit X controls in the
+drawer and floating bar. State changes preserve SVGs and update labels/tooltips;
+order and 44px responsive targets remain. All 110 focused speech checks,
+504 Node tests and 1,016 full browser cases pass with 9 existing skips and zero
+retries. Eight local visual cases and eight direct live cases pass; captures are
+reviewed across states, widths and palettes. Production assets, version/voice
+metadata, request guards and preservation pass with zero database writes.
+Physical Android/Soul acceptance is separate.
+[Guide](READER_TTS.md) · [Evidence](reader-speech-svg-release-2.26.2.json).
+
+**Previous reader deployment — 2026-10-26:** v2.26.1 skips decorative-only passages and
 chapters during speech/preloading. Shared synthesis-only preparation cleans
 inline ornaments and XML-incompatible text while preserving Unicode prose and
 original text/markup/highlight ranges. Symbol-only API input is rejected before
@@ -96,7 +107,7 @@ merged through [PR #28](https://github.com/skypie0102/ShadowGarden/pull/28).
 All 211 Node tests and 387 browser cases pass across five profiles. M5c's
 search/TOC, bookmark and app callback review is complete for these documented
 boundaries. Active failures and cleanup diagnostics remain visible. Production
-was v2.12.8 at the completion of M5c3. Current production is v2.26.1; the documented M1–M5 cleanup remains deployed.
+was v2.12.8 at the completion of M5c3. Current production is v2.26.2; the documented M1–M5 cleanup remains deployed.
 
 Started 2026-10-17 after v2.12.5 phone acceptance. The owner reports no more
 jumping or dimming during ordinary Android/Soul use. The
