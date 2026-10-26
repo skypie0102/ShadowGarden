@@ -1,7 +1,31 @@
 # Reader releases
 
-**Current production baseline:** v2.25.0. Ongoing
+**Current production baseline:** v2.26.0. Ongoing
 [maintenance](READER_MAINTENANCE.md) is tracked separately from deployments.
+
+## Reader v2.26.0 — independent browsing and floating controls
+
+**Live:** deployment `30b73dd6-7ecf-406a-be65-e1a796a9c521`, source `a453fb39586391cbd5f333983b5691b156352b8b`,
+verified at 2026-10-26T00:50:48.507Z. Browsing suspends screen-following while speech and
+the four-passage preload buffer continue across passages and chapters. The status
+button returns to the spoken passage and enables following without restarting
+audio, including paused/preparing states. Wheel/swipe page turns retain speech;
+explicit page buttons, TOC and seek actions retain their stop behavior.
+The parent viewport observes manual movement when WebKit suppresses callbacks
+inside script-disabled EPUB frames, distinguishing owned navigation/animation
+and anchor-preserving buffer changes. The EPUB sandbox remains intact.
+
+The bar is ordered status/return, Previous, Play/Pause, Next, Stop, settings cog.
+Narrow screens place status above five icon controls; all targets are at least
+44px and keyboard order follows the visual order. Candidate and main pass 501
+Node tests, 1,006 full browser cases and all 100 focused speech checks across five
+profiles, with nine existing skips and zero retries. The exact merged tree matches
+the verified candidate. Eight direct live checks pass with disposable original
+EPUBs and mocked audio; 320px/1280px toolbar captures are reviewed. Production
+assets, voice/request guards and preservation pass with zero database writes.
+Physical Android/Soul acceptance remains separate.
+[PR #69](https://github.com/skypie0102/ShadowGarden/pull/69) ·
+[Guide](READER_TTS.md) · [Evidence](reader-speech-browsing-release-2.26.0.json).
 
 ## Reader v2.25.0 — Brian default and speech preloading
 
