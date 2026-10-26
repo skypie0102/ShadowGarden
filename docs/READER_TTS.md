@@ -15,7 +15,7 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   sections, skips image-only sections, and stops at the end of the volume.
 - Follow reading position centers the spoken passage in both Pages and Continuous.
   Its highlight follows Garden, Night, Black and Paper, including Adult rose.
-  Pausing keeps the highlight; Stop and leaving the reader remove it. Browsing
+  Pausing keeps the highlight; Exit (X) and leaving the reader remove it. Browsing
   with touch, a wheel, the scrollbar or scroll keys inside the book suspends
   screen-following while narration and preloading continue. Following stays
   suspended across passage/chapter changes and Pause/Resume until the status
@@ -25,8 +25,12 @@ Aloud service, not an Azure Speech subscription, and it has no service guarantee
   page buttons and TOC/seek navigation still stop narration; Pages-mode wheel
   and swipe browsing keep it playing. Closing the speech drawer keeps
   controls in a floating bar, ordered status/return to passage, Previous,
-  Play/Pause, Next, Stop, settings cog. On narrow screens, the status occupies
+  Play/Pause, Next, Exit (X), settings cog. On narrow screens, the status occupies
   the first row and five icon controls share the second; all targets remain 44px.
+- Playback controls use theme-colored SVGs in the drawer and floating bar:
+  Play has a triangle, Pause has two bars, Previous/Next use skip icons with end
+  bars, and Exit uses an X. Playback state changes preserve the SVGs while
+  updating the visible drawer label and accessible floating-button action.
 - Following a loaded passage in the current chapter uses one eased scroll rather than navigating to its
   top and then centering it. Pause, Stop, manual input and newer navigation cancel
   pending animation. Browsing suspension is separate from the persisted Follow
