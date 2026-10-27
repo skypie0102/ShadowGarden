@@ -43,6 +43,11 @@ positions, sizes, spacing, type and layout properties, then restore the sheet
 and repeat the capture. Series reading/download and hero actions also keep their
 normal colors, borders and type. A changed button layout fails the comparison.
 
+The historical stylesheet comparisons also retain exact geometry/style equality
+and compare every computed native-control longhand. Their screenshot check allows
+at most two RGB steps on 0.1% of pixels for native-corner raster rounding. The
+reproduced Chromium difference was 33 of 921,600 pixels; larger changes still fail.
+
 Fixtures cover Main/Adult, phone/tablet/desktop, larger text, collapsed and open
 filters with real Tab/Space navigation, empty/loading/failure feedback, both
 Series views, all four Reader interface themes, and Keeper clean/dirty dialog
