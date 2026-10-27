@@ -778,10 +778,10 @@ async function initializeReader(session, scope) {
       }
     }
     progressController.startLocationGeneration();
-    const opened = await openRendition(initialTarget);
-    // Complete a saved Continuous CFI through the normal navigation path too:
-    // vendor startup display can report that CFI while showing another section.
-    const restoreContinuousCfi = saved?.cfi && state.renderedFlow === "scrolled-doc";
+    // Initialize Continuous at its normal starting view, then navigate to the
+    // saved CFI. Starting its buffer directly at that CFI can drift on prepend.
+    const restoreContinuousCfi = saved?.cfi && settingsController.get().flow === "scrolled-doc";
+    const opened = await openRendition(restoreContinuousCfi ? undefined : initialTarget);
     if (restoreContinuousCfi || !saved?.cfi && pageMapResult?.map && saved?.pageMapFingerprint === state.pageMap.fingerprint() && Number(saved?.page) > 0) {
       try {
         await correctCanonicalPosition(opened, saved, state.renderedFlow);
