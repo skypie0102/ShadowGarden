@@ -8,8 +8,20 @@
   let requestedAdult = window.__SG_SERIES_ROUTE_ADULT__ === true || String(id).startsWith("adult-");
   const bannerRandom = Math.random();
   let domain = null;
+  let seriesPreferences = null;
   let series = null;
   let rendering = false;
+  let volumeView = "grid";
+  let viewScope = "main";
+
+  function syncVolumeView() {
+    root.querySelector(".volume-grid")?.classList.toggle("volume-list", volumeView === "list");
+    root.querySelectorAll("[data-series-view]").forEach(button => {
+      const active = button.dataset.seriesView === volumeView;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
 
   function syncLibraryScope(adult) {
     document.body.classList.toggle("adult-library", Boolean(adult));
@@ -57,8 +69,8 @@
     if (!series || rendering) return;
     rendering = true;
     try {
-      const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.28.4");
-      root.innerHTML = seriesMarkup(series, { ...domain, bannerRandom });
+      const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.28.5");
+      root.innerHTML = seriesMarkup(series, { ...domain, bannerRandom, volumeView });
       root.setAttribute("aria-busy", "false");
       syncBackToTop();
     } finally {
@@ -68,6 +80,15 @@
 
   function bindControllerEvents() {
     root.addEventListener("click", event => {
+      const viewButton = event.target.closest?.("[data-series-view]");
+      if (viewButton) {
+        const next = viewButton.dataset.seriesView;
+        if (!["grid", "list"].includes(next) || next === volumeView) return;
+        volumeView = next;
+        seriesPreferences.setSeriesView(viewScope, volumeView);
+        syncVolumeView();
+        return;
+      }
       const backTop = event.target.closest?.("#seriesBackToTop");
       if (backTop) {
         window.scrollTo({
@@ -102,6 +123,11 @@
     );
     window.addEventListener(domain.readingState.EVENT, () => void render());
     window.addEventListener("storage", event => {
+      if (event.key === seriesPreferences.seriesViewKey(viewScope)) {
+        volumeView = seriesPreferences.seriesView(viewScope);
+        syncVolumeView();
+        return;
+      }
       if (
         domain.readingState.isReadingStorageKey(event.key) ||
         event.key === domain.preferences.PINNED_KEY
@@ -112,7 +138,10 @@
   }
 
   try {
-    domain = await import("/assets/js/domain/index.js");
+    [domain, seriesPreferences] = await Promise.all([
+      import("/assets/js/domain/index.js"),
+      import("/assets/js/domain/preferences.js?v=2.28.5")
+    ]);
     const { installVolumeActionController } = await import("/assets/js/public/volume-actions.js");
     installVolumeActionController(document);
     requestedAdult = domain.catalog.adultRoute(id, location.search);
@@ -125,6 +154,8 @@
     if (!context) throw new Error("Series not found");
     series = context.series;
     requestedAdult = context.adult;
+    viewScope = requestedAdult ? "nsfw" : "main";
+    volumeView = seriesPreferences.seriesView(viewScope);
     syncLibraryScope(requestedAdult);
 
     if (requestedAdult && !domain.preferences.adultAcknowledged()) {
@@ -140,7 +171,7 @@
   } catch (error) {
     console.error(error);
     if (!domain) domain = await import("/assets/js/domain/index.js");
-    const { notFoundMarkup } = await import("/assets/js/series-renderers.js");
+    const { notFoundMarkup } = await import("/assets/js/series-renderers.js?v=2.28.5");
     root.innerHTML = notFoundMarkup(domain.urls.libraryUrl(requestedAdult), domain.format);
     root.setAttribute("aria-busy", "false");
   }

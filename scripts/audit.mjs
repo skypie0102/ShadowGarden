@@ -44,6 +44,8 @@ for(const entry of provenance.files){
   if(sha!==entry.sha256)modified.push(entry.path);
 }
 const deliberate=new Set([
+  // v2.28.5: independent Main/Adult Series Grid/List preferences.
+  'public/assets/js/domain/preferences.js',
   // v2.22.1: publish the reader speech endpoint through Pages Functions.
   'public/_routes.json',
   // v2.18.13: ordered syntax/comment-equivalent Keeper and public CSS.

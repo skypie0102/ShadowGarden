@@ -53,6 +53,18 @@ export function setLibraryView(scope = "main", view = "grid") {
   return writeText(viewKey(scope), view === "compact" ? "compact" : "grid");
 }
 
+export function seriesViewKey(scope = "main") {
+  return viewKey(`series:${cleanScope(scope)}`);
+}
+
+export function seriesView(scope = "main") {
+  return readText(seriesViewKey(scope), "grid") === "list" ? "list" : "grid";
+}
+
+export function setSeriesView(scope = "main", view = "grid") {
+  return writeText(seriesViewKey(scope), view === "list" ? "list" : "grid");
+}
+
 export function librarySort(scope = "main") {
   const value = readText(sortKey(scope), "recent");
   return LIBRARY_SORTS.includes(value) ? value : "recent";

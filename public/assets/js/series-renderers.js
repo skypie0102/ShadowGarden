@@ -92,7 +92,7 @@ function volumeCard(series, entry, dependencies, context) {
 }
 
 export function seriesMarkup(series, dependencies) {
-  const { readingState, preferences, urls, format, identity, translations, bannerRandom } = dependencies;
+  const { readingState, preferences, urls, format, identity, translations, bannerRandom, volumeView = "grid" } = dependencies;
   const esc = format.escapeHtml;
   const volumes = arr(series?.volumes);
   const first = volumes[0];
@@ -132,8 +132,8 @@ export function seriesMarkup(series, dependencies) {
     </section>
     <section class="series-body">
       ${series?.description ? `<p class="series-description">${esc(series.description)}</p>` : ""}
-      <div class="series-section-head"><h2>Volumes</h2><span>${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"}</span></div>
-      <div class="volume-grid">${entries.map(entry => volumeCard(series, entry, dependencies, context)).join("")}</div>
+      <div class="series-section-head"><h2>Volumes</h2><div class="series-volume-tools"><span>${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"}</span><div class="view-switch series-view-switch" role="group" aria-label="Volume view"><button type="button" data-series-view="grid" aria-controls="seriesVolumeView" class="${volumeView !== "list" ? "active" : ""}" aria-pressed="${volumeView !== "list"}">Grid</button><button type="button" data-series-view="list" aria-controls="seriesVolumeView" class="${volumeView === "list" ? "active" : ""}" aria-pressed="${volumeView === "list"}">List</button></div></div></div>
+      <div id="seriesVolumeView" class="volume-grid${volumeView === "list" ? " volume-list" : ""}">${entries.map(entry => volumeCard(series, entry, dependencies, context)).join("")}</div>
     </section>
     <button id="seriesBackToTop" class="series-back-to-top" type="button" aria-label="Back to top" hidden>↑ Back to top</button>`;
 }

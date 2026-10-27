@@ -4,7 +4,7 @@ The Library reading banner, Recently Added and Series hero/cards use
 `public/assets/js/public/volume-actions.js` for their action and destination.
 `domain/reading-state.js` owns the browser-local reading state and series snapshot.
 
-| State/context | Action | Effect |
+| State/context | Library / Series hero action | Effect |
 | --- | --- | --- |
 | Unread, no preceding completed-volume continuation | Start reading | Open the selected volume normally |
 | In progress | Continue reading | Open the saved reading position |
@@ -22,6 +22,27 @@ Unread / In progress / Finished labels. “Up next” is an additional recommend
 not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
+
+## Series presentation
+
+PR #82 is reverted. The original full synopsis is displayed directly; Browse
+volumes, Find Volume and the expandable synopsis are removed.
+
+On phones, a larger proportional cover stays beside the title and details.
+Reading/pinning controls and tags each have their own row beneath that pair.
+Grid is the default volume layout. The explicit **Grid / List** buttons switch
+the same catalog-ordered volumes in place. List puts a small cover beside the
+volume details; it does not replace Grid automatically on phones.
+
+The Series choice is saved separately for Main and Adult under
+`sg-view:series:main` / `sg-view:series:nsfw`. It does not change the Library view,
+progress, bookmarks or Finished state. Reload, reading-state refresh and
+cross-tab view changes retain the selected mode.
+
+Volume links keep the restored compact **Read / Continue / Read Again** and
+bordered **Download EPUB** presentation from before PR #80. Series styles and
+rendering modules use fresh asset URLs so the requested view reaches returning
+browsers. Current source is v2.28.5; merge and production acceptance are separate.
 
 ## Saved-progress context
 

@@ -22,21 +22,26 @@ The current source adds saved-progress context for v2.28.1. Checkmarks identify
 implementation; the PR and guarded release record validation and live acceptance
 separately.
 
-- [x] Use consistent Start reading / Continue reading / Read next volume / Read again actions across the Library banner, Recently Added, Series hero and volume links.
+- [x] Keep shared reading destinations across Library and Series, with the user's restored compact Read / Continue / Read Again text on volume links.
 - [x] Show explicit volume order and Unread / In progress / Finished states on Series pages. Keep the next-volume indication separate from reading state.
 - [x] Let mobile metadata/actions flow around the cover, retain full-width tags and use compact themed pins (v2.19.1–v2.19.4).
 - [x] Fill mobile reading-banner content height with proportional cover artwork (v2.27.1).
-- [ ] Refine synopsis and volume-list presentation around the next reading action.
+- [x] Revert PR #82; retain the full original synopsis, enlarge the cover beside details and provide explicit Grid/List controls (v2.28.5 source).
 - [x] Show reliable saved progress without truncating useful context, including records with page-only progress: shared percentage/page/chapter summaries, timestamp-free legacy saves, accessible Recently Added descriptions and wrapping context (v2.28.1 source).
-- [ ] Keep downloads visually secondary and easy to find after the reading actions have been reviewed.
+- [x] Preserve the compact Read/Download controls from before PR #80, restored at the user's request in v2.28.4.
 
 Acceptance for this increment: Main and Adult; no progress, saved progress,
 completion of the first volume, all volumes finished, out-of-order Finished marks
 and missing EPUBs. The banner and Series hero must choose the same available
-volume; the matching card/cover and Recently Added use the same action name.
+volume; matching card/cover and Recently Added keep the same destination.
 Read again still requires confirmation, cancelling retains progress/bookmarks,
 and reload preserves state. Check long titles, keyboard focus and page overflow
 at 320px, tablet and desktop widths. Retain the catalog's volume order.
+
+User-directed Series baseline: no Browse volumes, Find Volume or expandable
+synopsis. Grid is the default; List is explicitly selected. Preserve the larger
+cover beside details and the restored compact reading/download controls unless
+the user requests a change. Source, PR checks and live acceptance stay separate.
 
 The [reading journey guide](../guides/READING_JOURNEY.md) documents the shared
 selection and action-copy contract. Earlier layout changes and their release
