@@ -4,7 +4,7 @@ The Library reading banner, Recently Added and Series hero/cards use
 `public/assets/js/public/volume-actions.js` for their action and destination.
 `domain/reading-state.js` owns the browser-local reading state and series snapshot.
 
-| State/context | Action | Effect |
+| State/context | Library / Series hero action | Effect |
 | --- | --- | --- |
 | Unread, no preceding completed-volume continuation | Start reading | Open the selected volume normally |
 | In progress | Continue reading | Open the saved reading position |
@@ -37,12 +37,14 @@ visible without a toggle. The preview adapts to the current width, preserves
 paragraph breaks and retains the complete escaped text. Expansion belongs to
 the current page only and does not write browser storage.
 
-At widths up to 520px, volume entries use a compact cover beside their full
-title and metadata. Reading actions appear first as the accented button;
-**Download EPUB** is a separate secondary button. They share available space
-and wrap to full-width rows on narrower cards or with larger text. Both retain
-at least 44px targets, visible boundaries and keyboard focus. Download links
-name their volume and retain the existing signed-ticket flow.
+Volume entries retain the portrait-card arrangement and compact reading/download
+controls from before PR #80 (source `4919c58`). The reading link uses **Read**,
+**Continue** or **Read Again**, followed by the original bordered **Download EPUB**
+link. Their original font sizes, padding, natural widths, transparent reading
+background and wrapping are restored; they do not grow into filled full-width
+buttons. The Library/Series hero keeps its longer state descriptions and shares
+the same destinations and Read again confirmation. Download links name their
+volume and retain the existing signed-ticket flow.
 The build versions the Series stylesheet URL from its contents, so returning
 browsers request updated styles when the volume presentation changes.
 An unavailable EPUB has a plain availability message and no reading, cover or

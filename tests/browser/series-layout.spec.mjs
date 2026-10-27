@@ -65,13 +65,13 @@ async function layout(page) {
   });
 }
 
-async function previousLayout(page, inspect) {
+async function previousLayout(page, inspect, css = previousCss) {
   await page.evaluate(css => {
     const current = document.querySelector('link[href*="/series-extra.css"], style[data-series-layout-css]');
     const style = document.createElement('style');
     style.dataset.seriesLayoutCss = 'true'; style.textContent = css;
     current.replaceWith(style);
-  }, previousCss);
+  }, css);
   try { return await inspect(); }
   finally {
     // Re-enabling a disabled link can apply its rules on a later frame. Restore
@@ -209,55 +209,63 @@ test('long metadata, missing cover and optional audio action fit a narrow series
   expect(errors).toEqual([]);
 });
 
-for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} single-volume reading and download controls have consistent button layout`, async ({ page }, info) => {
+const pre80Css = readFileSync(new URL('./fixtures/series-extra-pre-80.css', import.meta.url), 'utf8');
+if (createHash('sha256').update(pre80Css).digest('hex') !== '45723b1d0eb74457f5a2d3a08dedc10d5a434d1ded367dc7e8ff581b6040ef59') throw Error('Damaged pre-80 Series layout control.');
+
+for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume controls match the exact pre-80 styling and card arrangement`, async ({ page }, info) => {
   await page.setViewportSize({ width: 393, height: 850 });
-  // Model a returning browser/proxy retaining the pre-merge sheet under its old
-  // unchanged URL. A new page must request the sheet matching its built content.
   let staleRequests = 0;
+  let staleScriptRequests = 0;
+  for (const url of ['**/assets/js/series.js?v=2.11.0', '**/assets/js/series-renderers.js']) await page.route(url, route => {
+    staleScriptRequests++;
+    return route.fulfill({ contentType: 'application/javascript', body: 'throw new Error("Stale Series renderer requested");' });
+  });
   await page.route('**/assets/css/series-extra.css?v=2.11.0', route => {
     staleRequests++;
     return route.fulfill({ contentType: 'text/css', body: staleVolumeCss });
   });
   const errors = await openSeries(page, adult, { title: 'Adolescent Adam', volumes: [{ ...item.volumes[0], title: 'Adolescent Adam, Volume 1', date: '2026-08-19', size: 5000000 }] }, 'no-preference');
   const card = page.locator('.volume-card'), read = card.locator('a.read'), download = card.locator('a.download');
-  await card.scrollIntoViewIfNeeded();
-  await info.attach('returning-browser-volume', { body: await card.screenshot(), contentType: 'image/png' });
   await expect(page.locator('link[href*="/series-extra.css"]')).toHaveAttribute('href', `/assets/css/series-extra.css?v=${volumeCssVersion}`);
   expect(staleRequests).toBe(0);
+  expect(staleScriptRequests).toBe(0);
+  await expect(read).toHaveText('Read');
+  const inspect = async () => {
+    await card.scrollIntoViewIfNeeded();
+    return card.evaluate(async card => {
+      await document.fonts.ready;
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const styles = (element, properties) => Object.fromEntries(properties.map(name => [name, getComputedStyle(element)[name]]));
+      const properties = ['display', 'flexGrow', 'flexBasis', 'minHeight', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontSize', 'fontWeight', 'lineHeight', 'whiteSpace', 'color', 'backgroundColor', 'borderTopColor', 'borderTopWidth', 'borderTopStyle', 'borderRadius', 'textDecorationLine'];
+      return {
+        columns: getComputedStyle(card.parentElement).gridTemplateColumns,
+        actions: styles(card.querySelector('.volume-actions'), ['display', 'flexWrap', 'alignItems', 'gap', 'paddingTop']),
+        buttons: [...card.querySelectorAll('.volume-actions a')].map(element => {
+          const box = element.getBoundingClientRect();
+          return { text: element.textContent, styles: styles(element, properties), width: box.width, height: box.height };
+        })
+      };
+    });
+  };
   for (const width of [320, 393, 576, 768, 1280]) {
     await page.setViewportSize({ width, height: 850 });
-    await card.scrollIntoViewIfNeeded();
-    await info.attach(`volume-controls-${width}`, { body: await card.screenshot(), contentType: 'image/png' });
-    await expect(async () => {
-      const a = await read.boundingBox(), b = await download.boundingBox(), c = await card.boundingBox();
-      expect(a.height).toBeGreaterThanOrEqual(44); expect(b.height).toBeGreaterThanOrEqual(44);
-      expect(Math.abs(a.width - b.width)).toBeLessThan(1);
-      if (width <= 520) {
-        expect(Math.abs(a.y - b.y)).toBeLessThan(1);
-        expect(Math.abs(a.height - b.height)).toBeLessThan(1);
-        expect(b.x).toBeGreaterThanOrEqual(a.x + a.width + 6);
-      } else expect(b.y).toBeGreaterThanOrEqual(a.y + a.height + 6);
-      for (const box of [a, b]) {
-        expect(box.x).toBeGreaterThanOrEqual(c.x);
-        expect(box.x + box.width).toBeLessThanOrEqual(c.x + c.width + 1);
-        expect(box.y + box.height).toBeLessThanOrEqual(c.y + c.height + 1);
-      }
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    }).toPass();
-    for (const button of [read, download]) {
-      await expect(button).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      await expect(button).not.toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
-      await expect(button).toHaveCSS('text-decoration-line', 'none');
+    const restored = await inspect();
+    const original = await previousLayout(page, inspect, pre80Css);
+    expect(restored.columns).toBe(original.columns);
+    expect(restored.actions).toEqual(original.actions);
+    for (const [index, button] of restored.buttons.entries()) {
+      expect(button.text).toBe(original.buttons[index].text);
+      expect(button.styles).toEqual(original.buttons[index].styles);
+      expect(button.width).toBeCloseTo(original.buttons[index].width, 1);
+      expect(button.height).toBeCloseTo(original.buttons[index].height, 1);
     }
+    await card.scrollIntoViewIfNeeded();
+    if ([320, 393, 1280].includes(width)) await info.attach(`restored-pre80-${width}`, { body: await card.screenshot(), contentType: 'image/png' });
   }
-  await page.setViewportSize({ width: 320, height: 850 });
-  await page.evaluate(() => document.documentElement.style.fontSize = '200%');
   for (const button of [read, download]) {
-    await button.scrollIntoViewIfNeeded(); await button.focus(); await expect(button).toBeFocused();
-    expect(await button.evaluate(element => element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    await button.focus(); await expect(button).toBeFocused();
   }
   await expect(read).toHaveAttribute('href', new RegExp(`/reader.html\\?book=${bookId}`));
   await expect(download).toHaveAccessibleName('Download EPUB: Adolescent Adam, Volume 1');
-  await info.attach('volume-controls-large-text', { body: await card.screenshot(), contentType: 'image/png' });
   expect(errors).toEqual([]);
 });

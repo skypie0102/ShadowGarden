@@ -67,6 +67,7 @@ function volumeCard(series, entry, dependencies, context) {
   const summary = readingProgressSummary(progress);
   const finished = state === readingState.STATES.FINISHED;
   const inProgress = state === readingState.STATES.IN_PROGRESS;
+  const buttonLabel = finished ? "Read Again" : inProgress ? "Continue" : "Read";
   const upNext = index === context.nextIndex;
   const visualProgress = finished ? 100 : inProgress && summary.percent !== null ? Math.max(1, Math.min(99, summary.percent)) : 0;
   const stateMeta = finished ? "Finished" : inProgress ? summary.text : "Unread";
@@ -84,7 +85,7 @@ function volumeCard(series, entry, dependencies, context) {
     <p class="volume-meta">${[volume?.date || "", format.formatBytes(volume?.size), stateMeta].filter(Boolean).map(esc).join(" · ")}</p>
     ${overrideMarkup}
     <div class="volume-actions">
-      ${available ? `<a class="read" ${attrs(action, esc)} href="${action.href}">${esc(action.label)}</a>
+      ${available ? `<a class="read" ${attrs(action, esc)} href="${action.href}">${esc(buttonLabel)}</a>
       <a class="download" href="#book-${esc(volume.file)}" data-book-id="${esc(volume.file)}" aria-label="Download EPUB: ${esc(title)}" download>Download EPUB</a>` : '<span class="volume-unavailable">EPUB unavailable</span>'}
     </div>
   </article>`;
