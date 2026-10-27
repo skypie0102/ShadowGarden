@@ -23,6 +23,28 @@ not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
 
+## Synopsis, volume navigation and downloads
+
+The hero's **Browse volumes** link moves keyboard focus to the volume section.
+**Find Volume N** then targets the volume selected by the same reading context
+as the hero. Cards retain catalog order and expose their titles as their
+accessible names; their jump targets do not add stops to normal Tab navigation.
+
+Long synopses start with a six-line preview. **Show full synopsis** and **Show
+less** work with the keyboard, expose their expanded state and retain the
+current choice during reading-state refreshes. A short synopsis stays fully
+visible without a toggle. The preview adapts to the current width, preserves
+paragraph breaks and retains the complete escaped text. Expansion belongs to
+the current page only and does not write browser storage.
+
+At widths up to 520px, volume entries use a compact cover beside their full
+title and metadata. Reading actions appear first; the underlined **Download
+EPUB** link follows separately, with both retaining at least 44px targets.
+Download links name their volume and retain the existing signed-ticket flow.
+An unavailable EPUB has a plain availability message and no reading, cover or
+download link. Its metadata and reading state remain visible. An empty series
+states that no volumes have been added.
+
 ## Saved-progress context
 
 `public/reading-progress.js` formats the same saved-record summary for the Library

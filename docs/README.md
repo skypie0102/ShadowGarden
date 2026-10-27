@@ -9,7 +9,7 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Library → Series → Reader journey and Keeper feedback | Refine synopsis and volume-list presentation, then review download hierarchy; saved-progress context is implemented for v2.28.1 |
+| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Library → Series → Reader journey and Keeper feedback | Review Reader settings/navigation; the reading-journey phase is implemented through v2.28.2 |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides

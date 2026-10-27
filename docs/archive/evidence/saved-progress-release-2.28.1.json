@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-10-27T03:21:07.047Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "deploymentId": "5890616d-1fa6-4370-aa9d-6c1d1b94ba70",
+  "source": "1b86a4e7af1584304bf40d984fcb55957b55e335",
+  "version": "2.28.1",
+  "baselineCheckedAt": "2026-10-27T03:21:05.891Z",
+  "revision": 18,
+  "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+  "snapshots": 17,
+  "preservationChecked": true,
+  "databaseWrites": 0,
+  "versionCheck": {
+    "attempts": 1,
+    "elapsedMs": 196
+  },
+  "checks": [
+    {
+      "path": "/data/version.json",
+      "source": "1b86a4e7af1584304bf40d984fcb55957b55e335",
+      "version": "2.28.1"
+    },
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/assets/js/library-footer-version.js",
+      "sha256": "91c34edc052c3187040f3fd65b29b9de3d59d416d0d4b165a1c6ca1beb1f4e70",
+      "bytes": 1042
+    }
+  ],
+  "rollbackDeploymentId": "b6987f2b-92cd-4f2b-9b55-cca27c07add4",
+  "rollbackSource": "1b86a4e7af1584304bf40d984fcb55957b55e335",
+  "beforeCheckedAt": "2026-10-27T03:20:51.594Z",
+  "readerSpeech": {
+    "voiceCount": 318,
+    "defaultVoice": "en-US-BrianMultilingualNeural",
+    "checks": [
+      {
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "name": "garden-pass",
+        "method": "POST",
+        "status": 428,
+        "code": "human_verification_required"
+      },
+      {
+        "name": "text-limit",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "ornament-text",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "origin",
+        "method": "POST",
+        "status": 403,
+        "code": "cross_origin"
+      },
+      {
+        "name": "method",
+        "method": "PUT",
+        "status": 405,
+        "code": "method_not_allowed"
+      }
+    ]
+  }
+}

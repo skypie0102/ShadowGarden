@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-10-27T03:21:40.701Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "source": "1b86a4e7af1584304bf40d984fcb55957b55e335",
+  "version": "2.28.1",
+  "method": "Independent public GETs compared byte-for-byte with the reviewed merge source",
+  "checks": [
+    {
+      "path": "/assets/css/library-features.css",
+      "sha256": "b2343bc423cb082d3a7b1525af2a303259e7076dba964a2789d7b3e801890fd1",
+      "bytes": 16554,
+      "contentType": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/css/series-extra.css",
+      "sha256": "5979baf913c68193a2148f5a4ef627e01041d67118293607d46ff61b775949d6",
+      "bytes": 13794,
+      "contentType": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/js/domain/reading-state.js",
+      "sha256": "5946f79d3e1347a866da2c7bf57c06535aaf86c704b02f9f01d15c12306718f8",
+      "bytes": 11220,
+      "contentType": "application/javascript"
+    },
+    {
+      "path": "/assets/js/library-renderers.js",
+      "sha256": "62cb3c550a8def1f5def59bd4bc312fd10b4ceca369b967f6b7fdc5f2479db37",
+      "bytes": 9289,
+      "contentType": "application/javascript"
+    },
+    {
+      "path": "/assets/js/public/reading-progress.js",
+      "sha256": "1cfb5f8d956d5fd1f4244bb3221d7b2f8dc992bd13c911b1261ffda848906e0f",
+      "bytes": 1443,
+      "contentType": "application/javascript"
+    },
+    {
+      "path": "/assets/js/series-renderers.js",
+      "sha256": "fb967a74fdcb8d49d32516686e1bd8e7e9d2828cc9044458d6b07009f48740c4",
+      "bytes": 10534,
+      "contentType": "application/javascript"
+    }
+  ]
+}
