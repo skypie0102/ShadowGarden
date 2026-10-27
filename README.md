@@ -36,7 +36,7 @@ Their dated release and verification records are in the [archive](docs/archive/R
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
 journey, Reader controls, visual consistency and Keeper feedback work. The
-source completes synopsis/list presentation and download hierarchy for **v2.28.2**. The PR and guarded
+source restores consistent Series reading/download buttons and versions changed Series styles for **v2.28.3**. The PR and guarded
 release workflow record source validation and live acceptance separately.
 
 ## Local development
