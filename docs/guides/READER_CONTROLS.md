@@ -1,7 +1,8 @@
 # Reader controls
 
 The contents drawer separates **Current chapter** from **Volume progress**.
-The chapter is the EPUB's current contents label. Percentages refer to the whole
+The chapter is the EPUB's current contents label, or “Unlabeled section” if no
+label is available. Percentages refer to the whole
 volume. Page numbers come from the current device's page map and can change with
 screen size or text settings; they are not publisher print-page numbers.
 The footer, contents summary, accessible slider value and Continuous rail use

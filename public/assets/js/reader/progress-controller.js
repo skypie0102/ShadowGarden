@@ -65,7 +65,7 @@ export function createProgressController({storage,elements,getBook,getRendition,
     const range=elements.progressRange,text=elements.progressText;
     const chapter=String(position?.chapter||(position?.cfi?getChapter?.():"")||"").trim();
     const presentation=formatReaderProgress({percentage,position,chapter});
-    if(elements.currentChapterText)elements.currentChapterText.textContent=presentation.chapter||"Updating…";
+    if(elements.currentChapterText)elements.currentChapterText.textContent=presentation.chapter||"Unlabeled section";
     if(elements.volumeProgressText)elements.volumeProgressText.textContent=presentation.volume;
     if(range){range.value=Math.round(presentation.value*1000);range.setAttribute("aria-valuetext",presentation.accessible)}
     if(text){

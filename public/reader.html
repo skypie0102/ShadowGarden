@@ -40,7 +40,7 @@
   <script src="/assets/js/reader-continuous-rail.js?v=2.11.0"></script>
   <script src="/assets/js/motion.js?v=2.11.0"></script>
   <script src="/assets/js/reader-motion.js?v=2.11.0" defer></script>
-  <script src="/assets/js/reader-a11y.js?v=2.11.0" defer></script>
+  <script src="/assets/js/reader-a11y.js?v=2.29.0" defer></script>
   <script src="/assets/js/ui-direction-triangles.js?v=2.11.0" defer></script>
   <script type="module" src="/assets/js/reader-bootstrap.js?v=2.11.0"></script>
 </head>
@@ -84,12 +84,13 @@
       </div>
       <section class="reader-navigation-context" aria-label="Reading position and navigation">
         <dl><div><dt>Current chapter</dt><dd id="readerCurrentChapter">Opening the volume…</dd></div><div><dt>Volume progress</dt><dd id="readerVolumeProgress">0% of volume</dd></div></dl>
-        <details><summary tabindex="0">Navigation help</summary>
+        <button id="readerNavigationHelpToggle" class="reader-navigation-help-toggle" type="button" aria-expanded="false" aria-controls="readerNavigationHelp"><svg viewBox="0 0 20 20" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="m7 4 6 6-6 6"/></svg>Navigation help</button>
+        <div id="readerNavigationHelp" hidden>
           <p id="readerProgressHelp">The slider jumps within this volume. Page numbers depend on your screen and text settings; the percentage is for the whole volume.</p>
           <p>Choose a chapter, search this book or open your saved bookmarks.</p>
           <p id="readerPagesHelp" class="reader-pages-help">Previous and Next turn one page. You can also use the Left and Right arrow keys.</p>
           <p id="readerContinuousHelp" class="reader-continuous-help">Scroll to read. On the progress rail, Up/Down jumps 1%, Page Up/Down jumps 10%, and Home/End goes to the start/end.</p>
-        </details>
+        </div>
       </section>
       <div id="tocPanel" class="drawer-panel"></div>
       <div id="bookmarksPanel" class="drawer-panel hidden"></div>

@@ -48,11 +48,12 @@ for(const adult of [false,true])for(const flow of ['paginated','scrolled-doc']){
   const label=`${adult?'Adult':'Main'} ${flow}`;
   test(`${label} explains volume progress and keeps chapter, search and bookmarks usable`,async({page},info)=>{
     const errors=await open(page,{adult,flow});
+    await expect(page.locator('body')).toHaveClass(flow==='paginated'?/reader-flow-paginated/:/reader-flow-scrolled/);
     await expect.poll(()=>pageMapReady(page),{timeout:45000}).toBe(true);
     await contents(page);
     await expect(page.locator('#readerVolumeProgress')).toContainText(/Page \d+ of \d+ · \d+% of volume/);
     await info.attach('navigation-compact',{body:await page.screenshot(),contentType:'image/png'});
-    await page.locator('.reader-navigation-context summary').focus();await page.keyboard.press('Enter');
+    await page.getByRole('button',{name:'Navigation help',exact:true}).focus();await page.keyboard.press('Space');
     await expect(page.locator('#readerProgressHelp')).toContainText('percentage is for the whole volume');
     await expect(page.locator(flow==='paginated'?'#readerPagesHelp':'#readerContinuousHelp')).toBeVisible();
     await expect(page.locator(flow==='paginated'?'#readerContinuousHelp':'#readerPagesHelp')).toBeHidden();
@@ -127,6 +128,26 @@ test('offscreen buffered illustrations do not consume the first-use tip; dismiss
   expect(errors).toEqual([]);
 });
 
+test('explicit keyboard focus is retained when opening and closing navigation help',async({page})=>{
+  const errors=await open(page);
+  await expect.poll(()=>pageMapReady(page),{timeout:45000}).toBe(true);
+  await contents(page);
+  const help=page.getByRole('button',{name:'Navigation help',exact:true});
+  await expect(help).toBeVisible();await help.focus();await expect(help).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('button',{name:'Navigation help',exact:true})).toHaveAttribute('aria-expanded','true');
+  await expect(page.locator('#readerNavigationHelp')).toBeVisible();
+  await page.evaluate(async()=>{
+    document.querySelector('#tocDrawer [data-close]').click();
+    await Promise.resolve();
+    document.getElementById('bookmarkButton').focus();
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  });
+  await expect(page.locator('#bookmarkButton')).toBeFocused();
+  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');
+  expect(errors).toEqual([]);
+});
+
 test('the illustration tip times out discreetly and still dismisses when its storage write is rejected',async({page})=>{
   await page.addInitScript(key=>{
     const original=Storage.prototype.setItem;
@@ -149,5 +170,8 @@ test('learning image focus in another tab dismisses the tip without changing sav
     await expect(tip).toBeHidden();
     expect(await page.evaluate(()=>localStorage.getItem('sg-bookmarks:unrelated-volume'))).toBe('[{"cfi":"preserved"}]');
   }finally{await writer.close()}
+  await page.bringToFront();
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await expect(tip).toBeHidden();
   expect(errors).toEqual([]);
 });
