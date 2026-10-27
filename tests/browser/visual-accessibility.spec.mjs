@@ -172,7 +172,9 @@ for(const adult of [false,true]){
     const id=adult?'adult-phase4-reader':readerSeriesId;
     for(const scope of [false,true])await page.route(`**/media/shadow-garden/data/${scope?'adult-catalog':'catalog'}.json`,r=>r.fulfill({json:{series:scope===adult?[{id,title:readerTitle,nsfw:adult,volumes:[{bookId:readerBookId,file:readerBookId,number:1,title:readerTitle}]}]:[]}}));
     await page.goto(`/reader.html?book=${readerBookId}&series=${id}&scope=${adult?'adult':'main'}`);
-    await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});await pageMapReady(page);await page.locator('#settingsToggle').click();
+    await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});await pageMapReady(page);
+    // The existing focus handler reveals mobile chrome after idle reading.
+    await page.locator('#settingsToggle').focus();await page.locator('#settingsToggle').click();
     for(const theme of ['garden','night','black','paper']){
       await page.locator('#themeSelect').selectOption(theme);await expect(page.locator('body')).toHaveClass(new RegExp(`reader-theme-${theme}`));
       await pageMapReady(page);
