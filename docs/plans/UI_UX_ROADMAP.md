@@ -40,7 +40,8 @@ at 320px, tablet and desktop widths. Retain the catalog's volume order.
 
 User-directed Series baseline: no Browse volumes, Find Volume or expandable
 synopsis. Grid is the default; List is explicitly selected. Preserve the larger
-cover beside details and the restored compact reading/download controls unless
+cover beside details and reading/pinning actions, full-width tags below, and the
+restored compact volume reading/download controls unless
 the user requests a change. Source, PR checks and live acceptance stay separate.
 
 The [reading journey guide](../guides/READING_JOURNEY.md) documents the shared
