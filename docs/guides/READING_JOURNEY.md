@@ -29,7 +29,9 @@ PR #82 is reverted. The original full synopsis is displayed directly; Browse
 volumes, Find Volume and the expandable synopsis are removed.
 
 On phones, a larger proportional cover stays beside the title and details.
-Reading/pinning controls and tags each have their own row beneath that pair.
+Reading/pinning controls sit directly below the details in the column beside
+the cover, wrapping within that column on narrow screens. Tags span the row
+below the cover and details/actions.
 Grid is the default volume layout. The explicit **Grid / List** buttons switch
 the same catalog-ordered volumes in place. List puts a small cover beside the
 volume details; it does not replace Grid automatically on phones.
@@ -42,7 +44,7 @@ cross-tab view changes retain the selected mode.
 Volume links keep the restored compact **Read / Continue / Read Again** and
 bordered **Download EPUB** presentation from before PR #80. Series styles and
 rendering modules use fresh asset URLs so the requested view reaches returning
-browsers. Current source is v2.28.5; merge and production acceptance are separate.
+browsers. Current source is v2.28.6; merge and production acceptance are separate.
 
 ## Saved-progress context
 

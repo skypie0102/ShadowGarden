@@ -82,8 +82,21 @@ async function previousLayout(page, inspect, css = previousCss) {
   }
 }
 
+function expectActionsBesideCover(boxes) {
+  expect(Math.abs(boxes.actions.x - boxes.heading.x)).toBeLessThan(1);
+  expect(boxes.actions.x).toBeGreaterThanOrEqual(boxes.cover.right + 16);
+  expect(boxes.actions.y - boxes.heading.bottom).toBeGreaterThanOrEqual(17);
+  expect(boxes.actions.y - boxes.heading.bottom).toBeLessThanOrEqual(20);
+  expect(boxes.tags.y).toBeGreaterThanOrEqual(Math.max(boxes.cover.bottom, boxes.actions.bottom) + 17);
+  expect(Math.abs(boxes.tags.x - boxes.cover.x)).toBeLessThan(1);
+  for (const control of boxes.controls) {
+    expect(control.x).toBeGreaterThanOrEqual(boxes.actions.x - 1);
+    expect(control.right).toBeLessThanOrEqual(boxes.actions.right + 1);
+  }
+}
+
 for (const adult of [false, true]) {
-  test(`${adult ? 'Adult' : 'Main'} larger cover stays beside details with actions and tags below`, async ({ page }, info) => {
+  test(`${adult ? 'Adult' : 'Main'} larger cover stays beside details and reading/pinning actions, with tags below`, async ({ page }, info) => {
     const errors = await openSeries(page, adult, adult ? {
       title: 'Adolescent Adam', author: 'Sakaki Kasa (さかき傘)', translations: [{ name: 'js06' }]
     } : {});
@@ -103,11 +116,8 @@ for (const adult of [false, true]) {
       if (width <= 720) {
         expect(boxes.cover.width).toBeGreaterThanOrEqual(124);
         expect(boxes.cover.width).toBeLessThanOrEqual(171);
-        const bottom = Math.max(boxes.cover.bottom, boxes.heading.bottom);
-        expect(boxes.actions.y - bottom).toBeGreaterThanOrEqual(17);
-        expect(boxes.actions.y - bottom).toBeLessThanOrEqual(20);
-        expect(boxes.tags.y).toBeGreaterThanOrEqual(boxes.actions.bottom + 17);
-        expect(Math.abs(boxes.tags.x - boxes.cover.x)).toBeLessThan(1);
+        expectActionsBesideCover(boxes);
+        if (width >= 393) expect(boxes.actions.y).toBeLessThan(boxes.cover.bottom);
       }
       if ([320, 393, 720, 1280].includes(width)) await info.attach(`series-${width}`, {
         body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
@@ -139,7 +149,7 @@ for (const adult of [false, true]) {
     expect(unpinnedColor).not.toBe(accent);
     // Re-rendering the hero for a saved preference retains the same compact layout.
     const pinnedLayout = await layout(page);
-    expect(pinnedLayout.actions.y - Math.max(pinnedLayout.cover.bottom, pinnedLayout.heading.bottom)).toBeLessThanOrEqual(20);
+    expectActionsBesideCover(pinnedLayout);
     await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-book-id', bookId);
     await expect(page.locator('.tag-row a').first()).toHaveAttribute('href', `${adult ? '/nsfw.html' : '/'}?genre=Fantasy`);
     await page.evaluate(identity => localStorage.setItem(`sg-progress:${identity}`,
@@ -151,7 +161,7 @@ for (const adult of [false, true]) {
     await expect(icon).toHaveCSS('stroke', accent);
     await expect(page.locator('.series-actions [data-volume-action]')).toHaveAttribute('data-volume-state', 'in-progress');
     const savedLayout = await layout(page);
-    expect(savedLayout.actions.y - Math.max(savedLayout.cover.bottom, savedLayout.heading.bottom)).toBeLessThanOrEqual(20);
+    expectActionsBesideCover(savedLayout);
     expect(savedLayout.overflow).toBe(false);
     await info.attach('saved-progress-series', {
       body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
@@ -180,8 +190,7 @@ test('long metadata, missing cover and optional audio action fit a narrow series
     // The full title is already the page heading; its cover placeholder must
     // retain the book's proportions rather than growing to fit a second copy.
     expect(Math.abs(boxes.cover.height - boxes.cover.width * 1.5)).toBeLessThan(1);
-    expect(boxes.actions.y - Math.max(boxes.cover.bottom, boxes.heading.bottom)).toBeLessThanOrEqual(20);
-    expect(boxes.actions.y).toBeGreaterThanOrEqual(Math.max(boxes.cover.bottom, boxes.heading.bottom));
+    expectActionsBesideCover(boxes);
     expect(boxes.controls.every(control => control.x >= boxes.hero.x - 1 && control.right <= boxes.hero.right + 1)).toBe(true);
   }
   await expect(page.getByRole('link', { name: 'Audio EPUBs' })).toBeVisible();

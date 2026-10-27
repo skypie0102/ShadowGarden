@@ -498,6 +498,7 @@
   .series-hero-inner {
     display: grid;
     grid-template-columns: clamp(124px, 36vw, 170px) minmax(0, 1fr);
+    grid-template-rows: min-content 1fr auto;
     gap: 18px;
     align-items: start;
     padding-top: 28px;
@@ -506,7 +507,7 @@
   .series-cover,
   .series-cover-fallback {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1 / 3;
     width: 100%;
     float: none;
     margin: 0;
@@ -532,8 +533,9 @@
   }
   .series-info h1 { text-wrap: wrap; }
   .series-actions {
-    grid-column: 1 / -1;
+    grid-column: 2;
     grid-row: 2;
+    align-self: start;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
