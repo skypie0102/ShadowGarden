@@ -29,6 +29,15 @@ export function readerDefaults(){
   return{...READER_DEFAULTS,flow:mobile?"scrolled-doc":"paginated"};
 }
 
+export function readerResetDescription(){
+  const defaults=readerDefaults();
+  const flow=defaults.flow==="paginated"?"Pages":"Continuous scroll";
+  const font=READER_FONT_CHOICES.find(choice=>choice.value===defaults.font)?.label||"Default";
+  const theme={garden:"Shadow Garden",night:"Night",black:"Black",paper:"Paper"}[defaults.theme];
+  const alignment=defaults.alignment.charAt(0).toUpperCase()+defaults.alignment.slice(1);
+  return `Restores ${flow} for this device, the ${theme} theme, ${font} typeface and ${alignment} alignment, ${defaults.fontSize}% text, ${defaults.lineHeight} line height, ${defaults.width}px text width and swipe page turns ${defaults.swipeTurns?"on":"off"}. Your reading position, bookmarks and Read aloud choices are kept.`;
+}
+
 export function sanitizeReaderSettings(value,defaults=readerDefaults()){
   const input=value||{};
   return{
@@ -71,15 +80,23 @@ export function createSettingsController({storage,elements,isAdult=false,onApply
     syncFontOptions();
     if(elements.alignmentSelect)elements.alignmentSelect.value=settings.alignment;
     if(elements.fontSizeRange)elements.fontSizeRange.value=settings.fontSize;
+    elements.fontSizeRange?.setAttribute("aria-valuetext",`${settings.fontSize} percent`);
     if(elements.fontSizeValue)elements.fontSizeValue.textContent=`${settings.fontSize}%`;
     if(elements.lineHeightRange)elements.lineHeightRange.value=settings.lineHeight;
+    elements.lineHeightRange?.setAttribute("aria-valuetext",`${settings.lineHeight} times text size`);
     if(elements.lineHeightValue)elements.lineHeightValue.textContent=String(settings.lineHeight);
     if(elements.widthRange)elements.widthRange.value=settings.width;
+    elements.widthRange?.setAttribute("aria-valuetext",`${settings.width} pixels`);
     if(elements.widthValue)elements.widthValue.textContent=`${settings.width}px`;
     if(elements.flowSelect)elements.flowSelect.value=settings.flow;
-    if(elements.swipeTurnsToggle)elements.swipeTurnsToggle.checked=settings.swipeTurns!==false;
+    if(elements.swipeTurnsToggle){elements.swipeTurnsToggle.checked=settings.swipeTurns!==false;elements.swipeTurnsToggle.disabled=settings.flow!=="paginated"}
     if(elements.textWidthSetting)elements.textWidthSetting.hidden=settings.flow!=="scrolled-doc";
+    if(elements.readerFlowHint)elements.readerFlowHint.textContent=settings.flow==="paginated"
+      ?"Turn pages with the edge buttons or Left/Right arrow keys. Swipe turns can be adjusted below."
+      :"Scroll through the book. Text width shapes prose; illustrations keep the reading canvas.";
+    syncResetDescription();
   }
+  function syncResetDescription(){if(elements.resetReaderDescription)elements.resetReaderDescription.textContent=readerResetDescription()}
   function persist(){if(scope.disposed)return settings;settings=sanitizeReaderSettings(settings);storage.saveSettings(settings);syncBody();syncControls();return settings}
   function setFlow(flow,{save=true}={}){if(scope.disposed)return settings.flow;settings.flow=flow==="scrolled-doc"?"scrolled-doc":"paginated";if(save)persist();else{syncBody();syncControls()}return settings.flow}
   function replace(next,{save=true}={}){if(scope.disposed)return settings;settings=sanitizeReaderSettings(next);if(save)persist();else{syncBody();syncControls()}return settings}
@@ -92,7 +109,15 @@ export function createSettingsController({storage,elements,isAdult=false,onApply
   scope.listen(elements.widthRange,"input",event=>{settings.width=Number(event.target.value);persist();onApply?.({relayout:settings.flow==="scrolled-doc",rebuildPageMap:true})});
   scope.listen(elements.swipeTurnsToggle,"change",event=>{settings.swipeTurns=event.target.checked;persist()});
   scope.listen(elements.flowSelect,"change",event=>onFlowChange?.(event.target.value));
-  scope.listen(elements.resetReader,"click",()=>{const previous=settings.flow;settings=readerDefaults();persist();onReset?.(previous)});
+  scope.listen(elements.resetReader,"click",()=>{
+    const previous=settings.flow,defaults=readerDefaults();
+    // Let the normal flow switch capture the old layout before committing its
+    // new mode. Applying Continuous CSS here can move a paginated anchor.
+    settings={...defaults,flow:onReset?previous:defaults.flow};
+    persist();onReset?.(previous,defaults.flow);
+  });
+  scope.listen(elements.settingsToggle,"click",syncResetDescription);
+  scope.listen(globalThis.window,"resize",syncResetDescription);
 
   persist();
   return{dispose:()=>scope.dispose(),get:()=>settings,persist,setFlow,replace,sync:scope.guard(()=>{syncBody();syncControls()})};

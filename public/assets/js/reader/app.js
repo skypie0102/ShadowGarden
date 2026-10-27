@@ -81,6 +81,8 @@ function readerElements() {
     flowSelect: $("#flowSelect"),
     swipeTurnsToggle: $("#swipeTurnsToggle"),
     resetReader: $("#resetReader"),
+    resetReaderDescription: $("#resetReaderDescription"),
+    readerFlowHint: $("#readerFlowHint"),
     toast: $("#toast"),
     volumeEndPage: $("#volumeEndPage"),
     volumeCompleteTitle: $("#volumeCompleteTitle"),
@@ -361,10 +363,10 @@ async function initializeReader(session, scope) {
     isAdult: session.adult,
     onApply: applySettings,
     onFlowChange: (flow) => void switchFlow(flow),
-    onReset: (previousFlow) => {
+    onReset: (previousFlow, desiredFlow) => {
       resetReaderInput();
       schedulePageMapRefresh(100);
-      if (previousFlow !== settingsController.get().flow) void switchFlow(settingsController.get().flow);
+      if (previousFlow !== desiredFlow) void switchFlow(desiredFlow);
       else applySettings({ relayout: true, rebuildPageMap: true });
       toast("Reader settings reset");
     }
@@ -777,7 +779,10 @@ async function initializeReader(session, scope) {
     }
     progressController.startLocationGeneration();
     const opened = await openRendition(initialTarget);
-    if (!saved?.cfi && pageMapResult?.map && saved?.pageMapFingerprint === state.pageMap.fingerprint() && Number(saved?.page) > 0) {
+    // Complete a saved Continuous CFI through the normal navigation path too:
+    // vendor startup display can report that CFI while showing another section.
+    const restoreContinuousCfi = saved?.cfi && state.renderedFlow === "scrolled-doc";
+    if (restoreContinuousCfi || !saved?.cfi && pageMapResult?.map && saved?.pageMapFingerprint === state.pageMap.fingerprint() && Number(saved?.page) > 0) {
       try {
         await correctCanonicalPosition(opened, saved, state.renderedFlow);
       } catch (error) {

@@ -30,13 +30,13 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The released baseline for this work is [**v2.28.1**](docs/archive/releases/SAVED_PROGRESS_2.28.1.md). The Library discovery phase,
+The released baseline for this work is [**v2.28.2**](docs/archive/releases/READING_JOURNEY_2.28.2.md). Library discovery, the public reading journey,
 Reader maintenance, Website refactor and October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
-The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
-journey, Reader controls, visual consistency and Keeper feedback work. The
-source completes synopsis/list presentation and download hierarchy for **v2.28.2**. The PR and guarded
+The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining
+Reader controls, visual consistency and Keeper feedback work. The
+source groups Reader settings and explains current choices/Reset for **v2.29.0**. The PR and guarded
 release workflow record source validation and live acceptance separately.
 
 ## Local development

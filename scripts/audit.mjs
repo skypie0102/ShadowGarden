@@ -137,6 +137,8 @@ const deliberate=new Set([
   'public/assets/js/reader/error-presentation.js',
   'public/assets/js/reader/image-focus.js',
   'public/assets/css/reader-image-focus.css',
+  // v2.29.0: scoped settings groups, readable descriptions and touch targets.
+  'public/assets/css/reader-presentation.css',
   'public/assets/js/reader/continuous.js',
   'public/assets/js/reader/navigation-state.js',
   'public/assets/js/reader/progress-controller.js',

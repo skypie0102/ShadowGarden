@@ -9,7 +9,7 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Library → Series → Reader journey and Keeper feedback | Review Reader settings/navigation; the reading-journey phase is implemented through v2.28.2 |
+| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Reader controls, visual consistency and Keeper feedback | Clarify Reader progress/navigation and image-focus guidance; grouped settings/Reset clarity are implemented for v2.29.0 |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides
@@ -19,6 +19,7 @@ release evidence live in the archive.
 | [Website architecture](guides/WEBSITE_ARCHITECTURE.md) | Public pages, Garden Pass, Library state and Keeper upload ownership |
 | [Public reading journey](guides/READING_JOURNEY.md) | Shared reading actions, saved state and next-volume selection |
 | [Reader architecture](guides/READER_ARCHITECTURE.md) | Startup, navigation, layout, lifecycle, measurements and caches |
+| [Reader settings](guides/READER_SETTINGS.md) | Immediate changes, device defaults, mode-specific controls and Reset scope |
 | [EPUB.js contract](guides/READER_VENDOR_CONTRACT.md) | Pinned vendor integration and upgrade checks |
 | [Reader read aloud](guides/READER_TTS.md) | Speech behavior, buffering, playback and platform limits |
 | [API contracts](guides/API_CONTRACTS.md) | Authentication, revisions, catalog writes, uploads, snapshots and cleanup |

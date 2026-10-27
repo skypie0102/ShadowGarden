@@ -10,6 +10,24 @@ body.reader-theme-paper .volume-end-page{background:#fff!important}
 
 #textWidthSetting[hidden]{display:none!important}
 
+/* Settings remain distinct from the separate Read aloud drawer. */
+.reader-settings-panel{gap:26px;padding-bottom:32px}
+.reader-settings-intro,.reader-settings-panel .reader-setting-hint{margin:0;color:var(--muted);font-size:.76rem;line-height:1.6;overflow-wrap:anywhere}
+.reader-settings-group{min-inline-size:0;margin:0;padding:0;border:0}
+.reader-settings-group legend{max-width:100%;padding:0 0 12px;color:var(--text);font-size:.84rem;font-weight:650}
+.reader-settings-fields{display:grid;gap:18px;padding-top:14px;border-top:1px solid var(--line)}
+.reader-settings-panel .reader-setting{display:grid;gap:6px;min-width:0}
+.reader-settings-panel label{min-width:0}
+.reader-settings-panel label>span{align-items:baseline;gap:12px;line-height:1.5}
+.reader-settings-panel output{white-space:nowrap;font-variant-numeric:tabular-nums}
+.reader-settings-panel select{min-width:0;width:100%;min-height:44px}
+.reader-settings-panel input[type=range]{min-width:0;min-height:44px;margin:0}
+.reader-settings-panel .reader-toggle-setting input{flex-shrink:0}
+.reader-settings-panel .reader-toggle-setting{min-height:44px}
+.reader-settings-reset{display:grid;gap:12px;padding-top:20px;border-top:1px solid var(--line)}
+.reader-settings-reset h2{margin:0;color:var(--text);font-size:.84rem;font-weight:650}
+.reader-settings-reset .reader-reset{min-height:44px;height:auto;padding:10px;line-height:1.4}
+
 .reader-external-dialog{width:min(440px,calc(100vw - 32px));max-width:none;margin:auto;padding:0;border:1px solid rgba(181,163,229,.24);border-radius:18px;color:var(--text);background:linear-gradient(160deg,#171220,#0d0a12 72%);box-shadow:0 28px 90px rgba(0,0,0,.62);font-family:var(--sans);overflow:hidden}
 .reader-external-dialog::backdrop{background:rgba(3,2,5,.72);backdrop-filter:blur(5px)}
 .reader-external-dialog[open]{animation:sg-reader-external-in .16s ease-out}
