@@ -6,6 +6,7 @@ import * as bookmarks from '../public/assets/js/domain/bookmarks.js';
 import * as reading from '../public/assets/js/domain/reading-state.js';
 import {createReaderStorage} from '../public/assets/js/reader/storage.js';
 import {resetFinishedVolume} from '../public/assets/js/public/volume-actions.js';
+import * as preferences from '../public/assets/js/domain/preferences.js';
 
 const book='bk_0123456789012345678901',path='/media/shadow-garden/books/storage-fixture.epub';
 const aliases=[book,path,'series:fixture:volume:1'];
@@ -29,6 +30,27 @@ function fixture(t,seed={}){
   return {data,target,events,fail:predicate=>{failure=predicate},once(predicate){let failed=false;failure=(...args)=>!failed&&predicate(...args)&&(failed=true)}};
 }
 function snapshot(data){return Object.fromEntries([...data].sort(([a],[b])=>a.localeCompare(b)))}
+for(const scope of ['main','nsfw'])test(`Series view is isolated from Library and reading records (${scope})`,t=>{
+  const f=fixture(t,{[progress.progressKey(book)]:encoded({page:9}),[bookmarks.bookmarkKey(book)]:encoded([{cfi:'saved'}]),'sg-view:main':'compact','sg-view:nsfw':'compact'});
+  const before=snapshot(f.data),other=scope==='main'?'nsfw':'main';
+  assert.equal(preferences.seriesView(scope),'grid');
+  assert.equal(preferences.setSeriesView(scope,'list'),true);
+  assert.equal(preferences.seriesView(scope),'list');
+  assert.equal(preferences.seriesView(other),'grid');
+  assert.equal(preferences.libraryView(scope),'compact');
+  assert.equal(preferences.isPreferenceStorageKey(preferences.seriesViewKey(scope)),true);
+  assert.deepEqual(Object.fromEntries([...f.data].filter(([key])=>key!==preferences.seriesViewKey(scope))),before);
+  f.data.set(preferences.seriesViewKey(scope),'unsupported');
+  assert.equal(preferences.seriesView(scope),'grid');
+  assert.equal(f.data.get(preferences.seriesViewKey(scope)),'unsupported');
+});
+test('a rejected Series preference write preserves existing records',t=>{
+  const f=fixture(t,progressSeed()),before=snapshot(f.data);
+  f.fail((op,key)=>op==='set'&&key===preferences.seriesViewKey('main'));
+  assert.equal(preferences.setSeriesView('main','list'),false);
+  assert.equal(preferences.seriesView('main'),'grid');
+  assert.deepEqual(snapshot(f.data),before);
+});
 const progressSeed=()=>Object.fromEntries(aliases.map(id=>[progress.progressKey(id),encoded({file:book,page:9,updatedAt:10})]));
 const finishedSeed=()=>({[reading.KEY]:encoded(Object.fromEntries([...aliases.map(id=>[id,10]),['unrelated',11]])),...Object.fromEntries(aliases.map(id=>[reading.MARKER_PREFIX+id,'1']))});
 

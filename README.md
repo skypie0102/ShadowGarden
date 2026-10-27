@@ -30,13 +30,13 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The released baseline for this work is [**v2.28.1**](docs/archive/releases/SAVED_PROGRESS_2.28.1.md). The Library discovery phase,
+The released baseline for this work is [**v2.28.4**](https://github.com/skypie0102/ShadowGarden/pull/85). The Library discovery phase,
 Reader maintenance, Website refactor and October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
 journey, Reader controls, visual consistency and Keeper feedback work. The
-source restores the compact Series reading/download controls from before PR #80 for **v2.28.4**. The PR and guarded
+source reverts PR #82 and implements the requested larger Series cover and Grid/List controls for **v2.28.5**. The PR and guarded
 release workflow record source validation and live acceptance separately.
 
 ## Local development

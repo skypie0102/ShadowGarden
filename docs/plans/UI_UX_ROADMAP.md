@@ -10,39 +10,38 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../archive/releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
-| 2. Reading journey | Recognize saved progress and reach the next volume | Implemented through v2.28.2; release records distinguish source validation and production acceptance |
+| 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
 | 3. Reader controls | Understand preferences and navigation | Active; alignment and Read Aloud released through v2.27.0 |
 | 4. Visual consistency | Read labels and operate controls across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Planned; Replace EPUB and empty translator provenance already delivered |
 
 ## Phase 2 — Reading journey
 
-Consistent actions and volume states [shipped in v2.28.0](../archive/releases/PUBLIC_READING_ACTIONS_2.28.0.md),
-followed by [saved reading context in v2.28.1](../archive/releases/SAVED_PROGRESS_2.28.1.md).
-The current source completes synopsis/list presentation and download hierarchy
-for v2.28.2, following saved-progress context in v2.28.1. Checkmarks identify
+Consistent actions and volume states [shipped in v2.28.0](../archive/releases/PUBLIC_READING_ACTIONS_2.28.0.md).
+The current source adds saved-progress context for v2.28.1. Checkmarks identify
 implementation; the PR and guarded release record validation and live acceptance
 separately.
 
-- [x] Use consistent Start reading / Continue reading / Read next volume / Read again actions across the Library banner, Recently Added, Series hero and volume links.
+- [x] Keep shared reading destinations across Library and Series, with the user's restored compact Read / Continue / Read Again text on volume links.
 - [x] Show explicit volume order and Unread / In progress / Finished states on Series pages. Keep the next-volume indication separate from reading state.
 - [x] Let mobile metadata/actions flow around the cover, retain full-width tags and use compact themed pins (v2.19.1–v2.19.4).
 - [x] Fill mobile reading-banner content height with proportional cover artwork (v2.27.1).
-- [x] Refine synopsis and volume-list presentation around the next reading action: expandable six-line synopsis previews, Browse volumes/Find Volume links and readable narrow-screen entries (v2.28.2 source).
+- [x] Revert PR #82; retain the full original synopsis, enlarge the cover beside details and provide explicit Grid/List controls (v2.28.5 source).
 - [x] Show reliable saved progress without truncating useful context, including records with page-only progress: shared percentage/page/chapter summaries, timestamp-free legacy saves, accessible Recently Added descriptions and wrapping context (v2.28.1 source).
-- [x] Keep downloads visually secondary and easy to find: a separate underlined link after the reading action, named for its volume, with a 44px target; unavailable EPUBs have no dead actions (v2.28.2 source).
+- [x] Preserve the compact Read/Download controls from before PR #80, restored at the user's request in v2.28.4.
 
 Acceptance for this increment: Main and Adult; no progress, saved progress,
 completion of the first volume, all volumes finished, out-of-order Finished marks
 and missing EPUBs. The banner and Series hero must choose the same available
-volume; the matching card/cover and Recently Added use the same action name.
+volume; matching card/cover and Recently Added keep the same destination.
 Read again still requires confirmation, cancelling retains progress/bookmarks,
 and reload preserves state. Check long titles, keyboard focus and page overflow
 at 320px, tablet and desktop widths. Retain the catalog's volume order.
-Synopsis previews must retain full escaped text, keyboard expansion, responsive
-fit and the page's expanded choice through storage refreshes. Volume jumps move
-focus to their targets. Downloading through the existing authorization flow
-preserves saved progress/bookmarks, and empty/missing-EPUB states are explicit.
+
+User-directed Series baseline: no Browse volumes, Find Volume or expandable
+synopsis. Grid is the default; List is explicitly selected. Preserve the larger
+cover beside details and the restored compact reading/download controls unless
+the user requests a change. Source, PR checks and live acceptance stay separate.
 
 The [reading journey guide](../guides/READING_JOURNEY.md) documents the shared
 selection and action-copy contract. Earlier layout changes and their release
