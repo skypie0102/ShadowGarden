@@ -187,7 +187,7 @@ function latestActiveFromSnapshots(snapshots) {
   const candidates = [];
   for (const { series, entries } of snapshots) {
     for (const entry of entries) {
-      if (!entry.progress?.updatedAt || entry.state !== STATES.IN_PROGRESS || !readableEntry(entry)) continue;
+      if (entry.state !== STATES.IN_PROGRESS || !readableEntry(entry)) continue;
       candidates.push({ series, ...entry, updatedAt: Number(entry.progress.updatedAt) || 0 });
     }
   }

@@ -166,6 +166,15 @@
   color: var(--muted);
   font-size: 0.63rem;
 }
+.recent-volume-copy .recent-volume-progress {
+  color: var(--muted);
+  font-size: 0.63rem;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
+}
 .recent-volume-added {
   color: var(--dim);
   font-size: 0.58rem;

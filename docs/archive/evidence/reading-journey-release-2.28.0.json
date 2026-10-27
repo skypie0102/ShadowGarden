@@ -1,0 +1,104 @@
+{
+  "checkedAt": "2026-10-26T23:26:46.018Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "deploymentId": "d49d291b-c39b-466c-9af8-5e53aacd578d",
+  "source": "eb5545c4833a298afc1283e00ccb0fe13470d0f4",
+  "version": "2.28.0",
+  "baselineCheckedAt": "2026-10-26T23:26:44.771Z",
+  "revision": 18,
+  "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+  "snapshots": 17,
+  "preservationChecked": true,
+  "databaseWrites": 0,
+  "versionCheck": {
+    "attempts": 1,
+    "elapsedMs": 261
+  },
+  "checks": [
+    {
+      "path": "/data/version.json",
+      "source": "eb5545c4833a298afc1283e00ccb0fe13470d0f4",
+      "version": "2.28.0"
+    },
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/assets/css/series-extra.css",
+      "sha256": "b17b870823732f502071ca79f698adb5ecd73dea127ba5cf7128dffeef8414a6",
+      "bytes": 13725
+    },
+    {
+      "path": "/assets/js/domain/reading-state.js",
+      "sha256": "1f9f8dea43f7e64d73f6852eb3c8a718fc4ea34dbcbf9c414cce661049f4dd21",
+      "bytes": 11250
+    },
+    {
+      "path": "/assets/js/library-renderers.js",
+      "sha256": "46928e18a548519e99971e37c8914e8f48e2fc761038df5e0f132c1b7ab1b7f3",
+      "bytes": 8768
+    },
+    {
+      "path": "/assets/js/public/volume-actions.js",
+      "sha256": "bc752f0b0fd46ee710e4c67cfe0b392a11910bdfdbccce55930354b47427b1e0",
+      "bytes": 6397
+    },
+    {
+      "path": "/assets/js/series-renderers.js",
+      "sha256": "050fd9d83653b3ae14074df94af46410e15f80b5919dce6c5f230b93a7211705",
+      "bytes": 10181
+    }
+  ],
+  "rollbackDeploymentId": "01b69b75-77c2-46f1-b37d-b20970ba7538",
+  "rollbackSource": "4919c58f426f6e4f9ec858a7dabfaa6cd9bf1be8",
+  "beforeCheckedAt": "2026-10-26T23:26:35.623Z",
+  "readerSpeech": {
+    "voiceCount": 318,
+    "defaultVoice": "en-US-BrianMultilingualNeural",
+    "checks": [
+      {
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "name": "garden-pass",
+        "method": "POST",
+        "status": 428,
+        "code": "human_verification_required"
+      },
+      {
+        "name": "text-limit",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "ornament-text",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "origin",
+        "method": "POST",
+        "status": 403,
+        "code": "cross_origin"
+      },
+      {
+        "name": "method",
+        "method": "PUT",
+        "status": 405,
+        "code": "method_not_allowed"
+      }
+    ]
+  }
+}
