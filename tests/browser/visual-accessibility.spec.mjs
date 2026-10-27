@@ -23,6 +23,13 @@ async function publicFixture(page,adult){
 async function library(page,adult){
   await page.goto(adult?'/nsfw':'/');await expect(page.locator('#catalogGrid')).toHaveAttribute('aria-busy','false');
 }
+async function pageMapReady(page){
+  await expect.poll(()=>page.evaluate(async()=>{
+    const src=document.querySelector('script[src*="reader-bootstrap.js"]').getAttribute('src');
+    return(await import(src)).readerRuntime.current.state.pageMap.hasCompleteMap();
+  }),{timeout:45000}).toBe(true);
+  await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true',{timeout:20000});
+}
 async function geometry(page){
   return page.evaluate(async()=>{
     await document.fonts.ready;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
@@ -92,11 +99,16 @@ for(const adult of [false,true]){
       await focus(page,page.locator('.empty-filter-actions button').first());
       await preserveGeometry(page,`${scope}-empty-${width}`);
     }
+    await page.evaluate(()=>sessionStorage.setItem('phase4-larger-text','1'));
+    await page.addInitScript(()=>{if(sessionStorage.getItem('phase4-larger-text'))document.documentElement.style.fontSize='125%';});
+    // Set larger text before the new document's first layout. WebKit can retain
+    // stale inherited computed font sizes after changing the root on a live page.
     await page.setViewportSize({width:320,height:850});await library(page,adult);
-    await page.addStyleTag({content:'html{font-size:125%}'});
+    await expect(page.locator('html')).toHaveCSS('font-size','20px');
     await preserveGeometry(page,`${scope}-increased-text`);
     expect((await geometry(page)).overflow).toBe(false);
     await info.attach('increased-text',{contentType:'image/png',body:await page.screenshot({fullPage:true,animations:'disabled'})});
+    await page.evaluate(()=>sessionStorage.removeItem('phase4-larger-text'));
     for(const outcome of ['empty','failure']){
       let release,requested=false;const pending=new Promise(r=>{release=r;});
       await page.route(`**/media/shadow-garden/data/${adult?'adult-catalog':'catalog'}.json`,async route=>{
@@ -156,9 +168,10 @@ for(const adult of [false,true]){
     const id=adult?'adult-phase4-reader':readerSeriesId;
     for(const scope of [false,true])await page.route(`**/media/shadow-garden/data/${scope?'adult-catalog':'catalog'}.json`,r=>r.fulfill({json:{series:scope===adult?[{id,title:readerTitle,nsfw:adult,volumes:[{bookId:readerBookId,file:readerBookId,number:1,title:readerTitle}]}]:[]}}));
     await page.goto(`/reader.html?book=${readerBookId}&series=${id}&scope=${adult?'adult':'main'}`);
-    await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});await page.locator('#settingsToggle').click();
+    await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});await pageMapReady(page);await page.locator('#settingsToggle').click();
     for(const theme of ['garden','night','black','paper']){
       await page.locator('#themeSelect').selectOption(theme);await expect(page.locator('body')).toHaveClass(new RegExp(`reader-theme-${theme}`));
+      await pageMapReady(page);
       const ring=await focus(page,page.locator('#themeSelect'));
       const panel=await page.locator('#settingsDrawer').evaluate(e=>getComputedStyle(e).backgroundColor);
       expect(contrast(ring.color,panel)).toBeGreaterThanOrEqual(3);
