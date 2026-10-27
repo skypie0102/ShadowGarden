@@ -25,6 +25,12 @@ async function contents(page){
   await page.locator('#tocToggle').focus();await page.locator('#tocToggle').click();
   await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','false');
 }
+async function navigationFinished(page){
+  // Continuous can finish buffered chapter styling after the requested text
+  // appears. Use the same completion budget as production integration cases.
+  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true',{timeout:20000});
+  await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true',{timeout:20000});
+}
 async function pageMapReady(page){
   return page.evaluate(async()=>{
     const entry=document.querySelector('script[src*="reader-bootstrap.js"]').getAttribute('src');
@@ -58,7 +64,7 @@ for(const adult of [false,true])for(const flow of ['paginated','scrolled-doc']){
     await expect(page.locator(flow==='paginated'?'#readerPagesHelp':'#readerContinuousHelp')).toBeVisible();
     await expect(page.locator(flow==='paginated'?'#readerContinuousHelp':'#readerPagesHelp')).toBeHidden();
     await page.locator('#tocPanel [data-href="chapter2.xhtml"]').click();
-    await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');await visibleChapter(page,2);
+    await navigationFinished(page);await visibleChapter(page,2);
     await page.locator('#bookmarkButton').focus();await page.locator('#bookmarkButton').click();
     await expect(page.locator('#bookmarkButton')).toHaveAttribute('aria-pressed','true');
     await contents(page);
@@ -70,7 +76,7 @@ for(const adult of [false,true])for(const flow of ['paginated','scrolled-doc']){
     await page.getByRole('button',{name:'Search contents and book',exact:true}).click();
     await page.getByRole('searchbox',{name:'Search contents and book'}).fill('Chapter 4');
     await page.locator('#tocPanel .toc-entry-link[data-href="chapter4.xhtml"]').click();
-    await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');await visibleChapter(page,4);
+    await navigationFinished(page);await visibleChapter(page,4);
     await contents(page);
     for(const width of [320,768,1280]){
       await page.setViewportSize({width,height:850});
@@ -157,7 +163,7 @@ test('the illustration tip times out discreetly and still dismisses when its sto
   await expect(tip).toBeVisible();await expect(tip).toBeHidden({timeout:12000});
   expect(await page.evaluate(key=>localStorage.getItem(key),seenKey)).toBeNull();
   await contents(page);await page.locator('#tocPanel [data-href="chapter3.xhtml"]').click();
-  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');
+  await navigationFinished(page);
   await expect(tip).toBeHidden();expect(errors).toEqual([]);
 });
 
