@@ -99,16 +99,20 @@ for(const adult of [false,true]){
       await focus(page,page.locator('.empty-filter-actions button').first());
       await preserveGeometry(page,`${scope}-empty-${width}`);
     }
-    await page.evaluate(()=>sessionStorage.setItem('phase4-larger-text','1'));
-    await page.addInitScript(()=>{if(sessionStorage.getItem('phase4-larger-text'))document.documentElement.style.fontSize='125%';});
-    // Set larger text before the new document's first layout. WebKit can retain
-    // stale inherited computed font sizes after changing the root on a live page.
+    let largerText=true;
+    await page.route(url=>['/','/nsfw','/nsfw.html'].includes(url.pathname),async route=>{
+      if(!largerText)return route.continue();
+      const response=await route.fetch(),html=await response.text();
+      await route.fulfill({response,body:html.replace('<html ','<html style="font-size:125%" ')});
+    });
+    // Supply larger text in the initial HTML. WebKit can retain stale inherited
+    // computed font sizes after changing the root on an already laid-out page.
     await page.setViewportSize({width:320,height:850});await library(page,adult);
     await expect(page.locator('html')).toHaveCSS('font-size','20px');
     await preserveGeometry(page,`${scope}-increased-text`);
     expect((await geometry(page)).overflow).toBe(false);
     await info.attach('increased-text',{contentType:'image/png',body:await page.screenshot({fullPage:true,animations:'disabled'})});
-    await page.evaluate(()=>sessionStorage.removeItem('phase4-larger-text'));
+    largerText=false;
     for(const outcome of ['empty','failure']){
       let release,requested=false;const pending=new Promise(r=>{release=r;});
       await page.route(`**/media/shadow-garden/data/${adult?'adult-catalog':'catalog'}.json`,async route=>{
