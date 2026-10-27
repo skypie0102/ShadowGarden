@@ -1,0 +1,207 @@
+{
+  "checkedAt": "2026-10-27T15:56:51.334Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "deploymentId": "56813a6e-7ab0-4eca-8358-253856be5794",
+  "source": "90997e396ce1790a8f5e75ef30fd0a0ae2dad478",
+  "version": "2.29.0",
+  "baselineCheckedAt": "2026-10-27T15:56:49.712Z",
+  "revision": 18,
+  "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+  "snapshots": 17,
+  "preservationChecked": true,
+  "databaseWrites": 0,
+  "versionCheck": {
+    "attempts": 1,
+    "elapsedMs": 425
+  },
+  "checks": [
+    {
+      "path": "/data/version.json",
+      "source": "90997e396ce1790a8f5e75ef30fd0a0ae2dad478",
+      "version": "2.29.0"
+    },
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/assets/css/reader-presentation.css",
+      "sha256": "4160d0ddad9ecec9e11e4bbb4eb7f69894093cac7301109a4e97b9819ac9d313",
+      "bytes": 14128
+    },
+    {
+      "path": "/assets/js/reader-a11y.js",
+      "sha256": "557eba450869122c54fa1a2df3d0184698a1f2b5d2a33a7e58135f20fbc4bc77",
+      "bytes": 4006
+    },
+    {
+      "path": "/assets/js/reader/app.js",
+      "sha256": "4df4f050fe99c1b6c6ed4980148f78f158c2ddec5dbe7ec57ffb1c9712c371c6",
+      "bytes": 36669
+    },
+    {
+      "path": "/assets/js/reader/continuous.js",
+      "sha256": "94fc4d1e47ae62bc8c81a31382bc12e837cd61be8746ade7bee41c61cdfb139a",
+      "bytes": 4185
+    },
+    {
+      "path": "/assets/js/reader/image-focus.js",
+      "sha256": "ca4162128de00324518e0f4dada3076ae5f4e10fb2f3a5598b282582cb8c8371",
+      "bytes": 21922
+    },
+    {
+      "path": "/assets/js/reader/image-guidance.js",
+      "sha256": "fa664b1f0d4048954f7300829155290b1b09d2bb07d9a734c2988ed20f20a686",
+      "bytes": 4841
+    },
+    {
+      "path": "/assets/js/reader/progress-controller.js",
+      "sha256": "b997a5637910e654182abb33d14c5cf4b985ff55759d134236acdf5e72f6fae5",
+      "bytes": 12531
+    },
+    {
+      "path": "/assets/js/reader/settings.js",
+      "sha256": "35e6b69544eff34cad402bb4c7d1f6853fef48bf7712ee959d53311d509a337a",
+      "bytes": 8344
+    }
+  ],
+  "rollbackDeploymentId": "2d037d5a-0dee-43ed-ae2c-0d2a29ae3592",
+  "rollbackSource": "c07e341c50c39149c4c0a26a5c6a8345e3b677c3",
+  "beforeCheckedAt": "2026-10-27T15:56:40.140Z",
+  "readerSpeech": {
+    "voiceCount": 318,
+    "defaultVoice": "en-US-BrianMultilingualNeural",
+    "checks": [
+      {
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "name": "garden-pass",
+        "method": "POST",
+        "status": 428,
+        "code": "human_verification_required"
+      },
+      {
+        "name": "text-limit",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "ornament-text",
+        "method": "POST",
+        "status": 400,
+        "code": "invalid_tts_text"
+      },
+      {
+        "name": "origin",
+        "method": "POST",
+        "status": 403,
+        "code": "cross_origin"
+      },
+      {
+        "name": "method",
+        "method": "PUT",
+        "status": 405,
+        "code": "method_not_allowed"
+      }
+    ]
+  },
+  "validation": {
+    "reviewedHead": "7ca68d5f10628d63b64e2be3c12f7eec60c251d9",
+    "mergedSource": "90997e396ce1790a8f5e75ef30fd0a0ae2dad478",
+    "mergedTreeMatchesReviewedTree": true,
+    "pullRequest": "https://github.com/skypie0102/ShadowGarden/pull/83",
+    "reviewedHeadRun": "https://github.com/skypie0102/ShadowGarden/actions/runs/40530019401",
+    "reviewedHeadElapsedSeconds": 735,
+    "productionRun": "https://github.com/skypie0102/ShadowGarden/actions/runs/40534040129",
+    "nodePassed": 545,
+    "browserPassed": 1191,
+    "existingPlatformSkips": 9,
+    "browserRetries": 0,
+    "browserProfiles": 5,
+    "browserShards": 15,
+    "newReaderBrowserCases": 90,
+    "localWebkitGuidancePassed": 24,
+    "localWebkitSettingsPassed": 12,
+    "localDesktopWebkitAlignmentPassed": 2,
+    "seriesAssetsUnchangedFrom": "c07e341c50c39149c4c0a26a5c6a8345e3b677c3"
+  },
+  "servedReaderControls": {
+    "checkedAt": "2026-10-27T15:58:15.138Z",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": "2.29.0",
+    "source": "90997e396ce1790a8f5e75ef30fd0a0ae2dad478",
+    "branch": "main",
+    "stylesheet": "/assets/css/reader-presentation.css?v=2.29.0",
+    "readerAssetMatches": 8,
+    "seriesAssetMatches": 4,
+    "settingsGroups": 4,
+    "navigationHelpPresent": true,
+    "imageGuidancePresent": true,
+    "assets": [
+      {
+        "path": "/assets/css/reader-presentation.css?v=2.29.0",
+        "sha256": "4160d0ddad9ecec9e11e4bbb4eb7f69894093cac7301109a4e97b9819ac9d313"
+      },
+      {
+        "path": "/assets/js/reader/app.js",
+        "sha256": "4df4f050fe99c1b6c6ed4980148f78f158c2ddec5dbe7ec57ffb1c9712c371c6"
+      },
+      {
+        "path": "/assets/js/reader/settings.js",
+        "sha256": "35e6b69544eff34cad402bb4c7d1f6853fef48bf7712ee959d53311d509a337a"
+      },
+      {
+        "path": "/assets/js/reader/continuous.js",
+        "sha256": "94fc4d1e47ae62bc8c81a31382bc12e837cd61be8746ade7bee41c61cdfb139a"
+      },
+      {
+        "path": "/assets/js/reader/progress-controller.js",
+        "sha256": "b997a5637910e654182abb33d14c5cf4b985ff55759d134236acdf5e72f6fae5"
+      },
+      {
+        "path": "/assets/js/reader/image-focus.js",
+        "sha256": "ca4162128de00324518e0f4dada3076ae5f4e10fb2f3a5598b282582cb8c8371"
+      },
+      {
+        "path": "/assets/js/reader/image-guidance.js",
+        "sha256": "fa664b1f0d4048954f7300829155290b1b09d2bb07d9a734c2988ed20f20a686"
+      },
+      {
+        "path": "/assets/js/reader-a11y.js?v=2.29.0",
+        "sha256": "557eba450869122c54fa1a2df3d0184698a1f2b5d2a33a7e58135f20fbc4bc77"
+      },
+      {
+        "path": "/assets/css/series-extra.css?v=43e88563d6b6",
+        "sha256": "43e88563d6b6ff622b7b95efd2ed245fbe79f2a44edca39db7cd9b90338c5390"
+      },
+      {
+        "path": "/assets/js/series.js?v=2.28.5",
+        "sha256": "9535120ba7392523afefa798dd4478032e22f17648cfbbc5226b9d7434043548"
+      },
+      {
+        "path": "/assets/js/series-renderers.js?v=2.28.5",
+        "sha256": "5f49f133813611232da4920014983df696f8c8b5b2800221c8d6288e30a4df72"
+      },
+      {
+        "path": "/assets/js/domain/preferences.js?v=2.28.5",
+        "sha256": "a4b93941b97b0ad4e4835935cd7101e051c477d3c19ae39f67c2e1a2963344ae"
+      }
+    ],
+    "passed": true
+  },
+  "acceptanceLimits": [
+    "Physical Android/iOS acceptance remains separate from generated-book browser coverage.",
+    "Continuous width-change section drift also reproduces with released v2.28.7 Reader assets; resize-position acceptance is not claimed."
+  ]
+}

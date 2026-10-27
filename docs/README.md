@@ -9,7 +9,7 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Reading journey, Reader controls, visual consistency and Keeper feedback | Validate Phase 3 Reader controls for v2.29.0, then continue the visual-consistency review |
+| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Remaining reading journey, visual consistency and Keeper feedback | Continue Phase 4 visual consistency; Phase 3 is archived with its v2.29.0 release evidence |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides
