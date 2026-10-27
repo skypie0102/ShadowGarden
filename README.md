@@ -30,13 +30,15 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The released baseline for this work is [**v2.28.6**](https://github.com/skypie0102/ShadowGarden/pull/87). The Library discovery phase,
+The released baseline for this work is [**v2.28.7**](https://github.com/skypie0102/ShadowGarden/pull/88). The Library discovery phase,
 Reader maintenance, Website refactor and October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
 journey, Reader controls, visual consistency and Keeper feedback work. The
-source makes the Series pin icon solid when pinned for **v2.28.7**. The PR and guarded
+source completes Phase 3 Reader controls for **v2.29.0**: grouped settings and
+device-default Reset, clearer chapter/volume navigation, and first-use image-focus
+guidance. The Series layout and solid pinned icon retain their released behavior. The PR and guarded
 release workflow record source validation and live acceptance separately.
 
 ## Local development

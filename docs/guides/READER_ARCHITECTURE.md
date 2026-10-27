@@ -1,5 +1,8 @@
 # Reader integration and navigation ownership
 
+The [Reader controls](READER_CONTROLS.md) and [settings](READER_SETTINGS.md)
+guides describe the current user-facing behavior.
+
 Current cleanup is tracked in [READER_MAINTENANCE.md](../archive/plans/READER_MAINTENANCE.md).
 The [vendor contract](READER_VENDOR_CONTRACT.md) records supported adaptation;
 [code review](../archive/audits/READER_CODE_REVIEW.md) records the baseline. Original phased work

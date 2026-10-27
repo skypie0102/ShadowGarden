@@ -27,10 +27,18 @@
     });
     if(openDrawer){
       if(!returnTarget)returnTarget=triggerFor(openDrawer);
-      if(!openDrawer.contains(document.activeElement))requestAnimationFrame(()=>focusable(openDrawer)?.focus({preventScroll:true}));
+      if(!openDrawer.contains(document.activeElement))requestAnimationFrame(()=>{
+        // Explicit focus may have entered the drawer before this frame runs.
+        if(document.contains(openDrawer)&&openDrawer.classList.contains('open')&&!openDrawer.contains(document.activeElement))focusable(openDrawer)?.focus({preventScroll:true});
+      });
     }else if(returnTarget&&document.contains(returnTarget)){
       const target=returnTarget;returnTarget=null;
-      requestAnimationFrame(()=>target.focus({preventScroll:true}));
+      const activeWhenClosed=document.activeElement;
+      requestAnimationFrame(()=>{
+        if(drawers.some(drawer=>drawer.classList.contains('open'))||!document.contains(target))return;
+        if(document.activeElement!==activeWhenClosed&&document.activeElement!==document.body)return;
+        target.focus({preventScroll:true});
+      });
     }
   }
 

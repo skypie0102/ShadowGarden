@@ -1,10 +1,20 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createProgressController} from '../public/assets/js/reader/progress-controller.js';
+import {createProgressController,formatReaderProgress} from '../public/assets/js/reader/progress-controller.js';
 import {beginRenditionNavigation,cancelRenditionNavigation,registerRenditionNavigator} from '../public/assets/js/reader/navigation-state.js';
 
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b});return{promise,resolve,reject}};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
+
+test('Reader progress names the whole volume separately from its current chapter',()=>{
+  const p=formatReaderProgress({percentage:.42,position:{page:12,totalPages:30},chapter:'Chapter Three'});
+  assert.equal(p.volume,'Page 12 of 30 · 42% of volume');
+  assert.equal(p.chapter,'Chapter Three');
+  assert.equal(p.accessible,'Chapter Three · Page 12 of 30 · 42% of volume');
+  assert.equal(p.compact,'12/30 · 42%');
+  assert.equal(formatReaderProgress({percentage:2,position:{page:20,totalPages:10}}).volume,'100% of volume');
+  assert.equal(formatReaderProgress({percentage:-1}).volume,'0% of volume');
+});
 
 function fixture(t,pageMap){
   const generated=deferred(),calls=[];

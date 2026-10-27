@@ -64,6 +64,10 @@ function readerElements() {
     fullscreenButton: $("#fullscreenButton"),
     progressRange: $("#progressRange"),
     progressText: $("#progressText"),
+    currentChapterText: $("#readerCurrentChapter"),
+    volumeProgressText: $("#readerVolumeProgress"),
+    navigationHelpToggle: $("#readerNavigationHelpToggle"),
+    navigationHelp: $("#readerNavigationHelp"),
     prevPage: $("#prevPage"),
     nextPage: $("#nextPage"),
     prevBottom: $("#prevBottom"),
@@ -81,6 +85,8 @@ function readerElements() {
     flowSelect: $("#flowSelect"),
     swipeTurnsToggle: $("#swipeTurnsToggle"),
     resetReader: $("#resetReader"),
+    resetReaderDescription: $("#resetReaderDescription"),
+    readerFlowHint: $("#readerFlowHint"),
     toast: $("#toast"),
     volumeEndPage: $("#volumeEndPage"),
     volumeCompleteTitle: $("#volumeCompleteTitle"),
@@ -361,10 +367,10 @@ async function initializeReader(session, scope) {
     isAdult: session.adult,
     onApply: applySettings,
     onFlowChange: (flow) => void switchFlow(flow),
-    onReset: (previousFlow) => {
+    onReset: (previousFlow, desiredFlow) => {
       resetReaderInput();
       schedulePageMapRefresh(100);
-      if (previousFlow !== settingsController.get().flow) void switchFlow(settingsController.get().flow);
+      if (previousFlow !== desiredFlow) void switchFlow(desiredFlow);
       else applySettings({ relayout: true, rebuildPageMap: true });
       toast("Reader settings reset");
     }
@@ -414,6 +420,9 @@ async function initializeReader(session, scope) {
     image: elements.imageFocusImage,
     closeButton: elements.imageFocusClose,
     hint: document.getElementById("imageFocusHint"),
+    guidanceElement: document.getElementById("imageFocusGuidance"),
+    guidanceText: document.getElementById("imageFocusGuidanceText"),
+    guidanceDismiss: document.getElementById("imageFocusGuidanceDismiss"),
     shouldSuppressOpen: () => pageInputController.shouldSuppressClick(),
     getRendition: () => state.rendition,
     getFlow: () => settingsController.get().flow
@@ -646,6 +655,11 @@ async function initializeReader(session, scope) {
     if (event.type === "error" && elements.progressText) elements.progressText.title = "Page map unavailable; using EPUB location tracking";
   }
   function bindDrawers() {
+    scope.listen(elements.navigationHelpToggle,"click",()=>{
+      const help=elements.navigationHelp;if(!help)return;
+      const expanded=help.hidden;help.hidden=!expanded;
+      elements.navigationHelpToggle.setAttribute("aria-expanded",String(expanded));
+    });
     scope.listen(elements.tocToggle, "click", () => openDrawer(elements.tocDrawer));
     scope.listen(elements.settingsToggle, "click", () => openDrawer(elements.settingsDrawer));
     scope.listen(elements.backdrop, "click", closeDrawers);
@@ -776,8 +790,11 @@ async function initializeReader(session, scope) {
       }
     }
     progressController.startLocationGeneration();
-    const opened = await openRendition(initialTarget);
-    if (!saved?.cfi && pageMapResult?.map && saved?.pageMapFingerprint === state.pageMap.fingerprint() && Number(saved?.page) > 0) {
+    // Initialize Continuous at its normal starting view, then navigate to the
+    // saved CFI. Starting its buffer directly at that CFI can drift on prepend.
+    const restoreContinuousCfi = saved?.cfi && settingsController.get().flow === "scrolled-doc";
+    const opened = await openRendition(restoreContinuousCfi ? undefined : initialTarget);
+    if (restoreContinuousCfi || !saved?.cfi && pageMapResult?.map && saved?.pageMapFingerprint === state.pageMap.fingerprint() && Number(saved?.page) > 0) {
       try {
         await correctCanonicalPosition(opened, saved, state.renderedFlow);
       } catch (error) {

@@ -11,7 +11,7 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | --- | --- | --- |
 | 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../archive/releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
 | 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
-| 3. Reader controls | Understand preferences and navigation | Active; alignment and Read Aloud released through v2.27.0 |
+| 3. Reader controls | Understand preferences and navigation | Implemented for v2.29.0; validation and production acceptance pending |
 | 4. Visual consistency | Read labels and operate controls across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Planned; Replace EPUB and empty translator provenance already delivered |
 
@@ -54,14 +54,19 @@ Alignment, English Edge TTS, bounded preloading, independent browsing, SVG
 controls and supported background playback are already implemented. See the
 [read aloud guide](../guides/READER_TTS.md) and [release record](../archive/releases/READER_RELEASE.md).
 
-- [ ] Review live reader screens and group settings by mode, typography, layout and appearance.
-- [ ] Make current choices and Reset behavior understandable before applying changes.
-- [ ] Clarify chapter/book progress and the purpose of navigation controls.
-- [ ] Add discreet first-use guidance for image double-tap/double-click focus.
+- [x] Review the production Reader UI with disposable books and group settings by mode, typography, layout and appearance (v2.29.0 source).
+- [x] Explain immediate changes, retained mode-specific choices, units and device-default Reset scope (v2.29.0 source).
+- [x] Separate current chapter from whole-volume progress and explain chapter/search/bookmark, page-turn and seek controls (v2.29.0 source).
+- [x] Add a dismissible first-use illustration tip for double-tap/double-click focus without changing image gestures (v2.29.0 source).
 
 Acceptance: Continuous and Pages; mobile defaults/reset; TOC/search/bookmarks;
 image focus/return; keyboard use. Keep automated fast-scroll and restoration
 regressions. Physical-device checks retain their own dated evidence.
+The [settings](../guides/READER_SETTINGS.md) and [controls](../guides/READER_CONTROLS.md)
+guides describe the implemented contracts. Checkmarks identify source implementation;
+PR validation and guarded production acceptance remain separate. Confirm visible
+reading text through settings Reset/reload and image focus/return, rather than
+using a chapter label alone as evidence of position preservation.
 
 ## Phase 4 — Visual consistency
 

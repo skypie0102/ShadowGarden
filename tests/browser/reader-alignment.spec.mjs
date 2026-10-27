@@ -31,10 +31,10 @@ async function closeSettings(page){
 async function chapter(page,index){
   await page.locator('#tocToggle').focus();await page.locator('#tocToggle').click();
   await page.locator(`#tocPanel .toc-entry-link[data-href="chapter${index}.xhtml"]`).click();
-  await expect(page.locator('#tocDrawer')).not.toHaveClass(/\bopen\b/);
+  await expect(page.locator('#tocDrawer')).not.toHaveClass(/\bopen\b/,{timeout:20000});
   await expect.poll(()=>page.evaluate(index=>[...document.querySelectorAll('#viewer iframe')].some(frame=>
     frame.contentDocument?.body?.dataset.alignmentChapter===String(index)),index)).toBe(true);
-  await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true');
+  await expect(page.locator('#viewer')).not.toHaveAttribute('aria-busy','true',{timeout:20000});
 }
 async function painted(page,alignment){
   const expected=alignment==='default'?['center','right','justify']:Array(3).fill(alignment);
@@ -65,6 +65,9 @@ async function mapReady(page,alignment){
 for(const flow of ['paginated','scrolled-doc'])test(`${flow}: paragraph alignment restores EPUB styles, persists and measures the selected layout`,async({page})=>{
   test.setTimeout(150000);
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  // Alignment and canonical measurements use the fixture's authored styles;
+  // remote font delivery must not decide when navigation can finish settling.
+  await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({contentType:'text/css',body:''}));
   await installReaderFixture(page,{flow,publication:await publication()});
   await page.goto(readerURL);await expect(page.locator('#readerLoading')).toBeHidden({timeout:60000});
   await chapter(page,0);await painted(page,'default');

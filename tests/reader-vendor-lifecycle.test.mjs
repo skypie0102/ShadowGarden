@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {installEpubLifecyclePatch} from '../public/assets/js/reader/epub-lifecycle.js';
 import {displaySettledRenditionTarget} from '../public/assets/js/reader/rendition.js';
+import {createContinuousController} from '../public/assets/js/reader/continuous.js';
 import {beginRenditionNavigation,runRenditionMove} from '../public/assets/js/reader/navigation-state.js';
 
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done});return{promise,resolve}};
@@ -83,4 +84,29 @@ test('a newer navigation cancels an older CFI correction awaiting content stylin
   await runRenditionMove(rendition,latest,()=>rendition.display('latest.xhtml'));
   gate.resolve();assert.equal(await moving,false);
   assert.deepEqual(calls,['epubcfi(old)','latest.xhtml']);rendition.destroy();
+});
+
+for(const wave of [1,2])test(`Continuous restores its target after delayed buffer styling in wave ${wave}`,async t=>{
+  paint(t);const {rendition,view}=fixture(),gate=deferred(),entered=deferred();
+  let styled=false,visible='',buffers=0,completed=false;
+  rendition.hooks={render:{trigger:()=>Promise.resolve()},content:{trigger:()=>{entered.resolve();return gate.promise.then(()=>{styled=true;visible='previous section'})}}};
+  rendition.display=target=>{visible=styled?target:'previous section'};
+  const controller=createContinuousController({getRendition:()=>rendition,settleNavigation:()=>{if(++buffers===wave)rendition.afterDisplayed(view)}});
+  t.after(()=>{controller.dispose();rendition.destroy()});
+  const moving=controller.display('epubcfi(saved-section)').then(value=>{completed=true;return value});
+  await entered.promise;await tick();assert.equal(completed,false);
+  gate.resolve();assert.equal(await moving,true);
+  assert.equal(visible,'epubcfi(saved-section)');
+});
+
+test('newer Continuous navigation wins while old buffer styling is pending',async t=>{
+  paint(t);const {rendition,view}=fixture(),gate=deferred(),entered=deferred(),calls=[];
+  rendition.hooks={render:{trigger:()=>Promise.resolve()},content:{trigger:()=>{entered.resolve();return gate.promise}}};
+  rendition.display=target=>calls.push(target);
+  const controller=createContinuousController({getRendition:()=>rendition,settleNavigation:()=>rendition.afterDisplayed(view)});
+  t.after(()=>{controller.dispose();rendition.destroy()});
+  const old=controller.display('epubcfi(old)');await entered.promise;
+  assert.equal(await controller.display('latest.xhtml',{settle:false}),true);
+  gate.resolve();assert.equal(await old,false);
+  assert.deepEqual(calls,['epubcfi(old)','latest.xhtml']);
 });

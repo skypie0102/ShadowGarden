@@ -5,6 +5,7 @@ import { captureContinuousScrollPosition, restoreContinuousScrollPosition } from
 import {hasPendingRenditionNavigation,renditionNavigationRevision} from "./navigation-state.js";
 import {continuousGeneration} from './continuous-state.js';
 import {createDoubleTapActivation,installImageFocusTapTransport} from './image-focus-touch-compat.js';
+import {createImageFocusGuidance} from './image-guidance.js';
 
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,Number(value)||0));
 const distance=(a,b)=>Math.hypot((Number(a?.clientX)||0)-(Number(b?.clientX)||0),(Number(a?.clientY)||0)-(Number(b?.clientY)||0));
@@ -45,11 +46,16 @@ export function createImageFocusController({
   image,
   closeButton,
   hint,
+  guidanceElement,
+  guidanceText,
+  guidanceDismiss,
   shouldSuppressOpen,
   getRendition,
   getFlow
 }={}){
   const scope=createReaderScope(),documents=new WeakMap();
+  const guidance=createImageFocusGuidance({element:guidanceElement,text:guidanceText,dismissButton:guidanceDismiss});
+  scope.add(()=>guidance.dispose());
   const state={active:false,scale:1,x:0,y:0,maxScale:4,gesture:null,suppressCloseClickUntil:0,returnFocus:null};
   let returnPosition=null,focusCycle=0;
   const parentHits=new Map(),openTap=createDoubleTapActivation(),closeTap=createDoubleTapActivation();
@@ -135,6 +141,7 @@ export function createImageFocusController({
   function openImageFocus(sourceImage,doc){
     if(scope.disposed)return false;
     const src=imageSource(sourceImage,doc);if(!src||!overlay||!image)return false;
+    guidance.acknowledge();
     const cycle=++focusCycle;
     state.returnFocus=document.activeElement;
     returnPosition=captureReadingPosition(doc);
@@ -235,6 +242,7 @@ export function createImageFocusController({
     lifetime.add(release.forget);documents.set(doc,lifetime);
     lifetime.add(()=>{documents.delete(doc);delete doc.documentElement.dataset.sgReaderImageFocus;});
     doc.documentElement.dataset.sgReaderImageFocus="1";
+    guidance.observeDocument(doc,lifetime);
     try{const style=doc.createElement("style");style.id="sg-reader-image-focus-style";style.textContent="img{touch-action:manipulation;cursor:zoom-in;color-scheme:only light!important;-webkit-tap-highlight-color:transparent!important}";doc.head?.appendChild(style)}catch{}
     installParentHits(doc);
     installImageActivation(lifetime,doc,doc,event=>imageTarget(event.target));
