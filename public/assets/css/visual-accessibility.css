@@ -1,0 +1,58 @@
+/* Phase 4: readability and focus without changing layout, type or control sizes. */
+body {
+  --sg-focus: var(--leaf2, #c3b4ee);
+}
+body[class*="reader-theme-"] {
+  --sg-focus: var(--leaf);
+}
+body[data-library-scope],
+body:has(#seriesRoot),
+body.admin-page {
+  --dim: #9a91a4;
+}
+body.adult-library {
+  --dim: #b89aa4;
+}
+
+/* These controls previously replaced keyboard outlines with faint hover colors.
+   The outline stays outside the existing border and occupies no layout space. */
+body :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--sg-focus) !important;
+  outline-offset: 3px !important;
+}
+
+body[data-library-scope] .search-field,
+body[data-library-scope] .filter-group select {
+  border-color: #71677f;
+}
+body.adult-library[data-library-scope] .search-field,
+body.adult-library[data-library-scope] .filter-group select {
+  border-color: #966e7c;
+}
+body[data-library-scope] .search-field input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+body.adult-library[data-library-scope] .search-field input::placeholder,
+body.adult-library :is(.catalog-bar p, .card-meta, .card-copy p) {
+  color: var(--adult-muted);
+}
+
+@media (forced-colors: active) {
+  body :where(button, input, select, textarea, .search-field) {
+    border-color: ButtonText !important;
+  }
+  /* Background-only selection disappears in Windows contrast themes. */
+  body :where(.view-switch button[aria-pressed="true"],
+    .drawer-tabs button[aria-selected="true"],
+    .toc-entry-link[aria-current="location"],
+    .genre-chips button[aria-pressed="true"],
+    .genre-chips button.active) {
+    outline: 2px solid Highlight !important;
+    outline-offset: -4px !important;
+    text-decoration: underline;
+  }
+  body :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-color: Highlight !important;
+  }
+}
