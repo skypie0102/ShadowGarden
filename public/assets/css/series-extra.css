@@ -347,7 +347,6 @@
 }
 .series-pin-button.pinned .pin-head {
   fill: currentColor;
-  fill-opacity: 0.2;
 }
 .series-actions .primary-button {
   min-height: 46px;
