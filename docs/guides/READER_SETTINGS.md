@@ -32,6 +32,9 @@ changes mode, the normal flow switch captures the old layout before committing
 the new mode's styles. Reader
 startup completes saved Continuous CFIs through the normal navigation path after
 the rendition is ready; a nominal restored CFI must also show the saved section.
+Continuous navigation waits for pending buffer content styles before correcting
+the target, including styles introduced by the final buffer update. Newer
+navigation still cancels an older correction.
 Image focus, page measurement and scrolling keep their existing
 contracts in the [architecture guide](READER_ARCHITECTURE.md).
 

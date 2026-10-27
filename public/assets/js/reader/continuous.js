@@ -3,6 +3,7 @@ import {createReaderScope} from "./lifecycle.js";
 import {beginRenditionNavigation,runRenditionMove} from "./navigation-state.js";
 import {withSectionSource} from './section-source.js';
 import {recordReaderDiagnostic} from './diagnostics.js';
+import {renditionRenderRevision,settleRenditionContent} from './epub-lifecycle.js';
 
 const decode=value=>{try{return decodeURIComponent(value)}catch{return value}};
 
@@ -46,14 +47,21 @@ export function createContinuousController({getRendition,getBook,beforeNavigate,
     if(!current())return false;
     beforeNavigate?.();
     const exact=resolve?await resolveHrefTarget(getBook?.(),target):target;
+    const revision=renditionRenderRevision(rendition);
     if(!current()||!await runRenditionMove(rendition,operation,()=>rendition.display(exact)))return false;
     if(settle){
       await settleNavigation?.(rendition);
+      // Buffer growth finishes view.display before asynchronous content hooks.
+      // Complete their styles before positioning the requested CFI again.
+      await settleRenditionContent(rendition,revision);
       if(!current())return false;
       await scope.paint();
       if(current()){
+        const correctionRevision=renditionRenderRevision(rendition);
         if(!await runRenditionMove(rendition,operation,()=>rendition.display(exact)))return false;
         await settleNavigation?.(rendition);
+        const changed=await settleRenditionContent(rendition,correctionRevision);
+        if(changed&&current()&&!await runRenditionMove(rendition,operation,()=>rendition.display(exact)))return false;
         /* EPUB.js schedules reportLocation() from display before WebKit has always committed
            the final Continuous view geometry. Give the second display one more paint, then
            request an authoritative location report so Reader chapter/progress chrome cannot
