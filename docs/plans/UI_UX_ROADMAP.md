@@ -10,17 +10,43 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | Phase | Outcome | Status |
 | --- | --- | --- |
 | 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../archive/releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
-| 2. Reading journey | Recognize saved progress and reach the next volume | Complete in v2.28.2; [release record](../archive/releases/READING_JOURNEY_2.28.2.md) |
+| 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
 | 3. Reader controls | Understand preferences and navigation | Active; alignment and Read Aloud released through v2.27.0 |
 | 4. Visual consistency | Read labels and operate controls across screens | Planned; apply relevant improvements in each phase |
 | 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Planned; Replace EPUB and empty translator provenance already delivered |
 
 ## Phase 2 — Reading journey
 
-Complete and released in [v2.28.2](../archive/releases/READING_JOURNEY_2.28.2.md).
-The archived record contains the completed checklist, acceptance and production
-evidence. The [reading journey guide](../guides/READING_JOURNEY.md) maintains the
-shared action, saved-context, synopsis, navigation and download contracts.
+Consistent actions and volume states [shipped in v2.28.0](../archive/releases/PUBLIC_READING_ACTIONS_2.28.0.md).
+The current source adds saved-progress context for v2.28.1. Checkmarks identify
+implementation; the PR and guarded release record validation and live acceptance
+separately.
+
+- [x] Keep shared reading destinations across Library and Series, with the user's restored compact Read / Continue / Read Again text on volume links.
+- [x] Show explicit volume order and Unread / In progress / Finished states on Series pages. Keep the next-volume indication separate from reading state.
+- [x] Let mobile metadata/actions flow around the cover, retain full-width tags and use compact themed pins (v2.19.1–v2.19.4).
+- [x] Fill mobile reading-banner content height with proportional cover artwork (v2.27.1).
+- [x] Revert PR #82; retain the full original synopsis, enlarge the cover beside details and provide explicit Grid/List controls (v2.28.5 source).
+- [x] Show reliable saved progress without truncating useful context, including records with page-only progress: shared percentage/page/chapter summaries, timestamp-free legacy saves, accessible Recently Added descriptions and wrapping context (v2.28.1 source).
+- [x] Preserve the compact Read/Download controls from before PR #80, restored at the user's request in v2.28.4.
+
+Acceptance for this increment: Main and Adult; no progress, saved progress,
+completion of the first volume, all volumes finished, out-of-order Finished marks
+and missing EPUBs. The banner and Series hero must choose the same available
+volume; matching card/cover and Recently Added keep the same destination.
+Read again still requires confirmation, cancelling retains progress/bookmarks,
+and reload preserves state. Check long titles, keyboard focus and page overflow
+at 320px, tablet and desktop widths. Retain the catalog's volume order.
+
+User-directed Series baseline: no Browse volumes, Find Volume or expandable
+synopsis. Grid is the default; List is explicitly selected. Preserve the larger
+cover beside details and reading/pinning actions, full-width tags below, and the
+restored compact volume reading/download controls unless
+the user requests a change. Source, PR checks and live acceptance stay separate.
+
+The [reading journey guide](../guides/READING_JOURNEY.md) documents the shared
+selection and action-copy contract. Earlier layout changes and their release
+verification are in the [dated progress record](../archive/releases/UI_UX_PROGRESS_2.27.1.md).
 
 ## Phase 3 — Reader controls
 
@@ -28,22 +54,14 @@ Alignment, English Edge TTS, bounded preloading, independent browsing, SVG
 controls and supported background playback are already implemented. See the
 [read aloud guide](../guides/READER_TTS.md) and [release record](../archive/releases/READER_RELEASE.md).
 
-- [x] Review the production Reader UI with disposable books and group settings by mode, typography, layout and appearance (v2.29.0 source).
-- [x] Explain immediate changes, retained mode-specific choices, numeric units and device-default Reset scope before activation (v2.29.0 source).
+- [ ] Review live reader screens and group settings by mode, typography, layout and appearance.
+- [ ] Make current choices and Reset behavior understandable before applying changes.
 - [ ] Clarify chapter/book progress and the purpose of navigation controls.
 - [ ] Add discreet first-use guidance for image double-tap/double-click focus.
 
 Acceptance: Continuous and Pages; mobile defaults/reset; TOC/search/bookmarks;
 image focus/return; keyboard use. Keep automated fast-scroll and restoration
-regressions. Physical-device checks retain their own dated evidence. The [settings guide](../guides/READER_SETTINGS.md)
-documents the implemented grouping and Reset contract. Checkmarks identify
-source implementation; PR validation and guarded production acceptance remain
-separate records.
-
-Reset retains the old mode until its normal flow switch captures the reading
-anchor. Saved Continuous positions are also completed through the existing navigation
-path on startup (v2.29.0 source). Validate actual visible reading text through
-Reset/reload; a chapter label alone can describe an adjacent chapter in view.
+regressions. Physical-device checks retain their own dated evidence.
 
 ## Phase 4 — Visual consistency
 
