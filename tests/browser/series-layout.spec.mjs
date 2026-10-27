@@ -8,6 +8,9 @@ if (createHash('sha256').update(previousCss).digest('hex') !== 'ff107b173c1d673b
   throw Error('Damaged v2.19.1 Series layout control.');
 }
 const candidateCss = readFileSync(new URL('../../public/assets/css/series-extra.css', import.meta.url), 'utf8');
+const staleVolumeCss = readFileSync(new URL('./fixtures/series-extra-2.28.1.css', import.meta.url), 'utf8');
+if (createHash('sha256').update(staleVolumeCss).digest('hex') !== '5979baf913c68193a2148f5a4ef627e01041d67118293607d46ff61b775949d6') throw Error('Damaged v2.28.1 Series cache control.');
+const volumeCssVersion = createHash('sha256').update(candidateCss).digest('hex').slice(0, 12);
 
 const bookId = 'bk_A2yCOKedG1g4xXTJJhbEzA';
 const cover = '/test/series-layout-cover.svg';
@@ -19,10 +22,10 @@ const item = {
   cover, volumes: [{ bookId, file: bookId, number: 1, title: 'Volume 1', cover }]
 };
 
-async function openSeries(page, adult, overrides = {}) {
+async function openSeries(page, adult, overrides = {}, reducedMotion = 'reduce') {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.emulateMedia({ reducedMotion });
   await page.addInitScript(() => localStorage.setItem('sg-adult-ack', '1'));
   await page.route(`**${cover}`, route => route.fulfill({ contentType: 'image/svg+xml', body:
     '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300"><rect width="200" height="300" fill="#30263e"/><path d="M0 220 200 60V300H0Z" fill="#655378"/><text x="100" y="130" fill="#f0e9f5" font-size="23" text-anchor="middle">The Garden</text><text x="100" y="160" fill="#f0e9f5" font-size="18" text-anchor="middle">Volume 1</text></svg>' }));
@@ -203,5 +206,58 @@ test('long metadata, missing cover and optional audio action fit a narrow series
   await info.attach('long-title-no-cover', {
     body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
   });
+  expect(errors).toEqual([]);
+});
+
+for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} single-volume reading and download controls have consistent button layout`, async ({ page }, info) => {
+  await page.setViewportSize({ width: 393, height: 850 });
+  // Model a returning browser/proxy retaining the pre-merge sheet under its old
+  // unchanged URL. A new page must request the sheet matching its built content.
+  let staleRequests = 0;
+  await page.route('**/assets/css/series-extra.css?v=2.11.0', route => {
+    staleRequests++;
+    return route.fulfill({ contentType: 'text/css', body: staleVolumeCss });
+  });
+  const errors = await openSeries(page, adult, { title: 'Adolescent Adam', volumes: [{ ...item.volumes[0], title: 'Adolescent Adam, Volume 1', date: '2026-08-19', size: 5000000 }] }, 'no-preference');
+  const card = page.locator('.volume-card'), read = card.locator('a.read'), download = card.locator('a.download');
+  await card.scrollIntoViewIfNeeded();
+  await info.attach('returning-browser-volume', { body: await card.screenshot(), contentType: 'image/png' });
+  await expect(page.locator('link[href*="/series-extra.css"]')).toHaveAttribute('href', `/assets/css/series-extra.css?v=${volumeCssVersion}`);
+  expect(staleRequests).toBe(0);
+  for (const width of [320, 393, 576, 768, 1280]) {
+    await page.setViewportSize({ width, height: 850 });
+    await card.scrollIntoViewIfNeeded();
+    await info.attach(`volume-controls-${width}`, { body: await card.screenshot(), contentType: 'image/png' });
+    await expect(async () => {
+      const a = await read.boundingBox(), b = await download.boundingBox(), c = await card.boundingBox();
+      expect(a.height).toBeGreaterThanOrEqual(44); expect(b.height).toBeGreaterThanOrEqual(44);
+      expect(Math.abs(a.width - b.width)).toBeLessThan(1);
+      if (width <= 520) {
+        expect(Math.abs(a.y - b.y)).toBeLessThan(1);
+        expect(Math.abs(a.height - b.height)).toBeLessThan(1);
+        expect(b.x).toBeGreaterThanOrEqual(a.x + a.width + 6);
+      } else expect(b.y).toBeGreaterThanOrEqual(a.y + a.height + 6);
+      for (const box of [a, b]) {
+        expect(box.x).toBeGreaterThanOrEqual(c.x);
+        expect(box.x + box.width).toBeLessThanOrEqual(c.x + c.width + 1);
+        expect(box.y + box.height).toBeLessThanOrEqual(c.y + c.height + 1);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }).toPass();
+    for (const button of [read, download]) {
+      await expect(button).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(button).not.toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+      await expect(button).toHaveCSS('text-decoration-line', 'none');
+    }
+  }
+  await page.setViewportSize({ width: 320, height: 850 });
+  await page.evaluate(() => document.documentElement.style.fontSize = '200%');
+  for (const button of [read, download]) {
+    await button.scrollIntoViewIfNeeded(); await button.focus(); await expect(button).toBeFocused();
+    expect(await button.evaluate(element => element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+  }
+  await expect(read).toHaveAttribute('href', new RegExp(`/reader.html\\?book=${bookId}`));
+  await expect(download).toHaveAccessibleName('Download EPUB: Adolescent Adam, Volume 1');
+  await info.attach('volume-controls-large-text', { body: await card.screenshot(), contentType: 'image/png' });
   expect(errors).toEqual([]);
 });

@@ -104,11 +104,15 @@ for (const adult of [false, true]) {
         expect(readBox.height).toBeGreaterThanOrEqual(44);
         expect(downloadBox.height).toBeGreaterThanOrEqual(44);
         expect(readBox.y).toBeGreaterThanOrEqual(metaBox.y + metaBox.height - 1);
-        expect(downloadBox.y).toBeGreaterThanOrEqual(readBox.y + readBox.height);
+        if (Math.abs(downloadBox.y - readBox.y) < 1) {
+          expect(downloadBox.x).toBeGreaterThanOrEqual(readBox.x + readBox.width + 6);
+          expect(Math.abs(downloadBox.height - readBox.height)).toBeLessThan(1);
+        } else expect(downloadBox.y).toBeGreaterThanOrEqual(readBox.y + readBox.height + 6);
         expect(downloadBox.y + downloadBox.height).toBeLessThanOrEqual(cardBox.y + cardBox.height + 1);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }).toPass({ timeout: 5000 });
-      await expect(download).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(download).not.toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+      await expect(download).toHaveCSS('text-decoration-line', 'none');
       if (width !== 768) await info.attach(`volume-list-${width}`, { body: await page.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
     }
     expect(await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)))).toEqual(before);
