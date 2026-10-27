@@ -215,6 +215,11 @@ if (createHash('sha256').update(pre80Css).digest('hex') !== '45723b1d0eb74457f5a
 for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume controls match the exact pre-80 styling and card arrangement`, async ({ page }, info) => {
   await page.setViewportSize({ width: 393, height: 850 });
   let staleRequests = 0;
+  let staleScriptRequests = 0;
+  for (const url of ['**/assets/js/series.js?v=2.11.0', '**/assets/js/series-renderers.js']) await page.route(url, route => {
+    staleScriptRequests++;
+    return route.fulfill({ contentType: 'application/javascript', body: 'throw new Error("Stale Series renderer requested");' });
+  });
   await page.route('**/assets/css/series-extra.css?v=2.11.0', route => {
     staleRequests++;
     return route.fulfill({ contentType: 'text/css', body: staleVolumeCss });
@@ -223,6 +228,7 @@ for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume cont
   const card = page.locator('.volume-card'), read = card.locator('a.read'), download = card.locator('a.download');
   await expect(page.locator('link[href*="/series-extra.css"]')).toHaveAttribute('href', `/assets/css/series-extra.css?v=${volumeCssVersion}`);
   expect(staleRequests).toBe(0);
+  expect(staleScriptRequests).toBe(0);
   await expect(read).toHaveText('Read');
   const inspect = async () => {
     await card.scrollIntoViewIfNeeded();

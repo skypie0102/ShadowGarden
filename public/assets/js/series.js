@@ -71,7 +71,7 @@
     if (!series || rendering) return;
     rendering = true;
     try {
-      const { seriesMarkup } = await import("/assets/js/series-renderers.js");
+      const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.28.4");
       root.innerHTML = seriesMarkup(series, { ...domain, bannerRandom });
       syncSynopsis();
       root.setAttribute("aria-busy", "false");
