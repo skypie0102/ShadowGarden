@@ -392,74 +392,9 @@
 }
 .series-description {
   max-width: 850px;
-  margin: 0;
+  margin-bottom: 46px;
   font-size: 1rem;
   line-height: 1.82;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
-.series-synopsis {
-  margin-bottom: 32px;
-}
-.series-synopsis-head {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin-bottom: 10px;
-}
-.series-synopsis-head h2 {
-  margin: 0;
-  font: 500 1.4rem var(--serif);
-}
-#synopsisToggle {
-  min-height: 44px;
-  padding: 8px 4px;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: 0.8rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-.series-synopsis.is-collapsed .series-description {
-  max-height: 6lh;
-  overflow: hidden;
-}
-.series-volumes,
-.volume-card {
-  scroll-margin-top: 110px;
-}
-.series-volumes:focus-visible,
-.volume-card:focus-visible,
-#synopsisToggle:focus-visible,
-.series-list-context a:focus-visible {
-  outline: 2px solid var(--leaf2);
-  outline-offset: 4px;
-}
-.series-list-context {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 4px 14px;
-  margin-left: 16px;
-}
-.series-list-context a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--muted);
-  font-size: 0.8rem;
-  text-underline-offset: 3px;
-}
-.series-empty,
-.volume-unavailable {
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.5;
 }
 .series-section-head {
   padding-bottom: 12px;
@@ -478,7 +413,7 @@
 }
 .volume-card {
   min-width: 0;
-  box-sizing: border-box;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -490,10 +425,6 @@
     border-color 0.16s ease,
     background 0.16s ease,
     box-shadow 0.16s ease;
-}
-/* Preserve text and controls while deferred cards recalculate their height. */
-.volume-card > * {
-  flex-shrink: 0;
 }
 .volume-card:hover,
 .volume-card:focus-within {
@@ -522,16 +453,10 @@
   outline: 2px solid var(--leaf2);
   outline-offset: 3px;
 }
-.volume-card .volume-title-row {
+.volume-title-row {
   margin-top: 10px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 5px;
-  min-height: 0;
-}
-.volume-card .volume-state-pill {
-  justify-self: start;
-  margin-top: 0;
+  min-height: 2.55em;
+  align-items: flex-start;
 }
 .volume-title-row .volume-title {
   margin: 0;
@@ -638,6 +563,7 @@
     padding-top: 36px;
   }
   .series-description {
+    margin-bottom: 36px;
     line-height: 1.72;
   }
   .volume-grid {
@@ -649,6 +575,14 @@
   }
   .volume-card .volume-title-row {
     margin-top: 8px;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+  .volume-state-pill {
+    justify-self: start;
+    margin-top: 0;
   }
   .volume-actions {
     padding-top: 8px;

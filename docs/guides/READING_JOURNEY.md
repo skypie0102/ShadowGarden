@@ -4,7 +4,7 @@ The Library reading banner, Recently Added and Series hero/cards use
 `public/assets/js/public/volume-actions.js` for their action and destination.
 `domain/reading-state.js` owns the browser-local reading state and series snapshot.
 
-| State/context | Library / Series hero action | Effect |
+| State/context | Action | Effect |
 | --- | --- | --- |
 | Unread, no preceding completed-volume continuation | Start reading | Open the selected volume normally |
 | In progress | Continue reading | Open the saved reading position |
@@ -22,34 +22,6 @@ Unread / In progress / Finished labels. “Up next” is an additional recommend
 not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
-
-## Synopsis, volume navigation and downloads
-
-The hero's **Browse volumes** link moves keyboard focus to the volume section.
-**Find Volume N** then targets the volume selected by the same reading context
-as the hero. Cards retain catalog order and expose their titles as their
-accessible names; their jump targets do not add stops to normal Tab navigation.
-
-Long synopses start with a six-line preview. **Show full synopsis** and **Show
-less** work with the keyboard, expose their expanded state and retain the
-current choice during reading-state refreshes. A short synopsis stays fully
-visible without a toggle. The preview adapts to the current width, preserves
-paragraph breaks and retains the complete escaped text. Expansion belongs to
-the current page only and does not write browser storage.
-
-Volume entries retain the portrait-card arrangement and compact reading/download
-controls from before PR #80 (source `4919c58`). The reading link uses **Read**,
-**Continue** or **Read Again**, followed by the original bordered **Download EPUB**
-link. Their original font sizes, padding, natural widths, transparent reading
-background and wrapping are restored; they do not grow into filled full-width
-buttons. The Library/Series hero keeps its longer state descriptions and shares
-the same destinations and Read again confirmation. Download links name their
-volume and retain the existing signed-ticket flow.
-The build versions the Series stylesheet URL from its contents, so returning
-browsers request updated styles when the volume presentation changes.
-An unavailable EPUB has a plain availability message and no reading, cover or
-download link. Its metadata and reading state remain visible. An empty series
-states that no volumes have been added.
 
 ## Saved-progress context
 

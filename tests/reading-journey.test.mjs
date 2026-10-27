@@ -122,17 +122,3 @@ test('page-only summaries render consistently without fabricated percentages or 
   assert.match(recent, /aria-describedby="recent-volume-progress-0"/);
   assert.deepEqual([...f.data], before);
 });
-
-test('missing EPUB cards retain their order and state but expose no reading or download links', t => {
-  const f = fixture(t);
-  f.series.volumes[0].file = '';
-  f.series.volumes[0].bookId = 'bk_A2yCOKedG1g4xXTJJhbEzA';
-  f.finished(1);
-  const before = [...f.data], html = seriesMarkup(f.series, domain);
-  const missing = html.match(/<article[^>]*data-volume-index="0"[\s\S]*?<\/article>/)[0];
-  assert.match(missing, /Volume 1 of 3/);
-  assert.match(missing, /EPUB unavailable/);
-  assert.doesNotMatch(missing, /<a\b|data-volume-action|download/);
-  assert.match(html, /href="#series-volume-2"/);
-  assert.deepEqual([...f.data], before);
-});

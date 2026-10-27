@@ -10,20 +10,6 @@
   let domain = null;
   let series = null;
   let rendering = false;
-  let synopsisExpanded = false;
-
-  function syncSynopsis() {
-    const synopsis = root.querySelector(".series-synopsis");
-    const description = root.querySelector("#seriesSynopsis");
-    const toggle = root.querySelector("#synopsisToggle");
-    if (!synopsis || !description || !toggle) return;
-    // Measure the complete text even when its visible preview is clamped.
-    const collapsible = description.scrollHeight > parseFloat(getComputedStyle(description).lineHeight) * 6 + 1;
-    synopsis.classList.toggle("is-collapsed", collapsible && !synopsisExpanded);
-    toggle.hidden = !collapsible;
-    toggle.setAttribute("aria-expanded", String(!collapsible || synopsisExpanded));
-    toggle.textContent = synopsisExpanded ? "Show less" : "Show full synopsis";
-  }
 
   function syncLibraryScope(adult) {
     document.body.classList.toggle("adult-library", Boolean(adult));
@@ -73,7 +59,6 @@
     try {
       const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.28.4");
       root.innerHTML = seriesMarkup(series, { ...domain, bannerRandom });
-      syncSynopsis();
       root.setAttribute("aria-busy", "false");
       syncBackToTop();
     } finally {
@@ -83,11 +68,6 @@
 
   function bindControllerEvents() {
     root.addEventListener("click", event => {
-      if (event.target.closest?.("#synopsisToggle")) {
-        synopsisExpanded = !synopsisExpanded;
-        syncSynopsis();
-        return;
-      }
       const backTop = event.target.closest?.("#seriesBackToTop");
       if (backTop) {
         window.scrollTo({
@@ -129,8 +109,6 @@
         void render();
     });
     window.addEventListener("pageshow", () => void render());
-    window.addEventListener("resize", syncSynopsis, { passive: true });
-    void document.fonts.ready.then(syncSynopsis);
   }
 
   try {

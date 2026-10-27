@@ -62,7 +62,6 @@ function volumeCard(series, entry, dependencies, context) {
   const esc = format.escapeHtml;
   const { volume, index, state, progress } = entry;
   const action = volumeActionFor(series, volume, index, context);
-  const available = Boolean(volume?.file);
   const cover = volume?.coverThumb || volume?.cover || series?.coverThumb || series?.cover || "";
   const summary = readingProgressSummary(progress);
   const finished = state === readingState.STATES.FINISHED;
@@ -77,16 +76,17 @@ function volumeCard(series, entry, dependencies, context) {
   const order = `Volume ${number}${Number(number) === index + 1 ? " of" : ` · ${index + 1} of`} ${context.entries.length}`;
   const overrides = translations.normalizeTranslations(volume?.translations);
   const overrideMarkup = overrides.length ? `<p class="volume-translator"><span>TL override</span> ${overrides.map(credit => translatorLink(series, credit, urls, format, translations, "volume-translator-link")).join(" · ")}</p>` : "";
-  const artwork = `<div class="volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="lazy" decoding="async" fetchpriority="low">` : ""}${finished ? '<span class="finished-volume-badge" title="Finished" aria-label="Finished">✓</span>' : ""}${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}</div>`;
-  return `<article id="series-volume-${index}" tabindex="-1" aria-labelledby="series-volume-title-${index}" class="volume-card ${finished ? "is-finished" : ""} ${upNext ? "is-up-next" : ""} ${inProgress ? "is-in-progress" : ""}" data-volume-index="${index}" data-reading-state="${esc(state)}">
-    ${available ? `<a class="volume-cover-link" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)}" title="${esc(action.label)} ${esc(title)}">${artwork}</a>` : `<div class="volume-cover-unavailable">${artwork}</div>`}
+  return `<article class="volume-card ${finished ? "is-finished" : ""} ${upNext ? "is-up-next" : ""} ${inProgress ? "is-in-progress" : ""}" data-volume-index="${index}" data-reading-state="${esc(state)}">
+    <a class="volume-cover-link" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)}" title="${esc(action.label)} ${esc(title)}">
+      <div class="volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="lazy" decoding="async" fetchpriority="low">` : ""}${finished ? '<span class="finished-volume-badge" title="Finished" aria-label="Finished">✓</span>' : ""}${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}</div>
+    </a>
     <p class="volume-order">${esc(order)}${upNext ? " · Up next" : ""}</p>
-    <div class="volume-title-row"><h3 id="series-volume-title-${index}" class="volume-title">${esc(title)}</h3><span class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}">${esc(stateLabel)}</span></div>
+    <div class="volume-title-row"><h3 class="volume-title">${esc(title)}</h3><span class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}">${esc(stateLabel)}</span></div>
     <p class="volume-meta">${[volume?.date || "", format.formatBytes(volume?.size), stateMeta].filter(Boolean).map(esc).join(" · ")}</p>
     ${overrideMarkup}
     <div class="volume-actions">
-      ${available ? `<a class="read" ${attrs(action, esc)} href="${action.href}">${esc(buttonLabel)}</a>
-      <a class="download" href="#book-${esc(volume.file)}" data-book-id="${esc(volume.file)}" aria-label="Download EPUB: ${esc(title)}" download>Download EPUB</a>` : '<span class="volume-unavailable">EPUB unavailable</span>'}
+      <a class="read" ${attrs(action, esc)} href="${action.href}">${esc(buttonLabel)}</a>
+      <a class="download" href="#book-${esc(volume?.file)}" data-book-id="${esc(volume?.file)}" download>Download EPUB</a>
     </div>
   </article>`;
 }
@@ -123,7 +123,6 @@ export function seriesMarkup(series, dependencies) {
           </div>
           <div class="series-actions">
             ${startAction ? `<a class="primary-button" ${attrs(startAction, esc)} href="${startAction.href}">${esc(startAction.label)}</a>` : ""}
-            ${volumes.length ? '<a class="secondary-button" href="#seriesVolumes">Browse volumes</a>' : ""}
             ${audioAlignedUrl ? `<a class="secondary-button audio-series-link" href="${esc(audioAlignedUrl)}" target="_blank" rel="noopener noreferrer">Audio EPUBs ↗</a>` : ""}
             <button id="pinButton" class="secondary-button series-pin-button ${pinned ? "pinned" : ""}" type="button" aria-label="${pinned ? "Unpin from Garden" : "Pin to Garden"}" aria-pressed="${pinned}" title="${pinned ? "Unpin from Garden" : "Pin to Garden"}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="pin-head" d="m16 3 5 5-4 1-4 4 1 4-2 2-7-7 2-2 4 1 4-4 1-4Z"/><path d="m8.5 15.5-5.5 5.5"/></svg></button>
           </div>
@@ -132,11 +131,9 @@ export function seriesMarkup(series, dependencies) {
       </div>
     </section>
     <section class="series-body">
-      ${series?.description ? `<section class="series-synopsis" aria-labelledby="seriesSynopsisTitle"><div class="series-synopsis-head"><h2 id="seriesSynopsisTitle">Synopsis</h2><button id="synopsisToggle" type="button" aria-expanded="true" aria-controls="seriesSynopsis" hidden>Show less</button></div><p id="seriesSynopsis" class="series-description">${esc(series.description)}</p></section>` : ""}
-      <section id="seriesVolumes" class="series-volumes" tabindex="-1" aria-labelledby="seriesVolumesTitle">
-        <div class="series-section-head"><h2 id="seriesVolumesTitle">Volumes</h2><div class="series-list-context"><span>${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"} · Catalog order</span>${startEntry ? `<a href="#series-volume-${startEntry.index}" aria-label="Find Volume ${esc(startEntry.volume?.number ?? startEntry.index + 1)} in the volume list">Find Volume ${esc(startEntry.volume?.number ?? startEntry.index + 1)}</a>` : ""}</div></div>
-        ${entries.length ? `<div class="volume-grid">${entries.map(entry => volumeCard(series, entry, dependencies, context)).join("")}</div>` : '<p class="series-empty">No volumes have been added yet.</p>'}
-      </section>
+      ${series?.description ? `<p class="series-description">${esc(series.description)}</p>` : ""}
+      <div class="series-section-head"><h2>Volumes</h2><span>${volumes.length} ${volumes.length === 1 ? "volume" : "volumes"}</span></div>
+      <div class="volume-grid">${entries.map(entry => volumeCard(series, entry, dependencies, context)).join("")}</div>
     </section>
     <button id="seriesBackToTop" class="series-back-to-top" type="button" aria-label="Back to top" hidden>↑ Back to top</button>`;
 }
