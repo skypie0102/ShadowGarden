@@ -41,6 +41,12 @@ and first-use image-focus guidance. The Series layout and solid pinned icon reta
 their released behavior. The release record separates source validation, production
 verification and the remaining physical-device and width-change acceptance limits.
 
+The source adds the Phase 4 visual-accessibility pass for **v2.29.1**: readable
+metadata/placeholders and filter boundaries, visible keyboard focus and selected
+states in contrast themes. Existing layout styles and application JavaScript stay
+intact; controlled browser comparisons check button, cover and reading/download
+geometry against v2.29.0. See the [visual guide](docs/guides/VISUAL_ACCESSIBILITY.md).
+
 ## Local development
 
 Use Node.js 24; the minimum supported version is 22.16.

@@ -9,7 +9,7 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Remaining reading journey, visual consistency and Keeper feedback | Continue Phase 4 visual consistency; Phase 3 is archived with its v2.29.0 release evidence |
+| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Remaining reading journey, visual consistency and Keeper feedback | Validate the Phase 4 color/focus pass for v2.29.1 while preserving the released layouts |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides
@@ -21,6 +21,7 @@ release evidence live in the archive.
 | [Reader architecture](guides/READER_ARCHITECTURE.md) | Startup, navigation, layout, lifecycle, measurements and caches |
 | [Reader settings](guides/READER_SETTINGS.md) | Immediate changes, device defaults, mode-specific controls and Reset scope |
 | [Reader controls](guides/READER_CONTROLS.md) | Chapter/volume progress, navigation and first-use image-focus guidance |
+| [Visual accessibility](guides/VISUAL_ACCESSIBILITY.md) | Readability, keyboard/contrast focus and checks that preserve the released layouts |
 | [EPUB.js contract](guides/READER_VENDOR_CONTRACT.md) | Pinned vendor integration and upgrade checks |
 | [Reader read aloud](guides/READER_TTS.md) | Speech behavior, buffering, playback and platform limits |
 | [API contracts](guides/API_CONTRACTS.md) | Authentication, revisions, catalog writes, uploads, snapshots and cleanup |
