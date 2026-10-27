@@ -100,9 +100,12 @@ for (const adult of [false, true]) {
       await unclipped(card.locator('.volume-title')); await unclipped(card.locator('.volume-meta'));
       await expect(async () => {
         const readBox = await card.locator('a.read').boundingBox(), downloadBox = await download.boundingBox();
+        const cardBox = await card.boundingBox(), metaBox = await card.locator('.volume-meta').boundingBox();
         expect(readBox.height).toBeGreaterThanOrEqual(44);
         expect(downloadBox.height).toBeGreaterThanOrEqual(44);
+        expect(readBox.y).toBeGreaterThanOrEqual(metaBox.y + metaBox.height - 1);
         expect(downloadBox.y).toBeGreaterThanOrEqual(readBox.y + readBox.height);
+        expect(downloadBox.y + downloadBox.height).toBeLessThanOrEqual(cardBox.y + cardBox.height + 1);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }).toPass({ timeout: 5000 });
       await expect(download).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
