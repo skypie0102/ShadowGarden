@@ -39,6 +39,6 @@ Image focus, page measurement and scrolling keep their existing
 contracts in the [architecture guide](READER_ARCHITECTURE.md).
 
 This increment implements the settings grouping and Reset-clarity items in the
-[UI/UX roadmap](../plans/UI_UX_ROADMAP.md). Progress/navigation explanations and
-first-use image-focus guidance remain separate work. Source validation and
+[UI/UX roadmap](../plans/UI_UX_ROADMAP.md). The [Reader controls guide](READER_CONTROLS.md)
+documents progress/navigation explanations and first-use image-focus guidance. Source validation and
 guarded production acceptance are recorded independently.

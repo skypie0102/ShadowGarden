@@ -64,6 +64,8 @@ function readerElements() {
     fullscreenButton: $("#fullscreenButton"),
     progressRange: $("#progressRange"),
     progressText: $("#progressText"),
+    currentChapterText: $("#readerCurrentChapter"),
+    volumeProgressText: $("#readerVolumeProgress"),
     prevPage: $("#prevPage"),
     nextPage: $("#nextPage"),
     prevBottom: $("#prevBottom"),
@@ -416,6 +418,9 @@ async function initializeReader(session, scope) {
     image: elements.imageFocusImage,
     closeButton: elements.imageFocusClose,
     hint: document.getElementById("imageFocusHint"),
+    guidanceElement: document.getElementById("imageFocusGuidance"),
+    guidanceText: document.getElementById("imageFocusGuidanceText"),
+    guidanceDismiss: document.getElementById("imageFocusGuidanceDismiss"),
     shouldSuppressOpen: () => pageInputController.shouldSuppressClick(),
     getRendition: () => state.rendition,
     getFlow: () => settingsController.get().flow

@@ -10,14 +10,15 @@ const refinementWindow=10000;
 export function formatReaderProgress({percentage=0,position=null,chapter=""}={}){
   const value=clamp01(percentage),percent=`${Math.round(value*100)}%`;
   const rawPage=Number(position?.page),rawTotal=Number(position?.totalPages);
-  const hasPages=Number.isFinite(rawPage)&&Number.isFinite(rawTotal)&&rawPage>=1&&rawTotal>0;
+  const hasPages=Number.isFinite(rawPage)&&Number.isFinite(rawTotal)&&rawPage>=1&&rawTotal>=1&&rawPage<=rawTotal;
   const page=hasPages?Math.trunc(rawPage):null,total=hasPages?Math.trunc(rawTotal):null;
   const chapterLabel=String(chapter||"").trim();
   const rail=hasPages?`${page}/${total}`:percent;
   const compact=hasPages?`${rail} · ${percent}`:percent;
-  const visual=`${hasPages?`Page ${rail} · `:""}${percent}${chapterLabel?` · ${chapterLabel}`:""}`;
+  const volume=`${hasPages?`Page ${page} of ${total} · `:""}${percent} of volume`;
+  const visual=`${volume}${chapterLabel?` · ${chapterLabel}`:""}`;
   const accessible=`${chapterLabel?`${chapterLabel} · `:""}${hasPages?`Page ${page} of ${total} · `:""}${percent} of volume`;
-  return{value,percent,rail,compact,visual,accessible};
+  return{value,percent,rail,compact,volume,chapter:chapterLabel,visual,accessible};
 }
 
 export function createProgressController({storage,elements,getBook,getRendition,getPageMap,getFlow,getChapter,toast,onPositionChange}={}){
@@ -64,6 +65,8 @@ export function createProgressController({storage,elements,getBook,getRendition,
     const range=elements.progressRange,text=elements.progressText;
     const chapter=String(position?.chapter||(position?.cfi?getChapter?.():"")||"").trim();
     const presentation=formatReaderProgress({percentage,position,chapter});
+    if(elements.currentChapterText)elements.currentChapterText.textContent=presentation.chapter||"Updating…";
+    if(elements.volumeProgressText)elements.volumeProgressText.textContent=presentation.volume;
     if(range){range.value=Math.round(presentation.value*1000);range.setAttribute("aria-valuetext",presentation.accessible)}
     if(text){
       text.textContent=presentation.visual;

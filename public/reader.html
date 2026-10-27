@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="/assets/css/reader-notes.css?v=2.11.0">
   <link rel="stylesheet" href="/assets/css/reader-a11y.css?v=2.11.0">
   <link rel="stylesheet" href="/assets/css/reader-interface-themes.css?v=2.11.0">
-  <link rel="stylesheet" href="/assets/css/reader-presentation.css?v=2.11.0">
+  <link rel="stylesheet" href="/assets/css/reader-presentation.css?v=2.29.0">
   <link rel="stylesheet" href="/assets/css/reader-motion.css?v=2.11.0">
   <link rel="stylesheet" href="/assets/css/reader-speech.css?v=2.22.0">
   <link rel="stylesheet" href="/assets/css/ui-symbols.css?v=2.11.0">
@@ -58,7 +58,7 @@
   <div id="readerApp" class="reader-app">
     <header class="reader-topbar" aria-label="Reader controls">
       <div class="reader-left">
-        <button id="tocToggle" class="reader-icon" type="button" aria-label="Table of contents" aria-controls="tocDrawer" aria-expanded="false">☰</button>
+        <button id="tocToggle" class="reader-icon" type="button" aria-label="Table of contents" title="Chapters, search and bookmarks (T)" aria-controls="tocDrawer" aria-expanded="false">☰</button>
         <a id="backLink" class="reader-brand" href="/">Shadow Garden</a>
       </div>
       <div class="reader-title">
@@ -82,6 +82,15 @@
         </div>
         <button class="drawer-close" data-close="tocDrawer" type="button" aria-label="Close contents drawer">×</button>
       </div>
+      <section class="reader-navigation-context" aria-label="Reading position and navigation">
+        <dl><div><dt>Current chapter</dt><dd id="readerCurrentChapter">Opening the volume…</dd></div><div><dt>Volume progress</dt><dd id="readerVolumeProgress">0% of volume</dd></div></dl>
+        <details><summary tabindex="0">Navigation help</summary>
+          <p id="readerProgressHelp">The slider jumps within this volume. Page numbers depend on your screen and text settings; the percentage is for the whole volume.</p>
+          <p>Choose a chapter, search this book or open your saved bookmarks.</p>
+          <p id="readerPagesHelp" class="reader-pages-help">Previous and Next turn one page. You can also use the Left and Right arrow keys.</p>
+          <p id="readerContinuousHelp" class="reader-continuous-help">Scroll to read. On the progress rail, Up/Down jumps 1%, Page Up/Down jumps 10%, and Home/End goes to the start/end.</p>
+        </details>
+      </section>
       <div id="tocPanel" class="drawer-panel"></div>
       <div id="bookmarksPanel" class="drawer-panel hidden"></div>
     </aside>
@@ -156,12 +165,12 @@
     </main>
 
     <footer class="reader-bottombar" aria-label="Reading navigation">
-      <button id="prevBottom" type="button" aria-label="Previous page">◀ Previous</button>
-      <div class="progress-wrap"><input id="progressRange" type="range" min="0" max="1000" value="0" aria-label="Reading progress"><span id="progressText">0%</span></div>
-      <button id="nextBottom" type="button" aria-label="Next page">Next ▶</button>
+      <button id="prevBottom" type="button" aria-label="Previous page" title="Previous page (Left arrow)" aria-describedby="readerPagesHelp">◀ Previous</button>
+      <div class="progress-wrap"><input id="progressRange" type="range" min="0" max="1000" value="0" aria-label="Reading progress" aria-describedby="readerProgressHelp"><span id="progressText">0% of volume</span></div>
+      <button id="nextBottom" type="button" aria-label="Next page" title="Next page (Right arrow)" aria-describedby="readerPagesHelp">Next ▶</button>
     </footer>
 
-    <div id="continuousSeek" class="continuous-seek" role="slider" tabindex="0" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0%">
+    <div id="continuousSeek" class="continuous-seek" role="slider" tabindex="0" aria-label="Reading progress" aria-describedby="readerProgressHelp readerContinuousHelp" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0% of volume">
       <div id="continuousSeekTrack" class="continuous-seek-track" aria-hidden="true"><span id="continuousSeekThumb" class="continuous-seek-thumb"></span></div>
       <span id="continuousSeekText" class="continuous-seek-text">0%</span>
     </div>
@@ -175,6 +184,11 @@
         <div class="volume-complete-actions"><a id="nextVolumeLink" class="volume-complete-next" href="#">Read next volume ▶</a><a id="completeReturnLink" class="volume-complete-return" href="/">Return to series</a></div>
       </div>
     </section>
+
+    <aside id="imageFocusGuidance" class="reader-image-guidance" aria-label="Illustration tip" hidden>
+      <p id="imageFocusGuidanceText" role="status"></p>
+      <button id="imageFocusGuidanceDismiss" type="button" aria-label="Dismiss illustration tip">×</button>
+    </aside>
 
     <div id="imageFocus" class="reader-image-focus hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Focused book image" tabindex="-1">
       <button id="imageFocusClose" class="reader-image-focus-close" type="button" aria-label="Close focused image">×</button>
