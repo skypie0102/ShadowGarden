@@ -59,6 +59,12 @@ took **2h 7m 39s** including a desktop WebKit timeout and a later job rerun.
 That interval includes time between attempts, rather than two hours of continuous
 test execution.
 
+The Phase 3 Reader [PR run `40530019401`](https://github.com/skypie0102/ShadowGarden/actions/runs/40530019401)
+completed full verification and all 15 browser shards in **12m 15s** on 2026-10-27:
+545 Node tests and 1,191 browser cases passed, with 9 existing platform skips
+and no retries. This is a full Reader change; image-only changes use the focused
+selection above. It is one observed run, not a guaranteed duration.
+
 The planner has regression cases for documentation, cover CSS, images, release
 metadata, dependency changes, unknown files, missing history, deletes and renamed
 runtime files. `npm run check` also validates the unchanged application build and
