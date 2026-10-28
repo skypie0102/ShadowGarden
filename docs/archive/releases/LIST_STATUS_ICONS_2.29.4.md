@@ -3,6 +3,12 @@
 [PR #96](https://github.com/skypie0102/ShadowGarden/pull/96) merged as
 `1197cea4af10cce4bfc2f3843e10041368c69c2e` on 2026-10-28.
 
+A follow-up in [PR #99](https://github.com/skypie0102/ShadowGarden/pull/99)
+corrects two presentation details: this release still included a checkmark
+character in Grid Finished text and clipped List labels with CSS. The follow-up
+removes the checkmark and completely hides List label elements, with explicit
+assertions for the visible content in both views.
+
 List volume covers use compact 22px SVG badges: a green check for Finished,
 a closed book for Unread, an open book for In progress and a turning arrow for
 the unread Up next volume. The full state remains in accessible descriptions
