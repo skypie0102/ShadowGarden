@@ -59,6 +59,23 @@ async function coverBadges(page) {
       expect(box.right).toBeGreaterThanOrEqual(5); expect(box.right).toBeLessThanOrEqual(8);
       expect(box.left).toBeGreaterThanOrEqual(0); expect(box.bottom).toBeGreaterThanOrEqual(0);
       expect(box.clipped).toBe(false);
+      // Reflow must keep the title, metadata and actions below one another.
+      // WebKit can otherwise retain a collapsed percentage-height Grid card.
+      const details = await card.evaluate(card => {
+        const title = card.querySelector('.volume-title').getBoundingClientRect();
+        const row = card.querySelector('.volume-title-row').getBoundingClientRect();
+        const meta = card.querySelector('.volume-meta').getBoundingClientRect();
+        const actions = card.querySelector('.volume-actions').getBoundingClientRect();
+        const cover = card.querySelector('.volume-cover-link').getBoundingClientRect();
+        return { titleHeight: title.height, titleOverflow: title.bottom - row.bottom,
+          metaGap: meta.top - title.bottom, actionGap: actions.top - meta.bottom,
+          cardOverflow: Math.max(cover.bottom, actions.bottom) - card.getBoundingClientRect().bottom };
+      });
+      expect(details.titleHeight).toBeGreaterThan(0);
+      expect(details.titleOverflow).toBeLessThanOrEqual(1);
+      expect(details.metaGap).toBeGreaterThanOrEqual(-1);
+      expect(details.actionGap).toBeGreaterThanOrEqual(-1);
+      expect(details.cardOverflow).toBeLessThanOrEqual(1);
     }).toPass({ timeout: 5000 });
   }
 }
@@ -133,6 +150,7 @@ for (const adult of [false, true]) {
     }
     await page.locator('[data-series-view="grid"]').click();
     const before = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
+    await coverBadges(page);
     await card.locator('a.read').click();
     const dialog = page.locator('#readAgainDialog');
     await expect(dialog).toBeVisible();
