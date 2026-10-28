@@ -30,18 +30,19 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The current release is [**v2.29.0**](docs/archive/releases/READER_CONTROLS_2.29.0.md). Library discovery,
-Phase 3 Reader controls, Reader maintenance, Website refactor and the October codebase audit are complete.
+The current release is [**v2.29.1**](docs/archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md). Library discovery,
+Reader controls, Phase 4 visual consistency, Reader maintenance, Website refactor
+and the October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
-journey, visual consistency and Keeper feedback work. Reader controls now provide
+journey and Keeper feedback work. Reader controls now provide
 grouped settings and device-default Reset, clearer chapter/volume navigation,
 and first-use image-focus guidance. The Series layout and solid pinned icon retain
 their released behavior. The release record separates source validation, production
 verification and the remaining physical-device and width-change acceptance limits.
 
-The source adds the Phase 4 visual-accessibility pass for **v2.29.1**: readable
+The v2.29.1 visual-accessibility pass provides readable
 metadata/placeholders and filter boundaries, visible keyboard focus and selected
 states in contrast themes. Existing layout styles and application JavaScript stay
 intact; controlled browser comparisons check button, cover and reading/download

@@ -11,7 +11,7 @@ claim that an old bug is still present.
 | [Plans](plans/) | Reader refactor, Reader maintenance M1–M5 (deployed by v2.12.8), Website W1–W6 (v2.14.0) |
 | [Audits](audits/) | Recovery audit, October codebase audit completed through v2.18.13, Reader review and scroll investigation |
 | [Completed increments](completed/) | Keeper ownership/readability/CSS, EPUB inspection, Library readiness, upload buffering, persistence, protected transport and browser-runtime work |
-| [Releases](releases/) | Project/Reader/Website release history, public reading actions and [Phase 3 Reader controls v2.29.0](releases/READER_CONTROLS_2.29.0.md) |
+| [Releases](releases/) | Project/Reader/Website release history, public reading actions and [Reader controls v2.29.0](releases/READER_CONTROLS_2.29.0.md) and [Phase 4 visual consistency v2.29.1](releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
 | [Recovery](recovery/) | Reconstruction log, initial missing-components boundary, old manual production takeover and separate test-project setup; superseded by current operations |
 | [Incidents](incidents/) | Dated deployment incident and recovery evidence |
 | [Evidence](evidence/) | Original machine-readable measurements, source identities and sanitized verification reports |
