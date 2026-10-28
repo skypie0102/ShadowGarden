@@ -161,9 +161,21 @@ for (const adult of [false, true]) {
       const { preferences } = await import('/assets/js/domain/index.js');
       preferences.setPinned(id, true);
     }, id);
-    await page.reload();
+    // Reload's load event can precede the async controller. Exercise that gap
+    // explicitly, then wait for catalog readiness before using its controls.
+    let releaseRenderer;
+    const rendererReady = new Promise(resolve => { releaseRenderer = resolve; });
+    const delayedRenderer = route => rendererReady.then(() => route.continue());
+    await page.route('**/assets/js/library-renderers.js?*', delayedRenderer);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    try { await expect(page.locator('#catalogGrid')).toHaveAttribute('aria-busy', 'true'); }
+    finally { releaseRenderer(); }
+    await expect(page.locator('#catalogGrid')).toHaveAttribute('aria-busy', 'false');
+    await page.unroute('**/assets/js/library-renderers.js?*', delayedRenderer);
     const pinnedCard = page.locator(`#catalogGrid .series-card[href*="id=${id}"]`);
     await page.locator('[data-view="compact"]').click();
+    await expect(page.locator('[data-view="compact"]')).toHaveAttribute('aria-pressed', 'true');
+    await pinnedCard.scrollIntoViewIfNeeded();
     const seriesBadges = pinnedCard.locator('.series-list-status-badge');
     await expect(seriesBadges).toHaveCount(2);
     await expect(pinnedCard.getByRole('img', { name: 'Finished', exact: true })).toBeVisible();
