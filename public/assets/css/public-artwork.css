@@ -12,6 +12,45 @@ body[data-library-scope] {
 .compact-card-badges {
   display: none;
 }
+.series-list-status-badges {
+  display: none;
+}
+.catalog-grid.compact .series-list-status-badges {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+.series-list-status-badge {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(11, 9, 16, 0.94);
+}
+.series-list-status-badge .reading-status-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.series-list-status-badge.finished {
+  color: #98dfaa;
+  border-color: rgba(96, 204, 129, 0.34);
+}
+.series-list-status-badge.pinned {
+  color: #d1b777;
+  border-color: rgba(190, 161, 108, 0.3);
+}
+.adult-library .series-list-status-badge {
+  background: rgba(18, 10, 14, 0.94);
+}
 .catalog-grid.compact .series-card {
   height: 120px;
   grid-template-columns: auto minmax(0, 1fr) auto;

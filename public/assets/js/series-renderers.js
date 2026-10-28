@@ -2,6 +2,7 @@
 import {isAdultSeries} from "./domain/catalog.js";
 import { volumeActionFor } from "./public/volume-actions.js";
 import { readingProgressSummary } from "./public/reading-progress.js";
+import { readingStatusIcon } from "./public/reading-status-icons.js?v=2.29.4";
 
 const arr = value => Array.isArray(value) ? value : [];
 
@@ -71,6 +72,8 @@ function volumeCard(series, entry, dependencies, context) {
   const visualProgress = finished ? 100 : inProgress && summary.percent !== null ? Math.max(1, Math.min(99, summary.percent)) : 0;
   const stateMeta = inProgress ? summary.text : "";
   const stateLabel = finished ? "✓ Finished" : inProgress ? "In progress" : "Unread";
+  const stateDescription = upNext ? `${stateLabel} · Up next` : stateLabel;
+  const stateIcon = finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread";
   const stateId = `volume-state-${index}`;
   const title = volume?.title || `Volume ${index + 1}`;
   const number = volume?.number ?? index + 1;
@@ -78,8 +81,8 @@ function volumeCard(series, entry, dependencies, context) {
   const overrides = translations.normalizeTranslations(volume?.translations);
   const overrideMarkup = overrides.length ? `<p class="volume-translator"><span>TL override</span> ${overrides.map(credit => translatorLink(series, credit, urls, format, translations, "volume-translator-link")).join(" · ")}</p>` : "";
   return `<article class="volume-card ${finished ? "is-finished" : ""} ${upNext ? "is-up-next" : ""} ${inProgress ? "is-in-progress" : ""}" data-volume-index="${index}" data-reading-state="${esc(state)}">
-    <a class="volume-cover-link" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)}" aria-describedby="${stateId}" title="${esc(action.label)} ${esc(title)}">
-      <div class="volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="lazy" decoding="async" fetchpriority="low">` : ""}<span id="${stateId}" class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}">${esc(stateLabel)}</span>${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}</div>
+    <a class="volume-cover-link" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)}" aria-describedby="${stateId}" title="${esc(action.label)} ${esc(title)} · ${esc(stateDescription)}">
+      <div class="volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="lazy" decoding="async" fetchpriority="low">` : ""}<span id="${stateId}" class="volume-state-pill ${finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread"}" role="img" aria-label="${esc(stateDescription)}" title="${esc(stateDescription)}"><span class="volume-state-icon">${readingStatusIcon(stateIcon)}</span><span class="volume-state-label">${esc(stateLabel)}</span></span>${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}</div>
     </a>
     <p class="volume-order">${esc(order)}${upNext ? " · Up next" : ""}</p>
     <div class="volume-title-row"><h3 class="volume-title">${esc(title)}</h3></div>

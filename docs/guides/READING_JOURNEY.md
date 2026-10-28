@@ -17,14 +17,21 @@ and finally a finished available volume. Missing EPUBs are not hero destinations
 An out-of-order Finished mark does not make the hero disagree with the Library's
 next-volume suggestion. Renderers share one series snapshot while drawing cards.
 
-Series cards show Volume N of total independently of the title, and explicit
-Unread / In progress / Finished labels in one badge over the top-right of each
-volume cover in Grid and List, including cover placeholders. The metadata
+Series cards show Volume N of total independently of the title, with one badge
+over the top-right of each volume cover, including cover placeholders. Grid
+keeps Unread / In progress / Finished text labels. List uses a 22px icon badge:
+a closed book for Unread, an open book for In progress, a green check for Finished
+and a turning arrow for the unread Up next volume. Accessible descriptions and
+cover tooltips retain the full state. The metadata
 line keeps the date, file size and saved progress details; it does not repeat
 Unread or Finished. “Up next” is an additional recommendation,
 not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
+
+The Library’s compact view uses the same green check and filled pin icons on
+series covers for Finished and Pinned series. Its volume-count and Adult chips
+retain their existing text; Grid keeps its existing badge presentation.
 
 ## Series presentation
 

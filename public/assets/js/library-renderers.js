@@ -1,6 +1,7 @@
 /* Shadow Garden R3 — Library render ownership. */
 import { volumeActionFor } from "./public/volume-actions.js";
 import { readingProgressSummary } from "./public/reading-progress.js";
+import { readingStatusIcon } from "./public/reading-status-icons.js?v=2.29.4";
 import { addedTime, seriesCover, volumeCover } from "./library-model.js";
 
 const arr = value => Array.isArray(value) ? value : [];
@@ -32,6 +33,10 @@ export function seriesCard(series, index, { readingState, preferences, urls, for
       <span class="volume-pill">${volumes} ${volumes === 1 ? "VOL" : "VOLS"}</span>
       ${series?.nsfw ? `<span class="adult-pill">18+</span>` : ""}
       ${finished ? `<span class="finished-series-badge">✓ Finished</span>` : ""}
+      <div class="series-list-status-badges">
+        ${finished ? `<span class="series-list-status-badge finished" role="img" aria-label="Finished" title="Finished">${readingStatusIcon("finished")}</span>` : ""}
+        ${pinned ? `<span class="series-list-status-badge pinned" role="img" aria-label="Pinned series" title="Pinned series">${readingStatusIcon("pinned")}</span>` : ""}
+      </div>
       ${visualProgress ? `<span class="cover-reading-progress" aria-hidden="true"><span style="width:${visualProgress}%"></span></span>` : ""}
     </div>
     <div class="card-copy">
@@ -41,8 +46,6 @@ export function seriesCard(series, index, { readingState, preferences, urls, for
       <div class="card-meta"><span>${series?.year || "—"}</span><span>${finished ? "Finished" : esc(arr(series?.genres)[0] || arr(series?.tags)[0] || "")}</span></div>
     </div>
     <div class="compact-card-badges" aria-label="Series badges">
-      ${finished ? '<span class="compact-card-badge finished">✓ Finished</span>' : ""}
-      ${pinned ? '<span class="compact-card-badge pinned">◆ Pinned</span>' : ""}
       <span class="compact-card-badge volumes">${volumes} ${volumes === 1 ? "VOL" : "VOLS"}</span>
       ${series?.nsfw ? '<span class="compact-card-badge adult">18+</span>' : ""}
     </div>
