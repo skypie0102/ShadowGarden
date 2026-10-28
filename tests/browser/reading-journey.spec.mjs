@@ -41,7 +41,7 @@ async function seriesAction(page, adult, label, index) {
   const card = page.locator('.volume-card').nth(index);
   await expect(card.locator('a.read')).toHaveText({ 'Start reading': 'Read', 'Read next volume': 'Read', 'Continue reading': 'Continue', 'Read again': 'Read Again' }[label]);
   await expect(card.locator('.volume-cover-link')).toHaveAccessibleName(`${label} ${volumes[index].title}`);
-  await expect(card.locator('.volume-cover-link')).toHaveAccessibleDescription({ 'Start reading': 'Unread', 'Read next volume': 'Unread', 'Continue reading': 'In progress', 'Read again': '✓ Finished' }[label]);
+  await expect(card.locator('.volume-cover-link')).toHaveAccessibleDescription({ 'Start reading': 'Unread', 'Read next volume': 'Unread · Up next', 'Continue reading': 'In progress', 'Read again': '✓ Finished' }[label]);
   return card;
 }
 
@@ -50,6 +50,22 @@ async function coverBadges(page) {
   for (const card of await page.locator('.volume-card').all()) {
     const badge = card.locator('.volume-cover > .volume-state-pill');
     await expect(badge).toHaveCount(1);
+    const list = await card.evaluate(card => card.parentElement.classList.contains('volume-list'));
+    const icon = badge.locator('.reading-status-icon');
+    if (list) {
+      await expect(badge).toHaveCSS('width', '22px');
+      await expect(badge).toHaveCSS('height', '22px');
+      await expect(icon).toBeVisible();
+      await expect(badge.locator('.volume-state-label')).toHaveCSS('clip-path', 'inset(50%)');
+      const expected = await card.evaluate(card => card.dataset.readingState === 'finished' ? 'finished'
+        : card.dataset.readingState === 'in-progress' ? 'progress'
+        : card.classList.contains('is-up-next') ? 'up-next' : 'unread');
+      await expect(icon).toHaveAttribute('data-status-icon', expected);
+      expect(await icon.evaluate(icon => getComputedStyle(icon).stroke)).toBe(await badge.evaluate(badge => getComputedStyle(badge).color));
+    } else {
+      await expect(icon).toBeHidden();
+      await expect(badge.locator('.volume-state-label')).toHaveCSS('position', 'static');
+    }
     await expect(async () => {
       const box = await badge.evaluate(badge => {
         const b = badge.getBoundingClientRect(), c = badge.parentElement.getBoundingClientRect();
@@ -131,11 +147,41 @@ for (const adult of [false, true]) {
     card = await seriesAction(page, adult, 'Read next volume', 1);
     await expect(card.locator('.volume-state-pill')).toHaveText('Unread');
     await expect(card.locator('.volume-order')).toHaveText('Volume 2 of 3 · Up next');
+    await page.locator('[data-series-view="list"]').click();
+    await coverBadges(page);
+    await expect(card.locator('[data-status-icon="up-next"]')).toBeVisible();
+    await info.attach('up-next-list', { body: await card.screenshot({ animations: 'disabled' }), contentType: 'image/png' });
+    await page.locator('[data-series-view="grid"]').click();
     await page.evaluate(async ({ id, volumes }) => {
       const { readingState } = await import('/assets/js/domain/index.js');
       for (const [index, volume] of volumes.entries()) readingState.setVolumeFinished(id, volume, true, index);
     }, { id, volumes });
     await libraryAction(page, adult, 'Read again', 0);
+    await page.evaluate(async id => {
+      const { preferences } = await import('/assets/js/domain/index.js');
+      preferences.setPinned(id, true);
+    }, id);
+    await page.reload();
+    const pinnedCard = page.locator(`#catalogGrid .series-card[href*="id=${id}"]`);
+    await page.locator('[data-view="compact"]').click();
+    const seriesBadges = pinnedCard.locator('.series-list-status-badge');
+    await expect(seriesBadges).toHaveCount(2);
+    await expect(pinnedCard.getByRole('img', { name: 'Finished', exact: true })).toBeVisible();
+    await expect(pinnedCard.getByRole('img', { name: 'Pinned series', exact: true })).toBeVisible();
+    for (const badge of await seriesBadges.all()) {
+      await expect(badge).toHaveCSS('width', '22px'); await expect(badge).toHaveCSS('height', '22px');
+      await expect(badge).toHaveText('');
+      expect(await badge.evaluate(badge => {
+        const b = badge.getBoundingClientRect(), c = badge.closest('.cover').getBoundingClientRect();
+        return b.left >= c.left && b.right <= c.right && b.top >= c.top && b.bottom <= c.bottom;
+      })).toBe(true);
+    }
+    await expect(pinnedCard.locator('.compact-card-badge.volumes')).toHaveText('3 VOLS');
+    await expect(pinnedCard.locator('[data-status-icon="pinned"] path[fill="currentColor"]')).toHaveCount(1);
+    await info.attach('pinned-finished-series-list', { body: await pinnedCard.screenshot(), contentType: 'image/png' });
+    await page.locator('[data-view="grid"]').click();
+    await expect(pinnedCard.locator('.finished-series-badge')).toBeVisible();
+    await expect(seriesBadges.first()).toBeHidden();
     card = await seriesAction(page, adult, 'Read again', 0);
     await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
     await page.setViewportSize({ width: 320, height: 850 });

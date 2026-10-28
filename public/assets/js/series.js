@@ -69,7 +69,7 @@
     if (!series || rendering) return;
     rendering = true;
     try {
-      const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.29.3");
+      const { seriesMarkup } = await import("/assets/js/series-renderers.js?v=2.29.4");
       root.innerHTML = seriesMarkup(series, { ...domain, bannerRandom, volumeView });
       root.setAttribute("aria-busy", "false");
       syncBackToTop();
@@ -171,7 +171,7 @@
   } catch (error) {
     console.error(error);
     if (!domain) domain = await import("/assets/js/domain/index.js");
-    const { notFoundMarkup } = await import("/assets/js/series-renderers.js?v=2.29.3");
+    const { notFoundMarkup } = await import("/assets/js/series-renderers.js?v=2.29.4");
     root.innerHTML = notFoundMarkup(domain.urls.libraryUrl(requestedAdult), domain.format);
     root.setAttribute("aria-busy", "false");
   }
