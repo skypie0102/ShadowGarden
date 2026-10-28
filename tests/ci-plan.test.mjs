@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isVersionOnly, planChecks, planEvent } from '../scripts/plan-ci.mjs';
@@ -11,6 +11,74 @@ test('docs keep a successful lightweight gate without browsers or publication', 
   assert.equal(plan.mode, 'docs');
   assert.equal(plan.deploy, false);
   assert.deepEqual(plan.matrix.include, []);
+});
+
+test('Android changes skip website checks and publication, including when accompanied by docs', () => {
+  for (const paths of [
+    ['android/app/src/main/AndroidManifest.xml'],
+    ['.github/workflows/android.yml', 'docs/plans/ANDROID_ROADMAP.md'],
+    ['android/gradle/wrapper/gradle-wrapper.jar', 'README.md']
+  ]) {
+    const plan = planChecks(paths);
+    assert.equal(plan.mode, 'android');
+    assert.equal(plan.deploy, false);
+    assert.equal(plan.profile, false);
+    assert.deepEqual(plan.matrix.include, []);
+  }
+});
+
+test('Android paths do not weaken website checks for mixed changes', () => {
+  const focused = planChecks(['android/app/build.gradle.kts', 'public/assets/css/public-artwork.css']);
+  assert.equal(focused.mode, 'focused');
+  assert.equal(focused.deploy, true);
+  assert.equal(focused.matrix.include.length, 5);
+  const full = planChecks(['android/app/build.gradle.kts', 'server/books.js']);
+  assert.equal(full.mode, 'full');
+  assert.equal(full.deploy, true);
+  assert.equal(full.matrix.include.length, 15);
+});
+
+test('Android and CI selection changes run planner tests without publishing website assets', () => {
+  const plan = planChecks(['android/app/build.gradle.kts', '.github/workflows/ci.yml',
+    'scripts/plan-ci.mjs', 'tests/ci-plan.test.mjs']);
+  assert.equal(plan.mode, 'android');
+  assert.equal(plan.test_plan, true);
+  assert.equal(plan.deploy, false);
+  assert.deepEqual(plan.matrix.include, []);
+  const mixed = planChecks(['android/app/build.gradle.kts', 'scripts/plan-ci.mjs', 'server/books.js']);
+  assert.equal(mixed.mode, 'full');
+  assert.equal(mixed.deploy, true);
+  assert.equal(planChecks(['.github/workflows/ci.yml']).mode, 'full');
+  assert.equal(planChecks(['android/app/build.gradle.kts', 'scripts/build.mjs']).mode, 'full');
+});
+
+test('Android-only newer commits do not suppress an already checked website deployment', () => {
+  const workflow = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8');
+  const pathspecLine = workflow.match(/git diff --quiet HEAD origin\/main -- ([^\n]+); then/);
+  assert.ok(pathspecLine, 'production guard must compare the checked and current source');
+  const pathspecs = pathspecLine[1].match(/'[^']+'|\S+/g).map(value => value.replace(/^'|'$/g, ''));
+  const directory = mkdtempSync(join(tmpdir(), 'shadowgarden-deploy-guard-'));
+  const git = (args, options = {}) => execFileSync('git', args, { cwd: directory, encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'], ...options }).trim();
+  try {
+    git(['init', '-q']);
+    git(['config', 'user.email', 'fixture@example.invalid']);
+    git(['config', 'user.name', 'CI fixture']);
+    mkdirSync(join(directory, 'android'), { recursive: true });
+    mkdirSync(join(directory, 'server'), { recursive: true });
+    writeFileSync(join(directory, 'android', 'app.txt'), 'one');
+    writeFileSync(join(directory, 'server', 'app.js'), 'one');
+    git(['add', '.']); git(['commit', '-qm', 'checked website']);
+    const checked = git(['rev-parse', 'HEAD']);
+    writeFileSync(join(directory, 'android', 'app.txt'), 'two');
+    git(['add', '.']); git(['commit', '-qm', 'android']);
+    assert.doesNotThrow(() => git(['diff', '--quiet', checked, 'HEAD', '--', ...pathspecs]));
+    writeFileSync(join(directory, 'server', 'app.js'), 'two');
+    git(['add', '.']); git(['commit', '-qm', 'website']);
+    assert.throws(() => git(['diff', '--quiet', checked, 'HEAD', '--', ...pathspecs]), { status: 1 });
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test('cover styles plus their regression tests and release bump run public checks in every profile', () => {

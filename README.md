@@ -1,13 +1,14 @@
 # ShadowGarden
 
 ShadowGarden is a web library with a mobile-friendly EPUB reader and Keeper,
-its catalog administration interface. It runs on Cloudflare Pages and Pages
-Functions, with D1 for catalog metadata and Backblaze B2 for private book files.
+its catalog administration interface. An Android app is being developed in
+this repository. The website runs on Cloudflare Pages and Pages Functions, with
+D1 for catalog metadata and Backblaze B2 for private book files.
 
 [Open ShadowGarden](https://shadowgarden-bon.pages.dev/) ·
 [Documentation](docs/README.md) ·
 [Codebase audit](docs/archive/audits/CODEBASE_AUDIT_2026-10.md) ·
-[UI/UX roadmap](docs/plans/UI_UX_ROADMAP.md) ·
+[Android roadmap](docs/plans/ANDROID_ROADMAP.md) ·
 [Reader architecture](docs/guides/READER_ARCHITECTURE.md) ·
 [Release history](docs/archive/releases/PROJECT_HISTORY.md)
 
@@ -35,8 +36,12 @@ Reader controls, Phase 4 visual consistency, Phase 5 Keeper feedback, Reader
 maintenance, Website refactor and the October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
-The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
-journey follow-ups and delivery history. Keeper uploads explain destinations and
+The [Android roadmap](docs/plans/ANDROID_ROADMAP.md) is the current repository
+development cycle. The app is a scaffold: offline reading, local progress,
+backup and Keeper are planned, not yet implemented. The completed [UI/UX
+roadmap](docs/archive/plans/UI_UX_ROADMAP.md) retains its delivery history and
+the [follow-ups](docs/plans/FOLLOW_UPS.md) retain unresolved acceptance limits.
+Keeper uploads explain destinations and
 duplicate choices, distinguish per-file failures and retries, and retain skipped
 or invalid files for review. Reader controls now provide
 grouped settings and device-default Reset, clearer chapter/volume navigation,
@@ -51,6 +56,9 @@ intact; controlled browser comparisons check button, cover and reading/download
 geometry against v2.29.0. See the [visual guide](docs/guides/VISUAL_ACCESSIBILITY.md).
 
 ## Local development
+
+For Android prerequisites and build commands, see [android/README.md](android/README.md).
+The website remains independently runnable and releasable as described below.
 
 Use Node.js 24; the minimum supported version is 22.16.
 
@@ -112,6 +120,7 @@ JSON report path; see [upload memory](docs/archive/completed/UPLOAD_MEMORY.md).
 | Path | Responsibility |
 | --- | --- |
 | `public/` | Library and Keeper UI, reader modules, pinned vendor assets and static routing/header rules |
+| `android/` | Android app scaffold, Gradle build and Android-specific development instructions |
 | `public/assets/js/reader/` | Reader engine, application/controllers, navigation, layout, lifecycle and cache services |
 | `functions/` | Pages route handlers |
 | `server/` | Authorization, catalog transactions, B2 access, EPUB validation and cleanup |

@@ -37,9 +37,12 @@ jobs:
         id: plan
         run: node scripts/plan-ci.mjs
       - run: npm ci
-        if: steps.plan.outputs.mode != 'docs'
+        if: steps.plan.outputs.mode != 'docs' && steps.plan.outputs.mode != 'android'
       - run: npm run check
-        if: steps.plan.outputs.mode != 'docs'
+        if: steps.plan.outputs.mode != 'docs' && steps.plan.outputs.mode != 'android'
+      - name: Test Android CI selection changes
+        if: steps.plan.outputs.mode == 'android' && steps.plan.outputs.test_plan == 'true'
+        run: node --test tests/ci-plan.test.mjs
 
   production-access:
     name: Check production access
@@ -102,7 +105,7 @@ jobs:
 
   browser:
     needs: verify
-    if: needs.verify.outputs.mode != 'docs'
+    if: needs.verify.outputs.mode != 'docs' && needs.verify.outputs.mode != 'android'
     name: browser (${{ matrix.project }}, ${{ matrix.engine }}, ${{ matrix.shard }}/${{ matrix.shards }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -184,7 +187,7 @@ jobs:
       - name: Require every selected check to pass
         run: |
           test "$VERIFY_RESULT" = success
-          if [ "$CHECK_MODE" = docs ]; then
+          if [ "$CHECK_MODE" = docs ] || [ "$CHECK_MODE" = android ]; then
             test "$BROWSER_RESULT" = skipped
           else
             test "$BROWSER_RESULT" = success
@@ -213,7 +216,7 @@ jobs:
         shell: bash
         run: |
           git fetch --no-tags origin main
-          if git diff --quiet HEAD origin/main -- . ':(exclude)docs/**' ':(exclude)README.md'; then
+          if git diff --quiet HEAD origin/main -- . ':(exclude)docs/**' ':(exclude)README.md' ':(exclude)android/**' ':(exclude).github/workflows/android.yml'; then
             echo 'deploy=true' >> "$GITHUB_OUTPUT"
           else
             echo 'A newer application commit is on main; its checked run will deploy.'

@@ -39,7 +39,7 @@
   "docs/READER_VENDOR_CONTRACT.md": "docs/guides/READER_VENDOR_CONTRACT.md",
   "docs/STYLESHEET_OWNERSHIP.md": "docs/archive/completed/STYLESHEET_OWNERSHIP.md",
   "docs/TEST_DEPLOYMENT.md": "docs/archive/recovery/TEST_DEPLOYMENT.md",
-  "docs/UI_UX_ROADMAP.md": "docs/plans/UI_UX_ROADMAP.md",
+  "docs/UI_UX_ROADMAP.md": "docs/archive/plans/UI_UX_ROADMAP.md",
   "docs/UPLOAD_BUFFER_BUDGET.md": "docs/archive/completed/UPLOAD_BUFFER_BUDGET.md",
   "docs/UPLOAD_MEMORY.md": "docs/archive/completed/UPLOAD_MEMORY.md",
   "docs/WEBSITE_ARCHITECTURE.md": "docs/guides/WEBSITE_ARCHITECTURE.md",
@@ -116,5 +116,6 @@
   "docs/upload-verification-2.16.1.json": "docs/archive/evidence/upload-verification-2.16.1.json",
   "docs/website-release-2.13.0.json": "docs/archive/evidence/website-release-2.13.0.json",
   "docs/website-release-2.14.0.json": "docs/archive/evidence/website-release-2.14.0.json",
-  "RECONSTRUCTION_LOG.md": "docs/archive/recovery/RECONSTRUCTION_LOG.md"
+  "RECONSTRUCTION_LOG.md": "docs/archive/recovery/RECONSTRUCTION_LOG.md",
+  "docs/plans/UI_UX_ROADMAP.md": "docs/archive/plans/UI_UX_ROADMAP.md"
 }

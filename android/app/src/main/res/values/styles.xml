@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.ShadowGarden" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#14121A</item>
+        <item name="android:navigationBarColor">#14121A</item>
+    </style>
+</resources>

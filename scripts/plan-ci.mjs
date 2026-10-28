@@ -17,6 +17,12 @@ const publicSpecs = [
 ].map(name => `${name}.spec.mjs`);
 const artworkSpecs = [...publicSpecs, 'keeper-banner.spec.mjs', 'reader-image-focus.spec.mjs'];
 const isDocumentation = path => path === 'README.md' || path.startsWith('docs/');
+const isAndroidOnly = path => path.startsWith('android/') || path === '.github/workflows/android.yml';
+// CI-selection changes accompanying Android work are tested directly; they do
+// not alter website runtime assets. Other workflow/script changes fail closed.
+const isAndroidSelectionControl = path => [
+  '.github/workflows/ci.yml', 'scripts/plan-ci.mjs', 'tests/ci-plan.test.mjs'
+].includes(path);
 const isArtwork = path => /^public\/assets\/(?:icons|images|img)\/.+\.(?:svg|png|jpe?g|webp|gif|avif|ico)$/.test(path);
 const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -42,8 +48,12 @@ export function isVersionOnly(path, before, after) {
 
 export function planChecks(paths, { forceFull = false, versionOnly = [] } = {}) {
   const changed = [...new Set(paths)];
-  const application = changed.filter(path => !isDocumentation(path));
-  let mode = forceFull || !changed.length ? 'full' : application.length ? 'focused' : 'docs';
+  const androidChanges = changed.some(isAndroidOnly);
+  const selectionControl = androidChanges && changed.some(isAndroidSelectionControl);
+  const application = changed.filter(path => !isDocumentation(path) && !isAndroidOnly(path) &&
+    !(androidChanges && isAndroidSelectionControl(path)));
+  let mode = forceFull || !changed.length ? 'full' : application.length ? 'focused' :
+    changed.some(isAndroidOnly) ? 'android' : 'docs';
   const specs = new Set();
   const versionPaths = new Set(versionOnly);
   for (const path of application) {
@@ -64,10 +74,11 @@ export function planChecks(paths, { forceFull = false, versionOnly = [] } = {}) 
   }
   if (mode === 'focused' && !specs.size) mode = 'full';
   const shards = mode === 'full' ? 3 : 1;
-  const include = mode === 'docs' ? [] : profiles.flatMap(([project, engine]) =>
+  const include = ['docs', 'android'].includes(mode) ? [] : profiles.flatMap(([project, engine]) =>
     Array.from({ length: shards }, (_, index) => ({ project, engine, shard: index + 1, shards })));
   return {
     mode,
+    test_plan: selectionControl,
     deploy: forceFull || application.length > 0,
     profile: mode === 'full' && application.some(path =>
       /^public\/assets\/js\/(?:library|domain\/|nav|site-|data-source)/.test(path) ||
@@ -114,6 +125,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     `### Check selection\n\nScope: **${plan.mode}**. Browser jobs: **${plan.matrix.include.length}**.\n\n` +
     (plan.mode === 'focused' ? `Selected files: \`${plan.pattern}\`\n` :
       plan.mode === 'docs' ? 'Documentation only; browser checks and publication are skipped.\n' :
+        plan.mode === 'android' ? 'Android and its CI selection only; website browser checks and publication are skipped. See the separate Android workflow.\n' :
         'All tests across all five profiles, split into three isolated shards per profile.\n'));
   console.log(`CI scope: ${plan.mode}; browser jobs: ${plan.matrix.include.length}`);
 }

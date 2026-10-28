@@ -1,6 +1,6 @@
 # Follow-ups and acceptance limits
 
-The [UI/UX roadmap](UI_UX_ROADMAP.md) is the current implementation queue. The
+The [Android roadmap](ANDROID_ROADMAP.md) is the current development cycle. The
 following items are separate decisions or evidence limits, not unfinished steps
 of the completed Reader/Website refactors or October audit.
 
@@ -21,4 +21,4 @@ v2.18.8; Keeper readability, queue ownership, target context and editor races we
 addressed in later October increments. Do not reopen them from an earlier report.
 The old separate test-project provisioning notes are [recovery history](../archive/recovery/TEST_DEPLOYMENT.md);
 current CI uses disposable local Pages/D1 fixtures and production uses the guarded
-main workflow. No additional cloud resources are needed for the active UI work.
+main workflow. Website follow-ups remain available when separately prioritized.

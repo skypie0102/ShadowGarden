@@ -26,4 +26,4 @@ A separate public version GET confirms v2.28.0, the full source and `main`.
 
 The [sanitized production report](../evidence/reading-journey-release-2.28.0.json)
 retains deployment identity, checked hashes, preservation and the rollback
-deployment/source. Current work continues in the [UI/UX plan](../../plans/UI_UX_ROADMAP.md).
+deployment/source. Current work continues in the [UI/UX plan](../plans/UI_UX_ROADMAP.md).

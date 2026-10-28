@@ -9,7 +9,8 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Reading journey follow-ups and UI delivery history | Phase 5 is archived with its v2.30.0 release evidence; consult follow-ups before selecting new work |
+| [Android roadmap](plans/ANDROID_ROADMAP.md) | Current repository development cycle: reader, offline library, local progress backup and Keeper | Validate reader and access prototypes before committing to the integration approach |
+| [Android parity inventory](plans/ANDROID_PARITY_INVENTORY.md) | Existing Library, Reader and Keeper workflows mapped to Android screens and acceptance cases | Use to track implementation and acceptance through later phases |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides
@@ -26,6 +27,7 @@ release evidence live in the archive.
 | [EPUB.js contract](guides/READER_VENDOR_CONTRACT.md) | Pinned vendor integration and upgrade checks |
 | [Reader read aloud](guides/READER_TTS.md) | Speech behavior, buffering, playback and platform limits |
 | [API contracts](guides/API_CONTRACTS.md) | Authentication, revisions, catalog writes, uploads, snapshots and cleanup |
+| [Android development](../android/README.md) | Android scaffold, prerequisites, build commands and present limitations |
 
 ## Operations
 

@@ -49,4 +49,4 @@ Physical-device acceptance remains separate. The generated-book Continuous
 393px → 320px width-change witness also reproduced section drift with the released
 v2.28.7 Reader assets; this release does not claim resize-position acceptance.
 Both limits remain in [follow-ups](../../plans/FOLLOW_UPS.md). Active UI work
-continues with [visual consistency](../../plans/UI_UX_ROADMAP.md#phase-4--visual-consistency).
+continues with [visual consistency](../plans/UI_UX_ROADMAP.md#phase-4--visual-consistency).
