@@ -30,7 +30,7 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The current release is [**v2.29.2**](docs/archive/releases/SERIES_STATE_LABEL_2.29.2.md). Library discovery,
+The current release is [**v2.29.3**](docs/archive/releases/VOLUME_COVER_BADGES_2.29.3.md). Library discovery,
 Reader controls, Phase 4 visual consistency, Reader maintenance, Website refactor
 and the October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
