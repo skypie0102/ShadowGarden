@@ -60,7 +60,7 @@ async function coverBadges(page) {
       expect(box.left).toBeGreaterThanOrEqual(0); expect(box.bottom).toBeGreaterThanOrEqual(0);
       expect(box.clipped).toBe(false);
       // Reflow must keep the title, metadata and actions below one another.
-      // WebKit can otherwise retain collapsed sizes from the previous view.
+      // Offscreen size containment can retain sizes from the previous view.
       const details = await card.evaluate(card => {
         const title = card.querySelector('.volume-title').getBoundingClientRect();
         const row = card.querySelector('.volume-title-row').getBoundingClientRect();

@@ -15,15 +15,7 @@
   let viewScope = "main";
 
   function syncVolumeView() {
-    const volumes = root.querySelector(".volume-grid");
-    if (volumes && volumes.classList.contains("volume-list") !== (volumeView === "list")) {
-      // WebKit can retain collapsed child sizes when the same cards switch
-      // between nested Grid and Flex layouts. Fresh nodes keep their rendered
-      // state and delegated actions while letting the new view size normally.
-      const next = volumes.cloneNode(true);
-      next.classList.toggle("volume-list", volumeView === "list");
-      volumes.replaceWith(next);
-    }
+    root.querySelector(".volume-grid")?.classList.toggle("volume-list", volumeView === "list");
     root.querySelectorAll("[data-series-view]").forEach(button => {
       const active = button.dataset.seriesView === volumeView;
       button.classList.toggle("active", active);

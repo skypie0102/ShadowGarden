@@ -49,6 +49,12 @@ body .volume-card .volume-cover .volume-state-pill {
 body.adult-library .volume-cover .volume-state-pill {
   background: rgba(18, 10, 14, 0.94);
 }
+/* Volume dimensions change between Grid and List. Offscreen size containment
+   can reuse the previous view's card height in WebKit and overlap its details. */
+.series-body .volume-card {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
 .volume-cover-link .volume-cover {
   transition:
     transform 0.16s ease,
