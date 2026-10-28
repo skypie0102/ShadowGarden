@@ -18,7 +18,8 @@ An out-of-order Finished mark does not make the hero disagree with the Library's
 next-volume suggestion. Renderers share one series snapshot while drawing cards.
 
 Series cards show Volume N of total independently of the title, and explicit
-Unread / In progress / Finished labels in one state badge per volume. The metadata
+Unread / In progress / Finished labels in one badge over the top-right of each
+volume cover in Grid and List, including cover placeholders. The metadata
 line keeps the date, file size and saved progress details; it does not repeat
 Unread or Finished. “Up next” is an additional recommendation,
 not a substitute for reading state. Progress percentages stay between 0 and 100.
