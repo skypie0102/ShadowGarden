@@ -30,13 +30,15 @@ presentation checks, full regression shards and the stable required check.
 
 ## Project status
 
-The current release is [**v2.29.5**](docs/archive/releases/LIST_GRID_BADGES_2.29.5.md). Library discovery,
-Reader controls, Phase 4 visual consistency, Reader maintenance, Website refactor
-and the October codebase audit are complete.
+The current release is [**v2.30.0**](docs/archive/releases/KEEPER_FEEDBACK_2.30.0.md). Library discovery,
+Reader controls, Phase 4 visual consistency, Phase 5 Keeper feedback, Reader
+maintenance, Website refactor and the October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [active UI/UX plan](docs/plans/UI_UX_ROADMAP.md) tracks the remaining reading
-journey and Keeper feedback work. Reader controls now provide
+journey follow-ups and delivery history. Keeper uploads explain destinations and
+duplicate choices, distinguish per-file failures and retries, and retain skipped
+or invalid files for review. Reader controls now provide
 grouped settings and device-default Reset, clearer chapter/volume navigation,
 and first-use image-focus guidance. The Series layout and solid pinned icon retain
 their released behavior. The release record separates source validation, production

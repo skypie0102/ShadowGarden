@@ -1,0 +1,440 @@
+{
+  "checkedAt": "2026-10-28T11:17:53.594Z",
+  "origin": "https://shadowgarden-bon.pages.dev",
+  "deploymentId": "a8678919-22ba-4113-af13-423230b65bf8",
+  "source": "585d862d215f9ca4294c4110ae732f508d92462a",
+  "version": "2.30.0",
+  "baselineCheckedAt": "2026-10-28T11:17:52.272Z",
+  "revision": 18,
+  "documentSha256": "0746bed89fc8d55f70133a4508db713fb5eed44728831cda1b9c99cc344bbd55",
+  "snapshots": 17,
+  "preservationChecked": true,
+  "databaseWrites": 0,
+  "versionCheck": {
+    "attempts": 1,
+    "elapsedMs": 265
+  },
+  "checks": [
+    {
+      "path": "/data/version.json",
+      "source": "585d862d215f9ca4294c4110ae732f508d92462a",
+      "version": "2.30.0"
+    },
+    {
+      "path": "/media/shadow-garden/data/catalog.json",
+      "sha256": "93814f3e1bc76b5d51ecf8d32c80fc27d3cc7f117bdd70b87a54263129cdcc72",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/media/shadow-garden/data/adult-catalog.json",
+      "sha256": "30a540a03c262a59cad2fb1799a9f99f7fde3b4dca949f97f95b13ca89a728ac",
+      "series": 1,
+      "volumes": 1
+    },
+    {
+      "path": "/assets/css/admin-upload-feedback.css",
+      "sha256": "dadc8f9fff1c60c8766a4ea3f55c9a1f655cbfda3cbcc1c932106758c948f1da",
+      "bytes": 1131
+    },
+    {
+      "path": "/assets/js/admin-batch.js",
+      "sha256": "686bd4cb99e51b89821f92ae24cae8d0295d1afb58a7a9a506286d20eadbbe4c",
+      "bytes": 31786
+    },
+    {
+      "path": "/assets/js/admin-upload-workflow.js",
+      "sha256": "c071c87ca84d0e10d944525e143924a9ade11bdbf516f0a1934aee2523f96bc7",
+      "bytes": 24120
+    },
+    {
+      "path": "/assets/js/admin/app.js",
+      "sha256": "d377dea28fda6b0a35edae62d8720fc5c561151709e6ca194757a0ecac7ee707",
+      "bytes": 4175
+    },
+    {
+      "path": "/assets/js/admin/upload-preflight-report.js",
+      "sha256": "2924193b8ef3597e7f1ed8855c682e3f23a9fea8c158c8e154dc0d3b97755d09",
+      "bytes": 12047
+    },
+    {
+      "path": "/assets/js/admin/upload-safety.js",
+      "sha256": "fff6cdbd4d76445cddca008f237bbceb78df13099aeb1a4d21bae51ab395fcc4",
+      "bytes": 6328
+    }
+  ],
+  "rollbackDeploymentId": "bd7a79a8-ddee-4ae1-994a-418c432c4e0c",
+  "rollbackSource": "bc43a9151fd7d36dd13f89fbad4817eb8b6d7f2e",
+  "beforeCheckedAt": "2026-10-28T11:17:43.190Z",
+  "releasePullRequest": "https://github.com/skypie0102/ShadowGarden/pull/100",
+  "reviewedHead": "d0fe76569ecd985ef40dc26a32070a3a009e10a4",
+  "mergedTreeMatchesReviewed": true,
+  "ci": {
+    "checkedAt": "2026-10-28T11:04:27.364Z",
+    "reviewedHead": "d0fe76569ecd985ef40dc26a32070a3a009e10a4",
+    "workflowURL": "https://github.com/skypie0102/ShadowGarden/actions/runs/40675560898",
+    "workflowId": 40675560898,
+    "conclusion": "success",
+    "nodeTests": 556,
+    "browserPassed": 1281,
+    "browserSkipped": 9,
+    "shards": 15,
+    "retries": 0,
+    "elapsedSeconds": 677,
+    "browserResults": [
+      {
+        "id": 122773138504,
+        "name": "browser (desktop-firefox, firefox, 3/3)",
+        "passed": 84,
+        "skipped": 0
+      },
+      {
+        "id": 122773138524,
+        "name": "browser (mobile-chromium, chromium, 1/3)",
+        "passed": 88,
+        "skipped": 0
+      },
+      {
+        "id": 122773138543,
+        "name": "browser (desktop-firefox, firefox, 1/3)",
+        "passed": 87,
+        "skipped": 1
+      },
+      {
+        "id": 122773138582,
+        "name": "browser (desktop-chromium, chromium, 2/3)",
+        "passed": 86,
+        "skipped": 0
+      },
+      {
+        "id": 122773138585,
+        "name": "browser (desktop-chromium, chromium, 3/3)",
+        "passed": 84,
+        "skipped": 0
+      },
+      {
+        "id": 122773138619,
+        "name": "browser (desktop-chromium, chromium, 1/3)",
+        "passed": 88,
+        "skipped": 0
+      },
+      {
+        "id": 122773138704,
+        "name": "browser (mobile-chromium, chromium, 3/3)",
+        "passed": 84,
+        "skipped": 0
+      },
+      {
+        "id": 122773138527,
+        "name": "browser (mobile-webkit, webkit, 1/3)",
+        "passed": 88,
+        "skipped": 0
+      },
+      {
+        "id": 122773138551,
+        "name": "browser (mobile-webkit, webkit, 3/3)",
+        "passed": 84,
+        "skipped": 0
+      },
+      {
+        "id": 122773138598,
+        "name": "browser (mobile-chromium, chromium, 2/3)",
+        "passed": 86,
+        "skipped": 0
+      },
+      {
+        "id": 122773138727,
+        "name": "browser (desktop-firefox, firefox, 2/3)",
+        "passed": 84,
+        "skipped": 2
+      },
+      {
+        "id": 122773138534,
+        "name": "browser (mobile-webkit, webkit, 2/3)",
+        "passed": 82,
+        "skipped": 4
+      },
+      {
+        "id": 122773138557,
+        "name": "browser (desktop-webkit, webkit, 1/3)",
+        "passed": 88,
+        "skipped": 0
+      },
+      {
+        "id": 122773138589,
+        "name": "browser (desktop-webkit, webkit, 3/3)",
+        "passed": 84,
+        "skipped": 0
+      },
+      {
+        "id": 122773138687,
+        "name": "browser (desktop-webkit, webkit, 2/3)",
+        "passed": 84,
+        "skipped": 2
+      }
+    ]
+  },
+  "mainWorkflowURL": "https://github.com/skypie0102/ShadowGarden/actions/runs/40677148035",
+  "mainWorkflowConclusion": "success",
+  "mainWorkflowAttempt": 1,
+  "localValidation": {
+    "featureBrowserCases": 40,
+    "existingQueueRetryCases": 5,
+    "finalWebKitLayoutCases": 6,
+    "nodeTests": 556,
+    "screenshotsReviewed": true,
+    "mutationsUseDisposableFixtures": true
+  },
+  "previewVerification": {
+    "checkedAt": "2026-10-28T10:53:42.243Z",
+    "origin": "https://2c9df6d7.shadowgarden-test.pages.dev",
+    "version": "2.30.0",
+    "source": "d0fe76569ecd985ef40dc26a32070a3a009e10a4",
+    "branch": "feat/keeper-phase5-feedback",
+    "assetMatches": 28,
+    "changedKeeperAssetsMatched": 6,
+    "retainedPublicAssetsMatched": 14,
+    "retainedKeeperAssetsMatched": 8,
+    "assets": [
+      {
+        "path": "/assets/js/admin/app.js?v=2.30.0",
+        "sha256": "d377dea28fda6b0a35edae62d8720fc5c561151709e6ca194757a0ecac7ee707"
+      },
+      {
+        "path": "/assets/js/admin-batch.js?v=2.30.0",
+        "sha256": "686bd4cb99e51b89821f92ae24cae8d0295d1afb58a7a9a506286d20eadbbe4c"
+      },
+      {
+        "path": "/assets/js/admin-upload-workflow.js?v=2.30.0",
+        "sha256": "c071c87ca84d0e10d944525e143924a9ade11bdbf516f0a1934aee2523f96bc7"
+      },
+      {
+        "path": "/assets/js/admin/upload-safety.js?v=2.30.0",
+        "sha256": "fff6cdbd4d76445cddca008f237bbceb78df13099aeb1a4d21bae51ab395fcc4"
+      },
+      {
+        "path": "/assets/js/admin/upload-preflight-report.js?v=2.30.0",
+        "sha256": "2924193b8ef3597e7f1ed8855c682e3f23a9fea8c158c8e154dc0d3b97755d09"
+      },
+      {
+        "path": "/assets/css/admin-upload-feedback.css?v=2.30.0",
+        "sha256": "dadc8f9fff1c60c8766a4ea3f55c9a1f655cbfda3cbcc1c932106758c948f1da"
+      },
+      {
+        "path": "/assets/js/series.js?v=2.29.5",
+        "sha256": "6feb2ad44a91498b3ec5612b76f59f5b3cfab9b6cd68d6be75ff113a3bb7048c"
+      },
+      {
+        "path": "/assets/js/series-renderers.js?v=2.29.5",
+        "sha256": "af18ffd3acde6db55a09ac00404818c4ac76b29c57061ace2390b2d51cf03790"
+      },
+      {
+        "path": "/assets/css/series-extra.css?v=8b79a5b0e2d7",
+        "sha256": "8b79a5b0e2d70b8cb7b50a2f74e4c2a4759580ea56b74d188f6f25b629fabe25"
+      },
+      {
+        "path": "/assets/css/public-artwork.css?v=2.29.4",
+        "sha256": "d2b90d54da832bb14aadd90fe8d05e57ed49c3016c2ba5bfbbe7ef94957e543b"
+      },
+      {
+        "path": "/assets/js/library.js?v=2.29.5",
+        "sha256": "c91f3aae3edd0ce93a5cfd1c3a624ca3dcb6cc56f863f78c803b95182899b798"
+      },
+      {
+        "path": "/assets/js/library-renderers.js?v=2.29.5",
+        "sha256": "3c284ba9cdae2774b49b770a7c52a209864294165334f5b9726e30a668951fe5"
+      },
+      {
+        "path": "/assets/js/public/reading-status-icons.js?v=2.29.4",
+        "sha256": "9060affe107d230eb10ddd976f10ce4e481556f802bd9135982342b8147b11f6"
+      },
+      {
+        "path": "/assets/css/volume-actions.css?v=2.11.0",
+        "sha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc"
+      },
+      {
+        "path": "/assets/css/reading-status.css?v=2.11.0",
+        "sha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f"
+      },
+      {
+        "path": "/assets/css/visual-accessibility.css?v=2.29.1",
+        "sha256": "a0dfa40e017348eb48ec6f8f05ffee0b28f50137db476160044f1518909bab41"
+      },
+      {
+        "path": "/assets/js/domain/preferences.js?v=2.28.5",
+        "sha256": "a4b93941b97b0ad4e4835935cd7101e051c477d3c19ae39f67c2e1a2963344ae"
+      },
+      {
+        "path": "/assets/js/domain/reading-state.js",
+        "sha256": "5946f79d3e1347a866da2c7bf57c06535aaf86c704b02f9f01d15c12306718f8"
+      },
+      {
+        "path": "/assets/js/public/reading-progress.js",
+        "sha256": "1cfb5f8d956d5fd1f4244bb3221d7b2f8dc992bd13c911b1261ffda848906e0f"
+      },
+      {
+        "path": "/assets/js/public/volume-actions.js",
+        "sha256": "bc752f0b0fd46ee710e4c67cfe0b392a11910bdfdbccce55930354b47427b1e0"
+      },
+      {
+        "path": "/assets/css/admin-components.css?v=2.11.0",
+        "sha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e"
+      },
+      {
+        "path": "/assets/css/admin-batch.css?v=2.11.0",
+        "sha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a"
+      },
+      {
+        "path": "/assets/js/admin/core.js?v=2.11.0",
+        "sha256": "f269ed57e68640e551f32a63f0d71aa5442aa156da031aca5a324a1f8f73b531"
+      },
+      {
+        "path": "/assets/js/admin-batch-editor.js?v=2.11.0",
+        "sha256": "5cba4f0398c0efbb4da27154712c23673ed627bf8c8bbf08c112b048998be1d4"
+      },
+      {
+        "path": "/assets/js/admin/upload-fields.js?v=2.11.0",
+        "sha256": "f57428e8aa0e6af66ac62cad03e8f7ae4a5ee2c0a65141b643fb042ecb44b83a"
+      },
+      {
+        "path": "/assets/js/admin/epub-inspection.js?v=2.14.0",
+        "sha256": "825bebf97338add2acdbd1d91efab8b6ff7c8d52f4766d56336774949b606077"
+      },
+      {
+        "path": "/assets/js/admin/editor-interactions.js?v=2.11.0",
+        "sha256": "5c17f47e8ceb003f56cc8dc1fb5cb4531b4aef1b3cda750c5f024dfd55395601"
+      },
+      {
+        "path": "/assets/js/admin/shell.js?v=2.11.0",
+        "sha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+      }
+    ],
+    "passed": true
+  },
+  "publicVerification": {
+    "checkedAt": "2026-10-28T11:18:39.604Z",
+    "origin": "https://shadowgarden-bon.pages.dev",
+    "version": "2.30.0",
+    "source": "585d862d215f9ca4294c4110ae732f508d92462a",
+    "branch": "main",
+    "assetMatches": 28,
+    "changedKeeperAssetsMatched": 6,
+    "retainedPublicAssetsMatched": 14,
+    "retainedKeeperAssetsMatched": 8,
+    "assets": [
+      {
+        "path": "/assets/js/admin/app.js?v=2.30.0",
+        "sha256": "d377dea28fda6b0a35edae62d8720fc5c561151709e6ca194757a0ecac7ee707"
+      },
+      {
+        "path": "/assets/js/admin-batch.js?v=2.30.0",
+        "sha256": "686bd4cb99e51b89821f92ae24cae8d0295d1afb58a7a9a506286d20eadbbe4c"
+      },
+      {
+        "path": "/assets/js/admin-upload-workflow.js?v=2.30.0",
+        "sha256": "c071c87ca84d0e10d944525e143924a9ade11bdbf516f0a1934aee2523f96bc7"
+      },
+      {
+        "path": "/assets/js/admin/upload-safety.js?v=2.30.0",
+        "sha256": "fff6cdbd4d76445cddca008f237bbceb78df13099aeb1a4d21bae51ab395fcc4"
+      },
+      {
+        "path": "/assets/js/admin/upload-preflight-report.js?v=2.30.0",
+        "sha256": "2924193b8ef3597e7f1ed8855c682e3f23a9fea8c158c8e154dc0d3b97755d09"
+      },
+      {
+        "path": "/assets/css/admin-upload-feedback.css?v=2.30.0",
+        "sha256": "dadc8f9fff1c60c8766a4ea3f55c9a1f655cbfda3cbcc1c932106758c948f1da"
+      },
+      {
+        "path": "/assets/js/series.js?v=2.29.5",
+        "sha256": "6feb2ad44a91498b3ec5612b76f59f5b3cfab9b6cd68d6be75ff113a3bb7048c"
+      },
+      {
+        "path": "/assets/js/series-renderers.js?v=2.29.5",
+        "sha256": "af18ffd3acde6db55a09ac00404818c4ac76b29c57061ace2390b2d51cf03790"
+      },
+      {
+        "path": "/assets/css/series-extra.css?v=8b79a5b0e2d7",
+        "sha256": "8b79a5b0e2d70b8cb7b50a2f74e4c2a4759580ea56b74d188f6f25b629fabe25"
+      },
+      {
+        "path": "/assets/css/public-artwork.css?v=2.29.4",
+        "sha256": "d2b90d54da832bb14aadd90fe8d05e57ed49c3016c2ba5bfbbe7ef94957e543b"
+      },
+      {
+        "path": "/assets/js/library.js?v=2.29.5",
+        "sha256": "c91f3aae3edd0ce93a5cfd1c3a624ca3dcb6cc56f863f78c803b95182899b798"
+      },
+      {
+        "path": "/assets/js/library-renderers.js?v=2.29.5",
+        "sha256": "3c284ba9cdae2774b49b770a7c52a209864294165334f5b9726e30a668951fe5"
+      },
+      {
+        "path": "/assets/js/public/reading-status-icons.js?v=2.29.4",
+        "sha256": "9060affe107d230eb10ddd976f10ce4e481556f802bd9135982342b8147b11f6"
+      },
+      {
+        "path": "/assets/css/volume-actions.css?v=2.11.0",
+        "sha256": "60b41f358d3469f19ec0152aa36b33bd1f0736796f265ab13de6898fc6bf7fbc"
+      },
+      {
+        "path": "/assets/css/reading-status.css?v=2.11.0",
+        "sha256": "b716a98a5b8aa6e0fd811813795ee262926218b6e1aa24668a29c60866d5f80f"
+      },
+      {
+        "path": "/assets/css/visual-accessibility.css?v=2.29.1",
+        "sha256": "a0dfa40e017348eb48ec6f8f05ffee0b28f50137db476160044f1518909bab41"
+      },
+      {
+        "path": "/assets/js/domain/preferences.js?v=2.28.5",
+        "sha256": "a4b93941b97b0ad4e4835935cd7101e051c477d3c19ae39f67c2e1a2963344ae"
+      },
+      {
+        "path": "/assets/js/domain/reading-state.js",
+        "sha256": "5946f79d3e1347a866da2c7bf57c06535aaf86c704b02f9f01d15c12306718f8"
+      },
+      {
+        "path": "/assets/js/public/reading-progress.js",
+        "sha256": "1cfb5f8d956d5fd1f4244bb3221d7b2f8dc992bd13c911b1261ffda848906e0f"
+      },
+      {
+        "path": "/assets/js/public/volume-actions.js",
+        "sha256": "bc752f0b0fd46ee710e4c67cfe0b392a11910bdfdbccce55930354b47427b1e0"
+      },
+      {
+        "path": "/assets/css/admin-components.css?v=2.11.0",
+        "sha256": "08a1e42949f20dc21371f9fbeac0db7715787895fd8f7564a5012dd00079e82e"
+      },
+      {
+        "path": "/assets/css/admin-batch.css?v=2.11.0",
+        "sha256": "28b43a88fbf4befbee1c78c46f8df9c987af55549ac9bb32434602f4f51cc83a"
+      },
+      {
+        "path": "/assets/js/admin/core.js?v=2.11.0",
+        "sha256": "f269ed57e68640e551f32a63f0d71aa5442aa156da031aca5a324a1f8f73b531"
+      },
+      {
+        "path": "/assets/js/admin-batch-editor.js?v=2.11.0",
+        "sha256": "5cba4f0398c0efbb4da27154712c23673ed627bf8c8bbf08c112b048998be1d4"
+      },
+      {
+        "path": "/assets/js/admin/upload-fields.js?v=2.11.0",
+        "sha256": "f57428e8aa0e6af66ac62cad03e8f7ae4a5ee2c0a65141b643fb042ecb44b83a"
+      },
+      {
+        "path": "/assets/js/admin/epub-inspection.js?v=2.14.0",
+        "sha256": "825bebf97338add2acdbd1d91efab8b6ff7c8d52f4766d56336774949b606077"
+      },
+      {
+        "path": "/assets/js/admin/editor-interactions.js?v=2.11.0",
+        "sha256": "5c17f47e8ceb003f56cc8dc1fb5cb4531b4aef1b3cda750c5f024dfd55395601"
+      },
+      {
+        "path": "/assets/js/admin/shell.js?v=2.11.0",
+        "sha256": "b26f49662f538101535f8ddbdfcf663e2e52c02de0204a6dc74e3df9f39c240f"
+      }
+    ],
+    "passed": true
+  }
+}

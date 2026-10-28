@@ -13,7 +13,7 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
 | 3. Reader controls | Understand preferences and navigation | Complete in v2.29.0; [release and evidence](../archive/releases/READER_CONTROLS_2.29.0.md) |
 | 4. Visual consistency | Read labels and operate controls across screens | Complete in v2.29.1; [release and evidence](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
-| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Active: v2.30.0 implementation and acceptance checks; Replace EPUB and empty translator provenance already delivered |
+| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Complete in v2.30.0; [release and evidence](../archive/releases/KEEPER_FEEDBACK_2.30.0.md) |
 
 ## Phase 2 — Reading journey
 
@@ -71,26 +71,18 @@ styling boundary and controlled comparisons against v2.29.0. Existing
 
 ## Phase 5 — Keeper feedback
 
-Direct volume EPUB replacement and empty-until-added translator provenance are
-already released in v2.20.0/v2.20.1.
+Completed in v2.30.0: effective destinations and duplicate-action consequences,
+per-file progress/results, separate invalid-EPUB and upload-failure guidance,
+retry excluding successful files and retention of skipped/invalid queue entries.
+Targeted replacement stays within the selected series/library, completion links
+retain that destination and actions precede the detailed results.
 
-- [x] Walk through the current upload/target/duplicate flow before selecting changes.
-- [x] Make the selected destination and consequences of duplicate choices explicit.
-- [x] Present per-file preparation, upload, failure and retry states consistently.
-- [x] Make completion summaries and the next useful action easy to understand.
-
-Implemented for v2.30.0; these checkmarks describe source, with PR checks and live
-acceptance recorded separately. The [Keeper upload guide](../guides/KEEPER_UPLOADS.md)
-describes the reviewed flow. The walkthrough found that upload failures inherited
-structural-repair guidance, per-file outcomes disappeared during upload, and full
-success could clear skipped/invalid files excluded from the attempt. The change
-separates those outcomes and retains unattempted queue entries, while preserving
-existing controls and the public layouts. Targeted replacement is limited to the
-selected series/library, and completion links retain their library scope.
-
-Acceptance: new/existing series, Main/Adult targets, mixed valid/invalid files,
-duplicates, partial failure, retry, cancellation and reopening a queued batch.
-Use disposable fixtures for catalog mutations.
+The [release record](../archive/releases/KEEPER_FEEDBACK_2.30.0.md) archives the
+walkthrough, acceptance matrix and source/browser/production verification. The
+maintained [Keeper upload guide](../guides/KEEPER_UPLOADS.md) describes the flow.
+Direct volume Replace EPUB and empty-until-added translator provenance retain
+their v2.20.0/v2.20.1 contracts. Remaining Reader/device limits stay in
+[follow-ups](FOLLOW_UPS.md).
 
 ## Release discipline
 

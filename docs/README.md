@@ -9,7 +9,7 @@ release evidence live in the archive.
 
 | Document | Scope | Next step |
 | --- | --- | --- |
-| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Remaining reading journey, visual consistency and Keeper feedback | Continue Phase 5 Keeper feedback; Phase 4 is archived with its v2.29.1 release evidence |
+| [UI/UX roadmap](plans/UI_UX_ROADMAP.md) | Reading journey follow-ups and UI delivery history | Phase 5 is archived with its v2.30.0 release evidence; consult follow-ups before selecting new work |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides
