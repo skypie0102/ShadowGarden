@@ -1,23 +1,23 @@
 # Focused UI/UX roadmap
 
-This is the active work plan. Main retains its midnight palette and Adult its
+Archived roadmap: implementation has concluded; source and production evidence remain distinct. The [Android roadmap](../../plans/ANDROID_ROADMAP.md) is the current development cycle. Main retains its midnight palette and Adult its
 rose palette. Preserve URLs, book identities, browser storage and the accepted
 Reader scrolling/image-focus behavior. Each increment must have observable
-acceptance criteria and pass the [CI gate](../operations/CI.md).
+acceptance criteria and pass the [CI gate](../../operations/CI.md).
 
 ## Delivery order
 
 | Phase | Outcome | Status |
 | --- | --- | --- |
-| 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../archive/releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
-| 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
-| 3. Reader controls | Understand preferences and navigation | Complete in v2.29.0; [release and evidence](../archive/releases/READER_CONTROLS_2.29.0.md) |
-| 4. Visual consistency | Read labels and operate controls across screens | Complete in v2.29.1; [release and evidence](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
-| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Complete in v2.30.0; [release and evidence](../archive/releases/KEEPER_FEEDBACK_2.30.0.md) |
+| 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
+| 2. Reading journey | Recognize saved progress and the next volume | Implementation complete; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
+| 3. Reader controls | Understand preferences and navigation | Complete in v2.29.0; [release and evidence](../releases/READER_CONTROLS_2.29.0.md) |
+| 4. Visual consistency | Read labels and operate controls across screens | Complete in v2.29.1; [release and evidence](../releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
+| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Complete in v2.30.0; [release and evidence](../releases/KEEPER_FEEDBACK_2.30.0.md) |
 
 ## Phase 2 — Reading journey
 
-Consistent actions and volume states [shipped in v2.28.0](../archive/releases/PUBLIC_READING_ACTIONS_2.28.0.md).
+Consistent actions and volume states [shipped in v2.28.0](../releases/PUBLIC_READING_ACTIONS_2.28.0.md).
 The current source adds saved-progress context for v2.28.1. Checkmarks identify
 implementation; the PR and guarded release record validation and live acceptance
 separately.
@@ -44,30 +44,30 @@ cover beside details and reading/pinning actions, full-width tags below, and the
 restored compact volume reading/download controls unless
 the user requests a change. Source, PR checks and live acceptance stay separate.
 
-The [reading journey guide](../guides/READING_JOURNEY.md) documents the shared
+The [reading journey guide](../../guides/READING_JOURNEY.md) documents the shared
 selection and action-copy contract. Earlier layout changes and their release
-verification are in the [dated progress record](../archive/releases/UI_UX_PROGRESS_2.27.1.md).
+verification are in the [dated progress record](../releases/UI_UX_PROGRESS_2.27.1.md).
 
 ## Phase 3 — Reader controls
 
 Completed in v2.29.0: grouped settings, immediate-change and Reset explanations,
 separate chapter/volume context, navigation help and first-use illustration guidance.
-The [release record](../archive/releases/READER_CONTROLS_2.29.0.md) retains source,
-browser and production verification. The [settings](../guides/READER_SETTINGS.md)
-and [controls](../guides/READER_CONTROLS.md) guides describe maintained behavior.
+The [release record](../releases/READER_CONTROLS_2.29.0.md) retains source,
+browser and production verification. The [settings](../../guides/READER_SETTINGS.md)
+and [controls](../../guides/READER_CONTROLS.md) guides describe maintained behavior.
 Physical-device acceptance and the existing Continuous width-change restoration
-issue remain explicit [follow-ups](FOLLOW_UPS.md), with no claim of their completion.
+issue remain explicit [follow-ups](../../plans/FOLLOW_UPS.md), with no claim of their completion.
 
 ## Phase 4 — Visual consistency
 
 Completed in v2.29.1: readable metadata/placeholders and filter boundaries,
 consistent keyboard focus and selected controls in contrast themes. The user's
 approved button/cover layouts, font metrics, ordering and destinations are retained.
-The [release record](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) archives
+The [release record](../releases/VISUAL_ACCESSIBILITY_2.29.1.md) archives
 the review and source/browser/production evidence. The maintained
-[visual accessibility guide](../guides/VISUAL_ACCESSIBILITY.md) documents the
+[visual accessibility guide](../../guides/VISUAL_ACCESSIBILITY.md) documents the
 styling boundary and controlled comparisons against v2.29.0. Existing
-[Reader acceptance limits](FOLLOW_UPS.md) remain separate.
+[Reader acceptance limits](../../plans/FOLLOW_UPS.md) remain separate.
 
 ## Phase 5 — Keeper feedback
 
@@ -77,18 +77,18 @@ retry excluding successful files and retention of skipped/invalid queue entries.
 Targeted replacement stays within the selected series/library, completion links
 retain that destination and actions precede the detailed results.
 
-The [release record](../archive/releases/KEEPER_FEEDBACK_2.30.0.md) archives the
+The [release record](../releases/KEEPER_FEEDBACK_2.30.0.md) archives the
 walkthrough, acceptance matrix and source/browser/production verification. The
-maintained [Keeper upload guide](../guides/KEEPER_UPLOADS.md) describes the flow.
+maintained [Keeper upload guide](../../guides/KEEPER_UPLOADS.md) describes the flow.
 Direct volume Replace EPUB and empty-until-added translator provenance retain
 their v2.20.0/v2.20.1 contracts. Remaining Reader/device limits stay in
-[follow-ups](FOLLOW_UPS.md).
+[follow-ups](../../plans/FOLLOW_UPS.md).
 
 ## Release discipline
 
 Run asset/Node/build/Functions checks and relevant browser cases, then pass the
-[CI gate](../operations/CI.md). Review representative desktop/mobile captures.
-Checked main publishes through the [guarded workflow](../operations/AUTO_DEPLOYMENT.md).
+[CI gate](../../operations/CI.md). Review representative desktop/mobile captures.
+Checked main publishes through the [guarded workflow](../../operations/AUTO_DEPLOYMENT.md).
 Record canonical source/version, served assets and catalog/configuration
 preservation separately from source validation. No production seed or migration
 is part of these presentation increments.

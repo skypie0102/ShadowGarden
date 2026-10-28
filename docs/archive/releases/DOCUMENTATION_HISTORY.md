@@ -4,7 +4,7 @@ This is a dated record. Use the [documentation index](../../README.md) for activ
 
 # ShadowGarden documentation
 
-[Focused UI/UX roadmap](../../plans/UI_UX_ROADMAP.md) tracks the work following the completed
+[Focused UI/UX roadmap](../plans/UI_UX_ROADMAP.md) tracks the work following the completed
 codebase audit, beginning with Library discovery and reading-action clarity.
 
 The latest production release is **v2.27.1**, deployed on 2026-10-26 (Asia/Manila)
@@ -265,7 +265,7 @@ configuration are preserved, with zero database writes. See
 
 The preceding production release is **v2.19.2**, deployed on 2026-10-24 from
 `c9425b0` through [PR #56](https://github.com/skypie0102/ShadowGarden/pull/56).
-[Mobile Series flow](../../plans/UI_UX_ROADMAP.md) removes the remaining gap below
+[Mobile Series flow](../plans/UI_UX_ROADMAP.md) removes the remaining gap below
 short titles/authors. Reading controls follow the metadata and wrap around or
 below the cover; tags use the full width after the cover. The reported Main
 metadata without a translator credit is now an explicit regression case.
@@ -284,7 +284,7 @@ responsive rules are verified. See
 
 The preceding production release is **v2.19.1**, deployed on 2026-10-24 from
 `57d6b89` through [PR #55](https://github.com/skypie0102/ShadowGarden/pull/55).
-[Mobile Series layout](../../plans/UI_UX_ROADMAP.md) places reading/pin/audio actions
+[Mobile Series layout](../plans/UI_UX_ROADMAP.md) places reading/pin/audio actions
 and tags across the full mobile header beneath the cover/title pair. It adds
 compact padding, 44px action targets and bounded missing-cover placeholders,
 while retaining desktop geometry.
@@ -302,7 +302,7 @@ See [release evidence](../evidence/series-mobile-layout-release-2.19.1.json).
 
 The preceding production release is **v2.19.0**, deployed on 2026-10-24 from
 `af3c7bd` through [PR #54](https://github.com/skypie0102/ShadowGarden/pull/54).
-[UI/UX Phase 1](../../plans/UI_UX_ROADMAP.md) adds a compact Library introduction,
+[UI/UX Phase 1](../plans/UI_UX_ROADMAP.md) adds a compact Library introduction,
 labeled mobile filters with active counts, larger changed controls, fewer
 redundant shelves in single-series catalogs, and distinct reading suggestions,
 saved progress and next-volume actions.

@@ -79,5 +79,6 @@ links expose the complete summary as their accessible description. Existing
 cross-tab storage events refresh Library and Series summaries. Viewing or
 formatting progress never rewrites saved progress, Finished state or bookmarks.
 
-Current source changes are tracked in the [UI/UX plan](../plans/UI_UX_ROADMAP.md).
+The [archived UI/UX plan](../archive/plans/UI_UX_ROADMAP.md) records this work.
+The [Android roadmap](../plans/ANDROID_ROADMAP.md) is the current development cycle.
 Source tests, merge and live acceptance are recorded separately.

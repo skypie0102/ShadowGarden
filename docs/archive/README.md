@@ -8,7 +8,7 @@ claim that an old bug is still present.
 
 | Collection | Contents and completion |
 | --- | --- |
-| [Plans](plans/) | Reader refactor, Reader maintenance M1–M5 (deployed by v2.12.8), Website W1–W6 (v2.14.0) |
+| [Plans](plans/) | [UI/UX roadmap](plans/UI_UX_ROADMAP.md), Reader refactor, Reader maintenance M1–M5 (deployed by v2.12.8), Website W1–W6 (v2.14.0) |
 | [Audits](audits/) | Recovery audit, October codebase audit completed through v2.18.13, Reader review and scroll investigation |
 | [Completed increments](completed/) | Keeper ownership/readability/CSS, EPUB inspection, Library readiness, upload buffering, persistence, protected transport and browser-runtime work |
 | [Releases](releases/) | Project/Reader/Website release history, public reading actions, [Reader controls v2.29.0](releases/READER_CONTROLS_2.29.0.md), [Phase 4 visual consistency v2.29.1](releases/VISUAL_ACCESSIBILITY_2.29.1.md), [Series state labels v2.29.2](releases/SERIES_STATE_LABEL_2.29.2.md), [Volume cover badges v2.29.3](releases/VOLUME_COVER_BADGES_2.29.3.md), [List status icons v2.29.4](releases/LIST_STATUS_ICONS_2.29.4.md), [List/Grid badge correction v2.29.5](releases/LIST_GRID_BADGES_2.29.5.md) and [Phase 5 Keeper feedback v2.30.0](releases/KEEPER_FEEDBACK_2.30.0.md) |

@@ -50,4 +50,4 @@ The [sanitized evidence](../evidence/visual-accessibility-release-2.29.1.json)
 retains source/deployment/rollback identities, test totals, served hashes and
 preservation. Physical-device acceptance and the existing Continuous width-change
 issue remain in [follow-ups](../../plans/FOLLOW_UPS.md). Active UI work proceeds
-with [Keeper feedback](../../plans/UI_UX_ROADMAP.md#phase-5--keeper-feedback).
+with [Keeper feedback](../plans/UI_UX_ROADMAP.md#phase-5--keeper-feedback).
