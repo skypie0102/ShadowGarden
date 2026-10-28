@@ -18,7 +18,9 @@ An out-of-order Finished mark does not make the hero disagree with the Library's
 next-volume suggestion. Renderers share one series snapshot while drawing cards.
 
 Series cards show Volume N of total independently of the title, and explicit
-Unread / In progress / Finished labels. “Up next” is an additional recommendation,
+Unread / In progress / Finished labels in one state badge per volume. The metadata
+line keeps the date, file size and saved progress details; it does not repeat
+Unread or Finished. “Up next” is an additional recommendation,
 not a substitute for reading state. Progress percentages stay between 0 and 100.
 Storage keys, identity aliases, saved progress, bookmarks and the Read again
 confirmation/reset pipeline retain their existing contracts.
@@ -45,7 +47,7 @@ cross-tab view changes retain the selected mode.
 Volume links keep the restored compact **Read / Continue / Read Again** and
 bordered **Download EPUB** presentation from before PR #80. Series styles and
 rendering modules use fresh asset URLs so the requested view reaches returning
-browsers. Current source is v2.28.7; merge and production acceptance are separate.
+browsers. Release records separate source validation, merge and production acceptance.
 
 ## Saved-progress context
 
