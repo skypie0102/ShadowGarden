@@ -19,7 +19,8 @@ next-volume suggestion. Renderers share one series snapshot while drawing cards.
 
 Series cards show Volume N of total independently of the title, with one badge
 over the top-right of each volume cover, including cover placeholders. Grid
-keeps Unread / In progress / Finished text labels. List uses a 22px icon badge:
+shows only Unread / In progress / Finished text, with no checkmark or other
+icon. List hides the text label completely and uses a 22px icon badge:
 a closed book for Unread, an open book for In progress, a green check for Finished
 and a turning arrow for the unread Up next volume. Accessible descriptions and
 cover tooltips retain the full state. The metadata
@@ -31,7 +32,7 @@ confirmation/reset pipeline retain their existing contracts.
 
 The Library’s compact view uses the same green check and filled pin icons on
 series covers for Finished and Pinned series. Its volume-count and Adult chips
-retain their existing text; Grid keeps its existing badge presentation.
+retain their existing text; Grid uses a Finished text badge without a checkmark.
 
 ## Series presentation
 

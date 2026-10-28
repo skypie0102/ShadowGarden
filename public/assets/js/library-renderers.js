@@ -32,7 +32,7 @@ export function seriesCard(series, index, { readingState, preferences, urls, for
       <div class="cover-fallback ${cover ? "hidden" : ""}">${esc(series?.title)}</div>
       <span class="volume-pill">${volumes} ${volumes === 1 ? "VOL" : "VOLS"}</span>
       ${series?.nsfw ? `<span class="adult-pill">18+</span>` : ""}
-      ${finished ? `<span class="finished-series-badge">✓ Finished</span>` : ""}
+      ${finished ? `<span class="finished-series-badge">Finished</span>` : ""}
       <div class="series-list-status-badges">
         ${finished ? `<span class="series-list-status-badge finished" role="img" aria-label="Finished" title="Finished">${readingStatusIcon("finished")}</span>` : ""}
         ${pinned ? `<span class="series-list-status-badge pinned" role="img" aria-label="Pinned series" title="Pinned series">${readingStatusIcon("pinned")}</span>` : ""}
@@ -79,7 +79,7 @@ export function recentVolumeCard(entry, index, { readingState, urls, format }, c
   const inProgress = action.state === readingState.STATES.IN_PROGRESS;
   const progressId = `recent-volume-progress-${index}`;
   const copy = recentCopy(series, title, volume?.added, esc, format, inProgress ? summary.text : "", progressId);
-  const badge = action.state === readingState.STATES.FINISHED ? "✓ FINISHED" : inProgress ? `CONTINUE${summary.percent === null ? "" : ` · ${summary.percent}%`}` : volume?.number != null ? `VOL ${volume.number}` : "READ";
+  const badge = action.state === readingState.STATES.FINISHED ? "FINISHED" : inProgress ? `CONTINUE${summary.percent === null ? "" : ` · ${summary.percent}%`}` : volume?.number != null ? `VOL ${volume.number}` : "READ";
   return `<a class="recent-volume" ${attrs(action, esc)} href="${action.href}" aria-label="${esc(action.label)} ${esc(title)} — ${esc(series?.title)}"${inProgress ? ` aria-describedby="${esc(progressId)}"` : ""}><div class="recent-volume-cover">${cover ? `<img src="${esc(cover)}" alt="${esc(title)} cover" loading="${index < 4 ? "eager" : "lazy"}" decoding="async" onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')">` : ""}<div class="recent-volume-fallback ${cover ? "hidden" : ""}">${esc(title)}</div><span class="recent-volume-badge">${esc(badge)}</span></div>${copy}</a>`;
 }
 
