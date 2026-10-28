@@ -30,7 +30,7 @@
     await Promise.all([
       import("/assets/js/domain/index.js"),
       import("/assets/js/library-model.js"),
-      import("/assets/js/library-renderers.js?v=2.29.4"),
+      import("/assets/js/library-renderers.js?v=2.29.5"),
       import("/assets/js/public/volume-actions.js"),
       import("./public/library-location.js")
     ]);

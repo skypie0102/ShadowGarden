@@ -71,7 +71,7 @@ function volumeCard(series, entry, dependencies, context) {
   const upNext = index === context.nextIndex;
   const visualProgress = finished ? 100 : inProgress && summary.percent !== null ? Math.max(1, Math.min(99, summary.percent)) : 0;
   const stateMeta = inProgress ? summary.text : "";
-  const stateLabel = finished ? "✓ Finished" : inProgress ? "In progress" : "Unread";
+  const stateLabel = finished ? "Finished" : inProgress ? "In progress" : "Unread";
   const stateDescription = upNext ? `${stateLabel} · Up next` : stateLabel;
   const stateIcon = finished ? "finished" : inProgress ? "progress" : upNext ? "up-next" : "unread";
   const stateId = `volume-state-${index}`;

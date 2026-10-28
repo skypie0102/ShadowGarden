@@ -41,7 +41,7 @@ async function seriesAction(page, adult, label, index) {
   const card = page.locator('.volume-card').nth(index);
   await expect(card.locator('a.read')).toHaveText({ 'Start reading': 'Read', 'Read next volume': 'Read', 'Continue reading': 'Continue', 'Read again': 'Read Again' }[label]);
   await expect(card.locator('.volume-cover-link')).toHaveAccessibleName(`${label} ${volumes[index].title}`);
-  await expect(card.locator('.volume-cover-link')).toHaveAccessibleDescription({ 'Start reading': 'Unread', 'Read next volume': 'Unread · Up next', 'Continue reading': 'In progress', 'Read again': '✓ Finished' }[label]);
+  await expect(card.locator('.volume-cover-link')).toHaveAccessibleDescription({ 'Start reading': 'Unread', 'Read next volume': 'Unread · Up next', 'Continue reading': 'In progress', 'Read again': 'Finished' }[label]);
   return card;
 }
 
@@ -56,7 +56,9 @@ async function coverBadges(page) {
       await expect(badge).toHaveCSS('width', '22px');
       await expect(badge).toHaveCSS('height', '22px');
       await expect(icon).toBeVisible();
-      await expect(badge.locator('.volume-state-label')).toHaveCSS('clip-path', 'inset(50%)');
+      await expect(badge.locator('.volume-state-label')).toBeHidden();
+      await expect(badge.locator('.volume-state-label')).toHaveCSS('display', 'none');
+      expect(await badge.innerText()).toBe('');
       const expected = await card.evaluate(card => card.dataset.readingState === 'finished' ? 'finished'
         : card.dataset.readingState === 'in-progress' ? 'progress'
         : card.classList.contains('is-up-next') ? 'up-next' : 'unread');
@@ -64,7 +66,9 @@ async function coverBadges(page) {
       expect(await icon.evaluate(icon => getComputedStyle(icon).stroke)).toBe(await badge.evaluate(badge => getComputedStyle(badge).color));
     } else {
       await expect(icon).toBeHidden();
-      await expect(badge.locator('.volume-state-label')).toHaveCSS('position', 'static');
+      await expect(badge.locator('.volume-state-label')).toBeVisible();
+      const state = await card.getAttribute('data-reading-state');
+      expect((await badge.innerText()).toLowerCase()).toBe(state === 'finished' ? 'finished' : state === 'in-progress' ? 'in progress' : 'unread');
     }
     await expect(async () => {
       const box = await badge.evaluate(badge => {
@@ -179,6 +183,7 @@ for (const adult of [false, true]) {
     const seriesBadges = pinnedCard.locator('.series-list-status-badge');
     await expect(seriesBadges).toHaveCount(2);
     await expect(pinnedCard.getByRole('img', { name: 'Finished', exact: true })).toBeVisible();
+    await expect(pinnedCard.locator('.finished-series-badge')).toBeHidden();
     await expect(pinnedCard.getByRole('img', { name: 'Pinned series', exact: true })).toBeVisible();
     for (const badge of await seriesBadges.all()) {
       await expect(badge).toHaveCSS('width', '22px'); await expect(badge).toHaveCSS('height', '22px');
@@ -193,13 +198,15 @@ for (const adult of [false, true]) {
     await info.attach('pinned-finished-series-list', { body: await pinnedCard.screenshot(), contentType: 'image/png' });
     await page.locator('[data-view="grid"]').click();
     await expect(pinnedCard.locator('.finished-series-badge')).toBeVisible();
+    expect((await pinnedCard.locator('.finished-series-badge').innerText()).toLowerCase()).toBe('finished');
+    for (const icon of await pinnedCard.locator('.cover svg').all()) await expect(icon).toBeHidden();
     await expect(seriesBadges.first()).toBeHidden();
     card = await seriesAction(page, adult, 'Read again', 0);
-    await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
+    await expect(page.locator('.volume-state-pill')).toHaveText(['Finished', 'Finished', 'Finished']);
     await page.setViewportSize({ width: 320, height: 850 });
     for (const view of ['grid', 'list']) {
       await page.locator(`[data-series-view="${view}"]`).click();
-      await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
+      await expect(page.locator('.volume-state-pill')).toHaveText(['Finished', 'Finished', 'Finished']);
       await expect(page.locator('.volume-meta')).toHaveText(Array(3).fill('2026-08-19 · 4.8 MB'));
       await coverBadges(page);
       if (view === 'list') await info.attach('finished-list-320', {
