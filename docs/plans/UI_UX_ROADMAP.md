@@ -12,7 +12,7 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | 1. Library discovery | Find books and understand filters/suggestions | Complete in v2.19.0; [history](../archive/releases/UI_UX_PROGRESS_2.27.1.md#phase-1--library-discovery) |
 | 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
 | 3. Reader controls | Understand preferences and navigation | Complete in v2.29.0; [release and evidence](../archive/releases/READER_CONTROLS_2.29.0.md) |
-| 4. Visual consistency | Read labels and operate controls across screens | Color/focus pass implemented for v2.29.1; browser review and production acceptance pending |
+| 4. Visual consistency | Read labels and operate controls across screens | Complete in v2.29.1; [release and evidence](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
 | 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Planned; Replace EPUB and empty translator provenance already delivered |
 
 ## Phase 2 — Reading journey
@@ -60,19 +60,14 @@ issue remain explicit [follow-ups](FOLLOW_UPS.md), with no claim of their comple
 
 ## Phase 4 — Visual consistency
 
-- [x] Review representative muted text and control boundaries against both public palettes; improve dim metadata, search placeholders and filter boundaries (v2.29.1 source).
-- [x] Review stacked tablet filters and keyboard reachability of collapsed sections using real Tab/Space navigation.
-- [x] Preserve the user's approved spacing, button hierarchy, icons and touch targets; compare all rendered control geometry against v2.29.0 rather than redesigning the layout.
-- [x] Review dialog, loading, empty, failure, saving and success presentation with disposable fixtures.
-- [x] Repair suppressed keyboard outlines, retain reduced motion and distinguish selected controls in forced colors without changing their boxes.
-
-Acceptance: representative Main, Adult, Series, Reader and Keeper states at
-mobile/desktop widths, including long content and increased text size.
-The [visual accessibility guide](../guides/VISUAL_ACCESSIBILITY.md) records the
-color/focus owner and controlled layout comparisons. Checkmarks identify the
-source review and implementation; PR checks, screenshot review and production
-acceptance are recorded separately. Existing Series/Reader layout and gesture
-regressions remain required.
+Completed in v2.29.1: readable metadata/placeholders and filter boundaries,
+consistent keyboard focus and selected controls in contrast themes. The user's
+approved button/cover layouts, font metrics, ordering and destinations are retained.
+The [release record](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) archives
+the review and source/browser/production evidence. The maintained
+[visual accessibility guide](../guides/VISUAL_ACCESSIBILITY.md) documents the
+styling boundary and controlled comparisons against v2.29.0. Existing
+[Reader acceptance limits](FOLLOW_UPS.md) remain separate.
 
 ## Phase 5 — Keeper feedback
 

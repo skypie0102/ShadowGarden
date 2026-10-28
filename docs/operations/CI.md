@@ -65,6 +65,10 @@ completed full verification and all 15 browser shards in **12m 15s** on 2026-10-
 and no retries. This is a full Reader change; image-only changes use the focused
 selection above. It is one observed run, not a guaranteed duration.
 
+The Phase 4 visual [run `40602099989`](https://github.com/skypie0102/ShadowGarden/actions/runs/40602099989) completed full verification
+in **10m 53s**: 545 Node tests, 1,241 browser cases,
+9 platform skips and zero retries. All 50 new visual cases pass.
+
 The planner has regression cases for documentation, cover CSS, images, release
 metadata, dependency changes, unknown files, missing history, deletes and renamed
 runtime files. `npm run check` also validates the unchanged application build and
