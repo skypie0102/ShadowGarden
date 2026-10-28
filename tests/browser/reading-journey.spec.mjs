@@ -6,7 +6,7 @@ const id = 'reading-journey-browser';
 const volumes = [1, 2, 3].map(number => ({
   number, bookId: `bk_${String(number).padStart(22, 'A')}`, file: `bk_${String(number).padStart(22, 'A')}`,
   title: number === 1 ? 'A long first volume title that must leave its reading action and state legible on a narrow screen' : `Technical volume ${number}`,
-  added: '2026-10-26T00:00:00Z'
+  added: '2026-10-26T00:00:00Z', date: '2026-08-19', size: 5000000
 }));
 
 async function installCatalog(page, adult, items = volumes) {
@@ -51,6 +51,12 @@ for (const adult of [false, true]) {
     await seriesAction(page, adult, 'Start reading', 0);
     await expect(page.locator('.volume-state-pill')).toHaveText(['Unread', 'Unread', 'Unread']);
     await expect(page.locator('.volume-order')).toHaveText(['Volume 1 of 3', 'Volume 2 of 3', 'Volume 3 of 3']);
+    for (const view of ['grid', 'list']) {
+      await page.locator(`[data-series-view="${view}"]`).click();
+      await expect(page.locator('.volume-state-pill')).toHaveText(['Unread', 'Unread', 'Unread']);
+      await expect(page.locator('.volume-meta')).toHaveText(Array(3).fill('2026-08-19 · 4.8 MB'));
+    }
+    await page.locator('[data-series-view="grid"]').click();
     await page.evaluate(book => {
       localStorage.setItem(`sg-progress:${book}`, JSON.stringify({ percentage: 0.42, page: 12, updatedAt: 20 }));
       localStorage.setItem(`sg-bookmarks:${book}`, JSON.stringify([{ cfi: 'saved-fixture-bookmark' }]));
@@ -94,6 +100,12 @@ for (const adult of [false, true]) {
     await libraryAction(page, adult, 'Read again', 0);
     card = await seriesAction(page, adult, 'Read again', 0);
     await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
+    for (const view of ['grid', 'list']) {
+      await page.locator(`[data-series-view="${view}"]`).click();
+      await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
+      await expect(page.locator('.volume-meta')).toHaveText(Array(3).fill('2026-08-19 · 4.8 MB'));
+    }
+    await page.locator('[data-series-view="grid"]').click();
     const before = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
     await card.locator('a.read').click();
     const dialog = page.locator('#readAgainDialog');
