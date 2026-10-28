@@ -207,7 +207,7 @@ for (const adult of [false, true]) test(`${adult ? 'Adult' : 'Main'} volume cont
   await page.setViewportSize({ width: 393, height: 850 });
   let staleRequests = 0;
   let staleScriptRequests = 0;
-  for (const url of ['**/assets/js/series.js?v=2.11.0', '**/assets/js/series.js?v=2.28.4', '**/assets/js/series.js?v=2.28.5', '**/assets/js/series-renderers.js', '**/assets/js/series-renderers.js?v=2.28.4', '**/assets/js/series-renderers.js?v=2.28.5']) await page.route(url, route => {
+  for (const url of ['**/assets/js/series.js?v=2.11.0', '**/assets/js/series.js?v=2.28.4', '**/assets/js/series.js?v=2.28.5', '**/assets/js/series.js?v=2.29.2', '**/assets/js/series-renderers.js', '**/assets/js/series-renderers.js?v=2.28.4', '**/assets/js/series-renderers.js?v=2.28.5', '**/assets/js/series-renderers.js?v=2.29.2']) await page.route(url, route => {
     staleScriptRequests++;
     return route.fulfill({ contentType: 'application/javascript', body: 'throw new Error("Stale Series renderer requested");' });
   });

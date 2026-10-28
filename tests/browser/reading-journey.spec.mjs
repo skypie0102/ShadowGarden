@@ -41,7 +41,43 @@ async function seriesAction(page, adult, label, index) {
   const card = page.locator('.volume-card').nth(index);
   await expect(card.locator('a.read')).toHaveText({ 'Start reading': 'Read', 'Read next volume': 'Read', 'Continue reading': 'Continue', 'Read again': 'Read Again' }[label]);
   await expect(card.locator('.volume-cover-link')).toHaveAccessibleName(`${label} ${volumes[index].title}`);
+  await expect(card.locator('.volume-cover-link')).toHaveAccessibleDescription({ 'Start reading': 'Unread', 'Read next volume': 'Unread', 'Continue reading': 'In progress', 'Read again': '✓ Finished' }[label]);
   return card;
+}
+
+async function coverBadges(page) {
+  await expect(page.locator('.volume-title-row .volume-state-pill, .finished-volume-badge')).toHaveCount(0);
+  for (const card of await page.locator('.volume-card').all()) {
+    const badge = card.locator('.volume-cover > .volume-state-pill');
+    await expect(badge).toHaveCount(1);
+    await expect(async () => {
+      const box = await badge.evaluate(badge => {
+        const b = badge.getBoundingClientRect(), c = badge.parentElement.getBoundingClientRect();
+        return { top: b.top - c.top, right: c.right - b.right, left: b.left - c.left, bottom: c.bottom - b.bottom, clipped: badge.scrollWidth > badge.clientWidth + 1 };
+      });
+      expect(box.top).toBeGreaterThanOrEqual(5); expect(box.top).toBeLessThanOrEqual(8);
+      expect(box.right).toBeGreaterThanOrEqual(5); expect(box.right).toBeLessThanOrEqual(8);
+      expect(box.left).toBeGreaterThanOrEqual(0); expect(box.bottom).toBeGreaterThanOrEqual(0);
+      expect(box.clipped).toBe(false);
+      // Reflow must keep the title, metadata and actions below one another.
+      // Offscreen size containment can retain sizes from the previous view.
+      const details = await card.evaluate(card => {
+        const title = card.querySelector('.volume-title').getBoundingClientRect();
+        const row = card.querySelector('.volume-title-row').getBoundingClientRect();
+        const meta = card.querySelector('.volume-meta').getBoundingClientRect();
+        const actions = card.querySelector('.volume-actions').getBoundingClientRect();
+        const cover = card.querySelector('.volume-cover-link').getBoundingClientRect();
+        return { titleHeight: title.height, titleOverflow: title.bottom - row.bottom,
+          metaGap: meta.top - title.bottom, actionGap: actions.top - meta.bottom,
+          cardOverflow: Math.max(cover.bottom, actions.bottom) - card.getBoundingClientRect().bottom };
+      });
+      expect(details.titleHeight).toBeGreaterThan(0);
+      expect(details.titleOverflow).toBeLessThanOrEqual(1);
+      expect(details.metaGap).toBeGreaterThanOrEqual(-1);
+      expect(details.actionGap).toBeGreaterThanOrEqual(-1);
+      expect(details.cardOverflow).toBeLessThanOrEqual(1);
+    }).toPass({ timeout: 5000 });
+  }
 }
 
 for (const adult of [false, true]) {
@@ -55,6 +91,7 @@ for (const adult of [false, true]) {
       await page.locator(`[data-series-view="${view}"]`).click();
       await expect(page.locator('.volume-state-pill')).toHaveText(['Unread', 'Unread', 'Unread']);
       await expect(page.locator('.volume-meta')).toHaveText(Array(3).fill('2026-08-19 · 4.8 MB'));
+      await coverBadges(page);
     }
     await page.locator('[data-series-view="grid"]').click();
     await page.evaluate(book => {
@@ -74,13 +111,14 @@ for (const adult of [false, true]) {
         expect(box.height).toBeGreaterThan(0);
         expect(box.right ?? box.x + box.width).toBeLessThanOrEqual(parent.x + parent.width + 1);
       }
-      if (width === 320) {
-        // Reading-status.css loads after Series styles. Its shared flex row
-        // must not squeeze a long title beside the wider In progress badge.
-        const title = await card.locator('.volume-title').boundingBox();
-        const state = await card.locator('.volume-state-pill').boundingBox();
-        expect(state.y).toBeGreaterThanOrEqual(title.y + title.height - 1);
+      for (const view of ['grid', 'list']) {
+        await page.locator(`[data-series-view="${view}"]`).click();
+        await coverBadges(page);
+        if (width === 320 && view === 'list') await info.attach('progress-list-320', {
+          body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
+        });
       }
+      await page.locator('[data-series-view="grid"]').click();
       if (width !== 768) await info.attach(`progress-${width}`, {
         body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
       });
@@ -100,18 +138,31 @@ for (const adult of [false, true]) {
     await libraryAction(page, adult, 'Read again', 0);
     card = await seriesAction(page, adult, 'Read again', 0);
     await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
+    await page.setViewportSize({ width: 320, height: 850 });
     for (const view of ['grid', 'list']) {
       await page.locator(`[data-series-view="${view}"]`).click();
       await expect(page.locator('.volume-state-pill')).toHaveText(['✓ Finished', '✓ Finished', '✓ Finished']);
       await expect(page.locator('.volume-meta')).toHaveText(Array(3).fill('2026-08-19 · 4.8 MB'));
+      await coverBadges(page);
+      if (view === 'list') await info.attach('finished-list-320', {
+        body: await page.screenshot({ fullPage: true, animations: 'disabled' }), contentType: 'image/png'
+      });
     }
     await page.locator('[data-series-view="grid"]').click();
     const before = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
+    await coverBadges(page);
     await card.locator('a.read').click();
     const dialog = page.locator('#readAgainDialog');
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Keep My Place' }).focus();
     await page.keyboard.press('Enter');
+    await expect(dialog).toBeHidden();
+    expect(await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)))).toEqual(before);
+    const badge = card.locator('.volume-state-pill'); await badge.scrollIntoViewIfNeeded();
+    const badgeBox = await badge.boundingBox(), x = badgeBox.x + badgeBox.width / 2, y = badgeBox.y + badgeBox.height / 2;
+    if (info.project.use.hasTouch) await page.touchscreen.tap(x, y); else await page.mouse.click(x, y);
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Keep My Place' }).click();
     await expect(dialog).toBeHidden();
     expect(await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)))).toEqual(before);
     await page.reload();

@@ -30,6 +30,31 @@
   border-radius: 8px;
   outline: none;
 }
+/* One reading-state label belongs to the artwork in both Grid and List. */
+body .volume-card .volume-cover .volume-state-pill {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 4;
+  max-width: calc(100% - 12px);
+  box-sizing: border-box;
+  margin: 0;
+  background: rgba(11, 9, 16, 0.94);
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  pointer-events: none;
+}
+body.adult-library .volume-cover .volume-state-pill {
+  background: rgba(18, 10, 14, 0.94);
+}
+/* Volume dimensions change between Grid and List. Offscreen size containment
+   can reuse the previous view's card height in WebKit and overlap its details. */
+.series-body .volume-card {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
 .volume-cover-link .volume-cover {
   transition:
     transform 0.16s ease,
