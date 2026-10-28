@@ -431,9 +431,7 @@ body.adult-library .volume-cover .volume-state-pill {
 }
 .volume-card {
   min-width: 0;
-  /* Grid stretches cards naturally. A percentage height creates a sizing cycle
-     when WebKit switches these same cards between Grid and List. */
-  height: auto;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 10px;
