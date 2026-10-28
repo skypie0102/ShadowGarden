@@ -62,7 +62,7 @@
         const validation = item.validation || {},
           fatal = arr(validation.fatal),
           warnings = arr(validation.warnings);
-        if (validation.status === "fail" || item.status === "failed") {
+        if (validation.status === "fail") {
           const issue = fatal[0] || { message: item.error || "EPUB preflight failed", detail: "" };
           return {
             item,
@@ -73,6 +73,13 @@
             recommendation: recommendation(messageOf(issue), "blocked")
           };
         }
+        if (item.status === "failed") {
+          return {
+            item, kind: "retry", label: "RETRY",
+            message: item.error || "The upload did not finish", detail: "",
+            recommendation: "Review the reported upload problem, then retry from the queue. Uploaded files will not be sent again."
+          };
+        }
         if (item.duplicate && item.action === "skip" && item.status !== "done") {
           return {
             item,
@@ -81,7 +88,9 @@
             message: "Duplicate is currently set to Skip",
             detail: "",
             recommendation:
-              "Choose Replace existing or Add separate if this book should be imported; leaving Skip keeps the library unchanged."
+              item.duplicate.batch
+                ? "Choose Add separate if this queued copy should be imported; leaving Skip keeps the library unchanged."
+                : "Choose Replace existing or Add separate if this book should be imported; leaving Skip keeps the library unchanged."
           };
         }
         if (item.similarVolume) {
@@ -117,7 +126,8 @@
       function metrics(items, entries) {
         const blocked = entries.filter(entry => entry.kind === "blocked").length,
           decisions = entries.filter(entry => entry.kind === "decision").length,
-          warnings = entries.filter(entry => entry.kind === "warning").length;
+          warnings = entries.filter(entry => entry.kind === "warning").length,
+          retries = entries.filter(entry => entry.kind === "retry").length;
         const ready = items.filter(
           item =>
             item.metaReady &&
@@ -126,13 +136,13 @@
             item.status !== "done"
         ).length;
         const checking = items.filter(item => item.status === "checking").length;
-        return { blocked, decisions, warnings, ready, checking };
+        return { blocked, decisions, warnings, retries, ready, checking };
       }
 
       function reportHtml(items) {
         const entries = items.map(entryFor).filter(Boolean),
           counts = metrics(items, entries),
-          attention = counts.blocked + counts.decisions + counts.warnings;
+          attention = counts.blocked + counts.decisions + counts.warnings + counts.retries;
         const rows = entries
           .slice(0, 12)
           .map(
@@ -148,7 +158,7 @@
           !attention && !counts.checking
             ? '<div class="import-report-clean"><span>✓</span><div><strong>No validation warnings or blocked files.</strong><small>The queue still uses its normal metadata and duplicate review before upload.</small></div></div>'
             : "";
-        return `<section class="import-preflight-report" data-import-preflight-report><div class="import-report-head"><div><span>IMPORT REPORT</span><strong>Preflight & actions</strong></div><b>${attention ? `${attention} need review` : counts.checking ? `${counts.checking} checking` : "Clear"}</b></div><div class="import-report-metrics"><span>${counts.ready} ready</span>${counts.checking ? `<span>${counts.checking} checking</span>` : ""}${counts.warnings ? `<span class="warning">${counts.warnings} warning${counts.warnings === 1 ? "" : "s"}</span>` : ""}${counts.decisions ? `<span class="decision">${counts.decisions} decision${counts.decisions === 1 ? "" : "s"}</span>` : ""}${counts.blocked ? `<span class="blocked">${counts.blocked} blocked</span>` : ""}</div>${rows ? `<div class="import-report-items">${rows}</div>` : ""}${overflow}${clean}</section>`;
+        return `<section class="import-preflight-report" data-import-preflight-report><div class="import-report-head"><div><span>IMPORT REPORT</span><strong>Preflight & actions</strong></div><b>${attention ? `${attention} need review` : counts.checking ? `${counts.checking} checking` : "Clear"}</b></div><div class="import-report-metrics"><span>${counts.ready} ready</span>${counts.checking ? `<span>${counts.checking} checking</span>` : ""}${counts.warnings ? `<span class="warning">${counts.warnings} warning${counts.warnings === 1 ? "" : "s"}</span>` : ""}${counts.decisions ? `<span class="decision">${counts.decisions} decision${counts.decisions === 1 ? "" : "s"}</span>` : ""}${counts.blocked ? `<span class="blocked">${counts.blocked} blocked</span>` : ""}${counts.retries ? `<span class="retry">${counts.retries} to retry</span>` : ""}</div>${rows ? `<div class="import-report-items">${rows}</div>` : ""}${overflow}${clean}</section>`;
       }
 
       function decorate() {

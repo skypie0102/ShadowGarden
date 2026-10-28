@@ -57,15 +57,15 @@
        History, Trash, or Abuse owners. */
     for (const src of [
       "/assets/js/admin/epub-inspection.js?v=2.14.0",
-      "/assets/js/admin-batch.js?v=2.11.0",
+      "/assets/js/admin-batch.js?v=2.30.0",
       "/assets/js/admin/upload-similar-volume.js?v=2.11.0",
-      "/assets/js/admin/upload-safety.js?v=2.11.0",
+      "/assets/js/admin/upload-safety.js?v=2.30.0",
       "/assets/js/admin-batch-editor.js?v=2.11.0",
-      "/assets/js/admin-upload-workflow.js?v=2.11.0",
+      "/assets/js/admin-upload-workflow.js?v=2.30.0",
       "/assets/js/admin-upload-presentation.js?v=2.11.0",
       "/assets/js/admin/upload-events.js?v=2.11.0",
       "/assets/js/admin/editor-interactions.js?v=2.11.0",
-      "/assets/js/admin/upload-preflight-report.js?v=2.11.0"
+      "/assets/js/admin/upload-preflight-report.js?v=2.30.0"
     ])
       await loadScript(src);
 

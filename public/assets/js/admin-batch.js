@@ -184,6 +184,7 @@
     const status = item.validation?.status;
     if (item.status === "checking") return '<span class="batch-badge uploading">CHECKING</span>';
     if (item.status === "done") return '<span class="batch-badge pass">UPLOADED</span>';
+    if (item.status === "uploading") return '<span class="batch-badge uploading">UPLOADING</span>';
     if (item.status === "failed" || status === "fail")
       return '<span class="batch-badge fail">FAILED</span>';
     if (status === "warning") return '<span class="batch-badge warning">WARNING</span>';
