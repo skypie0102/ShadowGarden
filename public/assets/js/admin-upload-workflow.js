@@ -33,7 +33,7 @@
   let mode = "edit",
     sessionIds = [],
     completedSeries = [],
-    completionSnapshot = { successes: [], failures: [] },
+    completionSnapshot = { successes: [], failures: [], items: [] },
     finishing = false;
 
   if (!document.querySelector('link[href*="/assets/css/admin-components.css?v=2.11.0"]')) {
@@ -142,6 +142,53 @@
     return `${d.series?.title || "Existing series"} · ${d.volume?.title || `Volume ${d.volume?.number ?? "?"}`} · ${d.scope === "adult" ? "18+" : "Main"} · ${arr(d.reasons).join(", ")}`;
   }
 
+  function destinationCopy(item) {
+    const target = state.addBookTarget;
+    const adult = target ? target.scope === "adult" : Boolean(item.adult);
+    const title = target?.title || item.series || "Choose a series";
+    const id = target?.id || `${adult ? "adult-" : ""}${slug(title)}`;
+    const library = q.library || state.management;
+    const existing = Boolean(target) || arr(library?.[adult ? "adult" : "main"])
+      .some(series => series.id === id);
+    return `Destination: ${adult ? "Adult Library" : "Main Library"} · ${title} · Volume ${item.number || "?"}${library || target ? ` · ${existing ? "Existing series" : "New series"}` : ""}`;
+  }
+
+  function actionCopy(item) {
+    if (item.action === "skip") return "Skip this file. Nothing will be uploaded or replaced.";
+    if (item.action === "replace")
+      return "Replace the matched volume’s EPUB and metadata. Keep its book identity and reading links.";
+    if (item.action === "separate")
+      return "Add a separate volume entry. Keep any existing matched volume unchanged.";
+    return "Add this EPUB to the destination above. Matching volumes are never replaced automatically.";
+  }
+
+  function itemOutcome(item) {
+    if (item.status === "done") return { label: "Uploaded", kind: "done" };
+    if (item.validation?.status === "fail") return {
+      label: "Blocked · Invalid EPUB", kind: "blocked",
+      detail: "Not uploaded. Repair or replace the EPUB before trying again."
+    };
+    if (item.status === "failed") return {
+      label: "Upload failed · Retry available", kind: "failed",
+      detail: `${item.error || "The upload did not finish."} Review the queue and retry. Uploaded files will not be sent again.`
+    };
+    if (item.status === "checking") return { label: "Checking EPUB", kind: "checking" };
+    if (item.action === "skip") return { label: "Skipped · Not uploaded", kind: "skipped" };
+    if (item.status === "uploading") return { label: item.progressLabel || "Uploading EPUB", kind: "uploading" };
+    return { label: "Waiting to upload", kind: "waiting" };
+  }
+
+  function fileResults(items) {
+    return `<ul class="upload-file-results" role="list" aria-label="Per-file upload results">${items.map(item => {
+      const outcome = itemOutcome(item);
+      return `<li data-upload-file="${esc(item.id)}" data-outcome="${outcome.kind}"><strong>${esc(item.title || item.file?.name || "EPUB")}</strong><small>${esc(destinationCopy(item))}</small><span class="upload-file-state">${esc(outcome.label)}</span>${outcome.detail ? `<p>${esc(outcome.detail)}</p>` : ""}</li>`;
+    }).join("")}</ul>`;
+  }
+
+  function actionGuidance(item) {
+    return `<p id="batch-action-help-${esc(item.id)}" class="batch-action-guidance">${esc(destinationCopy(item))}<br>${esc(actionCopy(item))}</p>`;
+  }
+
   function decorateDuplicate(article, item) {
     const block = article.querySelector(".batch-duplicate");
     if (!block) return;
@@ -149,7 +196,7 @@
       article.classList.remove("has-duplicate");
       block.hidden = !item.metaReady || item.status === "done";
       if (!block.hidden)
-        block.innerHTML = `<label>Queue action<select data-batch-action="${esc(item.id)}" ${q.running ? "disabled" : ""}><option value="new"${item.action !== "skip" ? " selected" : ""}>Upload</option><option value="skip"${item.action === "skip" ? " selected" : ""}>Skip</option></select></label>`;
+        block.innerHTML = `<label>Queue action<select data-batch-action="${esc(item.id)}" aria-describedby="batch-action-help-${esc(item.id)}" ${q.running ? "disabled" : ""}><option value="new"${item.action !== "skip" ? " selected" : ""}>Upload</option><option value="skip"${item.action === "skip" ? " selected" : ""}>Skip</option></select></label>${actionGuidance(item)}`;
       return;
     }
     article.classList.add("has-duplicate");
@@ -157,7 +204,7 @@
     const options = item.duplicate.batch
       ? `<option value="skip"${item.action === "skip" ? " selected" : ""}>Skip</option><option value="separate"${item.action === "separate" ? " selected" : ""}>Add separate</option>`
       : `<option value="skip"${item.action === "skip" ? " selected" : ""}>Skip</option><option value="replace"${item.action === "replace" ? " selected" : ""}>Replace existing</option><option value="separate"${item.action === "separate" ? " selected" : ""}>Add separate</option>`;
-    block.innerHTML = `<label>Duplicate action<select data-batch-action="${esc(item.id)}" ${item.status === "done" ? "disabled" : ""}>${options}</select></label><p>${esc(duplicateCopy(item))}</p>`;
+    block.innerHTML = `<label>Duplicate action<select data-batch-action="${esc(item.id)}" aria-describedby="batch-action-help-${esc(item.id)}" ${q.running || item.status === "done" ? "disabled" : ""}>${options}</select></label><p>${esc(duplicateCopy(item))}</p>${actionGuidance(item)}`;
   }
 
   function enhanceQueue() {
@@ -270,6 +317,8 @@
   const showStage = () => {
     dialog.classList.add("sg-workflow-stage");
     stage.classList.remove("hidden");
+    const scroller = dialog.querySelector(".dialog-scroll");
+    if (scroller) scroller.scrollTop = 0;
   };
   function showEditor() {
     mode = "edit";
@@ -284,12 +333,15 @@
     } else if (typeof setUploadState === "function") {
       const ready = actionable().length;
       setUploadState(ready ? "READY" : "WAITING", ready ? "ready" : "");
+      const editor = q.items.find(item => item.id === q.activeId && item.metaReady)
+        || q.items.find(item => item.metaReady);
+      if (editor) queueMicrotask(() => list.querySelector(`[data-batch-edit="${CSS.escape(editor.id)}"]`)?.click());
     }
   }
 
   function renderUploading() {
     showStage();
-    stage.innerHTML = `<div class="upload-state-card upload-state-uploading"><div class="upload-state-mark" aria-hidden="true">✦</div><p class="kicker">PLANTING BOOKS</p><h2>Uploading to the Garden</h2><p id="uploadStageDetail">Preparing the batch for private storage…</p><div class="upload-stage-progress" aria-hidden="true"><i></i></div><div class="upload-stage-meta"><span id="uploadStagePercent">0%</span><span id="uploadStageCount">0 / ${sessionIds.length}</span></div></div>`;
+    stage.innerHTML = `<div class="upload-state-card upload-state-uploading"><div class="upload-state-mark" aria-hidden="true">✦</div><p class="kicker">PLANTING BOOKS</p><h2>Uploading to the Garden</h2><p id="uploadStageDetail">Preparing the batch for private storage…</p><div class="upload-stage-progress" role="progressbar" aria-label="Batch processing progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div><div class="upload-stage-meta"><span id="uploadStagePercent">0%</span><span id="uploadStageCount">0 / ${sessionIds.length}</span></div><div id="uploadFileResults">${fileResults(q.items)}</div></div>`;
     updateUploading();
   }
 
@@ -298,23 +350,27 @@
     const items = sessionIds.map(id => q.items.find(i => i.id === id)).filter(Boolean),
       total = Math.max(1, items.length);
     const progress =
-        items.reduce((n, i) => n + Math.max(0, Math.min(100, Number(i.progress) || 0)), 0) / total,
+        items.reduce((n, i) => n + (["done", "failed"].includes(i.status) ? 100 : Math.max(0, Math.min(100, Number(i.progress) || 0))), 0) / total,
       done = items.filter(i => i.status === "done").length,
+      failed = items.filter(i => i.status === "failed").length,
       current =
         items.find(i => i.status === "uploading") ||
         items.find(i => i.status !== "done" && i.status !== "failed");
     const track = stage.querySelector(".upload-stage-progress");
     track?.style.setProperty("--upload-stage-progress", `${progress.toFixed(1)}%`);
+    track?.setAttribute("aria-valuenow", String(Math.round(progress)));
+    const results = stage.querySelector("#uploadFileResults");
+    if (results) results.innerHTML = fileResults(q.items);
     const pct = stage.querySelector("#uploadStagePercent"),
       count = stage.querySelector("#uploadStageCount"),
       detail = stage.querySelector("#uploadStageDetail");
     if (pct) pct.textContent = `${Math.round(progress)}%`;
-    if (count) count.textContent = `${done} / ${items.length} uploaded`;
+    if (count) count.textContent = `${done} uploaded · ${failed} failed · ${items.length - done - failed} remaining`;
     if (detail)
       detail.textContent = current?.progressLabel
         ? `${current.title || current.file?.name || "EPUB"} — ${current.progressLabel}`
-        : done === items.length
-          ? "Finishing catalog updates…"
+        : done + failed === items.length
+          ? "Finishing batch results…"
           : "Preparing the next EPUB…";
   }
 
@@ -326,8 +382,8 @@
       if (!map.has(id))
         map.set(id, {
           id,
-          title: item.series || item.result?.seriesTitle || "Uploaded series",
-          adult: Boolean(item.adult),
+          title: state.addBookTarget?.title || item.series || item.result?.seriesTitle || "Uploaded series",
+          adult: state.addBookTarget ? state.addBookTarget.scope === "adult" : Boolean(item.adult),
           books: 0
         });
       map.get(id).books++;
@@ -336,8 +392,9 @@
   }
 
   function clearSuccessfulQueue() {
-    q.items.splice(0);
-    q.activeId = null;
+    const remaining = q.items.filter(item => item.status !== "done");
+    q.items.splice(0, q.items.length, ...remaining);
+    if (!remaining.some(item => item.id === q.activeId)) q.activeId = null;
     q.library = null;
     if (q.objectUrl) {
       try {
@@ -345,8 +402,11 @@
       } catch {}
       q.objectUrl = "";
     }
-    list.innerHTML = "";
-    panel.classList.add("hidden");
+    for (const article of list.querySelectorAll(":scope > .batch-item")) {
+      if (!remaining.some(item => item.id === article.dataset.batchId)) article.remove();
+    }
+    if (!remaining.length) list.innerHTML = "";
+    panel.classList.toggle("hidden", !remaining.length);
     fileInput.value = "";
     const summary = document.querySelector("#batchSummary");
     if (summary) summary.textContent = "";
@@ -359,17 +419,24 @@
 
   function renderComplete(successes, failures) {
     const success = failures.length === 0 && successes.length === sessionIds.length;
-    mode = success ? "complete" : "partial";
+    const remaining = q.items.filter(item => item.status !== "done");
+    const allDone = success && remaining.length === 0;
+    mode = allDone ? "complete" : "partial";
     completedSeries = seriesFrom(successes);
     showStage();
-    stage.innerHTML = `<div class="upload-state-card ${success ? "upload-state-complete" : "upload-state-partial"}"><div class="upload-state-mark" aria-hidden="true">${success ? "✓" : "△"}</div><p class="kicker">${success ? "UPLOAD COMPLETE" : "BATCH FINISHED"}</p><h2>${success ? "The new books have taken root." : "Some books need attention."}</h2><p>${success ? `${successes.length} book${successes.length === 1 ? " was" : "s were"} uploaded successfully and the upload queue has been cleared.` : `${successes.length} uploaded · ${failures.length} failed. Failed/reviewable entries remain in the queue so they can be corrected or retried.`}</p><div class="upload-state-actions">${completedSeries.length ? '<button id="workflowOpenSeries" class="admin-primary" type="button">Open uploaded series</button>' : ""}<button id="workflowNextBatch" class="admin-secondary" type="button">${success ? "Upload another batch" : "Review upload queue"}</button></div></div>`;
+    const summary = success
+      ? `${successes.length} book${successes.length === 1 ? " was" : "s were"} uploaded successfully${allDone ? " and the upload queue has been cleared." : "."}`
+      : `${successes.length} uploaded · ${failures.length} failed.`;
+    const remainingCopy = remaining.length
+      ? ` ${remaining.length} file${remaining.length === 1 ? " remains" : "s remain"} in the queue for review. Uploaded files will not be sent again.` : "";
+    stage.innerHTML = `<div class="upload-state-card ${allDone ? "upload-state-complete" : "upload-state-partial"}"><div class="upload-state-mark" aria-hidden="true">${allDone ? "✓" : "△"}</div><p class="kicker">${allDone ? "UPLOAD COMPLETE" : "BATCH FINISHED"}</p><h2>${allDone ? "The new books have taken root." : failures.length ? "Some books need attention." : "Uploads finished."}</h2><p>${esc(summary + remainingCopy)}</p><div class="upload-state-actions">${completedSeries.length ? '<button id="workflowOpenSeries" class="admin-primary" type="button">Open uploaded series</button>' : ""}<button id="workflowNextBatch" class="admin-secondary" type="button">${allDone ? "Upload another batch" : "Review upload queue"}</button></div>${fileResults(completionSnapshot.items)}</div>`;
     if (success) clearSuccessfulQueue();
     window.ShadowGardenKeeper.events.dispatchEvent(new Event("upload:view-rendered"));
     stage
       .querySelector("#workflowOpenSeries")
       ?.addEventListener("click", () =>
         completedSeries.length === 1
-          ? location.assign(`/series.html?id=${encodeURIComponent(completedSeries[0].id)}`)
+          ? location.assign(`/series.html?id=${encodeURIComponent(completedSeries[0].id)}&scope=${completedSeries[0].adult ? "adult" : "main"}`)
           : renderChooser()
       );
     stage.querySelector("#workflowNextBatch")?.addEventListener("click", showEditor);
@@ -378,13 +445,13 @@
   function renderChooser() {
     mode = "chooser";
     showStage();
-    stage.innerHTML = `<div class="upload-state-card upload-state-complete"><div class="upload-state-mark" aria-hidden="true">✦</div><p class="kicker">UPLOADED SERIES</p><h2>Choose a series to open</h2><p>This batch added books to ${completedSeries.length} series.</p><div class="upload-series-grid">${completedSeries.map(s => `<button class="upload-series-choice" type="button" data-open-uploaded-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><span>${s.adult ? "18+ Library" : "Main Library"} · ${s.books} uploaded book${s.books === 1 ? "" : "s"}</span></button>`).join("")}</div><div class="upload-state-actions"><button id="workflowChooserBack" class="admin-secondary" type="button">◀ Back</button><button id="workflowChooserNext" class="admin-secondary" type="button">Upload another batch</button></div></div>`;
+    stage.innerHTML = `<div class="upload-state-card upload-state-complete"><div class="upload-state-mark" aria-hidden="true">✦</div><p class="kicker">UPLOADED SERIES</p><h2>Choose a series to open</h2><p>This batch added books to ${completedSeries.length} series.</p><div class="upload-series-grid">${completedSeries.map(s => `<button class="upload-series-choice" type="button" data-open-uploaded-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><span>${s.adult ? "18+ Library" : "Main Library"} · ${s.books} uploaded book${s.books === 1 ? "" : "s"}</span></button>`).join("")}</div><div class="upload-state-actions"><button id="workflowChooserBack" class="admin-secondary" type="button">◀ Back</button><button id="workflowChooserNext" class="admin-secondary" type="button">${q.items.some(item => item.status !== "done") ? "Review upload queue" : "Upload another batch"}</button></div></div>`;
     window.ShadowGardenKeeper.events.dispatchEvent(new Event("upload:view-rendered"));
     stage
       .querySelectorAll("[data-open-uploaded-series]")
       .forEach(b =>
         b.addEventListener("click", () =>
-          location.assign(`/series.html?id=${encodeURIComponent(b.dataset.openUploadedSeries)}`)
+          location.assign(`/series.html?id=${encodeURIComponent(b.dataset.openUploadedSeries)}&scope=${completedSeries.find(series => series.id === b.dataset.openUploadedSeries)?.adult ? "adult" : "main"}`)
         )
       );
     stage
@@ -411,7 +478,7 @@
     const items = sessionIds.map(id => q.items.find(i => i.id === id)).filter(Boolean),
       successes = items.filter(i => i.status === "done"),
       failures = items.filter(i => i.status === "failed" || i.validation?.status === "fail");
-    completionSnapshot = { successes: [...successes], failures: [...failures] };
+    completionSnapshot = { successes: [...successes], failures: [...failures], items: [...q.items] };
     renderComplete(successes, failures);
     finishing = false;
   }

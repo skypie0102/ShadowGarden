@@ -21,6 +21,7 @@ release evidence live in the archive.
 | [Reader architecture](guides/READER_ARCHITECTURE.md) | Startup, navigation, layout, lifecycle, measurements and caches |
 | [Reader settings](guides/READER_SETTINGS.md) | Immediate changes, device defaults, mode-specific controls and Reset scope |
 | [Reader controls](guides/READER_CONTROLS.md) | Chapter/volume progress, navigation and first-use image-focus guidance |
+| [Keeper uploads](guides/KEEPER_UPLOADS.md) | Destinations, duplicate consequences, per-file outcomes, retries and retained queues |
 | [Visual accessibility](guides/VISUAL_ACCESSIBILITY.md) | Readability, keyboard/contrast focus and checks that preserve the released layouts |
 | [EPUB.js contract](guides/READER_VENDOR_CONTRACT.md) | Pinned vendor integration and upgrade checks |
 | [Reader read aloud](guides/READER_TTS.md) | Speech behavior, buffering, playback and platform limits |

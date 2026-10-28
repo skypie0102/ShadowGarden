@@ -145,3 +145,16 @@ test('a catalog refresh updates the similar-volume warning without changing queu
   assert.match(f.card.querySelector('[data-similar-volume-warning]')?.textContent || '', /Renamed fixture series/);
   assert.equal(f.incoming.action, 'new');
 });
+
+
+test('a provider failure is retry guidance, not a structural EPUB block', async () => {
+  const f = await reportFixture([item({ status: 'failed', error: 'Temporary upload service error' })]);
+  assert.match(f.html(), /RETRY/); assert.match(f.html(), /1 to retry/);
+  assert.match(f.html(), /Uploaded files will not be sent again/);
+  assert.doesNotMatch(f.html(), /Upload is blocked|replace or repair|1 blocked/);
+});
+
+test('a batch duplicate recommends only its available Add separate decision', async () => {
+  const f = await reportFixture([item({ action: 'skip', duplicate: { batch: true } })]);
+  assert.match(f.html(), /Choose Add separate/); assert.doesNotMatch(f.html(), /Replace existing/);
+});

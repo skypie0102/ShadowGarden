@@ -13,7 +13,7 @@ acceptance criteria and pass the [CI gate](../operations/CI.md).
 | 2. Reading journey | Recognize saved progress and the next volume | Active; consistent actions/volume states released in v2.28.0; saved-progress context implemented for v2.28.1 |
 | 3. Reader controls | Understand preferences and navigation | Complete in v2.29.0; [release and evidence](../archive/releases/READER_CONTROLS_2.29.0.md) |
 | 4. Visual consistency | Read labels and operate controls across screens | Complete in v2.29.1; [release and evidence](../archive/releases/VISUAL_ACCESSIBILITY_2.29.1.md) |
-| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Planned; Replace EPUB and empty translator provenance already delivered |
+| 5. Keeper feedback | Understand destinations, duplicate choices and per-file outcomes | Active: v2.30.0 implementation and acceptance checks; Replace EPUB and empty translator provenance already delivered |
 
 ## Phase 2 — Reading journey
 
@@ -74,10 +74,19 @@ styling boundary and controlled comparisons against v2.29.0. Existing
 Direct volume EPUB replacement and empty-until-added translator provenance are
 already released in v2.20.0/v2.20.1.
 
-- [ ] Walk through the current upload/target/duplicate flow before selecting changes.
-- [ ] Make the selected destination and consequences of duplicate choices explicit.
-- [ ] Present per-file preparation, upload, failure and retry states consistently.
-- [ ] Make completion summaries and the next useful action easy to understand.
+- [x] Walk through the current upload/target/duplicate flow before selecting changes.
+- [x] Make the selected destination and consequences of duplicate choices explicit.
+- [x] Present per-file preparation, upload, failure and retry states consistently.
+- [x] Make completion summaries and the next useful action easy to understand.
+
+Implemented for v2.30.0; these checkmarks describe source, with PR checks and live
+acceptance recorded separately. The [Keeper upload guide](../guides/KEEPER_UPLOADS.md)
+describes the reviewed flow. The walkthrough found that upload failures inherited
+structural-repair guidance, per-file outcomes disappeared during upload, and full
+success could clear skipped/invalid files excluded from the attempt. The change
+separates those outcomes and retains unattempted queue entries, while preserving
+existing controls and the public layouts. Targeted replacement is limited to the
+selected series/library, and completion links retain their library scope.
 
 Acceptance: new/existing series, Main/Adult targets, mixed valid/invalid files,
 duplicates, partial failure, retry, cancellation and reopening a queued batch.

@@ -1,0 +1,32 @@
+/* Keeper upload feedback; existing control geometry stays with its owners. */
+.upload-file-results {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.upload-file-results > li {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.018);
+  overflow-wrap: anywhere;
+}
+.upload-file-results strong,
+.upload-file-results small,
+.upload-file-state {
+  display: block;
+  line-height: 1.5;
+}
+.upload-file-results strong { color: var(--text); font-size: 0.76rem; }
+.upload-file-results small { color: var(--dim); font-size: 0.64rem; }
+.upload-file-state { margin-top: 6px; color: var(--leaf2); font-size: 0.69rem; }
+.upload-file-results p { margin: 6px 0 0; color: var(--dim); font-size: 0.67rem; line-height: 1.5; }
+.upload-file-results [data-outcome="done"] .upload-file-state { color: #9bc7a8; }
+.upload-file-results [data-outcome="failed"] .upload-file-state,
+.upload-file-results [data-outcome="blocked"] .upload-file-state,
+.import-report-item.retry em,
+.import-report-metrics .retry { color: #dc8c99; }

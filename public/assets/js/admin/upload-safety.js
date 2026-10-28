@@ -16,13 +16,15 @@
   function forceSafeReplacement(item, { notify = false } = {}) {
     if (!item || item.action !== "replace") return true;
     const duplicate = item.duplicate;
-    if (!sameSeries(item, duplicate)) {
+    const target = keeper.state.addBookTarget;
+    const matchesTarget = !target || (duplicate?.scope === target.scope && duplicate?.series?.id === target.id);
+    if (!sameSeries(item, duplicate) || !matchesTarget) {
       item.action = "skip";
       const select = list.querySelector(`[data-batch-action="${CSS.escape(item.id)}"]`);
       if (select) select.value = "skip";
       if (notify)
         alert(
-          "Replace is only allowed when the existing volume belongs to the same series. This item was changed to Skip."
+          "Replace is only allowed for a match in the selected series and library. This item was changed to Skip. Choose Add separate to keep the existing volume unchanged."
         );
       return false;
     }
@@ -56,9 +58,8 @@
         item.action !== "skip" &&
         item.status !== "done"
     );
-    const failed = q.items.filter(
-      item => item.validation?.status === "fail" || item.status === "failed"
-    ).length;
+    const blocked = q.items.filter(item => item.validation?.status === "fail").length;
+    const failed = q.items.filter(item => item.status === "failed" && item.validation?.status !== "fail").length;
     const skippedDuplicates = q.items.filter(
       item => item.duplicate && item.action === "skip" && item.status !== "done"
     ).length;
@@ -83,20 +84,26 @@
         setUploadState("READY", "ready");
         setStatus(
           "Ready to upload",
-          `${actionable.length} book${actionable.length === 1 ? " is" : "s are"} ready to send to private B2.`,
+          `${actionable.length} book${actionable.length === 1 ? " is" : "s are"} ready to upload to the selected libraries.`,
           "✓"
         );
       }
       return;
     }
-    if (failed) {
+    if (blocked) {
       upload.title = "Upload blocked by EPUB preflight";
       setUploadState("BLOCKED", "error");
       setStatus(
         "Upload blocked",
-        `${failed} file${failed === 1 ? " failed" : "s failed"} EPUB preflight. Open validation details to see the blocking issue.`,
+        `${blocked} file${blocked === 1 ? " failed" : "s failed"} EPUB preflight. Open validation details to see the blocking issue.`,
         "!"
       );
+      return;
+    }
+    if (failed) {
+      upload.title = "Review the failed uploads and choose Upload to retry";
+      setUploadState("ACTION NEEDED", "warning");
+      setStatus("Uploads need review", "Review the reported errors. Change a queue action from Skip to Upload to retry that file.", "△");
       return;
     }
     if (skippedDuplicates) {
