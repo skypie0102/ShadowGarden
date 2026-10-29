@@ -45,6 +45,21 @@ Local validation on 2026-10-29 passed all eight debug JVM tests, debug lint,
 release assembly and the release unit-test task (which has no sources). The
 unsigned release APK's three DEX files did not contain the prototype class.
 
+## Local HTTPS WebView experiment
+
+The separate `android/accesslab` test application hosts a fake service on
+localhost using a disposable certificate and tests real Android WebView HTTPS,
+request origins, HttpOnly cookie handling, ticket renewal and Keeper logout.
+Its network permission and localhost test CA are confined to that app's debug
+variant. The fixture server key, password, responses, Keeper key and tokens are
+public test data; the test does not contact the deployed site. The WebView
+cancels TLS errors and blocks requests outside its local test server.
+
+Emulator verification is pending. This is a fake service, not the deployed
+handlers, a real Turnstile widget or Siteverify; it cannot establish real server
+verification, cross-site cookie behavior, redirects, process death, download
+persistence, or a secure production WebView architecture.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

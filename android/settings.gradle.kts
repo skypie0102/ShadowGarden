@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ShadowGardenAndroid"
-include(":app")
+include(":app", ":accesslab")
