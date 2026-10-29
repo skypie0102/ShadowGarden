@@ -7,6 +7,11 @@ changes is not a cross-platform contract test. Those tests are planned as the
 Android integrations are built. Its result is a separate status from **CI
 checks**; the latter does not enforce the Android workflow. Account for both
 statuses in review and branch protection, including path-filtered skipped runs.
+The emulator smoke test in [Android checks](../../.github/workflows/android.yml)
+runs only when manually dispatched with its emulator option enabled. It checks app launch and activity recreation
+on an API 28 emulator and uploads its report when available; it does not replace
+physical-device acceptance. Normal Android CI compiles the instrumentation APK
+but does not boot an emulator.
 
 `ShadowGarden checks` runs once per pull request update and on pushes to `main`.
 Feature-branch pushes do not duplicate the PR run. A newer PR update cancels its
@@ -21,7 +26,7 @@ The verify job's summary records the chosen scope and browser-job count.
 | Changes | Browser checks | Publication on main |
 | --- | --- | --- |
 | Only `README.md` / `docs/**` | Skipped; lightweight successful gate | Skipped |
-| Only `android/**`, Android workflow and optional documentation | Skipped; lightweight website gate, separate Android workflow | Skipped |
+| Only `android/**`, Android workflows and optional documentation | Skipped; lightweight website gate, separate Android workflow | Skipped |
 | Android paths plus CI selection workflow/planner/tests and optional documentation | Planner unit tests and Android workflow; website browsers skipped | Skipped |
 | Listed public presentation styles, optionally their selected specs and a version-only release bump | Public layout, discovery, startup, persistence, reconstruction and CSS regressions across all five profiles | Existing guarded deployment |
 | Images under `public/assets/icons`, `images` or `img` | Public checks plus Keeper banners and Reader image focus across all five profiles | Existing guarded deployment |

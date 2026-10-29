@@ -14,7 +14,7 @@ let Gradle sync. Alternatively, configure `ANDROID_HOME` or an untracked
 
 ```sh
 ./gradlew assembleDebug
-./gradlew lintDebug testDebugUnitTest
+./gradlew assembleDebugAndroidTest lintDebug testDebugUnitTest
 ```
 
 The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
@@ -29,3 +29,18 @@ Android automatic system backup is disabled in the scaffold, with extraction
 rules excluding app data from cloud backup and device transfer. The planned
 explicit progress export/restore is not implemented yet. Keep signing keys,
 local SDK paths, Keeper tokens, real book files and personal backups out of Git.
+
+## Manual emulator smoke test
+
+The emulator smoke test in [Android checks](../.github/workflows/android.yml) is
+manual-only; it is not part of normal pull request or push checks. From GitHub,
+open **Actions → Android checks → Run workflow**, choose the branch, enable
+**Run the emulator smoke test instead of the regular build**, and start it. The
+job uses an API 28 emulator and runs the instrumented
+launch/recreation test with `connectedDebugAndroidTest`. An instrumentation
+report is retained for seven days when generated. KVM must be available on the
+GitHub-hosted runner; a setup failure does not establish app behavior.
+
+For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
+Physical-device testing is reserved for milestones that require it, such as
+touch behavior, background audio and release acceptance.
