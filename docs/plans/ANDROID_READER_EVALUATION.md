@@ -31,6 +31,14 @@ bridge. The test opens the EPUB, navigates to chapter two, saves its CFI in a
 test-only preference, recreates the activity and checks that the same chapter and
 CFI are restored. Test data are removed afterward.
 
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40836852045)
+passed both the launch smoke test and this EPUB test on Android 9 / API 28
+x86_64 at source `040d165`. The generated book and vendor resources were served
+locally by the test harness; the app declares no Internet permission. This run
+did not toggle airplane mode or use a real book. An earlier run timed out; the
+test page's optional-chaining syntax was removed and diagnostic reporting added
+before the successful run. The earlier timeout was not independently diagnosed.
+
 This proves only the measured test scenario on the tested Android WebView. It
 does not execute ShadowGarden's reader controllers/extensions, test process
 death, establish a secure production WebView architecture, provide a UI for
