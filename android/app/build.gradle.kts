@@ -28,6 +28,9 @@ android {
     buildFeatures {
         compose = true
     }
+    // The experimental Android test uses the site's pinned runtime directly.
+    // These files are packaged in the test APK only, not the application APK.
+    sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("../public/assets/vendor"))
 }
 
 dependencies {

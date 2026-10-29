@@ -2,9 +2,9 @@ name: Android checks
 on:
   push:
     branches: [main]
-    paths: ['android/**', 'server/**', 'functions/**', 'docs/guides/API_CONTRACTS.md', '.github/workflows/android.yml']
+    paths: ['android/**', 'server/**', 'functions/**', 'public/assets/vendor/**', 'docs/guides/API_CONTRACTS.md', '.github/workflows/android.yml']
   pull_request:
-    paths: ['android/**', 'server/**', 'functions/**', 'docs/guides/API_CONTRACTS.md', '.github/workflows/android.yml']
+    paths: ['android/**', 'server/**', 'functions/**', 'public/assets/vendor/**', 'docs/guides/API_CONTRACTS.md', '.github/workflows/android.yml']
   workflow_dispatch:
     inputs:
       emulator:
