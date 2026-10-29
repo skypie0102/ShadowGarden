@@ -120,8 +120,32 @@ not screenshot pixels or how much text can be read.
 
 This is a test-only EPUB.js harness, not the website's reader controllers or a
 production Android reader; it does not cover process death, rotation, continuous
-mode, changed editions, or other books. The same layout case has not yet been
-run with Readium.
+mode, changed editions, or other books.
+
+## Readium passage and layout experiment
+
+A debug-only Readium 3.0.0 test selects the same paragraph in the generated
+EPUB 3 using a locator with a text highlight. It saves that explicit locator,
+recreates the activity with a smaller reader container and a larger Readium
+font preference, and checks that the paragraph intersects the visible WebView
+area. The container changes from 280 × 340 to 220 × 260 Android dp; the
+Readium font-size preference changes from 1.0 to 1.6. The test verifies the
+actual container dimensions and a computed font-size increase of over 40%, and
+polls for the passage to intersect the visible WebView area for up to 45 seconds.
+This does not capture the current reading position during ordinary page turns.
+The EPUB.js and Readium locators, layout engines and dimension units differ, so
+the experiments are comparable scenarios, not interchangeable location formats.
+
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40877363882)
+passed all seven instrumented tests on Android 9 / API 28 x86_64 at source
+`09f618c`. The test did not explicitly re-navigate after recreation. An [earlier
+run](https://github.com/skypie0102/ShadowGarden/actions/runs/40876400326) failed
+because the test incorrectly expected Readium's CSS-based font setting to change
+WebView `textZoom`; its diagnostic showed the passage was visible. The revised
+test checks computed text size instead. Viewport intersection is not a screenshot
+or a guarantee that the whole passage is readable. This experiment does not
+prove process-death recovery, actual rotation, continuous mode, changed editions,
+real books, or production readiness.
 
 ## Prototype protocol
 

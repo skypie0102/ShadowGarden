@@ -40,6 +40,37 @@ class ReadiumPrototypeTest {
         runFixture(true, 11, "Final chapter marker.", 12)
     }
 
+    @Test
+    fun restoresPassageAfterFontAndViewportChange() {
+        val fixture = File(appContext.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME)
+        val preferences = appContext.getSharedPreferences(ReadiumPrototypeActivity.PREFERENCES, Context.MODE_PRIVATE)
+        preferences.edit().clear()
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 280)
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 340)
+            .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1f).commit()
+        EpubFixture.create(fixture, true)
+        val scenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+        try {
+            awaitChapter(scenario, "chapter1.xhtml", "Chapter 1 paragraph 1.")
+            scenario.onActivity { assertTrue("Readium should accept passage navigation", it.goToPassage()) }
+            val initialFontSize = awaitVisiblePassage(scenario, 0.0, 280, 340)
+            scenario.onActivity { assertTrue("Selected passage should be saved", it.savePassage()) }
+            val saved = preferences.getString(ReadiumPrototypeActivity.LOCATION, null)
+                ?: throw AssertionError("Passage locator was not saved")
+            assertEquals(ReadiumPrototypeActivity.PASSAGE, Locator.fromJSON(JSONObject(saved))?.text?.highlight)
+            assertTrue(preferences.edit()
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)
+                .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1.6f).commit())
+            scenario.recreate()
+            awaitVisiblePassage(scenario, initialFontSize * 1.4, 220, 260)
+        } finally {
+            scenario.close()
+            preferences.edit().clear().commit()
+            fixture.delete()
+        }
+    }
+
     private fun runFixture(extended: Boolean, chapterIndex: Int, marker: String, tocCount: Int) {
         @Suppress("DEPRECATION")
         val requested = appContext.packageManager.getPackageInfo(
@@ -110,6 +141,72 @@ class ReadiumPrototypeTest {
             SystemClock.sleep(100)
         }
         throw AssertionError("Readium did not render $href: $lastState")
+    }
+
+    private fun awaitVisiblePassage(
+        scenario: ActivityScenario<ReadiumPrototypeActivity>, minimumFontSize: Double, widthDp: Int, heightDp: Int
+    ): Double {
+        val deadline = SystemClock.elapsedRealtime() + 45_000
+        var lastState = "not started"
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val states = CopyOnWriteArrayList<String>()
+            val failure = AtomicReference<String?>()
+            val pendingRef = AtomicReference<CountDownLatch>()
+            val viewport = AtomicReference<String>()
+            val locator = AtomicReference<Locator?>()
+            scenario.onActivity { activity ->
+                failure.set(activity.failure)
+                locator.set(activity.navigator?.currentLocator?.value)
+                val container = activity.findViewById<View>(R.id.readium_prototype_container)
+                val density = activity.resources.displayMetrics.density
+                viewport.set("${container.width}x${container.height}; expected=${(widthDp * density).toInt()}x${(heightDp * density).toInt()}")
+                val dimensionsMatch = container.width == (widthDp * density).toInt() && container.height == (heightDp * density).toInt()
+                val views = visibleWebViews(container)
+                val pending = CountDownLatch(views.size)
+                pendingRef.set(pending)
+                views.forEach { webView ->
+                    val clip = Rect()
+                    webView.getGlobalVisibleRect(clip)
+                    val screen = IntArray(2)
+                    webView.getLocationOnScreen(screen)
+                    val left = (clip.left - screen[0]).toDouble() / webView.width
+                    val top = (clip.top - screen[1]).toDouble() / webView.height
+                    val right = (clip.right - screen[0]).toDouble() / webView.width
+                    val bottom = (clip.bottom - screen[1]).toDouble() / webView.height
+                    val script = """JSON.stringify((function() {
+                        const p = Array.from(document.querySelectorAll('p')).find(e => e.textContent.includes('Chapter 12 paragraph 40.'));
+                        if (!p || !p.firstChild) return {found: false};
+                        const range = document.createRange(); range.setStart(p.firstChild, 0); range.setEnd(p.firstChild, 24);
+                        const rects = Array.from(range.getClientRects());
+                        const visible = rects.some(r => r.right > innerWidth * $left && r.left < innerWidth * $right &&
+                          r.bottom > innerHeight * $top && r.top < innerHeight * $bottom);
+                        return {found: true, text: range.toString(), visible: visible,
+                          fontSize: parseFloat(getComputedStyle(p).fontSize), width: innerWidth, height: innerHeight, rects: rects.map(r => [r.left,r.top,r.right,r.bottom])};
+                    })())""".trimIndent()
+                    webView.evaluateJavascript(script) { result ->
+                        val value = runCatching { JSONTokener(result).nextValue() }.getOrNull()
+                        val document = if (value is String) runCatching { JSONObject(value) }.getOrNull() else null
+                        if (document != null) {
+                            document.put("dimensionsMatch", dimensionsMatch)
+                            states.add(document.toString())
+                        }
+                        pending.countDown()
+                    }
+                }
+            }
+            failure.get()?.let { throw AssertionError("Readium could not open the fixture: $it") }
+            assertTrue("Reading WebView timed out", pendingRef.get().await(5, TimeUnit.SECONDS))
+            lastState = "locator=${locator.get()?.href}; viewport=${viewport.get()}; views=$states"
+            val found = states.map(::JSONObject).firstOrNull {
+                it.optBoolean("dimensionsMatch") && it.optDouble("fontSize", 0.0) > minimumFontSize &&
+                    it.optString("text") == ReadiumPrototypeActivity.PASSAGE && it.optBoolean("visible")
+            }
+            if (locator.get()?.href.toString().endsWith("chapter12.xhtml") && found != null) {
+                return found.getDouble("fontSize")
+            }
+            SystemClock.sleep(100)
+        }
+        throw AssertionError("Passage not visible at expected layout: $lastState")
     }
 
     private fun visibleWebViews(root: View): List<WebView> {
