@@ -55,10 +55,24 @@ variant. The fixture server key, password, responses, Keeper key and tokens are
 public test data; the test does not contact the deployed site. The WebView
 cancels TLS errors and blocks requests outside its local test server.
 
-Emulator verification is pending. This is a fake service, not the deployed
-handlers, a real Turnstile widget or Siteverify; it cannot establish real server
-verification, cross-site cookie behavior, redirects, process death, download
-persistence, or a secure production WebView architecture.
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40970876616)
+passed the access-lab test and the existing reader instrumentation suite on
+Android 9 / API 28 x86_64 at source `60f030f`; the previously documented
+Readium accuracy case was skipped. The access test observed rejected and accepted
+fixture verification, 428 before a human session, a rejected expired ticket,
+a renewed ticket and downloaded fixture bytes, Keeper bearer plus session,
+logout and post-logout rejection. It also checked that page scripts could not
+read the HttpOnly cookies and that the local WebView requests used the expected
+origin. TLS errors were not bypassed.
+
+The first access-lab run could not load the disposable PKCS#12 keystore on API 28;
+it was repackaged with compatible fixture-only encryption. Later runs exposed a
+mock-server cookie parser that read only one header field and an optional WebView
+favicon request; the fixture was corrected before the passing run. The tests
+still use a fake service, not the deployed handlers, a real Turnstile widget or
+Siteverify. They cannot establish real server verification, cross-site cookie
+behavior, redirects, process death, download persistence, or a secure production
+WebView architecture.
 
 ## Next integration evidence
 
