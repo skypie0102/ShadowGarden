@@ -70,6 +70,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-emulator-smoke-report
-          path: android/app/build/reports/androidTests/
+          path: |
+            android/app/build/reports/androidTests/
+            android/accesslab/build/reports/androidTests/
           if-no-files-found: ignore
           retention-days: 7

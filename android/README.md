@@ -37,8 +37,9 @@ manual-only; it is not part of normal pull request or push checks. From GitHub,
 open **Actions → Android checks → Run workflow**, choose the branch, enable
 **Run the emulator smoke test instead of the regular build**, and start it. The
 job uses an API 28 emulator and runs the instrumented launch/recreation test and
-the experimental offline EPUB.js and Readium harnesses with `connectedDebugAndroidTest`. An instrumentation
-report is retained for seven days when generated. KVM must be available on the
+the experimental offline EPUB.js and Readium harnesses, plus the separate local
+HTTPS access test, with `connectedDebugAndroidTest`. Instrumentation reports
+are retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
@@ -55,3 +56,9 @@ The Readium comparison is a non-exported debug-only test host using the same
 generated EPUB. It does not provide an app reader or implement progress backup.
 The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
 prototype constraints and results.
+
+The separate [access test module](accesslab/README.md) uses a disposable local
+HTTPS fixture and simulated responses to investigate WebView cookies and request
+origins. It has its own debug-only Internet permission and test trust anchor;
+these do not apply to the ShadowGarden app. Real Garden Pass, Keeper and backend
+integration remain unimplemented. See the [access evaluation](../docs/plans/ANDROID_ACCESS_EVALUATION.md).

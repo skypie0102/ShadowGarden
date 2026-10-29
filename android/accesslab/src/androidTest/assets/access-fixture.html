@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Local access fixture</title></head>
+<body>
+<script>
+window.accessResult = {state: 'opening'};
+(async () => {
+  async function jsonRequest(path, method, body, extraHeaders) {
+    const options = {method: method, credentials: 'same-origin', headers: extraHeaders || {}};
+    if (body !== null) {
+      options.headers['content-type'] = 'application/json';
+      options.body = JSON.stringify(body);
+    }
+    const response = await fetch(path, options);
+    let value = {};
+    try { value = await response.json(); } catch (_) {}
+    return {status: response.status, value: value};
+  }
+  const firstTicket = await jsonRequest('/book-access', 'POST', {bookId: 'fixture-book'});
+  const badHuman = await jsonRequest('/human-access', 'POST', {token: 'invalid'});
+  const goodHuman = await jsonRequest('/human-access', 'POST', {token: 'human-fixture'});
+  const ticket1 = await jsonRequest('/book-access', 'POST', {bookId: 'fixture-book'});
+  const stale = await fetch(ticket1.value.url, {credentials: 'same-origin'});
+  const ticket2 = await jsonRequest('/book-access', 'POST', {bookId: 'fixture-book'});
+  const download = await fetch(ticket2.value.url, {credentials: 'same-origin'});
+  const downloadedText = await download.text();
+  const challenge = await jsonRequest('/admin-access', 'GET', null);
+  const badKeeper = await jsonRequest('/admin-access', 'POST', {adminToken: 'wrong', turnstileToken: 'admin-fixture'});
+  const goodKeeper = await jsonRequest('/admin-access', 'POST', {adminToken: 'keeper-fixture', turnstileToken: 'admin-fixture'});
+  const status = await jsonRequest('/admin-api/status', 'POST', {}, {authorization: 'Bearer keeper-fixture'});
+  const logout = await jsonRequest('/admin-access', 'DELETE', null);
+  const afterLogout = await jsonRequest('/admin-api/status', 'POST', {}, {authorization: 'Bearer keeper-fixture'});
+  window.accessResult = {
+    state: 'ready', firstTicket: firstTicket.status, badHuman: badHuman.status, goodHuman: goodHuman.status,
+    ticket1: ticket1.status, stale: stale.status, ticket2: ticket2.status, download: download.status,
+    downloadedText: downloadedText, keeperAction: challenge.value.action,
+    badKeeper: badKeeper.status, goodKeeper: goodKeeper.status, status: status.status, statusDetails: status.value,
+    logout: logout.status, logoutDetails: logout.value, afterLogout: afterLogout.status, documentCookie: document.cookie
+  };
+})().catch(error => {
+  window.accessResult = {state: 'error', message: String((error && error.message) || error)};
+});
+</script>
+</body>
+</html>
