@@ -47,6 +47,7 @@ dependencies {
     debugImplementation("org.readium.kotlin-toolkit:readium-navigator:3.0.0")
     debugImplementation("androidx.fragment:fragment-ktx:1.8.5")
     debugImplementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    testImplementation("junit:junit:4.13.2")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.12.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

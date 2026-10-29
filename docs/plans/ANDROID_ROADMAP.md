@@ -39,7 +39,7 @@ and production acceptance are distinct.
 
 - [x] Establish a Gradle/Kotlin/Compose Android project and independently versioned app shell.
 - [x] Establish this roadmap and archive the previous UI/UX plan.
-- [x] Verify the debug build and lint with Android SDK 35 and JDK 17. No Android unit tests exist yet.
+- [x] Verify the debug build and lint with Android SDK 35 and JDK 17; subsequent protocol tests run in the local JVM.
 - [x] Launch the scaffold and verify activity recreation on an emulator.
 - [ ] Verify the scaffold and later relevant milestones on a physical device; record device/OS and results separately.
 - [x] Add a manual-only emulator workflow for a launch/recreation smoke test; routine Android CI compiles the test without starting an emulator.
@@ -49,7 +49,7 @@ and production acceptance are distinct.
 - [x] Select Android-aware CI without weakening website checks or publishing for Android-only changes. Backend changes also run the Android build; actual cross-platform contract tests remain future work once consumers exist.
 
 Scaffold verification on 2026-10-28: `assembleDebug` and `lintDebug` passed
-with JDK 17 and SDK 35; `testDebugUnitTest` had no sources. No Android device
+with JDK 17 and SDK 35; `testDebugUnitTest` had no sources at that time. No Android device
 was attached to the development environment. Its 4.9 GiB filesystem and lack of
 KVM prevented emulator acceptance: installing API 35 and API 28 system images
 both failed for insufficient disk space. Device and emulator launch remain
@@ -68,8 +68,9 @@ behavior is essential.
 - [x] Run both prototypes against a generated 12-chapter EPUB with a table of contents and embedded illustration, checking final-chapter restoration after activity recreation. See [test evidence](ANDROID_READER_EVALUATION.md#extended-generated-fixture).
 - [ ] Test representative real-world text-heavy, illustrated and long EPUBs, Pages and Continuous modes, search, table-of-contents navigation, bookmarks, image zoom and lifecycle recovery.
 - [ ] Validate reading-location capture and restoration, including EPUB CFIs, font/viewport changes, process death and changed editions. Do not assume different reader engines interpret locations identically.
-- [ ] Prove Garden Pass verification, short-lived book tickets and download renewal on Android with the existing same-origin/session requirements; preserve server-side checks. Document any backend change and test it without production credentials.
-- [ ] Prototype Keeper's verification and authenticated session, including lock/logout and session expiry. Never embed Keeper secrets in the APK.
+- [x] Exercise a debug-only access-flow sketch with local JVM tests and fake responses; see the [access evaluation](ANDROID_ACCESS_EVALUATION.md).
+- [ ] Prove Garden Pass verification, short-lived book tickets and download renewal on Android with the existing same-origin/session requirements; preserve server-side checks. A [debug-only protocol sketch](ANDROID_ACCESS_EVALUATION.md) tests simulated success and failure paths; real verification, cookies and networking remain untested. Document any backend change and test it without production credentials.
+- [ ] Prototype Keeper's verification and authenticated session, including lock/logout and session expiry. The [protocol sketch](ANDROID_ACCESS_EVALUATION.md) uses fake responses only; authenticated Android integration and race-safe lock remain outstanding. Never embed Keeper secrets in the APK.
 
 Acceptance: a documented reader/access decision and repeatable emulator and
 physical-device evidence with authorized test content. Failed verification or

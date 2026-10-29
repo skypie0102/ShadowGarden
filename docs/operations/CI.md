@@ -2,9 +2,10 @@
 
 The Android scaffold has a separate [Android workflow](../../.github/workflows/android.yml)
 that builds and runs lint for Android, backend, API-contract and workflow changes.
-The app has no unit tests or API consumers yet; running the build on backend
-changes is not a cross-platform contract test. Those tests are planned as the
-Android integrations are built. Its result is a separate status from **CI
+Android CI runs local JVM unit tests for the debug-only access protocol sketch.
+The app has no real API consumers yet; running the build on backend changes is
+not a cross-platform contract test. Those tests are planned as the Android
+integrations are built. Its result is a separate status from **CI
 checks**; the latter does not enforce the Android workflow. Account for both
 statuses in review and branch protection, including path-filtered skipped runs.
 The emulator smoke test in [Android checks](../../.github/workflows/android.yml)
