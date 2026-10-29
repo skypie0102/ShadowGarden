@@ -25,7 +25,7 @@ device and evidence limits are tracked in [follow-ups](FOLLOW_UPS.md).
 | Phase | Status | Outcome |
 | --- | --- | --- |
 | 0. Scaffold and discovery | In progress | Buildable Android shell, current roadmap and a feature inventory; no app features are claimed |
-| 1. Reader and access prototypes | Planned | Choose reader approach and prove offline locations and protected access |
+| 1. Reader and access prototypes | In discovery | Compare approaches, then prove offline locations and protected access |
 | 2. Library and offline reader | Planned | Reader-facing library, protected downloads, EPUB reader and local state |
 | 3. Progress backup and restore | Planned | Portable, validated Android reading-data export and restore |
 | 4. Keeper | Planned | All website Keeper workflows usable and protected on Android |
@@ -40,7 +40,9 @@ and production acceptance are distinct.
 - [x] Establish a Gradle/Kotlin/Compose Android project and independently versioned app shell.
 - [x] Establish this roadmap and archive the previous UI/UX plan.
 - [x] Verify the debug build and lint with Android SDK 35 and JDK 17. No Android unit tests exist yet.
-- [ ] Launch the scaffold on an emulator and a physical device; record device/OS and results separately.
+- [x] Launch the scaffold and verify activity recreation on an emulator.
+- [ ] Verify the scaffold and later relevant milestones on a physical device; record device/OS and results separately.
+- [x] Add a manual-only emulator workflow for a launch/recreation smoke test; routine Android CI compiles the test without starting an emulator.
 - [x] Inventory Library, Reader and Keeper workflows with proposed Android screens and acceptance cases: [parity inventory](ANDROID_PARITY_INVENTORY.md).
 - [x] Select direct APK download for initial distribution. Use API 26 as the provisional development minimum.
 - [ ] Decide final application ID, supported minimum Android version, release signing/key custody and APK hosting before publishing; do not treat the scaffold ID as a release commitment.
@@ -51,11 +53,16 @@ with JDK 17 and SDK 35; `testDebugUnitTest` had no sources. No Android device
 was attached to the development environment. Its 4.9 GiB filesystem and lack of
 KVM prevented emulator acceptance: installing API 35 and API 28 system images
 both failed for insufficient disk space. Device and emulator launch remain
-unverified and must not be inferred from the successful APK build.
+unverified at that point and must not be inferred from the successful APK build.
+On 2026-10-29 the manual [emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40833427129)
+at source `3c192da` passed one instrumented launch and activity-recreation test
+on an Android 9 / API 28 x86_64 emulator. This is not reader or physical-device
+acceptance. The user's phone is reserved for milestones where physical-device
+behavior is essential.
 
 ## Phase 1 — Reader and protected access prototypes
 
-- [ ] Compare a native EPUB toolkit (including licensing) with the existing reader in a secure Android shell. Record the choice and tradeoffs.
+- [ ] Compare a native EPUB toolkit (including licensing) with the existing reader in a secure Android shell. The [preliminary evaluation](ANDROID_READER_EVALUATION.md) records candidates and a prototype protocol; a choice requires evidence.
 - [ ] Test representative text-heavy, illustrated and long EPUBs, Pages and Continuous modes, search, table of contents, bookmarks, image zoom and lifecycle recovery.
 - [ ] Validate reading-location capture and restoration, including EPUB CFIs, font/viewport changes, process death and changed editions. Do not assume different reader engines interpret locations identically.
 - [ ] Prove Garden Pass verification, short-lived book tickets and download renewal on Android with the existing same-origin/session requirements; preserve server-side checks. Document any backend change and test it without production credentials.

@@ -6,10 +6,16 @@ on:
   pull_request:
     paths: ['android/**', 'server/**', 'functions/**', 'docs/guides/API_CONTRACTS.md', '.github/workflows/android.yml']
   workflow_dispatch:
+    inputs:
+      emulator:
+        description: 'Run the emulator smoke test instead of the regular build'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
   build:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.emulator }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
@@ -28,4 +34,41 @@ jobs:
       - name: Install Android SDK platform
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
       - name: Build and check Android app
-        run: ./gradlew --no-daemon assembleDebug lintDebug testDebugUnitTest
+        run: ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest lintDebug testDebugUnitTest
+  emulator:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.emulator }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install build SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Enable emulator acceleration
+        run: |
+          test -c /dev/kvm || { echo 'KVM is unavailable on this runner'; exit 1; }
+          sudo chmod a+rw /dev/kvm
+      - name: Run launch and recreation smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          target: default
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
+          script: cd android && ./gradlew --no-daemon connectedDebugAndroidTest
+      - name: Preserve instrumentation report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emulator-smoke-report
+          path: android/app/build/reports/androidTests/
+          if-no-files-found: ignore
+          retention-days: 7
