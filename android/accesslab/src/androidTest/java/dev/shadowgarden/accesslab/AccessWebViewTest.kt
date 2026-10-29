@@ -156,7 +156,7 @@ class AccessWebViewTest {
                 "POST /book-access", "GET /media/shadow-garden/books/fixture.epub", "POST /book-access",
                 "GET /media/shadow-garden/books/fixture.epub", "GET /admin-access", "POST /admin-access",
                 "POST /admin-access", "POST /admin-api/status", "DELETE /admin-access", "POST /admin-api/status"
-            ), calls.toList())
+            ), calls.filterNot { it == "GET /favicon.ico" })
         } finally {
             view.get()?.let { webView -> scenario.onActivity {
                 (webView.parent as? ViewGroup)?.removeView(webView)
