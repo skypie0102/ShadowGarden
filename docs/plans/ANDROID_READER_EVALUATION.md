@@ -1,7 +1,7 @@
 # Android reader evaluation
 
-Status: preliminary source review and test-only EPUB.js prototype, 2026-10-29.
-The prototype is not a production reader and the comparison remains incomplete.
+Status: preliminary source review and reader prototypes, 2026-10-29.
+Neither prototype is a production reader and the comparison remains incomplete.
 The [Android roadmap](ANDROID_ROADMAP.md)
 tracks the required experiments and acceptance criteria.
 
@@ -42,8 +42,35 @@ before the successful run. The earlier timeout was not independently diagnosed.
 This proves only the measured test scenario on the tested Android WebView. It
 does not execute ShadowGarden's reader controllers/extensions, test process
 death, establish a secure production WebView architecture, provide a UI for
-users or implement personal backup. The separate Readium prototype and the
-remaining matrix below are still needed before making a reader choice.
+users or implement personal backup. The remaining matrix below is still needed
+before making a reader choice.
+
+## Readium test harness
+
+An experimental Readium 3.0.0 host is included in debug builds only, with an
+instrumentation test that uses the same generated EPUB as the EPUB.js test. The
+host is not exported and opens only its fixed, test-generated file in private
+cache. The debug manifest removes Internet permission for the experiment. Its
+saved locator lives in test-only preferences; test data are cleaned up afterward.
+The app's release build does not include the Readium dependencies or host.
+
+Version 3.0.0 was selected for this comparison because its documented Android
+compile SDK is compatible with the current SDK 35 scaffold. It is not a decision
+to ship that version. A production choice must re-evaluate current Readium
+versions, transitive licenses, API compatibility and the required SDK upgrade.
+The harness intentionally recreates its navigator after activity recreation; it
+does not implement a production process-death restoration strategy.
+
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40846836749)
+passed all three instrumented tests on Android 9 / API 28 x86_64 at source
+`34f8f44`: the launch smoke test and both EPUB.js and Readium prototypes. For
+Readium, the test checks the target app has no Internet permission, observes the
+first chapter's text, navigates to the second, verifies its rendered text, saves
+the navigator's locator JSON and checks the restored resource and progression
+after activity recreation. A local unsigned release build also succeeded; its
+DEX files contained no Readium or prototype activity names. This is evidence for
+one short EPUB and layout only, not process death, airplane-mode toggling, real
+books, backup compatibility or a full reader comparison.
 
 ## Prototype protocol
 
