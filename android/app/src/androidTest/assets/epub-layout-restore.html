@@ -33,22 +33,36 @@
         range.setEnd(paragraph.firstChild, 'Chapter 12 paragraph 40.'.length);
         cfi = content.cfiFromRange(range);
       }
+      async function measure() {
+        const content = rendition.getContents()[0];
+        const range = content.range(cfi);
+        if (!range) throw new Error('Saved CFI did not resolve');
+        const frame = content.window.frameElement.getBoundingClientRect();
+        const viewport = document.getElementById('viewer').getBoundingClientRect();
+        const rects = Array.from(range.getClientRects());
+        const visible = rects.some(rect => {
+          const left = frame.left + rect.left, right = frame.left + rect.right;
+          const top = frame.top + rect.top, bottom = frame.top + rect.bottom;
+          return right > viewport.left && left < viewport.right && bottom > viewport.top && top < viewport.bottom;
+        });
+        return {content, range, frame, viewport, rects, visible};
+      }
       await rendition.display(cfi);
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      const content = rendition.getContents()[0];
-      const range = content.range(cfi);
-      if (!range) throw new Error('Saved CFI did not resolve');
-      const frame = content.window.frameElement.getBoundingClientRect();
-      const viewport = document.getElementById('viewer').getBoundingClientRect();
-      const rects = Array.from(range.getClientRects());
-      const visible = rects.some(rect => {
-        const left = frame.left + rect.left, right = frame.left + rect.right;
-        const top = frame.top + rect.top, bottom = frame.top + rect.bottom;
-        return right > viewport.left && left < viewport.right && bottom > viewport.top && top < viewport.bottom;
-      });
+      const firstMeasurement = await measure();
+      // Experimental correction only: do not copy this into a production reader
+      // without lifecycle, user-navigation and security review.
+      let measurement = firstMeasurement;
+      if (!measurement.visible) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        await rendition.display(cfi);
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        measurement = await measure();
+      }
+      const {content, range, frame, viewport, rects, visible} = measurement;
       const element = range.startContainer.parentElement;
       window.prototypeResult = {
-        state: 'ready', cfi, text: range.toString(), visible,
+        state: 'ready', cfi, text: range.toString(), visible, firstVisible: firstMeasurement.visible,
         frame: {left: frame.left, top: frame.top, width: frame.width, height: frame.height},
         viewport: {left: viewport.left, top: viewport.top, width: viewport.width, height: viewport.height},
         rects: rects.map(rect => ({left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom})),
