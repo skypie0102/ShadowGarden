@@ -95,11 +95,13 @@ class AccessWebViewTest {
                         }
                     }
                     "POST /admin-api/status" -> {
-                        if (adminActive.get() && cookie.contains("__Host-sg_admin=fixture-session") && request.getHeader("Authorization") == "Bearer keeper-fixture") response(200)
-                        else response(401)
+                        val hasSession = cookie.contains("__Host-sg_admin=fixture-session")
+                        val hasBearer = request.getHeader("Authorization") == "Bearer keeper-fixture"
+                        if (adminActive.get() && hasSession && hasBearer) response(200)
+                        else response(401, """{"active":${adminActive.get()},"hasSession":$hasSession,"hasBearer":$hasBearer}""")
                     }
                     "DELETE /admin-access" -> {
-                        if (!cookie.contains("__Host-sg_admin=fixture-session")) response(401)
+                        if (!cookie.contains("__Host-sg_admin=fixture-session")) response(401, """{"hasSession":false}""")
                         else {
                             adminActive.set(false)
                             response(200).addHeader("set-cookie", "__Host-sg_admin=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict")

@@ -34,8 +34,8 @@ window.accessResult = {state: 'opening'};
     state: 'ready', firstTicket: firstTicket.status, badHuman: badHuman.status, goodHuman: goodHuman.status,
     ticket1: ticket1.status, stale: stale.status, ticket2: ticket2.status, download: download.status,
     downloadedText: downloadedText, keeperAction: challenge.value.action,
-    badKeeper: badKeeper.status, goodKeeper: goodKeeper.status, status: status.status,
-    logout: logout.status, afterLogout: afterLogout.status, documentCookie: document.cookie
+    badKeeper: badKeeper.status, goodKeeper: goodKeeper.status, status: status.status, statusDetails: status.value,
+    logout: logout.status, logoutDetails: logout.value, afterLogout: afterLogout.status, documentCookie: document.cookie
   };
 })().catch(error => {
   window.accessResult = {state: 'error', message: String((error && error.message) || error)};
