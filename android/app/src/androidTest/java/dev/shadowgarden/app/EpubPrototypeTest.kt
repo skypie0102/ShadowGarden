@@ -69,7 +69,7 @@ class EpubPrototypeTest {
             val restored = awaitResult(view)
             assertEquals(cfi, restored.getString("cfi"))
             assertEquals("Chapter 12 paragraph 40.", restored.getString("text"))
-            assertTrue("The saved passage must be in the changed viewport", restored.getBoolean("visible"))
+            assertTrue("The saved passage must be in the changed viewport: $restored", restored.getBoolean("visible"))
             assertEquals(220, restored.getInt("width"))
             assertEquals(260, restored.getInt("height"))
             assertTrue("The font must actually become larger", restored.getDouble("fontSize") > first.getDouble("fontSize") * 1.4)

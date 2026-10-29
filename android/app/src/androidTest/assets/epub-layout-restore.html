@@ -49,6 +49,10 @@
       const element = range.startContainer.parentElement;
       window.prototypeResult = {
         state: 'ready', cfi, text: range.toString(), visible,
+        frame: {left: frame.left, top: frame.top, width: frame.width, height: frame.height},
+        viewport: {left: viewport.left, top: viewport.top, width: viewport.width, height: viewport.height},
+        rects: rects.map(rect => ({left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom})),
+        scroll: {x: content.window.scrollX, y: content.window.scrollY},
         fontSize: parseFloat(content.window.getComputedStyle(element).fontSize),
         width: viewport.width, height: viewport.height
       };
