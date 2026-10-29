@@ -1,7 +1,8 @@
 # Android reader evaluation
 
-Status: preliminary source review, 2026-10-29. No Android reader prototype or
-production reader choice has been validated yet. The [Android roadmap](ANDROID_ROADMAP.md)
+Status: preliminary source review and test-only EPUB.js prototype, 2026-10-29.
+The prototype is not a production reader and the comparison remains incomplete.
+The [Android roadmap](ANDROID_ROADMAP.md)
 tracks the required experiments and acceptance criteria.
 
 ## Candidates
@@ -18,6 +19,31 @@ The user's Android progress is separate from website browser data. Direct
 website-to-app CFI migration is not a product requirement; location stability
 within Android, including after backup and restore, is. Comparing locations still
 helps assess whether reusing the website reader preserves its behavior.
+
+## EPUB.js test harness
+
+`android/app/src/androidTest/` contains an isolated prototype using the site's
+pinned EPUB.js and JSZip files in the instrumentation APK only. It generates an
+original, two-chapter EPUB in app-private cache, serves only that file and the
+two vendor scripts through a synthetic origin, and blocks other intercepted
+requests. It disables WebView file/content access and exposes no JavaScript
+bridge. The test opens the EPUB, navigates to chapter two, saves its CFI in a
+test-only preference, recreates the activity and checks that the same chapter and
+CFI are restored. Test data are removed afterward.
+
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40836852045)
+passed both the launch smoke test and this EPUB test on Android 9 / API 28
+x86_64 at source `040d165`. The generated book and vendor resources were served
+locally by the test harness; the app declares no Internet permission. This run
+did not toggle airplane mode or use a real book. An earlier run timed out; the
+test page's optional-chaining syntax was removed and diagnostic reporting added
+before the successful run. The earlier timeout was not independently diagnosed.
+
+This proves only the measured test scenario on the tested Android WebView. It
+does not execute ShadowGarden's reader controllers/extensions, test process
+death, establish a secure production WebView architecture, provide a UI for
+users or implement personal backup. The separate Readium prototype and the
+remaining matrix below are still needed before making a reader choice.
 
 ## Prototype protocol
 

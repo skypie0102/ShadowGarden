@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline EPUB prototype</title>
+  <style>html,body,#viewer { width: 100%; height: 100%; margin: 0; }</style>
+  <script src="/jszip.min.js"></script>
+  <script src="/epub.min.js"></script>
+</head>
+<body>
+  <div id="viewer"></div>
+  <script>
+    window.prototypeResult = {state: 'opening'};
+    (async () => {
+      const response = await fetch('/fixture.epub');
+      if (!response.ok) throw new Error('Fixture could not be loaded');
+      window.prototypeResult = {state: 'reading-archive'};
+      const book = ePub(await response.arrayBuffer());
+      await book.ready;
+      window.prototypeResult = {state: 'rendering'};
+      const rendition = book.renderTo('viewer', {
+        width: '100%', height: '100%', flow: 'paginated', allowScriptedContent: false
+      });
+      const restoredCfi = __RESTORED_CFI__;
+      if (restoredCfi) {
+        await rendition.display(restoredCfi);
+      } else {
+        await rendition.display();
+        await rendition.display('chapter2.xhtml');
+      }
+      const location = await rendition.currentLocation();
+      const contents = rendition.getContents();
+      const text = contents.map(content => content.document.body.textContent).join(' ');
+      window.prototypeResult = {
+        state: 'ready', cfi: (location && location.start && location.start.cfi) || '',
+        href: (location && location.start && location.start.href) || '',
+        chapterTwoVisible: text.includes('A quiet second chapter begins here.')
+      };
+    })().catch(error => {
+      window.prototypeResult = {state: 'error', message: String((error && error.message) || error)};
+    });
+  </script>
+</body>
+</html>

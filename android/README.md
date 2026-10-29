@@ -36,11 +36,17 @@ The emulator smoke test in [Android checks](../.github/workflows/android.yml) is
 manual-only; it is not part of normal pull request or push checks. From GitHub,
 open **Actions → Android checks → Run workflow**, choose the branch, enable
 **Run the emulator smoke test instead of the regular build**, and start it. The
-job uses an API 28 emulator and runs the instrumented
-launch/recreation test with `connectedDebugAndroidTest`. An instrumentation
+job uses an API 28 emulator and runs the instrumented launch/recreation test and
+the experimental offline EPUB.js harness with `connectedDebugAndroidTest`. An instrumentation
 report is retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
 Physical-device testing is reserved for milestones that require it, such as
 touch behavior, background audio and release acceptance.
+
+The EPUB.js harness is test-only: it creates a small original EPUB in app-private
+cache, reads it offline through an isolated WebView, and tests chapter navigation
+and CFI restoration after activity recreation. The website's pinned vendor files
+are packaged only into the test APK. It does not implement the application reader,
+save user progress or prove the website's reader extensions work on Android.
