@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline EPUB layout restoration experiment</title>
+  <style>html,body { margin: 0; } #viewer { width: __WIDTH__px; height: __HEIGHT__px; overflow: hidden; }</style>
+  <script src="/jszip.min.js"></script>
+  <script src="/epub.min.js"></script>
+</head>
+<body>
+  <div id="viewer"></div>
+  <script>
+    window.prototypeResult = {state: 'opening'};
+    (async () => {
+      const response = await fetch('/fixture.epub');
+      if (!response.ok) throw new Error('Fixture could not be loaded');
+      const book = ePub(await response.arrayBuffer());
+      await book.ready;
+      const rendition = book.renderTo('viewer', {
+        width: __WIDTH__, height: __HEIGHT__, flow: 'paginated', spread: 'none', allowScriptedContent: false
+      });
+      rendition.themes.fontSize('__FONT_SIZE__%');
+      let cfi = __RESTORED_CFI__;
+      if (!cfi) {
+        await rendition.display('chapter12.xhtml');
+        const content = rendition.getContents()[0];
+        const paragraph = Array.from(content.document.querySelectorAll('p'))
+          .find(element => element.textContent.includes('Chapter 12 paragraph 40.'));
+        if (!paragraph || !paragraph.firstChild) throw new Error('Passage not found');
+        const range = content.document.createRange();
+        range.setStart(paragraph.firstChild, 0);
+        range.setEnd(paragraph.firstChild, 'Chapter 12 paragraph 40.'.length);
+        cfi = content.cfiFromRange(range);
+      }
+      async function measure() {
+        const content = rendition.getContents()[0];
+        const range = content.range(cfi);
+        if (!range) throw new Error('Saved CFI did not resolve');
+        const frame = content.window.frameElement.getBoundingClientRect();
+        const viewport = document.getElementById('viewer').getBoundingClientRect();
+        const rects = Array.from(range.getClientRects());
+        const visible = rects.some(rect => {
+          const left = frame.left + rect.left, right = frame.left + rect.right;
+          const top = frame.top + rect.top, bottom = frame.top + rect.bottom;
+          return right > viewport.left && left < viewport.right && bottom > viewport.top && top < viewport.bottom;
+        });
+        return {content, range, frame, viewport, rects, visible};
+      }
+      await rendition.display(cfi);
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const firstMeasurement = await measure();
+      // Experimental correction only: do not copy this into a production reader
+      // without lifecycle, user-navigation and security review.
+      let measurement = firstMeasurement;
+      if (!measurement.visible) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        await rendition.display(cfi);
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        measurement = await measure();
+      }
+      const {content, range, frame, viewport, rects, visible} = measurement;
+      const element = range.startContainer.parentElement;
+      window.prototypeResult = {
+        state: 'ready', cfi, text: range.toString(), visible, firstVisible: firstMeasurement.visible,
+        frame: {left: frame.left, top: frame.top, width: frame.width, height: frame.height},
+        viewport: {left: viewport.left, top: viewport.top, width: viewport.width, height: viewport.height},
+        rects: rects.map(rect => ({left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom})),
+        scroll: {x: content.window.scrollX, y: content.window.scrollY},
+        fontSize: parseFloat(content.window.getComputedStyle(element).fontSize),
+        width: viewport.width, height: viewport.height
+      };
+    })().catch(error => {
+      window.prototypeResult = {state: 'error', message: String((error && error.message) || error)};
+    });
+  </script>
+</body>
+</html>

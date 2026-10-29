@@ -91,6 +91,38 @@ passed all five instrumented tests on Android 9 / API 28 x86_64 at source
 not cover EPUB 2, image zoom, continuous scrolling, changing font or viewport,
 process death, large real-world publications, or untrusted-content security.
 
+## EPUB.js passage and layout experiment
+
+An additional instrumentation case selects a passage in paragraph 40 of the
+last chapter of the generated EPUB 3, derives a range CFI, and displays it. It
+saves the CFI to test-only preferences, recreates the activity, changes the
+reader viewport from 280 × 340 to 220 × 260 CSS pixels and increases the font
+size from 100% to 160%, then restores the range. It checks the actual font and
+viewport sizes and whether the selected range intersects the reader viewport.
+This deliberately uses an explicitly selected passage; it does not yet test
+capturing the current page's reading location in ordinary navigation.
+
+The initial [emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40872894985)
+failed the changed-viewport visibility assertion. A
+[diagnostic rerun](https://github.com/skypie0102/ShadowGarden/actions/runs/40873516640)
+at source `336d961` reproduced this: the CFI resolved to the selected text,
+but its rectangle was approximately 1,329 CSS pixels to the right of the
+220-pixel viewport. This does not establish the cause or apply to the website's
+resume controller.
+
+The harness was then changed to wait 200 ms and redisplay the same CFI if its
+first measurement falls outside the viewport. The subsequent [emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40874280556)
+at source `5c553c9` passed all six instrumented tests on Android 9 / API 28.
+The conditional retry is a test experiment, not a production-ready fix; the
+passing run does not establish whether the retry was needed in that run or
+that the delay is reliable. The visibility check measures rectangle overlap,
+not screenshot pixels or how much text can be read.
+
+This is a test-only EPUB.js harness, not the website's reader controllers or a
+production Android reader; it does not cover process death, rotation, continuous
+mode, changed editions, or other books. The same layout case has not yet been
+run with Readium.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated
