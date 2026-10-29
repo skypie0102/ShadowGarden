@@ -37,7 +37,7 @@ manual-only; it is not part of normal pull request or push checks. From GitHub,
 open **Actions → Android checks → Run workflow**, choose the branch, enable
 **Run the emulator smoke test instead of the regular build**, and start it. The
 job uses an API 28 emulator and runs the instrumented launch/recreation test and
-the experimental offline EPUB.js harness with `connectedDebugAndroidTest`. An instrumentation
+the experimental offline EPUB.js and Readium harnesses with `connectedDebugAndroidTest`. An instrumentation
 report is retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
 
@@ -50,3 +50,8 @@ cache, reads it offline through an isolated WebView, and tests chapter navigatio
 and CFI restoration after activity recreation. The website's pinned vendor files
 are packaged only into the test APK. It does not implement the application reader,
 save user progress or prove the website's reader extensions work on Android.
+
+The Readium comparison is a non-exported debug-only test host using the same
+generated EPUB. It does not provide an app reader or implement progress backup.
+The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
+prototype constraints and results.
