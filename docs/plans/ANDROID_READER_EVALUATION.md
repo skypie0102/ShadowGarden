@@ -102,9 +102,26 @@ viewport sizes and whether the selected range intersects the reader viewport.
 This deliberately uses an explicitly selected passage; it does not yet test
 capturing the current page's reading location in ordinary navigation.
 
-Emulator verification is pending. This is a test-only EPUB.js harness, not the
-website's reader controllers or a production Android reader; it does not cover
-process death, rotation, continuous mode, changed editions, or other books.
+The initial [emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40872894985)
+failed the changed-viewport visibility assertion. A
+[diagnostic rerun](https://github.com/skypie0102/ShadowGarden/actions/runs/40873516640)
+at source `336d961` reproduced this: the CFI resolved to the selected text,
+but its rectangle was approximately 1,329 CSS pixels to the right of the
+220-pixel viewport. This does not establish the cause or apply to the website's
+resume controller.
+
+The harness was then changed to wait 200 ms and redisplay the same CFI if its
+first measurement falls outside the viewport. The subsequent [emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40874280556)
+at source `5c553c9` passed all six instrumented tests on Android 9 / API 28.
+The conditional retry is a test experiment, not a production-ready fix; the
+passing run does not establish whether the retry was needed in that run or
+that the delay is reliable. The visibility check measures rectangle overlap,
+not screenshot pixels or how much text can be read.
+
+This is a test-only EPUB.js harness, not the website's reader controllers or a
+production Android reader; it does not cover process death, rotation, continuous
+mode, changed editions, or other books. The same layout case has not yet been
+run with Readium.
 
 ## Prototype protocol
 
