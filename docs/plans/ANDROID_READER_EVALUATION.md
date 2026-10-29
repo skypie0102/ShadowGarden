@@ -120,8 +120,18 @@ not screenshot pixels or how much text can be read.
 
 This is a test-only EPUB.js harness, not the website's reader controllers or a
 production Android reader; it does not cover process death, rotation, continuous
-mode, changed editions, or other books. The same layout case has not yet been
-run with Readium.
+mode, changed editions, or other books.
+
+## Readium passage and layout experiment
+
+A debug-only Readium 3.0.0 test selects the same paragraph in the generated
+EPUB 3 using a locator with a text highlight. It saves that explicit locator,
+recreates the activity with a smaller reader container and a larger Readium
+font preference, and checks that the paragraph intersects the visible WebView
+area. This does not capture the current reading position during ordinary page
+turns. The EPUB.js and Readium locators and layout engines differ, so the two
+experiments are comparable scenarios, not interchangeable location formats.
+Emulator verification is pending.
 
 ## Prototype protocol
 
