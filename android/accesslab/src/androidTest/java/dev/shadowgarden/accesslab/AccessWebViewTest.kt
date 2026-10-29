@@ -63,7 +63,8 @@ class AccessWebViewTest {
                 val path = request.requestUrl?.encodedPath ?: return response(400)
                 calls.add("${request.method} $path")
                 if (request.method != "GET" && request.getHeader("Origin") != origin) return response(403)
-                val cookie = request.getHeader("Cookie").orEmpty()
+                // HTTP/2 may split cookies across header fields; combine all of them.
+                val cookie = request.headers.values("Cookie").joinToString("; ")
                 fun body(): JSONObject = runCatching { JSONObject(request.body.readUtf8()) }.getOrDefault(JSONObject())
                 return when ("${request.method} $path") {
                     "GET /" -> MockResponse().setResponseCode(200)
