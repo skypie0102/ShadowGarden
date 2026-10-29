@@ -59,8 +59,18 @@ compile SDK is compatible with the current SDK 35 scaffold. It is not a decision
 to ship that version. A production choice must re-evaluate current Readium
 versions, transitive licenses, API compatibility and the required SDK upgrade.
 The harness intentionally recreates its navigator after activity recreation; it
-does not implement a production process-death restoration strategy. Its actual
-runtime behavior remains to be verified on the emulator.
+does not implement a production process-death restoration strategy.
+
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40846836749)
+passed all three instrumented tests on Android 9 / API 28 x86_64 at source
+`34f8f44`: the launch smoke test and both EPUB.js and Readium prototypes. For
+Readium, the test checks the target app has no Internet permission, observes the
+first chapter's text, navigates to the second, verifies its rendered text, saves
+the navigator's locator JSON and checks the restored resource and progression
+after activity recreation. A local unsigned release build also succeeded; its
+DEX files contained no Readium or prototype activity names. This is evidence for
+one short EPUB and layout only, not process death, airplane-mode toggling, real
+books, backup compatibility or a full reader comparison.
 
 ## Prototype protocol
 

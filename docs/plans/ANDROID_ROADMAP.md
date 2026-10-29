@@ -64,7 +64,7 @@ behavior is essential.
 
 - [ ] Compare a native EPUB toolkit (including licensing) with the existing reader in a secure Android shell. The [preliminary evaluation](ANDROID_READER_EVALUATION.md) records candidates and a prototype protocol; a choice requires evidence.
 - [x] Validate the isolated EPUB.js test harness on the manual emulator: generated local EPUB, chapter navigation and CFI restoration after activity recreation. The [evidence](ANDROID_READER_EVALUATION.md#epubjs-test-harness) is not a production reader or process-death test.
-- [ ] Validate the Readium debug-only prototype on the same generated EPUB, including rendering, chapter navigation and locator restoration after activity recreation.
+- [x] Validate the Readium debug-only prototype on the same generated EPUB, including rendering, chapter navigation and locator restoration after activity recreation. See [test evidence](ANDROID_READER_EVALUATION.md#readium-test-harness).
 - [ ] Test representative text-heavy, illustrated and long EPUBs, Pages and Continuous modes, search, table of contents, bookmarks, image zoom and lifecycle recovery.
 - [ ] Validate reading-location capture and restoration, including EPUB CFIs, font/viewport changes, process death and changed editions. Do not assume different reader engines interpret locations identically.
 - [ ] Prove Garden Pass verification, short-lived book tickets and download renewal on Android with the existing same-origin/session requirements; preserve server-side checks. Document any backend change and test it without production credentials.
