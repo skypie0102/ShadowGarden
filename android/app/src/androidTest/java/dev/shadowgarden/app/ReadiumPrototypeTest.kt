@@ -142,9 +142,11 @@ class ReadiumPrototypeTest {
                 ?: throw AssertionError("Current locator was not saved")
             assertEquals("The saved sample must match the observed stable locator", before.locator.href, saved.href)
             assertEquals(before.locator.locations.progression, saved.locations.progression)
+            Log.i("SGReaderProbe", "Before recreation: paragraph=${before.paragraph}; saved=${saved.toJSON()}")
 
             scenario.recreate()
             val same = awaitStableViewport(scenario, 0.0, 280, 340)
+            Log.i("SGReaderProbe", "Same layout: paragraph=${same.paragraph}; locator=${same.locator.toJSON()}")
             assertTrue(preferences.edit()
                 .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
                 .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)
