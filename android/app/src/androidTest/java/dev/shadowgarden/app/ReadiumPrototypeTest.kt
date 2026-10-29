@@ -343,7 +343,7 @@ class ReadiumPrototypeTest {
                           const match = /^Chapter 12 paragraph (\d+)\./.exec(p.textContent);
                           if (!match || !p.firstChild) continue;
                           const range = document.createRange();
-                          range.setStart(p.firstChild, 0); range.setEnd(p.firstChild, match[0].length);
+                          range.selectNodeContents(p);
                           const visible = Array.from(range.getClientRects()).some(r =>
                             r.right > innerWidth * $left && r.left < innerWidth * $right &&
                             r.bottom > innerHeight * $top && r.top < innerHeight * $bottom);
