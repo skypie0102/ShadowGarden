@@ -6,13 +6,16 @@ import android.os.SystemClock
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.ConsoleMessage
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.webkit.WebChromeClient
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import java.util.zip.CRC32
@@ -32,6 +35,7 @@ class EpubPrototypeTest {
     private val testAssets = instrumentation.context.assets
     private val appContext = instrumentation.targetContext
     private val origin = "https://epub-prototype.invalid/"
+    private val consoleMessages = CopyOnWriteArrayList<String>()
 
     @Test
     fun opensLocalEpubAndRestoresChapterAfterRecreation() {
@@ -76,6 +80,12 @@ class EpubPrototypeTest {
             webView.settings.javaScriptEnabled = true
             webView.settings.allowFileAccess = false
             webView.settings.allowContentAccess = false
+            webView.webChromeClient = object : WebChromeClient() {
+                override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+                    consoleMessages.add("${message.message()} (line ${message.lineNumber()})")
+                    return true
+                }
+            }
             webView.webViewClient = object : WebViewClient() {
                 override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse {
                     val url: Uri = request.url
@@ -104,6 +114,7 @@ class EpubPrototypeTest {
 
     private fun awaitResult(view: WebView): JSONObject {
         val deadline = SystemClock.elapsedRealtime() + 30_000
+        var lastResponse = "unavailable"
         while (SystemClock.elapsedRealtime() < deadline) {
             val response = AtomicReference<String>()
             val latch = CountDownLatch(1)
@@ -114,6 +125,7 @@ class EpubPrototypeTest {
                 }
             }
             assertTrue("WebView evaluation timed out", latch.await(5, TimeUnit.SECONDS))
+            lastResponse = response.get()
             val value = JSONTokener(response.get()).nextValue()
             if (value is String) {
                 val state = JSONObject(value)
@@ -122,7 +134,7 @@ class EpubPrototypeTest {
             }
             SystemClock.sleep(100)
         }
-        throw AssertionError("The EPUB prototype did not finish loading")
+        throw AssertionError("The EPUB prototype did not finish loading: $lastResponse; console: $consoleMessages")
     }
 
     private fun closeHarness(scenario: ActivityScenario<MainActivity>, view: WebView) {
