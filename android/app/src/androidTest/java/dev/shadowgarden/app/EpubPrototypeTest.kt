@@ -36,17 +36,28 @@ class EpubPrototypeTest {
 
     @Test
     fun opensLocalEpubAndRestoresChapterAfterRecreation() {
+        runFixture(false, "chapter2.xhtml", "A quiet second chapter begins here.", 2)
+    }
+
+    @Test
+    fun opensLongIllustratedEpubAndRestoresFinalChapter() {
+        runFixture(true, "chapter12.xhtml", "Final chapter marker.", 12)
+    }
+
+    private fun runFixture(extended: Boolean, href: String, marker: String, tocCount: Int) {
         val fixture = File(appContext.cacheDir, "epub-prototype-fixture.epub")
         val preferences = appContext.getSharedPreferences("epub-prototype-test", Context.MODE_PRIVATE)
         preferences.edit().clear().commit()
-        EpubFixture.create(fixture)
+        EpubFixture.create(fixture, extended)
         val scenario = ActivityScenario.launch(MainActivity::class.java)
         var view: WebView? = null
         try {
-            view = openHarness(scenario, fixture, null)
+            view = openHarness(scenario, fixture, null, href, marker)
             val first = awaitResult(view)
-            assertEquals("chapter2.xhtml", first.getString("href"))
-            assertTrue("The second chapter should be rendered", first.getBoolean("chapterTwoVisible"))
+            assertEquals(href, first.getString("href"))
+            assertEquals(tocCount, first.getInt("tocCount"))
+            if (extended) assertTrue("Illustration should decode", first.getBoolean("imageLoaded"))
+            assertTrue("The target chapter should contain its marker", first.getBoolean("markerPresent"))
             val cfi = first.getString("cfi")
             assertTrue("An EPUB CFI should be captured", cfi.startsWith("epubcfi("))
             assertTrue(preferences.edit().putString("location", cfi).commit())
@@ -55,10 +66,10 @@ class EpubPrototypeTest {
             view = null
             scenario.recreate()
 
-            view = openHarness(scenario, fixture, preferences.getString("location", null))
+            view = openHarness(scenario, fixture, preferences.getString("location", null), href, marker)
             val restored = awaitResult(view)
-            assertEquals("chapter2.xhtml", restored.getString("href"))
-            assertTrue("The saved chapter should be rendered after recreation", restored.getBoolean("chapterTwoVisible"))
+            assertEquals(href, restored.getString("href"))
+            assertTrue("The restored chapter should contain its marker", restored.getBoolean("markerPresent"))
             assertEquals("Restoration should return to the same CFI", cfi, restored.getString("cfi"))
         } finally {
             view?.let { closeHarness(scenario, it) }
@@ -68,9 +79,11 @@ class EpubPrototypeTest {
         }
     }
 
-    private fun openHarness(scenario: ActivityScenario<MainActivity>, fixture: File, cfi: String?): WebView {
+    private fun openHarness(scenario: ActivityScenario<MainActivity>, fixture: File, cfi: String?, href: String, marker: String): WebView {
         val html = testAssets.open("epub-prototype.html").bufferedReader().use { it.readText() }
             .replace("__RESTORED_CFI__", cfi?.let(JSONObject::quote) ?: "null")
+            .replace("__TARGET_HREF__", JSONObject.quote(href))
+            .replace("__MARKER__", JSONObject.quote(marker))
         val result = AtomicReference<WebView>()
         scenario.onActivity { activity ->
             val webView = WebView(activity)
