@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -112,6 +113,49 @@ class ReadiumPrototypeTest {
                 .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1.6f).commit())
             scenario.recreate()
             awaitVisiblePassage(scenario, initialFontSize * 1.4, 220, 260)
+        } finally {
+            scenario.close()
+            preferences.edit().clear().commit()
+            fixture.delete()
+        }
+    }
+
+    /** Records page-start observations; it does not claim exact passage recovery. */
+    @Test
+    fun observesCurrentLocationAcrossLayoutChanges() {
+        val fixture = File(appContext.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME)
+        val preferences = appContext.getSharedPreferences(ReadiumPrototypeActivity.PREFERENCES, Context.MODE_PRIVATE)
+        preferences.edit().clear()
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 280)
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 340)
+            .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1f).commit()
+        EpubFixture.create(fixture, true)
+        val scenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+        try {
+            awaitChapter(scenario, "chapter1.xhtml", "Chapter 1 paragraph 1.")
+            scenario.onActivity { assertTrue("Passage navigation should be accepted", it.goToPassage()) }
+            awaitVisiblePassage(scenario, 0.0, 280, 340)
+            val before = awaitStableViewport(scenario, 0.0, 280, 340)
+            scenario.onActivity { assertTrue("Current location should be saved", it.saveLocation()) }
+            val saved = preferences.getString(ReadiumPrototypeActivity.LOCATION, null)
+                ?.let { Locator.fromJSON(JSONObject(it)) }
+                ?: throw AssertionError("Current locator was not saved")
+            assertEquals("The saved sample must match the observed stable locator", before.locator.href, saved.href)
+            assertEquals(before.locator.locations.progression, saved.locations.progression)
+
+            scenario.recreate()
+            val same = awaitStableViewport(scenario, 0.0, 280, 340)
+            assertTrue(preferences.edit()
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)
+                .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1.6f).commit())
+            scenario.recreate()
+            val changed = awaitStableViewport(scenario, before.fontSize * 1.4, 220, 260)
+            // Only generated paragraph numbers and relative positions are logged.
+            Log.i("SGReaderProbe", "Readium current locator: before=${before.paragraph}, " +
+                "same=${same.paragraph}, changed=${changed.paragraph}; " +
+                "progress=${saved.locations.progression}; sameProgress=${same.locator.locations.progression}; " +
+                "changedProgress=${changed.locator.locations.progression}")
         } finally {
             scenario.close()
             preferences.edit().clear().commit()
@@ -255,6 +299,89 @@ class ReadiumPrototypeTest {
             SystemClock.sleep(100)
         }
         throw AssertionError("Passage not visible at expected layout: $lastState")
+    }
+
+    private data class ViewportSample(val locator: Locator, val paragraph: Int, val fontSize: Double)
+
+    private fun awaitStableViewport(
+        scenario: ActivityScenario<ReadiumPrototypeActivity>, minimumFontSize: Double, widthDp: Int, heightDp: Int
+    ): ViewportSample {
+        val deadline = SystemClock.elapsedRealtime() + 45_000
+        var previous: ViewportSample? = null
+        var stableSince = 0L
+        var lastState = "not started"
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val states = CopyOnWriteArrayList<String>()
+            val failure = AtomicReference<String?>()
+            val locator = AtomicReference<Locator?>()
+            val pendingRef = AtomicReference<CountDownLatch>()
+            val viewport = AtomicReference<String>()
+            scenario.onActivity { activity ->
+                failure.set(activity.failure)
+                locator.set(activity.navigator?.currentLocator?.value)
+                val container = activity.findViewById<View>(R.id.readium_prototype_container)
+                val density = activity.resources.displayMetrics.density
+                val dimensionsMatch = container.width == (widthDp * density).toInt() && container.height == (heightDp * density).toInt()
+                viewport.set("${container.width}x${container.height}")
+                val views = visibleWebViews(container)
+                val pending = CountDownLatch(views.size)
+                pendingRef.set(pending)
+                views.forEach { webView ->
+                    val clip = Rect()
+                    webView.getGlobalVisibleRect(clip)
+                    val screen = IntArray(2)
+                    webView.getLocationOnScreen(screen)
+                    val left = (clip.left - screen[0]).toDouble() / webView.width
+                    val top = (clip.top - screen[1]).toDouble() / webView.height
+                    val right = (clip.right - screen[0]).toDouble() / webView.width
+                    val bottom = (clip.bottom - screen[1]).toDouble() / webView.height
+                    val script = """JSON.stringify((function() {
+                        const ps = Array.from(document.querySelectorAll('p'));
+                        for (const p of ps) {
+                          const match = /^Chapter 12 paragraph (\d+)\./.exec(p.textContent);
+                          if (!match || !p.firstChild) continue;
+                          const range = document.createRange();
+                          range.setStart(p.firstChild, 0); range.setEnd(p.firstChild, match[0].length);
+                          const visible = Array.from(range.getClientRects()).some(r =>
+                            r.right > innerWidth * $left && r.left < innerWidth * $right &&
+                            r.bottom > innerHeight * $top && r.top < innerHeight * $bottom);
+                          if (visible) return {paragraph: Number(match[1]), fontSize: parseFloat(getComputedStyle(p).fontSize)};
+                        }
+                        return {};
+                    })())""".trimIndent()
+                    webView.evaluateJavascript(script) { result ->
+                        val value = runCatching { JSONTokener(result).nextValue() }.getOrNull()
+                        val document = if (value is String) runCatching { JSONObject(value) }.getOrNull() else null
+                        if (document != null) {
+                            document.put("dimensionsMatch", dimensionsMatch)
+                            states.add(document.toString())
+                        }
+                        pending.countDown()
+                    }
+                }
+            }
+            failure.get()?.let { throw AssertionError("Readium could not open the fixture: $it") }
+            assertTrue("Reading WebView timed out", pendingRef.get().await(5, TimeUnit.SECONDS))
+            val current = locator.get()
+            lastState = "locator=$current; viewport=${viewport.get()}; views=$states"
+            val found = states.map(::JSONObject).firstOrNull {
+                it.optBoolean("dimensionsMatch") && it.optInt("paragraph") in 1..80 &&
+                    it.optDouble("fontSize", 0.0) > minimumFontSize
+            }
+            val sample = if (current != null && current.href.toString().endsWith("chapter12.xhtml") &&
+                (current.locations.progression ?: 0.0) > 0.05 && found != null) {
+                ViewportSample(current, found.getInt("paragraph"), found.getDouble("fontSize"))
+            } else null
+            if (sample != null && previous?.paragraph == sample.paragraph &&
+                previous.locator.locations.progression == sample.locator.locations.progression) {
+                if (SystemClock.elapsedRealtime() - stableSince >= 600) return sample
+            } else {
+                previous = sample
+                stableSince = SystemClock.elapsedRealtime()
+            }
+            SystemClock.sleep(100)
+        }
+        throw AssertionError("No stable viewport sample: $lastState")
     }
 
     private fun visibleWebViews(root: View): List<WebView> {

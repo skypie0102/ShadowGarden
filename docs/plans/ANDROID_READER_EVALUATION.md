@@ -166,6 +166,14 @@ Remove the annotation in an experimental branch to investigate. Measure the
 actual saved passage or page start, repeat the scenario and investigate recovery
 before relying on this locator for Android progress.
 
+A follow-up diagnostic samples the first visible generated paragraph and waits
+for both that paragraph and Readium's reported progression to remain unchanged
+for 600 ms before saving. It observes the paragraph after recreation with the
+same layout and then with the smaller viewport and larger text. It logs only
+generated paragraph numbers and relative progression, and checks that usable
+samples and the requested layout are present; it does not assert that the same
+passage must remain visible. Emulator results are pending.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated
