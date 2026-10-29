@@ -23,19 +23,25 @@
         width: '100%', height: '100%', flow: 'paginated', allowScriptedContent: false
       });
       const restoredCfi = __RESTORED_CFI__;
+      const targetHref = __TARGET_HREF__;
+      const marker = __MARKER__;
+      const navigation = await book.loaded.navigation;
       if (restoredCfi) {
         await rendition.display(restoredCfi);
       } else {
         await rendition.display();
-        await rendition.display('chapter2.xhtml');
+        await rendition.display(targetHref);
       }
       const location = await rendition.currentLocation();
       const contents = rendition.getContents();
       const text = contents.map(content => content.document.body.textContent).join(' ');
+      const image = contents[0].document.querySelector('img');
+      if (image && !image.complete) await new Promise(resolve => { image.onload = resolve; image.onerror = resolve; });
       window.prototypeResult = {
+        tocCount: navigation.toc.length, imageLoaded: !!(image && image.complete && image.naturalWidth > 0),
         state: 'ready', cfi: (location && location.start && location.start.cfi) || '',
         href: (location && location.start && location.start.href) || '',
-        chapterTwoVisible: text.includes('A quiet second chapter begins here.')
+        markerPresent: text.includes(marker)
       };
     })().catch(error => {
       window.prototypeResult = {state: 'error', message: String((error && error.message) || error)};

@@ -72,6 +72,23 @@ DEX files contained no Readium or prototype activity names. This is evidence for
 one short EPUB and layout only, not process death, airplane-mode toggling, real
 books, backup compatibility or a full reader comparison.
 
+## Extended generated fixture
+
+The instrumentation suite also generates a reflowable EPUB 3 with 12 chapters,
+80 short paragraphs per chapter, a 12-entry table of contents and an original
+256 × 192 PNG in the last chapter. Both prototypes use the same book. Each test
+checks the table-of-contents entry count, opens the final chapter, checks its
+marker and that the image decodes, saves a location and recreates the activity.
+The tests inspect the chapter document and image loading; they do not verify
+that the marker or illustration is visible within the current page viewport.
+The EPUB.js test compares its restored CFI; the Readium test compares its saved
+resource and progression. The prototypes remain offline with no app Internet
+permission, and test files and preferences are removed afterward.
+
+Emulator verification of this additional fixture is pending. It does not cover
+EPUB 2, image zoom, continuous scrolling, changing font or viewport, process
+death, large real-world publications, or untrusted-content security.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated

@@ -57,8 +57,10 @@ class ReadiumPrototypeActivity : FragmentActivity() {
         }
     }
 
-    fun goToSecondChapter(): Boolean =
-        publication?.readingOrder?.getOrNull(1)?.let { navigator?.go(it) } ?: false
+    fun goToChapter(index: Int): Boolean =
+        publication?.readingOrder?.getOrNull(index)?.let { navigator?.go(it) } ?: false
+
+    fun tableOfContentsSize(): Int = publication?.tableOfContents?.size ?: 0
 
     fun saveLocation(): Boolean {
         val locator = navigator?.currentLocator?.value ?: return false
