@@ -168,11 +168,26 @@ before relying on this locator for Android progress.
 
 A follow-up diagnostic samples the first visible generated paragraph and waits
 for both that paragraph and Readium's reported progression to remain unchanged
-for 600 ms before saving. It observes the paragraph after recreation with the
-same layout and then with the smaller viewport and larger text. It logs only
-generated paragraph numbers and relative progression, and checks that usable
-samples and the requested layout are present; it does not assert that the same
-passage must remain visible. Emulator results are pending.
+for 600 ms before saving. It observes the first paragraph with any text
+intersecting the viewport after recreation with the same layout and then with
+the smaller viewport and larger text. It logs generated fixture information,
+checks that usable samples and the requested layout are present, and does not
+assert that the same passage must remain visible.
+
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40962144629)
+at source `78351f7` passed on Android 9 / API 28; the earlier strict test remained
+skipped. The first visible paragraph was 39 before capture, 39 after unchanged
+recreation, and 39 after the resized, larger-text recreation. Saved progression
+was approximately 0.4857; after reflow the navigator reported approximately
+0.4835. This suggests the earlier off-screen paragraph 40 was not the start of
+the observed page, but does not prove which text character the locator represents
+or that no text was skipped. It is one run with synthetic text.
+
+An earlier [diagnostic run](https://github.com/skypie0102/ShadowGarden/actions/runs/40961286935)
+observed paragraph 40 before and after unchanged recreation but could not sample
+the resized page: the probe incorrectly required paragraph labels to be visible.
+The follow-up checks the full text range instead. Other layout and lifecycle
+scenarios, real books, and an accurate production capture policy remain open.
 
 ## Prototype protocol
 

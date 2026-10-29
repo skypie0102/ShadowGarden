@@ -11,8 +11,8 @@ statuses in review and branch protection, including path-filtered skipped runs.
 The emulator smoke test in [Android checks](../../.github/workflows/android.yml)
 runs only when manually dispatched with its emulator option enabled. It checks app launch,
 activity recreation and the test-only EPUB.js and Readium offline prototypes on an API 28 emulator,
-and uploads its report when available; it does not replace
-physical-device acceptance. Normal Android CI compiles the instrumentation APK
+and uploads its report when available; it prints only the synthetic reader probe's
+filtered log tag and does not replace physical-device acceptance. Normal Android CI compiles the instrumentation APK
 but does not boot an emulator.
 
 `ShadowGarden checks` runs once per pull request update and on pushes to `main`.
