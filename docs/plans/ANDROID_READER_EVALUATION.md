@@ -85,9 +85,11 @@ The EPUB.js test compares its restored CFI; the Readium test compares its saved
 resource and progression. The prototypes remain offline with no app Internet
 permission, and test files and preferences are removed afterward.
 
-Emulator verification of this additional fixture is pending. It does not cover
-EPUB 2, image zoom, continuous scrolling, changing font or viewport, process
-death, large real-world publications, or untrusted-content security.
+The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40866603424)
+passed all five instrumented tests on Android 9 / API 28 x86_64 at source
+`37c13ff`, including the extended fixture in both prototypes. This evidence does
+not cover EPUB 2, image zoom, continuous scrolling, changing font or viewport,
+process death, large real-world publications, or untrusted-content security.
 
 ## Prototype protocol
 
