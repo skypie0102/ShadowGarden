@@ -21,6 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.readium.r2.shared.publication.Locator
 
@@ -58,6 +59,53 @@ class ReadiumPrototypeTest {
             val saved = preferences.getString(ReadiumPrototypeActivity.LOCATION, null)
                 ?: throw AssertionError("Passage locator was not saved")
             assertEquals(ReadiumPrototypeActivity.PASSAGE, Locator.fromJSON(JSONObject(saved))?.text?.highlight)
+            assertTrue(preferences.edit()
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)
+                .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1.6f).commit())
+            scenario.recreate()
+            awaitVisiblePassage(scenario, initialFontSize * 1.4, 220, 260)
+        } finally {
+            scenario.close()
+            preferences.edit().clear().commit()
+            fixture.delete()
+        }
+    }
+
+    @Ignore("Known passage visibility failure after reflow; see Android reader evaluation")
+    @Test
+    fun restoresCapturedCurrentLocationAfterLayoutChange() {
+        val fixture = File(appContext.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME)
+        val preferences = appContext.getSharedPreferences(ReadiumPrototypeActivity.PREFERENCES, Context.MODE_PRIVATE)
+        preferences.edit().clear()
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 280)
+            .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 340)
+            .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1f).commit()
+        EpubFixture.create(fixture, true)
+        val scenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+        try {
+            awaitChapter(scenario, "chapter1.xhtml", "Chapter 1 paragraph 1.")
+            scenario.onActivity { assertTrue("Passage navigation should be accepted", it.goToPassage()) }
+            val initialFontSize = awaitVisiblePassage(scenario, 0.0, 280, 340)
+            // Wait for Readium to report a location inside the target resource,
+            // rather than persisting its earlier chapter-start state.
+            val deadline = SystemClock.elapsedRealtime() + 15_000
+            var current: Locator? = null
+            while (SystemClock.elapsedRealtime() < deadline) {
+                scenario.onActivity { current = it.navigator?.currentLocator?.value }
+                if (current?.href.toString().endsWith("chapter12.xhtml") &&
+                    (current?.locations?.progression ?: 0.0) > 0.05) break
+                SystemClock.sleep(100)
+            }
+            assertTrue("Readium should report a position inside chapter twelve: $current",
+                current?.href.toString().endsWith("chapter12.xhtml") &&
+                    (current?.locations?.progression ?: 0.0) > 0.05)
+            scenario.onActivity { assertTrue("Current location should be saved", it.saveLocation()) }
+            val saved = preferences.getString(ReadiumPrototypeActivity.LOCATION, null)
+                ?.let { Locator.fromJSON(JSONObject(it)) }
+                ?: throw AssertionError("Current locator was not saved")
+            assertTrue("Saved location must target chapter twelve", saved.href.toString().endsWith("chapter12.xhtml"))
+            assertTrue("Saved location must be inside the chapter", (saved.locations.progression ?: 0.0) > 0.05)
             assertTrue(preferences.edit()
                 .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
                 .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)

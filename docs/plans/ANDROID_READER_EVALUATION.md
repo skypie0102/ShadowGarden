@@ -147,6 +147,25 @@ or a guarantee that the whole passage is readable. This experiment does not
 prove process-death recovery, actual rotation, continuous mode, changed editions,
 real books, or production readiness.
 
+## Readium current-location experiment
+
+The next debug-only experiment starts at the same visible paragraph, waits until
+Readium reports a position within chapter 12, saves its `currentLocator`, and
+recreates the activity with the smaller viewport and larger font. Unlike the
+preceding experiment, it does not save a manually constructed text locator.
+
+The [API 28 emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40943735717)
+at source `3cf2a4d` failed the passage-visibility assertion after recreation.
+The chapter and target text were present, but the text was just beyond the right
+edge of the 220-pixel viewport. This is one observed case, not proof that
+Readium always restores inaccurately: the navigator's saved position may refer to
+a different part of the original page than the selected paragraph, and the test
+does not establish whether its captured locator had fully settled. The test is
+marked `@Ignore` so the known failure does not break the normal emulator suite.
+Remove the annotation in an experimental branch to investigate. Measure the
+actual saved passage or page start, repeat the scenario and investigate recovery
+before relying on this locator for Android progress.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated
