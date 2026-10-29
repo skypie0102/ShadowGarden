@@ -11,8 +11,9 @@ statuses in review and branch protection, including path-filtered skipped runs.
 The emulator smoke test in [Android checks](../../.github/workflows/android.yml)
 runs only when manually dispatched with its emulator option enabled. It checks app launch,
 activity recreation, the test-only EPUB.js and Readium offline prototypes, and the
-separate local-HTTPS access test on an API 28 emulator. It uploads their reports
-when available; it prints only the synthetic reader probe's
+separate local-HTTPS access tests on an API 28 emulator. The manual job also runs
+a local Node fixture with the actual access handlers and mocked external services;
+regular builds do not start it. It uploads instrumentation reports when available; it prints only the synthetic reader probe's
 filtered log tag and does not replace physical-device acceptance. Normal Android CI compiles the instrumentation APK
 but does not boot an emulator.
 

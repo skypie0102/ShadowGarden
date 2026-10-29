@@ -43,7 +43,9 @@ are retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
-Physical-device testing is reserved for milestones that require it, such as
+To include the isolated real-handler fixture, use `bash accesslab/run-emulator-tests.sh`
+from `android/` with Node 24, `curl` and `adb` available. The fixture is not
+started by normal Android builds. Physical-device testing is reserved for milestones that require it, such as
 touch behavior, background audio and release acceptance.
 
 The EPUB.js harness is test-only: it creates a small original EPUB in app-private
