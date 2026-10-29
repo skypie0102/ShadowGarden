@@ -91,6 +91,21 @@ passed all five instrumented tests on Android 9 / API 28 x86_64 at source
 not cover EPUB 2, image zoom, continuous scrolling, changing font or viewport,
 process death, large real-world publications, or untrusted-content security.
 
+## EPUB.js passage and layout experiment
+
+An additional instrumentation case selects a passage in paragraph 40 of the
+last chapter of the generated EPUB 3, derives a range CFI, and displays it. It
+saves the CFI to test-only preferences, recreates the activity, changes the
+reader viewport from 280 × 340 to 220 × 260 CSS pixels and increases the font
+size from 100% to 160%, then restores the range. It checks the actual font and
+viewport sizes and whether the selected range intersects the reader viewport.
+This deliberately uses an explicitly selected passage; it does not yet test
+capturing the current page's reading location in ordinary navigation.
+
+Emulator verification is pending. This is a test-only EPUB.js harness, not the
+website's reader controllers or a production Android reader; it does not cover
+process death, rotation, continuous mode, changed editions, or other books.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated

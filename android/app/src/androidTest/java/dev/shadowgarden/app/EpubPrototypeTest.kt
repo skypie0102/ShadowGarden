@@ -44,6 +44,43 @@ class EpubPrototypeTest {
         runFixture(true, "chapter12.xhtml", "Final chapter marker.", 12)
     }
 
+    @Test
+    fun restoresPassageAfterFontAndViewportChange() {
+        val fixture = File(appContext.cacheDir, "epub-prototype-layout.epub")
+        val preferences = appContext.getSharedPreferences("epub-prototype-test", Context.MODE_PRIVATE)
+        preferences.edit().clear().commit()
+        EpubFixture.create(fixture, true)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        var view: WebView? = null
+        try {
+            view = openHarness(scenario, fixture, null, "", "", "epub-layout-restore.html", 280, 340, 100)
+            val first = awaitResult(view)
+            assertEquals("Chapter 12 paragraph 40.", first.getString("text"))
+            assertTrue("The selected passage must be in the initial viewport", first.getBoolean("visible"))
+            assertEquals(280, first.getInt("width"))
+            assertEquals(340, first.getInt("height"))
+            val cfi = first.getString("cfi")
+            assertTrue(cfi.startsWith("epubcfi("))
+            assertTrue(preferences.edit().putString("location", cfi).commit())
+            closeHarness(scenario, view)
+            view = null
+            scenario.recreate()
+            view = openHarness(scenario, fixture, preferences.getString("location", null), "", "", "epub-layout-restore.html", 220, 260, 160)
+            val restored = awaitResult(view)
+            assertEquals(cfi, restored.getString("cfi"))
+            assertEquals("Chapter 12 paragraph 40.", restored.getString("text"))
+            assertTrue("The saved passage must be in the changed viewport", restored.getBoolean("visible"))
+            assertEquals(220, restored.getInt("width"))
+            assertEquals(260, restored.getInt("height"))
+            assertTrue("The font must actually become larger", restored.getDouble("fontSize") > first.getDouble("fontSize") * 1.4)
+        } finally {
+            view?.let { closeHarness(scenario, it) }
+            scenario.close()
+            preferences.edit().clear().commit()
+            fixture.delete()
+        }
+    }
+
     private fun runFixture(extended: Boolean, href: String, marker: String, tocCount: Int) {
         val fixture = File(appContext.cacheDir, "epub-prototype-fixture.epub")
         val preferences = appContext.getSharedPreferences("epub-prototype-test", Context.MODE_PRIVATE)
@@ -79,11 +116,17 @@ class EpubPrototypeTest {
         }
     }
 
-    private fun openHarness(scenario: ActivityScenario<MainActivity>, fixture: File, cfi: String?, href: String, marker: String): WebView {
-        val html = testAssets.open("epub-prototype.html").bufferedReader().use { it.readText() }
+    private fun openHarness(
+        scenario: ActivityScenario<MainActivity>, fixture: File, cfi: String?, href: String, marker: String,
+        template: String = "epub-prototype.html", width: Int = 0, height: Int = 0, fontSize: Int = 100
+    ): WebView {
+        val html = testAssets.open(template).bufferedReader().use { it.readText() }
             .replace("__RESTORED_CFI__", cfi?.let(JSONObject::quote) ?: "null")
             .replace("__TARGET_HREF__", JSONObject.quote(href))
             .replace("__MARKER__", JSONObject.quote(marker))
+            .replace("__WIDTH__", width.toString())
+            .replace("__HEIGHT__", height.toString())
+            .replace("__FONT_SIZE__", fontSize.toString())
         val result = AtomicReference<WebView>()
         scenario.onActivity { activity ->
             val webView = WebView(activity)
