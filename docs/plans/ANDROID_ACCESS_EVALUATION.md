@@ -122,8 +122,8 @@ passed at source `830c8c8`: all three access-lab instrumentation tests completed
 without skips, including the private-download experiment, and the direct Node
 fixture test passed. The existing app instrumentation suite passed with its
 previously documented Readium reflow test skipped. The diagnostic again reported
-that the book cookie was not visible to the native cookie API; the cause, and
-whether cookie-only downloads would work, remain untested. No cookie value was
+that the book cookie was not visible to the native cookie API; the cause was
+not established in that run. No cookie value was
 logged. The experiment used the signed URL without copying cookies.
 
 The prototype is not a production download
@@ -132,6 +132,44 @@ Siteverify and storage, reads one known chapter rather than running either reade
 and does not prove cancellation, malicious EPUB safety, storage exhaustion,
 real network interruption, crash durability, progress persistence, or a secure
 production authentication and download architecture.
+
+## Book cookie diagnostics
+
+The access lab now compares browser cookie-only requests and Android's native
+cookie API against real handlers, using fixture-only root- and path-scoped
+HttpOnly controls and a readable root control. It checks authorization before issuance, signed and unsigned
+requests, a different book path, HttpOnly visibility, activity recreation and
+cookie removal. Only cookie-presence booleans and HTTP status are logged; test
+cookies and ticket values are never logged. Direct Node fixture coverage checks
+the real cookie attributes and successful cookie-only authorization, including
+rejection after the book cookie is removed. The controls are not available in
+production and do not grant book access.
+
+The [API 28 emulator run 41053191920](https://github.com/skypie0102/ShadowGarden/actions/runs/41053191920)
+at source `e92989d` completed all four access-lab instrumentation tests and the
+direct Node test. WebView's unsigned request to the protected book returned 200
+before and after activity recreation, while unsigned requests without cookies
+and to a different book returned 403. The Android native cookie lookup did not
+show the book cookie or either HttpOnly control cookie, and a native unsigned
+request using the returned cookies received 403. The signed URL still worked.
+No cookie values or tickets were logged. One existing Readium reflow test in the
+app suite remained skipped. This observes one Android WebView and fixture; it
+does not explain the discrepancy or prove behavior on other versions or devices.
+
+The [follow-up API 28 emulator run 41054176681](https://github.com/skypie0102/ShadowGarden/actions/runs/41054176681)
+at source `85d0765` also passed all four access-lab tests and the direct Node
+test. The WebView again returned 200 for the unsigned request; the native request
+using its lookup returned 403. A readable root control cookie was visible to page
+scripts, but native lookups on both the main and test threads did not report that
+control or the book cookie. Native lookups also did not report the human cookie
+or the HttpOnly controls. These observations narrow the discrepancy beyond an
+HttpOnly-only difference, but do not establish its cause or generalize across
+Android or WebView versions. No cookie values were logged.
+
+This remains a diagnostic test, not production session integration, process-death
+persistence or live-site verification. Do not rely on sharing the WebView cookie
+jar with native downloads based on this experiment; the separate signed-URL
+fixture experiment does not settle a production architecture.
 
 ## Next integration evidence
 

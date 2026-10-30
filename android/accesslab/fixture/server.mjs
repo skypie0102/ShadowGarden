@@ -73,6 +73,8 @@ export async function startFixture(port=18443) {
   const handlers={'/human-access':humanAccess,'/book-access':bookAccess,'/admin-access':adminAccess,'/admin-api/status':statusEndpoint};
   const html=readFileSync(new URL('../src/androidTest/assets/real-handlers-fixture.html',HERE));
   const downloadHtml=readFileSync(new URL('../src/androidTest/assets/download-fixture.html',HERE));
+  const cookieHtml=readFileSync(new URL('../src/androidTest/assets/cookie-fixture.html',HERE));
+  const cookieResumeHtml=readFileSync(new URL('../src/androidTest/assets/cookie-resume-fixture.html',HERE));
   const pfx=readFileSync(new URL('../src/androidTest/assets/localhost-fixture.p12',HERE));
   globalThis.fetch=fakeExternalFetch;
   const server=createServer({pfx,passphrase:'accesslab-fixture'},async (incoming,outgoing)=>{
@@ -85,6 +87,22 @@ export async function startFixture(port=18443) {
       }
       if (incoming.method==='GET' && url.pathname==='/download-fixture') {
         outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(downloadHtml);return;
+      }
+      if (incoming.method==='GET' && url.pathname==='/cookie-fixture') {
+        outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(cookieHtml);return;
+      }
+      if (incoming.method==='GET' && url.pathname==='/cookie-resume-fixture') {
+        outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(cookieResumeHtml);return;
+      }
+      // Public disposable controls, scoped like the real ticket cookie. These
+      // endpoints exist only in this loopback test fixture and grant no access.
+      if (incoming.method==='GET' && url.pathname==='/cookie-probe/issue') {
+        const base='; Max-Age=900; HttpOnly; Secure; SameSite=Strict';
+        outgoing.writeHead(200,{'cache-control':'no-store','set-cookie':[
+          '__Secure-sg_control_root=fixture; Path=/'+base,
+          '__Secure-sg_control_visible=fixture; Path=/; Max-Age=900; Secure; SameSite=Strict',
+          '__Secure-sg_control_path=fixture; Path=/media/'+EPUB_KEY+base
+        ]}).end('fixture');return;
       }
       const handler=handlers[url.pathname] || (url.pathname.startsWith('/media/')?media:null);
       if (!handler) {outgoing.writeHead(404).end();return;}
