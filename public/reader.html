@@ -85,13 +85,6 @@
       </div>
       <section class="reader-navigation-context" aria-label="Reading position and navigation">
         <dl><div><dt>Current chapter</dt><dd id="readerCurrentChapter">Opening the volume…</dd></div><div><dt>Volume progress</dt><dd id="readerVolumeProgress">0% of volume</dd></div></dl>
-        <button id="readerNavigationHelpToggle" class="reader-navigation-help-toggle" type="button" aria-expanded="false" aria-controls="readerNavigationHelp"><svg viewBox="0 0 20 20" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="m7 4 6 6-6 6"/></svg>Navigation help</button>
-        <div id="readerNavigationHelp" hidden>
-          <p id="readerProgressHelp">The slider jumps within this volume. Page numbers depend on your screen and text settings; the percentage is for the whole volume.</p>
-          <p>Choose a chapter, search this book or open your saved bookmarks.</p>
-          <p id="readerPagesHelp" class="reader-pages-help">Previous and Next turn one page. You can also use the Left and Right arrow keys.</p>
-          <p id="readerContinuousHelp" class="reader-continuous-help">Scroll to read. On the progress rail, Up/Down jumps 1%, Page Up/Down jumps 10%, and Home/End goes to the start/end.</p>
-        </div>
       </section>
       <div id="tocPanel" class="drawer-panel"></div>
       <div id="bookmarksPanel" class="drawer-panel hidden"></div>
@@ -167,6 +160,9 @@
     </main>
 
     <footer class="reader-bottombar" aria-label="Reading navigation">
+      <span id="readerProgressHelp" hidden>The slider jumps within this volume. Page numbers depend on your screen and text settings; the percentage is for the whole volume.</span>
+      <span id="readerPagesHelp" hidden>Previous and Next turn one page. You can also use the Left and Right arrow keys.</span>
+      <span id="readerContinuousHelp" hidden>Scroll to read. On the progress rail, Up and Down jump 1%, Page Up and Down jump 10%, and Home and End go to the start and end.</span>
       <button id="prevBottom" type="button" aria-label="Previous page" title="Previous page (Left arrow)" aria-describedby="readerPagesHelp">◀ Previous</button>
       <div class="progress-wrap"><input id="progressRange" type="range" min="0" max="1000" value="0" aria-label="Reading progress" aria-describedby="readerProgressHelp"><span id="progressText">0% of volume</span></div>
       <button id="nextBottom" type="button" aria-label="Next page" title="Next page (Right arrow)" aria-describedby="readerPagesHelp">Next ▶</button>

@@ -15,6 +15,7 @@ import { createCompletionController } from "./completion.js";
 import { createSpeechController } from "./speech-controller.js";
 import { createPaginatedController } from "./paginated.js";
 import { createContinuousController } from "./continuous.js";
+import { resolveHrefTarget } from "./href-target.js";
 import { createReaderResumeController } from "./resume-controller.js";
 import {
   createRendition,
@@ -66,8 +67,6 @@ function readerElements() {
     progressText: $("#progressText"),
     currentChapterText: $("#readerCurrentChapter"),
     volumeProgressText: $("#readerVolumeProgress"),
-    navigationHelpToggle: $("#readerNavigationHelpToggle"),
-    navigationHelp: $("#readerNavigationHelp"),
     prevPage: $("#prevPage"),
     nextPage: $("#nextPage"),
     prevBottom: $("#prevBottom"),
@@ -284,7 +283,11 @@ async function initializeReader(session, scope) {
       }
     } else {
       state.continuousNavigation = null;
-      await displaySettledRenditionTarget(rendition, target, { operation });
+      // EPUB.js can position a fragment before WebKit has finished laying out
+      // the columns. A text CFI can be reapplied after content hooks settle.
+      const exact = String(target).includes("#") ? await resolveHrefTarget(state.book, target) : target;
+      if (!current()) return false;
+      await displaySettledRenditionTarget(rendition, exact, { operation });
     }
     return current();
   }
@@ -296,6 +299,7 @@ async function initializeReader(session, scope) {
     navigate,
     closeDrawers,
     getBook: () => state.book,
+    onNavigationError: () => toast("Could not open this chapter"),
     bookSearch: bookSearchController
   });
   own(tocController);
@@ -655,11 +659,6 @@ async function initializeReader(session, scope) {
     if (event.type === "error" && elements.progressText) elements.progressText.title = "Page map unavailable; using EPUB location tracking";
   }
   function bindDrawers() {
-    scope.listen(elements.navigationHelpToggle,"click",()=>{
-      const help=elements.navigationHelp;if(!help)return;
-      const expanded=help.hidden;help.hidden=!expanded;
-      elements.navigationHelpToggle.setAttribute("aria-expanded",String(expanded));
-    });
     scope.listen(elements.tocToggle, "click", () => openDrawer(elements.tocDrawer));
     scope.listen(elements.settingsToggle, "click", () => openDrawer(elements.settingsDrawer));
     scope.listen(elements.backdrop, "click", closeDrawers);

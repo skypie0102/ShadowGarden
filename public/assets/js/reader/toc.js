@@ -57,7 +57,33 @@ function locationSpineIndex(location, items) {
   return spineIndexForHref(location?.start?.href || location?.end?.href || "", items);
 }
 
-export function createTocController({ panel, navigate, closeDrawers, getBook, bookSearch }) {
+// Navigation links are relative to the EPUB navigation document, while the
+// reader and spine expect paths relative to the package document.
+function resolveNavigationItems(items, book) {
+  const navPath = book?.packaging?.navPath || book?.packaging?.ncxPath;
+  const spine = book?.spine?.spineItems || [];
+  function resolveItem(item) {
+    const href = String(item?.href || "");
+    let resolved = href;
+    if (href && navPath && !/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href)) {
+      try {
+        const base = new URL(navPath, "https://epub.invalid/");
+        const target = new URL(href, base);
+        const path = target.pathname.replace(/^\//, "");
+        if (target.origin === base.origin && spine.some(section => cleanSectionHref(section?.href) === cleanSectionHref(path))) {
+          resolved = path + target.search + target.hash;
+        }
+      } catch {}
+    }
+    const copy = {...item, href: resolved};
+    if (Array.isArray(item?.subitems)) copy.subitems = item.subitems.map(resolveItem);
+    if (Array.isArray(item?.children)) copy.children = item.children.map(resolveItem);
+    return copy;
+  }
+  return (Array.isArray(items) ? items : []).map(resolveItem);
+}
+
+export function createTocController({ panel, navigate, closeDrawers, getBook, bookSearch, onNavigationError }) {
   const scope=createReaderScope();
   let uiScope=scope.child();
   let items = [];
@@ -160,13 +186,17 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
       button.dataset.href = href;
       uiScope.listen(button,"click", async () => {
         try {
+          closeDrawers();
           await navigate(href);
-          if(!scope.disposed)closeDrawers();
         } catch (error) {
-          if(!scope.disposed)recordReaderDiagnostic('navigation.tocFailed');
+          if(!scope.disposed){recordReaderDiagnostic('navigation.tocFailed');onNavigationError?.();}
         }
       });
       row.appendChild(button);
+      // Page numbers share the chapter row but are not themselves buttons.
+      uiScope.listen(row, "click", event => {
+        if (event.target?.closest?.(".toc-page-number")) button.click();
+      });
       const pageNumber = pageNumberFor(href);
       if (pageNumber) {
         const page = document.createElement("span");
@@ -307,7 +337,7 @@ export function createTocController({ panel, navigate, closeDrawers, getBook, bo
   function render(navigationItems) {
     if(scope.disposed)return;
     uiScope.dispose();uiScope=scope.child();bookSearchUi.reset(uiScope);
-    items = Array.isArray(navigationItems) ? navigationItems : [];
+    items = resolveNavigationItems(navigationItems, getBook?.());
     flat = flatten(items);
     activeButton = null;
     tree = null;
