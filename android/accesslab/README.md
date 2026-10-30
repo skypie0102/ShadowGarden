@@ -39,9 +39,9 @@ real Turnstile, live storage, cancellation, safe untrusted EPUB handling, proces
 death, airplane mode, reading-progress persistence, or production credential and
 network architecture. The generated test EPUB and tickets are disposable.
 
-`BookCookieDiagnosticsTest` compares a real-handler book ticket cookie with two
-public fixture-only control cookies. It checks unsigned requests before and
+`BookCookieDiagnosticsTest` compares a real-handler book ticket cookie with
+public fixture-only HttpOnly and readable control cookies. It checks unsigned requests before and
 after activity recreation, compares the WebView and native cookie API, and checks
-path scope and logout cleanup. It logs only boolean presence and HTTP status,
+path scope and cookie removal. It logs only boolean presence and HTTP status,
 never cookie values or ticket URLs. Control endpoints are loopback-only fixture
 code and do not change the deployed handlers or grant access to protected books.

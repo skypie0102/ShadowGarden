@@ -137,7 +137,7 @@ production authentication and download architecture.
 
 The access lab now compares browser cookie-only requests and Android's native
 cookie API against real handlers, using fixture-only root- and path-scoped
-control cookies. It checks authorization before issuance, signed and unsigned
+HttpOnly controls and a readable root control. It checks authorization before issuance, signed and unsigned
 requests, a different book path, HttpOnly visibility, activity recreation and
 cookie removal. Only cookie-presence booleans and HTTP status are logged; test
 cookies and ticket values are never logged. Direct Node fixture coverage checks
@@ -156,10 +156,20 @@ No cookie values or tickets were logged. One existing Readium reflow test in the
 app suite remained skipped. This observes one Android WebView and fixture; it
 does not explain the discrepancy or prove behavior on other versions or devices.
 
-A follow-up adds a non-HttpOnly control and compares main-thread and test-thread
-native lookups; emulator evidence for that comparison is pending. This remains a
-diagnostic test, not production session integration, process-death persistence or
-live-site verification.
+The [follow-up API 28 emulator run 41054176681](https://github.com/skypie0102/ShadowGarden/actions/runs/41054176681)
+at source `85d0765` also passed all four access-lab tests and the direct Node
+test. The WebView again returned 200 for the unsigned request; the native request
+using its lookup returned 403. A readable root control cookie was visible to page
+scripts, but native lookups on both the main and test threads did not report that
+control or the book cookie. Native lookups also did not report the human cookie
+or the HttpOnly controls. These observations narrow the discrepancy beyond an
+HttpOnly-only difference, but do not establish its cause or generalize across
+Android or WebView versions. No cookie values were logged.
+
+This remains a diagnostic test, not production session integration, process-death
+persistence or live-site verification. Do not rely on sharing the WebView cookie
+jar with native downloads based on this experiment; the separate signed-URL
+fixture experiment does not settle a production architecture.
 
 ## Next integration evidence
 
