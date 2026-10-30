@@ -21,6 +21,7 @@ window.cookieResult = {state:'opening'};
   window.cookieResult={state:'ready',before:before,human:human.status,ticket:ticket.status,
     control:control,unsigned:unsigned,signed:signed,sibling:sibling,
     documentBook:document.cookie.indexOf('__Secure-sg_book_')>=0,
-    documentControl:document.cookie.indexOf('__Secure-sg_control_')>=0};
+    documentControl:document.cookie.indexOf('__Secure-sg_control_root=')>=0,
+    documentVisible:document.cookie.indexOf('__Secure-sg_control_visible=')>=0};
 })().catch(function(error){window.cookieResult={state:'error',message:String(error)};});
 </script></body></html>

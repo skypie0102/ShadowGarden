@@ -122,8 +122,8 @@ passed at source `830c8c8`: all three access-lab instrumentation tests completed
 without skips, including the private-download experiment, and the direct Node
 fixture test passed. The existing app instrumentation suite passed with its
 previously documented Readium reflow test skipped. The diagnostic again reported
-that the book cookie was not visible to the native cookie API; the cause, and
-whether cookie-only downloads would work, remain untested. No cookie value was
+that the book cookie was not visible to the native cookie API; the cause was
+not established in that run. No cookie value was
 logged. The experiment used the signed URL without copying cookies.
 
 The prototype is not a production download
@@ -145,8 +145,21 @@ the real cookie attributes and successful cookie-only authorization, including
 rejection after the book cookie is removed. The controls are not available in
 production and do not grant book access.
 
-Android emulator evidence is pending. This is a diagnostic test, not production
-session integration, process-death persistence or live-site verification.
+The [API 28 emulator run 41053191920](https://github.com/skypie0102/ShadowGarden/actions/runs/41053191920)
+at source `e92989d` completed all four access-lab instrumentation tests and the
+direct Node test. WebView's unsigned request to the protected book returned 200
+before and after activity recreation, while unsigned requests without cookies
+and to a different book returned 403. The Android native cookie lookup did not
+show the book cookie or either HttpOnly control cookie, and a native unsigned
+request using the returned cookies received 403. The signed URL still worked.
+No cookie values or tickets were logged. One existing Readium reflow test in the
+app suite remained skipped. This observes one Android WebView and fixture; it
+does not explain the discrepancy or prove behavior on other versions or devices.
+
+A follow-up adds a non-HttpOnly control and compares main-thread and test-thread
+native lookups; emulator evidence for that comparison is pending. This remains a
+diagnostic test, not production session integration, process-death persistence or
+live-site verification.
 
 ## Next integration evidence
 

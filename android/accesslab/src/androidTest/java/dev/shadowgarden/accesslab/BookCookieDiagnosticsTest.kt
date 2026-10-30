@@ -38,6 +38,8 @@ class BookCookieDiagnosticsTest {
     private val bookName = "__Secure-sg_book_bk_abcdefghijklmnopqrstuv="
     private val rootControl = "__Secure-sg_control_root="
     private val pathControl = "__Secure-sg_control_path="
+    private val visibleControl = "__Secure-sg_control_visible="
+    private val humanName = "__Host-sg_human="
 
     @Test
     fun compareBrowserAndNativeCookieOnlyRequestsAcrossActivityRecreation() {
@@ -59,7 +61,7 @@ class BookCookieDiagnosticsTest {
             assertFalse("HttpOnly book cookie must not be visible to page scripts", initialState.getBoolean("documentBook"))
             assertFalse("HttpOnly root control must not be visible to page scripts", initialState.getBoolean("documentControl"))
             val browserStatus = initialState.getInt("unsigned")
-            assertTrue("Unexpected unsigned browser response", browserStatus == 200 || browserStatus == 403)
+            assertEquals("WebView should send the scoped book cookie for an unsigned request", 200, browserStatus)
 
             val manager = CookieManager.getInstance()
             val before = manager.getCookie(origin + path) ?: ""
@@ -74,6 +76,8 @@ class BookCookieDiagnosticsTest {
             } while (SystemClock.elapsedRealtime() < deadline)
             val rootCookies = manager.getCookie(origin + "/cookie-fixture") ?: ""
             val signedLookup = manager.getCookie(origin + path + "?sig=fixture") ?: ""
+            val mainThreadCookies = AtomicReference<String>()
+            instrumentation.runOnMainSync { mainThreadCookies.set(manager.getCookie(origin + path) ?: "") }
             val cookieNativeStatus = nativeStatus(nativeCookies)
             assertEquals("An unsigned request without any cookies must be rejected", 403, nativeStatus(""))
             assertTrue("Unexpected native cookie-only response", cookieNativeStatus == 200 || cookieNativeStatus == 403)
@@ -103,7 +107,10 @@ class BookCookieDiagnosticsTest {
             Log.i("SGReaderProbe", "Book cookie: browser=$browserStatus native=$cookieNativeStatus " +
                 "initial=${before.contains(bookName)} settled=${nativeCookies.contains(bookName)} " +
                 "signedLookup=${signedLookup.contains(bookName)} afterRecreate=${afterCookies.contains(bookName)} " +
-                "rootControl=${rootCookies.contains(rootControl)} pathControl=${nativeCookies.contains(pathControl)}")
+                "rootControl=${rootCookies.contains(rootControl)} pathControl=${nativeCookies.contains(pathControl)} " +
+                "humanNative=${rootCookies.contains(humanName)} visibleDocument=${initialState.getBoolean("documentVisible")} " +
+                "visibleNative=${rootCookies.contains(visibleControl)} mainBook=${mainThreadCookies.get().contains(bookName)} " +
+                "mainVisible=${mainThreadCookies.get().contains(visibleControl)}")
         } finally {
             view.get()?.let { web -> scenario.onActivity {
                 (web.parent as? ViewGroup)?.removeView(web)

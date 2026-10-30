@@ -100,6 +100,7 @@ export async function startFixture(port=18443) {
         const base='; Max-Age=900; HttpOnly; Secure; SameSite=Strict';
         outgoing.writeHead(200,{'cache-control':'no-store','set-cookie':[
           '__Secure-sg_control_root=fixture; Path=/'+base,
+          '__Secure-sg_control_visible=fixture; Path=/; Max-Age=900; Secure; SameSite=Strict',
           '__Secure-sg_control_path=fixture; Path=/media/'+EPUB_KEY+base
         ]}).end('fixture');return;
       }
