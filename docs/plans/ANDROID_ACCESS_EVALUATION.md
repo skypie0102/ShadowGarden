@@ -74,6 +74,30 @@ Siteverify. They cannot establish real server verification, cross-site cookie
 behavior, redirects, process death, download persistence, or a secure production
 WebView architecture.
 
+## Real-handler fixture experiment
+
+The test-only `android/accesslab/fixture/server.mjs` runs the repository's actual
+access and media handlers on loopback HTTPS with an in-memory SQLite-backed D1
+substitute, a synthetic catalog and mocked Siteverify and B2 responses. It
+refuses to start without its explicit fixture flag and intercepts every external
+`fetch`; it does not access production services. A direct Node test exercises
+verification rejection (including action and hostname mismatch), ticket issuance,
+tampering, a generated download, same-origin checks, Keeper authorization and
+revocation replay. Android WebView can reach the same fixture through ADB reverse
+in the manual emulator job. The WebView case is opt-in and is skipped when the
+fixture is not running.
+
+[Manual Android API 28 emulator run 40972218355](https://github.com/skypie0102/ShadowGarden/actions/runs/40972218355)
+passed at source `b69afb94`: both access-lab WebView tests completed without
+skips, including the real-handler fixture. The direct Node handler test also
+passed. The app instrumentation suite passed with one previously documented
+Readium reflow test skipped.
+
+This harness executes real handlers but uses Node rather than workerd, and does
+not run a real Turnstile widget or Siteverify,
+prove ticket expiry by waiting 15 minutes, save an EPUB locally, or establish
+production access, cookie persistence or a secure production architecture.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

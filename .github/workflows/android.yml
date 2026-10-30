@@ -51,6 +51,9 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - name: Install build SDK
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Enable emulator acceleration
         run: |
           test -c /dev/kvm || { echo 'KVM is unavailable on this runner'; exit 1; }
@@ -63,8 +66,7 @@ jobs:
           arch: x86_64
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim
-          script: >-
-            cd android && { ./gradlew --no-daemon connectedDebugAndroidTest; result=$?; adb logcat -d -s SGReaderProbe:I '*:S'; exit "$result"; }
+          script: bash android/accesslab/run-emulator-tests.sh
       - name: Preserve instrumentation report
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

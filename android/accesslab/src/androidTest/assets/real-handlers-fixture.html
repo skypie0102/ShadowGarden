@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Real handler fixture</title></head>
+<body>
+<script>
+window.accessResult = {state: 'opening'};
+(async () => {
+  const bookId = 'bk_0123456789abcdefghijkl';
+  async function request(path, method, body, extraHeaders) {
+    const options = {method: method, credentials: 'same-origin', headers: extraHeaders || {}};
+    if (body !== null) {
+      options.headers['content-type'] = 'application/json';
+      options.body = JSON.stringify(body);
+    }
+    const response = await fetch(path, options);
+    let value = {};
+    try { value = await response.json(); } catch (_) {}
+    return {status: response.status, value: value};
+  }
+  const humanChallenge = await request('/human-access', 'GET', null);
+  const unverified = await request('/book-access', 'POST', {bookId: bookId});
+  const badHuman = await request('/human-access', 'POST', {token: 'invalid-fixture'});
+  const badAction = await request('/human-access', 'POST', {token: 'wrong-action'});
+  const badHost = await request('/human-access', 'POST', {token: 'wrong-host'});
+  const goodHuman = await request('/human-access', 'POST', {token: 'human-fixture'});
+  const firstTicket = await request('/book-access', 'POST', {bookId: bookId});
+  const badTicket = new URL(firstTicket.value.url, location.href);
+  badTicket.searchParams.set('sig', 'tampered');
+  const rejectedDownload = await fetch(badTicket.href, {credentials: 'same-origin'});
+  const renewed = await request('/book-access', 'POST', {bookId: bookId});
+  const download = await fetch(renewed.value.url, {credentials: 'same-origin'});
+  const downloadedText = await download.text();
+  const adminChallenge = await request('/admin-access', 'GET', null);
+  const badKeeper = await request('/admin-access', 'POST', {adminToken: 'wrong', turnstileToken: 'admin-fixture'});
+  const goodKeeper = await request('/admin-access', 'POST', {adminToken: 'keeper-fixture', turnstileToken: 'admin-fixture'});
+  const missingBearer = await request('/admin-api/status', 'POST', {});
+  const status = await request('/admin-api/status', 'POST', {}, {authorization: 'Bearer keeper-fixture'});
+  const logout = await request('/admin-access', 'DELETE', null);
+  const afterLogout = await request('/admin-api/status', 'POST', {}, {authorization: 'Bearer keeper-fixture'});
+  window.accessResult = {
+    state: 'ready', humanAction: humanChallenge.value.action, unverified: unverified.status,
+    badHuman: badHuman.status, badAction: badAction.status, badHost: badHost.status,
+    goodHuman: goodHuman.status, firstTicket: firstTicket.status,
+    rejectedDownload: rejectedDownload.status, renewed: renewed.status, download: download.status,
+    downloadedText: downloadedText, adminAction: adminChallenge.value.action,
+    badKeeper: badKeeper.status, goodKeeper: goodKeeper.status, missingBearer: missingBearer.status,
+    status: status.status, logout: logout.status, afterLogout: afterLogout.status,
+    documentCookie: document.cookie
+  };
+})().catch(error => { window.accessResult = {state: 'error', message: String((error && error.message) || error)}; });
+</script>
+</body>
+</html>
