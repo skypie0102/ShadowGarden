@@ -133,6 +133,21 @@ and does not prove cancellation, malicious EPUB safety, storage exhaustion,
 real network interruption, crash durability, progress persistence, or a secure
 production authentication and download architecture.
 
+## Book cookie diagnostics
+
+The access lab now compares browser cookie-only requests and Android's native
+cookie API against real handlers, using fixture-only root- and path-scoped
+control cookies. It checks authorization before issuance, signed and unsigned
+requests, a different book path, HttpOnly visibility, activity recreation and
+cookie removal. Only cookie-presence booleans and HTTP status are logged; test
+cookies and ticket values are never logged. Direct Node fixture coverage checks
+the real cookie attributes and successful cookie-only authorization, including
+rejection after the book cookie is removed. The controls are not available in
+production and do not grant book access.
+
+Android emulator evidence is pending. This is a diagnostic test, not production
+session integration, process-death persistence or live-site verification.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

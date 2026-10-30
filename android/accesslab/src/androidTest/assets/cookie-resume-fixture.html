@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Cookie recreation fixture</title></head><body>
+<script>
+window.resumeResult={state:'opening'};
+(async function() {
+  const response=await fetch('/media/shadow-garden/books/generated-download.epub',{credentials:'same-origin',cache:'no-store'});
+  await response.arrayBuffer();
+  window.resumeResult={state:'ready',unsigned:response.status};
+})().catch(function(error){window.resumeResult={state:'error',message:String(error)};});
+</script></body></html>

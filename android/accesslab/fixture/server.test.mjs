@@ -20,8 +20,9 @@ test('real access handlers enforce verification, tickets and revocable Keeper se
     if(cookies.size)headers.cookie=[...cookies].map(([key,value])=>`${key}=${value}`).join('; ');
     return new Promise((resolve,reject)=>{
       const req=httpsRequest({host:'localhost',family:4,port:fixture.port,path,method,headers,ca},response=>{
+        const setCookie=(response.headers['set-cookie']||[]).map(value=>{const [pair,...attributes]=value.split(';');return {name:pair.split('=')[0],attributes:attributes.map(item=>item.trim())};});
         for(const value of response.headers['set-cookie']||[]){const [pair]=value.split(';');const i=pair.indexOf('=');if(i>0){const key=pair.slice(0,i),v=pair.slice(i+1);if(v)cookies.set(key,v);else cookies.delete(key);}}
-        const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>{const bytes=Buffer.concat(chunks);resolve({status:response.statusCode,body:bytes.toString(),bytes});});
+        const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>{const bytes=Buffer.concat(chunks);resolve({status:response.statusCode,body:bytes.toString(),bytes,setCookie});});
       });req.on('error',reject);if(data!==undefined)req.write(data);req.end();
     });
   }
@@ -35,7 +36,17 @@ test('real access handlers enforce verification, tickets and revocable Keeper se
   assert.ok(ticket.url.includes('sig='));
   const broken=new URL(ticket.url,origin);broken.searchParams.set('sig','tampered');
   assert.equal((await call(broken.pathname+broken.search)).status,403);
-  const fresh=JSON.parse((await call('/book-access','POST',{bookId})).body);
+  const freshResponse=await call('/book-access','POST',{bookId});
+  const fresh=JSON.parse(freshResponse.body);
+  assert.deepEqual(freshResponse.setCookie,[{name:`__Secure-sg_book_${bookId}`,attributes:[
+    'Path=/media/shadow-garden/books/fixture.epub','Max-Age=900','HttpOnly','Secure','SameSite=Strict'
+  ]}]);
+  const unsigned=new URL(fresh.url,origin).pathname;
+  assert.equal((await call(unsigned)).status,200);
+  const bookCookie=cookies.get(`__Secure-sg_book_${bookId}`);
+  cookies.delete(`__Secure-sg_book_${bookId}`);
+  assert.equal((await call(unsigned)).status,403);
+  cookies.set(`__Secure-sg_book_${bookId}`,bookCookie);
   const download=await call(fresh.url);assert.equal(download.status,200);assert.equal(download.body,'generated-fixture-bytes');
   const epubTicket=JSON.parse((await call('/book-access','POST',{bookId:'bk_abcdefghijklmnopqrstuv'})).body);
   const epub=await call(epubTicket.url);assert.equal(epub.status,200);assert.deepEqual([...epub.bytes.subarray(0,4)],[0x50,0x4b,0x03,0x04]);

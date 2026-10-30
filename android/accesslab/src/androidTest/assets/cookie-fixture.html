@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Cookie fixture</title></head><body>
+<script>
+window.cookieResult = {state:'opening'};
+(async function() {
+  async function post(path,body) {
+    const response=await fetch(path,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    return {status:response.status,value:await response.json()};
+  }
+  async function get(path) {
+    const response=await fetch(path,{credentials:'same-origin',cache:'no-store'});
+    await response.arrayBuffer();return response.status;
+  }
+  const path='/media/shadow-garden/books/generated-download.epub';
+  const before=await get(path);
+  const human=await post('/human-access',{token:'human-fixture'});
+  const ticket=await post('/book-access',{bookId:'bk_abcdefghijklmnopqrstuv'});
+  const control=await get('/cookie-probe/issue');
+  const unsigned=await get(path);
+  const signed=await get(ticket.value.url);
+  const sibling=await get('/media/shadow-garden/books/fixture.epub');
+  window.cookieResult={state:'ready',before:before,human:human.status,ticket:ticket.status,
+    control:control,unsigned:unsigned,signed:signed,sibling:sibling,
+    documentBook:document.cookie.indexOf('__Secure-sg_book_')>=0,
+    documentControl:document.cookie.indexOf('__Secure-sg_control_')>=0};
+})().catch(function(error){window.cookieResult={state:'error',message:String(error)};});
+</script></body></html>
