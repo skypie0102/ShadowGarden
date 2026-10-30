@@ -102,8 +102,8 @@ production access, cookie persistence or a secure production architecture.
 
 The opt-in access-lab instrumentation experiment requests an original generated
 EPUB using the real book-access and media handlers on the existing loopback
-fixture. After the test WebView obtains a disposable signed ticket and book
-cookie, test-only native HTTPS code writes to a temporary private file and
+fixture. After the test WebView obtains a disposable signed ticket, test-only
+native HTTPS code uses the URL without copying cookies and writes to a temporary private file and
 replaces its fixture file after checking the generated EPUB's expected entries.
 A rejected ticket and a deliberately low transfer-size limit test preservation of
 an existing file and temporary-file cleanup. After clearing cookies and
@@ -111,7 +111,14 @@ recreating the activity, the test extracts the generated chapter and renders it
 in a WebView with network loads blocked. The fixture server is still running;
 this is not a system airplane-mode or process-death test.
 
-Emulator verification is pending. The prototype is not a production download
+The initial [API 28 emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41036729409)
+failed before download because the test assumed the native WebView cookie API
+would return the book cookie. The reason for that observation is not yet known;
+no cookie values were logged. The revised experiment uses the separately supported
+signed URL and records only whether a book cookie is visible. Emulator verification
+of the revised experiment is pending.
+
+The prototype is not a production download
 manager or general EPUB validator: it uses synthetic content and mocked
 Siteverify and storage, reads one known chapter rather than running either reader,
 and does not prove cancellation, malicious EPUB safety, storage exhaustion,

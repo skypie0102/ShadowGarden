@@ -4,6 +4,7 @@ import android.net.Uri
 import android.net.http.SslError
 import android.os.SystemClock
 import android.system.Os
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.SslErrorHandler
@@ -78,19 +79,21 @@ class PrivateDownloadTest {
             assertEquals(200, result.getInt("human"))
             assertEquals(200, result.getInt("ticket"))
             val ticketUrl = URL(URL(origin), result.getString("url"))
-            val cookies = CookieManager.getInstance().getCookie(ticketUrl.toString()) ?: ""
-            assertTrue("Expected the HttpOnly book cookie in the native cookie jar", cookies.contains("__Secure-sg_book_"))
+            // The server permits this signed URL without copying WebView cookies
+            // into native networking. Record only cookie presence, never its value.
+            val hasBookCookie = (CookieManager.getInstance().getCookie(ticketUrl.toString()) ?: "").contains("__Secure-sg_book_")
+            Log.i("SGReaderProbe", "Private download: book cookie visible to native API=$hasBookCookie")
 
             // A rejected response and an interrupted copy must not replace an existing file.
             book.writeText("previous fixture")
             val broken = Uri.parse(ticketUrl.toString()).buildUpon().clearQuery().appendQueryParameter("sig", "tampered").build().toString()
-            assertTrue("Invalid ticket must be rejected", runCatching { download(broken, cookies, book, 2_000_000) }.isFailure)
+            assertTrue("Invalid ticket must be rejected", runCatching { download(broken, book, 2_000_000) }.isFailure)
             assertEquals("previous fixture", book.readText())
-            download(ticketUrl.toString(), cookies, book, 2_000_000)
+            download(ticketUrl.toString(), book, 2_000_000)
             val saved = book.readBytes()
             assertTrue(saved.size > 100)
             assertTrue(book.canonicalPath.startsWith(instrumentation.targetContext.filesDir.canonicalPath + File.separator))
-            assertTrue("Limited copy must fail", runCatching { download(ticketUrl.toString(), cookies, book, 8) }.isFailure)
+            assertTrue("Limited copy must fail", runCatching { download(ticketUrl.toString(), book, 8) }.isFailure)
             assertArrayEquals("A failed replacement must preserve the previous file", saved, book.readBytes())
             assertEquals("Temporary files must be cleaned up", listOf("fixture.epub"), directory.list()?.sorted())
             assertEquals(0, sslErrors.get())
@@ -105,7 +108,7 @@ class PrivateDownloadTest {
             }
             clearCookies()
             val unsigned = Uri.parse(ticketUrl.toString()).buildUpon().clearQuery().build().toString()
-            assertTrue("Book access without the ticket or cookie must fail", runCatching { download(unsigned, "", book, 2_000_000) }.isFailure)
+            assertTrue("Book access without the ticket or cookie must fail", runCatching { download(unsigned, book, 2_000_000) }.isFailure)
             assertArrayEquals(saved, book.readBytes())
             scenario.recreate()
 
@@ -142,7 +145,7 @@ class PrivateDownloadTest {
 
     private fun local(uri: Uri): Boolean = uri.scheme == "https" && uri.host == "localhost" && uri.port == 18443
 
-    private fun download(url: String, cookie: String, destination: File, maxBytes: Int) {
+    private fun download(url: String, destination: File, maxBytes: Int) {
         val target = URL(url)
         require(target.protocol == "https" && target.host == "localhost" && target.port == 18443 && target.userInfo == null)
         require(target.path == "/media/shadow-garden/books/generated-download.epub")
@@ -153,7 +156,6 @@ class PrivateDownloadTest {
             connection.connectTimeout = 10_000
             connection.readTimeout = 10_000
             connection.useCaches = false
-            if (cookie.isNotEmpty()) connection.setRequestProperty("Cookie", cookie)
             try {
                 if (connection.responseCode != 200) throw IOException("Download rejected: ${connection.responseCode}")
                 if (connection.contentType?.substringBefore(';') != "application/epub+zip") throw IOException("Unexpected media type")

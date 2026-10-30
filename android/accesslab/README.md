@@ -26,8 +26,8 @@ for production.
 
 `PrivateDownloadTest` is an opt-in instrumentation experiment against that
 real-handler fixture. The fixture serves an original generated EPUB. The test
-obtains a signed ticket in a sandboxed WebView, transfers that disposable ticket
-and its test cookie to a native HTTPS request, and writes to a temporary file in
+obtains a signed ticket in a sandboxed WebView, uses that disposable URL in a
+native HTTPS request without copying cookies, and writes to a temporary file in
 the test app's private files directory before replacing its fixture file. It
 checks rejected-ticket and size-limit failures preserve an existing file, clears
 the cookies, recreates the host activity and renders the extracted generated
