@@ -87,8 +87,14 @@ revocation replay. Android WebView can reach the same fixture through ADB revers
 in the manual emulator job. The WebView case is opt-in and is skipped when the
 fixture is not running.
 
-Emulator verification is pending. This harness executes real handlers but uses
-Node rather than workerd, and does not run a real Turnstile widget or Siteverify,
+[Manual Android API 28 emulator run 40972218355](https://github.com/skypie0102/ShadowGarden/actions/runs/40972218355)
+passed at source `b69afb94`: both access-lab WebView tests completed without
+skips, including the real-handler fixture. The direct Node handler test also
+passed. The app instrumentation suite passed with one previously documented
+Readium reflow test skipped.
+
+This harness executes real handlers but uses Node rather than workerd, and does
+not run a real Turnstile widget or Siteverify,
 prove ticket expiry by waiting 15 minutes, save an EPUB locally, or establish
 production access, cookie persistence or a secure production architecture.
 
