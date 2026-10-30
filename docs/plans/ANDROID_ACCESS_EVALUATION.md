@@ -115,8 +115,16 @@ The initial [API 28 emulator run](https://github.com/skypie0102/ShadowGarden/act
 failed before download because the test assumed the native WebView cookie API
 would return the book cookie. The reason for that observation is not yet known;
 no cookie values were logged. The revised experiment uses the separately supported
-signed URL and records only whether a book cookie is visible. Emulator verification
-of the revised experiment is pending.
+signed URL and records only whether a book cookie is visible.
+
+The [revised API 28 emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41037366701)
+passed at source `830c8c8`: all three access-lab instrumentation tests completed
+without skips, including the private-download experiment, and the direct Node
+fixture test passed. The existing app instrumentation suite passed with its
+previously documented Readium reflow test skipped. The diagnostic again reported
+that the book cookie was not visible to the native cookie API; the cause, and
+whether cookie-only downloads would work, remain untested. No cookie value was
+logged. The experiment used the signed URL without copying cookies.
 
 The prototype is not a production download
 manager or general EPUB validator: it uses synthetic content and mocked
