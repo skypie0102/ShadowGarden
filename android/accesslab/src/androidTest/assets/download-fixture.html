@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Download fixture</title></head><body>
+<script>
+window.downloadResult = {state:'opening'};
+(async function() {
+  async function post(path,body) {
+    const response = await fetch(path,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    return {status:response.status,value:await response.json()};
+  }
+  const human = await post('/human-access',{token:'human-fixture'});
+  const ticket = await post('/book-access',{bookId:'bk_abcdefghijklmnopqrstuv'});
+  window.downloadResult = {state:'ready',human:human.status,ticket:ticket.status,url:ticket.value.url};
+})().catch(function(error) { window.downloadResult = {state:'error',message:String(error)}; });
+</script></body></html>

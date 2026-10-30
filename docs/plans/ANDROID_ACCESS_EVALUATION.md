@@ -98,6 +98,41 @@ not run a real Turnstile widget or Siteverify,
 prove ticket expiry by waiting 15 minutes, save an EPUB locally, or establish
 production access, cookie persistence or a secure production architecture.
 
+## Private download and offline-view experiment
+
+The opt-in access-lab instrumentation experiment requests an original generated
+EPUB using the real book-access and media handlers on the existing loopback
+fixture. After the test WebView obtains a disposable signed ticket, test-only
+native HTTPS code uses the URL without copying cookies and writes to a temporary private file and
+replaces its fixture file after checking the generated EPUB's expected entries.
+A rejected ticket and a deliberately low transfer-size limit test preservation of
+an existing file and temporary-file cleanup. After clearing cookies and
+recreating the activity, the test extracts the generated chapter and renders it
+in a WebView with network loads blocked. The fixture server is still running;
+this is not a system airplane-mode or process-death test.
+
+The initial [API 28 emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41036729409)
+failed before download because the test assumed the native WebView cookie API
+would return the book cookie. The reason for that observation is not yet known;
+no cookie values were logged. The revised experiment uses the separately supported
+signed URL and records only whether a book cookie is visible.
+
+The [revised API 28 emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41037366701)
+passed at source `830c8c8`: all three access-lab instrumentation tests completed
+without skips, including the private-download experiment, and the direct Node
+fixture test passed. The existing app instrumentation suite passed with its
+previously documented Readium reflow test skipped. The diagnostic again reported
+that the book cookie was not visible to the native cookie API; the cause, and
+whether cookie-only downloads would work, remain untested. No cookie value was
+logged. The experiment used the signed URL without copying cookies.
+
+The prototype is not a production download
+manager or general EPUB validator: it uses synthetic content and mocked
+Siteverify and storage, reads one known chapter rather than running either reader,
+and does not prove cancellation, malicious EPUB safety, storage exhaustion,
+real network interruption, crash durability, progress persistence, or a secure
+production authentication and download architecture.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

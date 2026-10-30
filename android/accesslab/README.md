@@ -23,3 +23,18 @@ configures ADB reverse forwarding and runs the Android instrumentation suite.
 The real-handler WebView case skips when the fixture isn't explicitly enabled.
 The test server and credentials are test-only and must never be exposed or used
 for production.
+
+`PrivateDownloadTest` is an opt-in instrumentation experiment against that
+real-handler fixture. The fixture serves an original generated EPUB. The test
+obtains a signed ticket in a sandboxed WebView, uses that disposable URL in a
+native HTTPS request without copying cookies, and writes to a temporary file in
+the test app's private files directory before replacing its fixture file. It
+checks rejected-ticket and size-limit failures preserve an existing file, clears
+the cookies, recreates the host activity and renders the extracted generated
+chapter in a WebView with network loads blocked. The server itself remains
+running during this offline-view check.
+
+This is test code, not a download manager or EPUB reader. It does not establish
+real Turnstile, live storage, cancellation, safe untrusted EPUB handling, process
+death, airplane mode, reading-progress persistence, or production credential and
+network architecture. The generated test EPUB and tickets are disposable.
