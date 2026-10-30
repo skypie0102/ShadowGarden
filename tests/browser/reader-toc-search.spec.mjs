@@ -134,6 +134,23 @@ test.describe('TOC book-search presentation',()=>{
     expect(await page.evaluate(()=>window.tocFixture.requests.length)).toBe(5);
   });
 
+  test('chapter selection closes immediately and does not close a subsequently reopened drawer',async({page})=>{
+    await page.locator('.toc-entry-link[data-href="chapter2.xhtml"]').click();
+    expect(await page.evaluate(()=>({targets:window.tocFixture.navigation.map(move=>move.target),closed:window.tocFixture.closed})))
+      .toEqual({targets:['chapter2.xhtml'],closed:1});
+    await page.evaluate(()=>window.tocFixture.navigation[0].resolve());
+    expect(await page.evaluate(()=>window.tocFixture.closed)).toBe(1);
+  });
+
+  test('clicking the page number activates its chapter',async({page})=>{
+    await page.evaluate(()=>window.tocFixture.controller.setPageResolver(()=>42));
+    const row=page.locator('.toc-row').filter({has:page.locator('.toc-entry-link[data-href="chapter2.xhtml"]')});
+    await row.locator('.toc-page-number').click();
+    expect(await page.evaluate(()=>({targets:window.tocFixture.navigation.map(move=>move.target),closed:window.tocFixture.closed})))
+      .toEqual({targets:['chapter2.xhtml'],closed:1});
+    await page.evaluate(()=>window.tocFixture.navigation[0].resolve());
+  });
+
   test('result navigation waits for the shared owner and cannot close drawers after disposal',async({page})=>{
     await startSearch(page,'navigation');await complete(page,0,{hits:[hit('destination')]});
     await page.locator('.book-search-result').click();
@@ -172,6 +189,6 @@ test.describe('TOC book-search presentation',()=>{
       window.tocFixture.navigation[1].reject(new DOMException('Reader disposed','AbortError'));
     });
     expect(await count()).toBe(1);
-    expect(await page.evaluate(()=>window.tocFixture.closed)).toBe(0);
+    expect(await page.evaluate(()=>window.tocFixture.closed)).toBe(kind==='chapter'?2:0);
   });
 });

@@ -7,15 +7,15 @@ volume. Page numbers come from the current device's page map and can change with
 screen size or text settings; they are not publisher print-page numbers.
 The footer, contents summary, accessible slider value and Continuous rail use
 the existing progress controller. Compact phone/rail labels keep their page
-fraction; the drawer provides the full explanation.
+fraction; the drawer shows the current chapter and volume progress.
 
 Contents opens chapters and bookmarks; Search finds chapter labels and text in
 the book. In Pages, Previous/Next and Left/Right turn pages. The progress slider
 seeks within the whole volume. In Continuous, scroll to read; when the rail has
 keyboard focus, Up/Down seeks 1%, Page Up/Down 10%, and Home/End the start/end.
-The drawer's keyboard-accessible **Navigation help** expands the guidance for
-the current mode, leaving the chapter list compact by default. These explanations do
-not add a second navigation or progress owner.
+Selecting a chapter or its page number closes the contents drawer and opens the
+selected location. Screen-reader descriptions remain attached to the progress and
+page controls.
 
 When a substantial illustration is visible, a small first-use tip explains
 **double-click** for a fine pointer or **double-tap** for touch. It never takes
@@ -38,6 +38,5 @@ and timers are released with the Reader or its content documents.
 
 See [Reader settings](READER_SETTINGS.md) for grouping and Reset, and
 [Reader architecture](READER_ARCHITECTURE.md) for navigation/restoration ownership.
-This is v2.29.0 source behavior; exact PR checks and guarded production acceptance
-are recorded separately. Automated browser coverage does not substitute for
-physical-device acceptance.
+Historical v2.29.0 release evidence is recorded separately. Automated browser
+coverage does not substitute for physical-device acceptance.

@@ -31,7 +31,7 @@ and [API contracts](../guides/API_CONTRACTS.md).
 | Status | Website behavior | Proposed Android surface | Acceptance cases |
 | --- | --- | --- | --- |
 | Planned | Pages and Continuous reading, page/scroll controls and progress seek | Reader | Touch navigation and seek work in both modes; switching flow retains the semantic location; completion and next-volume actions work. |
-| Planned | Table of contents, chapter context, book text search, results and navigation help | Reader contents/search | Nested chapters and text matches open the intended passage; cancel/new search does not navigate from stale results. |
+| Planned | Table of contents, chapter context, book text search and results | Reader contents/search | Nested chapters and text matches open the intended passage; cancel/new search does not navigate from stale results. |
 | Planned | Saved progress, volume completion, bookmarks and read-again reset | Reader and series | Restart returns to the saved location; bookmarks navigate and can be removed; reset retains bookmarks and other books' state. |
 | Planned | Flow, typeface, font size, line height, alignment, text width, swipe preference, four themes and device-default reset | Reader settings | Settings apply, persist and reset independently of progress; layout reflow keeps the location; scope and accessibility remain correct. |
 | Planned | Double-tap image focus/zoom and return; first-use guidance | Reader image viewer | An illustration can be opened, zoomed and dismissed, returning to the same reading position. |

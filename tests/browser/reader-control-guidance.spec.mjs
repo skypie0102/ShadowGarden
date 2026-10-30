@@ -59,10 +59,7 @@ for(const adult of [false,true])for(const flow of ['paginated','scrolled-doc']){
     await contents(page);
     await expect(page.locator('#readerVolumeProgress')).toContainText(/Page \d+ of \d+ · \d+% of volume/);
     await info.attach('navigation-compact',{body:await page.screenshot(),contentType:'image/png'});
-    await page.getByRole('button',{name:'Navigation help',exact:true}).focus();await page.keyboard.press('Space');
-    await expect(page.locator('#readerProgressHelp')).toContainText('percentage is for the whole volume');
-    await expect(page.locator(flow==='paginated'?'#readerPagesHelp':'#readerContinuousHelp')).toBeVisible();
-    await expect(page.locator(flow==='paginated'?'#readerContinuousHelp':'#readerPagesHelp')).toBeHidden();
+    await expect(page.getByRole('button',{name:'Navigation help',exact:true})).toHaveCount(0);
     await page.locator('#tocPanel [data-href="chapter2.xhtml"]').click();
     await navigationFinished(page);await visibleChapter(page,2);
     await page.locator('#bookmarkButton').focus();await page.locator('#bookmarkButton').click();
@@ -131,26 +128,6 @@ test('offscreen buffered illustrations do not consume the first-use tip; dismiss
   await page.getByRole('button',{name:'Dismiss illustration tip'}).click();await expect(tip).toBeHidden();
   expect(await page.evaluate(key=>localStorage.getItem(key),seenKey)).toBe('1');
   expect(Math.abs((await image.boundingBox()).y-before.y)).toBeLessThan(2);
-  expect(errors).toEqual([]);
-});
-
-test('explicit keyboard focus is retained when opening and closing navigation help',async({page})=>{
-  const errors=await open(page);
-  await expect.poll(()=>pageMapReady(page),{timeout:45000}).toBe(true);
-  await contents(page);
-  const help=page.getByRole('button',{name:'Navigation help',exact:true});
-  await expect(help).toBeVisible();await help.focus();await expect(help).toBeFocused();
-  await page.keyboard.press('Space');
-  await expect(page.getByRole('button',{name:'Navigation help',exact:true})).toHaveAttribute('aria-expanded','true');
-  await expect(page.locator('#readerNavigationHelp')).toBeVisible();
-  await page.evaluate(async()=>{
-    document.querySelector('#tocDrawer [data-close]').click();
-    await Promise.resolve();
-    document.getElementById('bookmarkButton').focus();
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  });
-  await expect(page.locator('#bookmarkButton')).toBeFocused();
-  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');
   expect(errors).toEqual([]);
 });
 

@@ -66,8 +66,6 @@ function readerElements() {
     progressText: $("#progressText"),
     currentChapterText: $("#readerCurrentChapter"),
     volumeProgressText: $("#readerVolumeProgress"),
-    navigationHelpToggle: $("#readerNavigationHelpToggle"),
-    navigationHelp: $("#readerNavigationHelp"),
     prevPage: $("#prevPage"),
     nextPage: $("#nextPage"),
     prevBottom: $("#prevBottom"),
@@ -296,6 +294,7 @@ async function initializeReader(session, scope) {
     navigate,
     closeDrawers,
     getBook: () => state.book,
+    onNavigationError: () => toast("Could not open this chapter"),
     bookSearch: bookSearchController
   });
   own(tocController);
@@ -655,11 +654,6 @@ async function initializeReader(session, scope) {
     if (event.type === "error" && elements.progressText) elements.progressText.title = "Page map unavailable; using EPUB location tracking";
   }
   function bindDrawers() {
-    scope.listen(elements.navigationHelpToggle,"click",()=>{
-      const help=elements.navigationHelp;if(!help)return;
-      const expanded=help.hidden;help.hidden=!expanded;
-      elements.navigationHelpToggle.setAttribute("aria-expanded",String(expanded));
-    });
     scope.listen(elements.tocToggle, "click", () => openDrawer(elements.tocDrawer));
     scope.listen(elements.settingsToggle, "click", () => openDrawer(elements.settingsDrawer));
     scope.listen(elements.backdrop, "click", closeDrawers);
