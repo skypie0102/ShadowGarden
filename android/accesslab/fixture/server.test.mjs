@@ -21,7 +21,7 @@ test('real access handlers enforce verification, tickets and revocable Keeper se
     return new Promise((resolve,reject)=>{
       const req=httpsRequest({host:'localhost',family:4,port:fixture.port,path,method,headers,ca},response=>{
         for(const value of response.headers['set-cookie']||[]){const [pair]=value.split(';');const i=pair.indexOf('=');if(i>0){const key=pair.slice(0,i),v=pair.slice(i+1);if(v)cookies.set(key,v);else cookies.delete(key);}}
-        const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>resolve({status:response.statusCode,body:Buffer.concat(chunks).toString()}));
+        const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>{const bytes=Buffer.concat(chunks);resolve({status:response.statusCode,body:bytes.toString(),bytes});});
       });req.on('error',reject);if(data!==undefined)req.write(data);req.end();
     });
   }
@@ -37,6 +37,8 @@ test('real access handlers enforce verification, tickets and revocable Keeper se
   assert.equal((await call(broken.pathname+broken.search)).status,403);
   const fresh=JSON.parse((await call('/book-access','POST',{bookId})).body);
   const download=await call(fresh.url);assert.equal(download.status,200);assert.equal(download.body,'generated-fixture-bytes');
+  const epubTicket=JSON.parse((await call('/book-access','POST',{bookId:'bk_abcdefghijklmnopqrstuv'})).body);
+  const epub=await call(epubTicket.url);assert.equal(epub.status,200);assert.deepEqual([...epub.bytes.subarray(0,4)],[0x50,0x4b,0x03,0x04]);
   assert.equal((await call('/admin-access','POST',{adminToken:'wrong',turnstileToken:'admin-fixture'})).status,401);
   assert.equal((await call('/admin-access','POST',{adminToken:'keeper-fixture',turnstileToken:'admin-fixture'})).status,200);
   assert.equal((await call('/admin-api/status','POST',{})).status,401);

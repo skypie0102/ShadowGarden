@@ -7,9 +7,13 @@ import {endpoint} from '../../../server/http.js';
 import {humanAccess, adminAccess} from '../../../server/security.js';
 import {bookAccess, media} from '../../../server/books.js';
 import {statusEndpoint} from '../../../server/admin.js';
+import {createFixtureEpub} from './generated-epub.mjs';
 
 const BOOK_ID='bk_0123456789abcdefghijkl';
 const BOOK_KEY='shadow-garden/books/fixture.epub';
+const EPUB_ID='bk_abcdefghijklmnopqrstuv';
+const EPUB_KEY='shadow-garden/books/generated-download.epub';
+const EPUB_BYTES=await createFixtureEpub();
 const FIXTURE_BYTES='generated-fixture-bytes';
 const FIXTURE_KEY='keeper-fixture';
 const HERE=new URL('.',import.meta.url);
@@ -20,7 +24,7 @@ function database() {
   for (const name of readdirSync(migrations).filter(value=>value.endsWith('.sql')).sort()) {
     sqlite.exec(readFileSync(new URL(name,migrations),'utf8'));
   }
-  const document={main:[{id:'fixture-series',title:'Generated fixture',volumes:[{bookId:BOOK_ID,title:'Fixture volume',number:1}]}],adult:[],books:{[BOOK_ID]:BOOK_KEY},trash:[]};
+  const document={main:[{id:'fixture-series',title:'Generated fixture',volumes:[{bookId:BOOK_ID,title:'Fixture volume',number:1},{bookId:EPUB_ID,title:'Generated EPUB',number:2}]}],adult:[],books:{[BOOK_ID]:BOOK_KEY,[EPUB_ID]:EPUB_KEY},trash:[]};
   sqlite.prepare('INSERT INTO library_state(id,revision,document,updated_at) VALUES(1,0,?,?)')
     .run(JSON.stringify(document),'2026-01-01T00:00:00Z');
   const prepare=(sql,args=[])=>({
@@ -52,6 +56,9 @@ function fakeExternalFetch(input,init={}) {
   if (url==='https://download.example.backblazeb2.com/file/fixture/'+BOOK_KEY) {
     return Promise.resolve(new Response(FIXTURE_BYTES,{status:200,headers:{'content-type':'application/epub+zip'}}));
   }
+  if (url==='https://download.example.backblazeb2.com/file/fixture/'+EPUB_KEY) {
+    return Promise.resolve(new Response(EPUB_BYTES,{status:200,headers:{'content-type':'application/epub+zip'}}));
+  }
   return Promise.reject(new Error('External network is disabled in the access fixture'));
 }
 
@@ -65,6 +72,7 @@ export async function startFixture(port=18443) {
     ASSETS:{async fetch(){return new Response('Not found',{status:404});}}};
   const handlers={'/human-access':humanAccess,'/book-access':bookAccess,'/admin-access':adminAccess,'/admin-api/status':statusEndpoint};
   const html=readFileSync(new URL('../src/androidTest/assets/real-handlers-fixture.html',HERE));
+  const downloadHtml=readFileSync(new URL('../src/androidTest/assets/download-fixture.html',HERE));
   const pfx=readFileSync(new URL('../src/androidTest/assets/localhost-fixture.p12',HERE));
   globalThis.fetch=fakeExternalFetch;
   const server=createServer({pfx,passphrase:'accesslab-fixture'},async (incoming,outgoing)=>{
@@ -74,6 +82,9 @@ export async function startFixture(port=18443) {
       const url=new URL(incoming.url,`https://${incoming.headers.host}`);
       if (incoming.method==='GET' && url.pathname==='/') {
         outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(html);return;
+      }
+      if (incoming.method==='GET' && url.pathname==='/download-fixture') {
+        outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(downloadHtml);return;
       }
       const handler=handlers[url.pathname] || (url.pathname.startsWith('/media/')?media:null);
       if (!handler) {outgoing.writeHead(404).end();return;}

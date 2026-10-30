@@ -98,6 +98,26 @@ not run a real Turnstile widget or Siteverify,
 prove ticket expiry by waiting 15 minutes, save an EPUB locally, or establish
 production access, cookie persistence or a secure production architecture.
 
+## Private download and offline-view experiment
+
+The opt-in access-lab instrumentation experiment requests an original generated
+EPUB using the real book-access and media handlers on the existing loopback
+fixture. After the test WebView obtains a disposable signed ticket and book
+cookie, test-only native HTTPS code writes to a temporary private file and
+replaces its fixture file after checking the generated EPUB's expected entries.
+A rejected ticket and a deliberately low transfer-size limit test preservation of
+an existing file and temporary-file cleanup. After clearing cookies and
+recreating the activity, the test extracts the generated chapter and renders it
+in a WebView with network loads blocked. The fixture server is still running;
+this is not a system airplane-mode or process-death test.
+
+Emulator verification is pending. The prototype is not a production download
+manager or general EPUB validator: it uses synthetic content and mocked
+Siteverify and storage, reads one known chapter rather than running either reader,
+and does not prove cancellation, malicious EPUB safety, storage exhaustion,
+real network interruption, crash durability, progress persistence, or a secure
+production authentication and download architecture.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real
