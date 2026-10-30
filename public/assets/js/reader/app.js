@@ -15,6 +15,7 @@ import { createCompletionController } from "./completion.js";
 import { createSpeechController } from "./speech-controller.js";
 import { createPaginatedController } from "./paginated.js";
 import { createContinuousController } from "./continuous.js";
+import { resolveHrefTarget } from "./href-target.js";
 import { createReaderResumeController } from "./resume-controller.js";
 import {
   createRendition,
@@ -282,7 +283,11 @@ async function initializeReader(session, scope) {
       }
     } else {
       state.continuousNavigation = null;
-      await displaySettledRenditionTarget(rendition, target, { operation });
+      // EPUB.js can position a fragment before WebKit has finished laying out
+      // the columns. A text CFI can be reapplied after content hooks settle.
+      const exact = String(target).includes("#") ? await resolveHrefTarget(state.book, target) : target;
+      if (!current()) return false;
+      await displaySettledRenditionTarget(rendition, exact, { operation });
     }
     return current();
   }
