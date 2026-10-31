@@ -156,17 +156,42 @@ class ReaderProcessRecoveryTest {
                 val currentWeb = epubHelper.openHarness(epubScenario, epubFile, currentCfi, "", "", "epub-current-location.html", 280, 340, 100)
                 val current = try { epubHelper.awaitResult(currentWeb) } finally { epubHelper.closeHarness(epubScenario, currentWeb) }
                 assertEquals("EPUB.js current location must restore the observed paragraph", expectedEpubParagraph, current.getInt("paragraph"))
+                val changedWeb = epubHelper.openHarness(epubScenario, epubFile, currentCfi, "", "", "epub-current-location.html", 220, 260, 160)
+                val changed = try { epubHelper.awaitResult(changedWeb) } finally { epubHelper.closeHarness(epubScenario, changedWeb) }
+                assertEquals(220, changed.getInt("width"))
+                assertEquals(260, changed.getInt("height"))
+                assertTrue("EPUB.js text must actually be larger", changed.getDouble("fontSize") > current.getDouble("fontSize") * 1.4)
+                Log.i("SGReaderProbe", "EPUB.js process reflow: before=$expectedEpubParagraph " +
+                    "same=${current.getJSONArray("paragraphs")} changed=${changed.getJSONArray("paragraphs")} " +
+                    "firstPreviouslyVisible=${containsParagraph(changed.getJSONArray("paragraphs"), expectedEpubParagraph)}")
             } finally {
                 epubScenario.close()
             }
             val readiumHelper = ReadiumPrototypeTest()
             val readiumScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+            val sameReadium: ReadiumPrototypeTest.ViewportSample
             try {
-                val current = readiumHelper.awaitStableViewport(readiumScenario, 0.0, 280, 340)
-                assertEquals("Readium current locator must restore the observed paragraph", expectedReadiumParagraph, current.paragraph)
+                sameReadium = readiumHelper.awaitStableViewport(readiumScenario, 0.0, 280, 340)
+                assertEquals("Readium current locator must restore the observed paragraph", expectedReadiumParagraph, sameReadium.paragraph)
             } finally {
                 readiumScenario.close()
             }
+            assertTrue(readiumPreferences.edit().putString(ReadiumPrototypeActivity.LOCATION, currentReadium)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 220)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 260)
+                .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1.6f).commit())
+            val changedScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+            try {
+                val changed = readiumHelper.awaitStableViewport(changedScenario, sameReadium.fontSize * 1.4, 220, 260)
+                Log.i("SGReaderProbe", "Readium process reflow: before=$expectedReadiumParagraph " +
+                    "same=${sameReadium.visibleParagraphs} changed=${changed.visibleParagraphs} " +
+                    "firstPreviouslyVisible=${expectedReadiumParagraph in changed.visibleParagraphs}")
+            } finally {
+                changedScenario.close()
+            }
+            assertTrue(readiumPreferences.edit().putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 280)
+                .putInt(ReadiumPrototypeActivity.VIEWPORT_HEIGHT, 340)
+                .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1f).commit())
             assertTrue(readiumPreferences.edit().putString(ReadiumPrototypeActivity.LOCATION, selectedReadium).commit())
             val selectedScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
             try {
@@ -191,6 +216,9 @@ class ReaderProcessRecoveryTest {
 
     private fun fingerprint(file: File): EditionFingerprint =
         file.inputStream().use { EditionFingerprint.calculate(it, 8_000_000) }
+
+    private fun containsParagraph(paragraphs: org.json.JSONArray, target: Int): Boolean =
+        (0 until paragraphs.length()).any { paragraphs.getInt(it) == target }
 
     @Suppress("DEPRECATION")
     private fun assertOfflinePermission() {

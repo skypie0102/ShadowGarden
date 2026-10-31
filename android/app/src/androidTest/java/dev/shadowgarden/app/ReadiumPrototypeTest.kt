@@ -303,7 +303,7 @@ class ReadiumPrototypeTest {
         throw AssertionError("Passage not visible at expected layout: $lastState")
     }
 
-    internal data class ViewportSample(val locator: Locator, val paragraph: Int, val fontSize: Double)
+    internal data class ViewportSample(val locator: Locator, val paragraph: Int, val fontSize: Double, val visibleParagraphs: List<Int>)
 
     internal fun awaitStableViewport(
         scenario: ActivityScenario<ReadiumPrototypeActivity>, minimumFontSize: Double, widthDp: Int, heightDp: Int
@@ -339,6 +339,8 @@ class ReadiumPrototypeTest {
                     val bottom = (clip.bottom - screen[1]).toDouble() / webView.height
                     val script = """JSON.stringify((function() {
                         const ps = Array.from(document.querySelectorAll('p'));
+                        const visibleParagraphs = [];
+                        let fontSize = 0;
                         for (const p of ps) {
                           const match = /^Chapter 12 paragraph (\d+)\./.exec(p.textContent);
                           if (!match || !p.firstChild) continue;
@@ -347,9 +349,12 @@ class ReadiumPrototypeTest {
                           const visible = Array.from(range.getClientRects()).some(r =>
                             r.right > innerWidth * $left && r.left < innerWidth * $right &&
                             r.bottom > innerHeight * $top && r.top < innerHeight * $bottom);
-                          if (visible) return {paragraph: Number(match[1]), fontSize: parseFloat(getComputedStyle(p).fontSize)};
+                          if (visible) {
+                            visibleParagraphs.push(Number(match[1]));
+                            fontSize = parseFloat(getComputedStyle(p).fontSize);
+                          }
                         }
-                        return {};
+                        return {paragraph: visibleParagraphs[0], visibleParagraphs, fontSize};
                     })())""".trimIndent()
                     webView.evaluateJavascript(script) { result ->
                         val value = runCatching { JSONTokener(result).nextValue() }.getOrNull()
@@ -372,9 +377,11 @@ class ReadiumPrototypeTest {
             }
             val sample = if (current != null && current.href.toString().endsWith("chapter12.xhtml") &&
                 (current.locations.progression ?: 0.0) > 0.05 && found != null) {
-                ViewportSample(current, found.getInt("paragraph"), found.getDouble("fontSize"))
+                val visible = found.getJSONArray("visibleParagraphs")
+                ViewportSample(current, found.getInt("paragraph"), found.getDouble("fontSize"),
+                    (0 until visible.length()).map { visible.getInt(it) })
             } else null
-            if (sample != null && previous?.paragraph == sample.paragraph &&
+            if (sample != null && previous?.visibleParagraphs == sample.visibleParagraphs &&
                 previous.locator.locations.progression == sample.locator.locations.progression) {
                 if (SystemClock.elapsedRealtime() - stableSince >= 600) return sample
             } else {

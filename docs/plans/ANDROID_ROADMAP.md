@@ -48,6 +48,14 @@ and production acceptance are distinct.
 - [ ] Decide final application ID, supported minimum Android version, release signing/key custody and APK hosting before publishing; do not treat the scaffold ID as a release commitment.
 - [x] Select Android-aware CI without weakening website checks or publishing for Android-only changes. Backend changes also run the Android build; actual cross-platform contract tests remain future work once consumers exist.
 
+The separate Git-connected `shadowgarden-test` Pages project has build-watch
+exclusions for `android/*`, `docs/*`, `README.md` and
+`.github/workflows/android.yml`. This avoids automatic test previews for pushes
+containing only those paths while still allowing a preview when a push also
+changes a watched website path. These settings live in Cloudflare, not in the
+repository workflows. Cloudflare can bypass path matching for empty or very
+large pushes; the production project's deployment settings are separate.
+
 Scaffold verification on 2026-10-28: `assembleDebug` and `lintDebug` passed
 with JDK 17 and SDK 35; `testDebugUnitTest` had no sources at that time. No Android device
 was attached to the development environment. Its 4.9 GiB filesystem and lack of
@@ -68,6 +76,7 @@ behavior is essential.
 - [x] Run both prototypes against a generated 12-chapter EPUB with a table of contents and embedded illustration, checking final-chapter restoration after activity recreation. See [test evidence](ANDROID_READER_EVALUATION.md#extended-generated-fixture).
 - [x] Restore explicitly selected passages in both test readers after force-stop and a new app process, using unchanged generated EPUBs and the same layout. See [test evidence](ANDROID_READER_EVALUATION.md#reader-process-recovery-experiment); changed editions and production recovery remain open.
 - [x] Compare automatically captured current-page locations in both prototypes after force-stop at the same layout, using the first visible generated paragraph as the check. See [test evidence](ANDROID_READER_EVALUATION.md#current-page-location-after-process-termination); exact characters, layout changes and production progress remain open.
+- [x] Observe both captured locations after force-stop with a smaller viewport and larger text on the generated fixture. See [reflow evidence](ANDROID_READER_EVALUATION.md#current-page-reflow-after-process-termination); exact characters, other books and production recovery remain open.
 - [x] Establish and verify an initial [app-private position store and edition identity](ANDROID_READING_STATE.md), including mismatches, stale writes and process-stop persistence. Reader integration, mismatch UI and manual backup remain open.
 - [ ] Test representative real-world text-heavy, illustrated and long EPUBs, Pages and Continuous modes, search, table-of-contents navigation, bookmarks, image zoom and lifecycle recovery.
 - [ ] Validate reading-location capture and restoration, including EPUB CFIs, font/viewport changes, process death and changed editions. An [EPUB.js layout experiment](ANDROID_READER_EVALUATION.md#epubjs-passage-and-layout-experiment) exposed an initial wrong-page restore and tested a conditional retry; a [Readium experiment](ANDROID_READER_EVALUATION.md#readium-passage-and-layout-experiment) restored the selected passage after a similar change. A [current-location experiment](ANDROID_READER_EVALUATION.md#readium-current-location-experiment) found an earlier visible passage outside the viewport after reflow; a follow-up observed the first visible paragraph remained the same in one synthetic case. The strict test remains disabled pending investigation. Production capture and reliable recovery remain open. Do not assume different reader engines interpret locations identically.

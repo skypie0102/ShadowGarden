@@ -27,11 +27,13 @@ window.prototypeResult={state:'opening'};
     await rendition.display('chapter12.xhtml');
     for(let turn=0;turn<3;turn++)await rendition.next();
   }
-  function sampleParagraph() {
+  function sampleParagraphs() {
     const content=rendition.getContents()[0];
-    if(!content || !content.document || !content.window.frameElement)return 0;
+    if(!content || !content.document || !content.window.frameElement)return null;
     const frame=content.window.frameElement.getBoundingClientRect();
     const viewport=document.getElementById('viewer').getBoundingClientRect();
+    const visibleParagraphs=[];
+    let fontSize=0;
     for(const paragraph of Array.from(content.document.querySelectorAll('p'))){
       const match=/^Chapter 12 paragraph (\d+)\./.exec(paragraph.textContent);
       if(!match)continue;
@@ -40,24 +42,25 @@ window.prototypeResult={state:'opening'};
         return frame.left+rect.right>viewport.left && frame.left+rect.left<viewport.right &&
           frame.top+rect.bottom>viewport.top && frame.top+rect.top<viewport.bottom;
       });
-      if(visible)return Number(match[1]);
+      if(visible){visibleParagraphs.push(Number(match[1]));fontSize=parseFloat(content.window.getComputedStyle(paragraph).fontSize);}
     }
-    return 0;
+    return {paragraphs:visibleParagraphs,fontSize:fontSize};
   }
   let previous='',stableSince=0;
   const deadline=Date.now()+15000;
   while(Date.now()<deadline){
     const location=await rendition.currentLocation();
-    const paragraph=sampleParagraph();
+    const sample=sampleParagraphs();
+    const paragraphs=sample && sample.paragraphs || [];
     const cfi=location && location.start && location.start.cfi || '';
     const href=location && location.start && location.start.href || '';
-    const key=cfi+'|'+paragraph;
-    if(cfi && href.indexOf('chapter12.xhtml')>=0 && paragraph>0){
+    const key=cfi+'|'+paragraphs.join(',');
+    if(cfi && href.indexOf('chapter12.xhtml')>=0 && paragraphs.length>0){
       if(key!==previous){previous=key;stableSince=Date.now();}
       else if(Date.now()-stableSince>=600){
         const viewport=document.getElementById('viewer').getBoundingClientRect();
-        window.prototypeResult={state:'ready',cfi:cfi,href:href,paragraph:paragraph,
-          width:viewport.width,height:viewport.height};return;
+        window.prototypeResult={state:'ready',cfi:cfi,href:href,paragraph:paragraphs[0],
+          paragraphs:paragraphs,fontSize:sample.fontSize,width:viewport.width,height:viewport.height};return;
       }
     }else{previous='';stableSince=0;}
     await new Promise(function(resolve){setTimeout(resolve,100);});
