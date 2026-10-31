@@ -19,6 +19,7 @@ internal class ReadingProgressStore(
 ) : Closeable {
     private val helper: Database
     private val previewOwner = Any()
+    private var closed = false
 
     init {
         require(DATABASE_FILE.matches(databaseName)) { "Invalid database name" }
@@ -28,6 +29,7 @@ internal class ReadingProgressStore(
     /** Exact progress is returned only for the same catalog book, EPUB bytes, and reader format. */
     @Synchronized
     fun lookup(bookId: CatalogBookId, edition: EditionFingerprint?, format: LocatorFormat): ProgressLookup {
+        check(!closed) { "Progress store is closed" }
         val db = helper.readableDatabase
         if (edition == null) return if (hasBook(db, bookId)) ProgressLookup.EditionUnknown else ProgressLookup.NoProgress
         val args = keyArgs(bookId, edition, format)
@@ -53,6 +55,7 @@ internal class ReadingProgressStore(
      */
     @Synchronized
     fun save(position: ReadingPosition, expectedRevision: Long?): ProgressSaveResult {
+        check(!closed) { "Progress store is closed" }
         require(expectedRevision == null || expectedRevision > 0) { "Invalid expected revision" }
         val db = helper.writableDatabase
         val args = keyArgs(position.bookId, position.edition, position.format)
@@ -97,6 +100,7 @@ internal class ReadingProgressStore(
     /** A consistent position-only snapshot. Unknown or damaged rows fail rather than being omitted. */
     @Synchronized
     fun snapshotPositions(): List<ReadingPosition> {
+        check(!closed) { "Progress store is closed" }
         val positions = mutableListOf<ReadingPosition>()
         var locatorBytes = 0L
         val db = helper.writableDatabase
@@ -133,6 +137,7 @@ internal class ReadingProgressStore(
     /** Preview validated position records without writing. The caller must obtain user confirmation. */
     @Synchronized
     fun previewRestore(positions: List<ReadingPosition>): PositionRestorePreview {
+        check(!closed) { "Progress store is closed" }
         require(positions.size <= ReadingPositionBackup.MAX_POSITIONS) { "Too many positions" }
         val input = positions.toList()
         val keys = mutableSetOf<Triple<CatalogBookId, EditionFingerprint, LocatorFormat>>()
@@ -169,6 +174,7 @@ internal class ReadingProgressStore(
     /** Apply only a previously reviewed preview. A changed slot aborts every write. */
     @Synchronized
     fun restore(preview: PositionRestorePreview, mode: PositionRestoreMode): PositionRestoreResult {
+        check(!closed) { "Progress store is closed" }
         require(preview.owner === previewOwner) { "Preview belongs to another store" }
         val db = helper.writableDatabase
         db.beginTransactionNonExclusive()
@@ -236,7 +242,12 @@ internal class ReadingProgressStore(
         }
 
     @Synchronized
-    override fun close() = helper.close()
+    override fun close() {
+        if (!closed) {
+            closed = true
+            helper.close()
+        }
+    }
 
     private fun hasBook(db: SQLiteDatabase, bookId: CatalogBookId): Boolean =
         db.rawQuery("SELECT 1 FROM reading_positions WHERE book_id=? LIMIT 1", arrayOf(bookId.value))

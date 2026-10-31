@@ -158,6 +158,15 @@ class ReadingProgressStoreTest {
         }
     }
 
+    @Test
+    fun closedStoreCannotReopenFromAnInFlightCaller() {
+        store.close()
+        val position = position(book, original, LocatorFormat.EPUBJS_CFI, "epubcfi(/6/2)")
+        assertTrue(runCatching { store.save(position, null) }.isFailure)
+        assertTrue(runCatching { store.lookup(book, original, LocatorFormat.EPUBJS_CFI) }.isFailure)
+        assertTrue(runCatching { store.previewRestore(listOf(position)) }.isFailure)
+    }
+
     private fun position(id: CatalogBookId, edition: EditionFingerprint, format: LocatorFormat, locator: String) =
         ReadingPosition(id, edition, format, locator, 10)
 }

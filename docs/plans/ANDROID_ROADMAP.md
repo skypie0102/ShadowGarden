@@ -24,14 +24,14 @@ device and evidence limits are tracked in [follow-ups](FOLLOW_UPS.md).
 
 | Phase | Status | Outcome |
 | --- | --- | --- |
-| 0. Scaffold and discovery | In progress | Buildable Android shell, current roadmap and a feature inventory; no app features are claimed |
+| 0. Scaffold and discovery | In progress | Buildable Android shell, current roadmap and a feature inventory |
 | 1. Reader and access prototypes | In discovery | Compare approaches, then prove offline locations and protected access |
 | 2. Library and offline reader | Planned | Reader-facing library, protected downloads, EPUB reader and local state |
 | 3. Progress backup and restore | Planned | Portable, validated Android reading-data export and restore |
 | 4. Keeper | Planned | All website Keeper workflows usable and protected on Android |
 | 5. Parity and release | Planned | Complete feature parity, accessibility, device acceptance and release preparation |
 
-The first scaffold is a placeholder. A roadmap item is complete only after its
+The app is an early scaffold with a position-only backup screen. A roadmap item is complete only after its
 acceptance evidence is recorded; source changes, CI, real-device verification
 and production acceptance are distinct.
 
@@ -80,6 +80,7 @@ behavior is essential.
 - [x] Establish and verify an initial [app-private position store and edition identity](ANDROID_READING_STATE.md), including mismatches, stale writes and process-stop persistence. Reader integration, mismatch UI and manual backup remain open.
 - [x] Establish a position-only backup interchange foundation with bounded validation and a complete local snapshot; the [format](ANDROID_READING_STATE.md#experimental-position-interchange) is not a user-facing backup or restore.
 - [x] Establish a position-only restore preview and atomic merge foundation, including stale previews and rollback; user confirmation and the complete backup experience remain open.
+- [ ] Provide an early position-only document-picker export and restore screen with conflict review and confirmation; reader integration and complete personal-data backup remain open.
 - [ ] Test representative real-world text-heavy, illustrated and long EPUBs, Pages and Continuous modes, search, table-of-contents navigation, bookmarks, image zoom and lifecycle recovery.
 - [ ] Validate reading-location capture and restoration, including EPUB CFIs, font/viewport changes, process death and changed editions. An [EPUB.js layout experiment](ANDROID_READER_EVALUATION.md#epubjs-passage-and-layout-experiment) exposed an initial wrong-page restore and tested a conditional retry; a [Readium experiment](ANDROID_READER_EVALUATION.md#readium-passage-and-layout-experiment) restored the selected passage after a similar change. A [current-location experiment](ANDROID_READER_EVALUATION.md#readium-current-location-experiment) found an earlier visible passage outside the viewport after reflow; a follow-up observed the first visible paragraph remained the same in one synthetic case. The strict test remains disabled pending investigation. Production capture and reliable recovery remain open. Do not assume different reader engines interpret locations identically.
 - [x] Exercise a debug-only access-flow sketch with local JVM tests and fake responses; see the [access evaluation](ANDROID_ACCESS_EVALUATION.md).

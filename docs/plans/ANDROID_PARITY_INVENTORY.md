@@ -65,7 +65,7 @@ screens are proposed groupings; they do not require reproducing desktop layout.
 | Status | Feature | Acceptance cases |
 | --- | --- | --- |
 | Planned | Download manager and offline library | Protected downloads retry after interruption/expired ticket; opening downloaded EPUBs works offline; deleting bytes leaves progress intact. |
-| Planned | Local reading data and manual export/restore | App data is separate from browser state; invalid backups do not corrupt existing data; a restored matching edition resumes correctly. EPUBs and Keeper credentials are excluded from the initial progress backup. |
+| Partial | Local reading data and manual export/restore | An early position-only backup screen exists. Reader integration, a complete personal-data backup and device acceptance remain open. App data is separate from browser state; invalid backups must not corrupt existing data; a restored matching edition must resume correctly. EPUBs and Keeper credentials are excluded from the initial progress backup. |
 | Planned | Storage and lifecycle behavior | Process death, rotation, low storage and app restart preserve committed state and expose failures. |
 
 Offline text-to-speech, personal highlights/notes, reminders and other proposed

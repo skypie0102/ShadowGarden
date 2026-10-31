@@ -5,5 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
     <application>
         <activity android:name=".ReadiumPrototypeActivity" android:exported="false" />
+        <provider android:name=".BackupTestProvider" android:authorities="${applicationId}.backup-test" android:exported="false" />
     </application>
 </manifest>
