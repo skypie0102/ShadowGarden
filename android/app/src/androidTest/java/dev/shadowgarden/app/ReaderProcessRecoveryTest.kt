@@ -7,6 +7,13 @@ import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.shadowgarden.app.progress.CatalogBookId
+import dev.shadowgarden.app.progress.EditionFingerprint
+import dev.shadowgarden.app.progress.LocatorFormat
+import dev.shadowgarden.app.progress.ProgressLookup
+import dev.shadowgarden.app.progress.ProgressSaveResult
+import dev.shadowgarden.app.progress.ReadingPosition
+import dev.shadowgarden.app.progress.ReadingProgressStore
 import java.io.File
 import java.security.MessageDigest
 import org.json.JSONObject
@@ -92,6 +99,12 @@ class ReaderProcessRecoveryTest {
             } finally {
                 readiumScenario.close()
             }
+            ReadingProgressStore(context, PROCESS_DATABASE).use { store ->
+                val epubPosition = ReadingPosition(BOOK_ID, fingerprint(epubFile), LocatorFormat.EPUBJS_CFI, currentCfi, 1_000)
+                val readiumPosition = ReadingPosition(BOOK_ID, fingerprint(readiumFile), LocatorFormat.READIUM_LOCATOR, currentReadium, 1_000)
+                assertEquals(ProgressSaveResult.Saved(1), store.save(epubPosition, null))
+                assertEquals(ProgressSaveResult.Saved(1), store.save(readiumPosition, null))
+            }
             assertTrue(probe.edit().putInt("pid", Process.myPid()).putString("cfi", cfi)
                 .putString("epub_current_cfi", currentCfi).putInt("epub_paragraph", currentParagraph)
                 .putString("readium_selected", selectedReadium).putString("readium_current", currentReadium)
@@ -120,6 +133,17 @@ class ReaderProcessRecoveryTest {
             val currentReadium = probe.getString("readium_current", null) ?: throw AssertionError("Missing current Readium locator")
             val expectedReadiumParagraph = probe.getInt("readium_paragraph", 0)
             assertEquals(currentReadium, readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null))
+            ReadingProgressStore(context, PROCESS_DATABASE).use { store ->
+                val epub = store.lookup(BOOK_ID, fingerprint(epubFile), LocatorFormat.EPUBJS_CFI) as ProgressLookup.Exact
+                val readium = store.lookup(BOOK_ID, fingerprint(readiumFile), LocatorFormat.READIUM_LOCATOR) as ProgressLookup.Exact
+                assertEquals(currentCfi, epub.stored.position.locator)
+                assertEquals(currentReadium, readium.stored.position.locator)
+                assertEquals(1L, epub.stored.revision)
+                assertEquals(1L, readium.stored.revision)
+                assertEquals(ProgressLookup.EditionUnknown, store.lookup(BOOK_ID, null, LocatorFormat.EPUBJS_CFI))
+                val replacement = EditionFingerprint.calculate("replaced edition".byteInputStream(), 1_000)
+                assertEquals(ProgressLookup.EditionChanged, store.lookup(BOOK_ID, replacement, LocatorFormat.EPUBJS_CFI))
+            }
 
             val epubHelper = EpubPrototypeTest()
             val epubScenario = ActivityScenario.launch(MainActivity::class.java)
@@ -162,7 +186,11 @@ class ReaderProcessRecoveryTest {
         readiumPreferences.edit().clear().commit()
         epubFile.delete()
         readiumFile.delete()
+        context.deleteDatabase(PROCESS_DATABASE)
     }
+
+    private fun fingerprint(file: File): EditionFingerprint =
+        file.inputStream().use { EditionFingerprint.calculate(it, 8_000_000) }
 
     @Suppress("DEPRECATION")
     private fun assertOfflinePermission() {
@@ -187,5 +215,7 @@ class ReaderProcessRecoveryTest {
     companion object {
         private const val PROBE_PREFS = "reader-process-probe-test"
         private const val EPUB_FIXTURE = "epub-process-probe-fixture.epub"
+        private const val PROCESS_DATABASE = "reading-progress-process-test.db"
+        private val BOOK_ID = CatalogBookId("bk_abcdefghijklmnopqrstuv")
     }
 }

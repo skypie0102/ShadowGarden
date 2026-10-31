@@ -45,8 +45,9 @@ GitHub-hosted runner; a setup failure does not establish app behavior.
 The script also runs a two-stage reader process-recovery experiment on emulators.
 It reinstalls the debug app and its test APK on the emulator without clearing
 data, saves generated selected-passage and current-page locations, force-stops
-`dev.shadowgarden.app`, and restores in a separate instrumentation process.
-The probe removes only its test fixtures and preferences. It is skipped on
+`dev.shadowgarden.app`, and restores in a separate instrumentation process. It
+also checks test progress records across the stop. The probe removes only its
+test fixtures, preferences and test database. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
@@ -63,6 +64,9 @@ save user progress or prove the website's reader extensions work on Android.
 
 The Readium comparison is a non-exported debug-only test host using the same
 generated EPUB. It does not provide an app reader or implement progress backup.
+An internal [reading-position foundation](../docs/plans/ANDROID_READING_STATE.md)
+now stores app-private locations by book, exact EPUB edition and reader format,
+but is not yet connected to the placeholder or available to users.
 The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
 prototype constraints and results.
 
