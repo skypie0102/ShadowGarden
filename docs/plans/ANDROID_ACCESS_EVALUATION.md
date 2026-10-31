@@ -171,6 +171,13 @@ persistence or live-site verification. Do not rely on sharing the WebView cookie
 jar with native downloads based on this experiment; the separate signed-URL
 fixture experiment does not settle a production architecture.
 
+A further test varies Strict, Lax, None and unspecified SameSite attributes,
+checks an HttpOnly control, compares native lookup URL variants with and without
+the loopback port, and sets a separate cookie through Android's native API. It
+records only cookie-presence booleans and the WebView version. The fixture uses
+public disposable values and never changes production cookie attributes.
+Emulator evidence for this attribute comparison is pending.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

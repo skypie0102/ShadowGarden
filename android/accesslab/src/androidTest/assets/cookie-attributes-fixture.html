@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Cookie attribute fixture</title></head><body>
+<script>
+window.attributeResult={state:'opening'};
+(async function() {
+  const response=await fetch('/cookie-probe/attributes',{credentials:'same-origin',cache:'no-store'});
+  await response.text();
+  function present(name){return document.cookie.split(';').some(function(item){return item.trim().indexOf(name+'=')===0;});}
+  window.attributeResult={state:'ready',status:response.status,strict:present('sg_attr_strict'),
+    lax:present('sg_attr_lax'),none:present('sg_attr_none'),defaultValue:present('sg_attr_default'),
+    httpOnly:present('sg_attr_httponly')};
+})().catch(function(){window.attributeResult={state:'error'};});
+</script></body></html>

@@ -45,3 +45,9 @@ after activity recreation, compares the WebView and native cookie API, and check
 path scope and cookie removal. It logs only boolean presence and HTTP status,
 never cookie values or ticket URLs. Control endpoints are loopback-only fixture
 code and do not change the deployed handlers or grant access to protected books.
+
+`CookieAttributeDiagnosticsTest` compares disposable cookies with Strict, Lax,
+None and unspecified SameSite attributes, plus an HttpOnly control. It also
+checks native lookup URL variants and a cookie written through Android's native
+API. These controls are isolated to the loopback fixture; the test logs only
+presence booleans and the emulator's WebView version, not cookie values.

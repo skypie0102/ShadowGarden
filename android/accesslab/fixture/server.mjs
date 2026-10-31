@@ -75,6 +75,7 @@ export async function startFixture(port=18443) {
   const downloadHtml=readFileSync(new URL('../src/androidTest/assets/download-fixture.html',HERE));
   const cookieHtml=readFileSync(new URL('../src/androidTest/assets/cookie-fixture.html',HERE));
   const cookieResumeHtml=readFileSync(new URL('../src/androidTest/assets/cookie-resume-fixture.html',HERE));
+  const cookieAttributesHtml=readFileSync(new URL('../src/androidTest/assets/cookie-attributes-fixture.html',HERE));
   const pfx=readFileSync(new URL('../src/androidTest/assets/localhost-fixture.p12',HERE));
   globalThis.fetch=fakeExternalFetch;
   const server=createServer({pfx,passphrase:'accesslab-fixture'},async (incoming,outgoing)=>{
@@ -93,6 +94,20 @@ export async function startFixture(port=18443) {
       }
       if (incoming.method==='GET' && url.pathname==='/cookie-resume-fixture') {
         outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(cookieResumeHtml);return;
+      }
+      if (incoming.method==='GET' && url.pathname==='/cookie-attributes-fixture') {
+        outgoing.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}).end(cookieAttributesHtml);return;
+      }
+      if (incoming.method==='GET' && url.pathname==='/cookie-probe/attributes') {
+        // Disposable controls only: no production endpoint, ticket, or credentials.
+        const base='=fixture; Path=/; Max-Age=900; Secure';
+        outgoing.writeHead(200,{'cache-control':'no-store','set-cookie':[
+          'sg_attr_strict'+base+'; SameSite=Strict',
+          'sg_attr_lax'+base+'; SameSite=Lax',
+          'sg_attr_none'+base+'; SameSite=None',
+          'sg_attr_default'+base,
+          'sg_attr_httponly'+base+'; HttpOnly; SameSite=None'
+        ]}).end('fixture');return;
       }
       // Public disposable controls, scoped like the real ticket cookie. These
       // endpoints exist only in this loopback test fixture and grant no access.
