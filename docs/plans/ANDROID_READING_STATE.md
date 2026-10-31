@@ -125,3 +125,15 @@ file picker, restore, interruption during export, cross-device use or a complete
 personal-data backup. The retained report could not be downloaded from this
 environment; the run log reports six more app tests started than the preceding
 successful run and no failures.
+
+The position-restore foundation was exercised in the
+[API 28 emulator run 41221272423](https://github.com/skypie0102/ShadowGarden/actions/runs/41221272423)
+at source `6a5bb58`. The six new instrumentation cases cover conflict choices,
+unchanged and separate edition/reader slots, changes after preview, an injected
+SQLite failure and rollback, a backup transferred between two independent test
+databases, and duplicate or foreign previews. The app suite and both staged
+process-recovery invocations passed; the regular suite skipped the manual-only
+stage and the known Readium reflow test. The retained report could not be
+downloaded in this environment; the run log reports six more app tests started
+than the previous successful run and no failures. Separate databases on one
+emulator do not establish real cross-device recovery or file-picker behavior.
