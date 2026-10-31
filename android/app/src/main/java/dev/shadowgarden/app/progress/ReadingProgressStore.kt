@@ -97,6 +97,7 @@ internal class ReadingProgressStore(
     @Synchronized
     fun snapshotPositions(): List<ReadingPosition> {
         val positions = mutableListOf<ReadingPosition>()
+        var locatorBytes = 0L
         val db = helper.writableDatabase
         db.beginTransactionNonExclusive()
         try {
@@ -116,6 +117,8 @@ internal class ReadingProgressStore(
                     val position = ReadingPosition(CatalogBookId(cursor.getString(0)),
                         EditionFingerprint(cursor.getString(1), cursor.getLong(2)), format, cursor.getString(4), cursor.getLong(5))
                     StoredReadingPosition(position, cursor.getLong(6)) // Validate revision; do not export it.
+                    locatorBytes += position.locator.toByteArray(Charsets.UTF_8).size
+                    if (locatorBytes > ReadingPositionBackup.MAX_BYTES) throw SQLiteException("Positions exceed backup size limit")
                     positions.add(position)
                 }
             }

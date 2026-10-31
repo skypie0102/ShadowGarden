@@ -104,6 +104,23 @@ class ReadingPositionBackupTest {
         } finally { store.close(); context.deleteDatabase(name) }
     }
 
+    @Test fun snapshotRejectsOversizedCollectionsWithoutChangingStoredPositions() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val name = "reading-backup-limit-${UUID.randomUUID()}.db"
+        val store = ReadingProgressStore(context, name)
+        try {
+            val longLocator = "x".repeat(64 * 1024)
+            repeat(65) { index ->
+                val position = first.copy(bookId = CatalogBookId("bk_" + index.toString().padStart(22, '0')), locator = longLocator)
+                assertEquals(ProgressSaveResult.Saved(1), store.save(position, null))
+            }
+            assertTrue("An oversized snapshot must fail", runCatching { store.snapshotPositions() }.isFailure)
+            val lastBook = CatalogBookId("bk_" + "64".padStart(22, '0'))
+            val saved = store.lookup(lastBook, edition, LocatorFormat.EPUBJS_CFI) as ProgressLookup.Exact
+            assertEquals(longLocator, saved.stored.position.locator)
+        } finally { store.close(); context.deleteDatabase(name) }
+    }
+
     private fun encode(positions: List<ReadingPosition>): String {
         val output = ByteArrayOutputStream()
         ReadingPositionBackup.write(output, positions)

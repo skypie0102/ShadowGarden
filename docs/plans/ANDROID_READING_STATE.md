@@ -64,8 +64,10 @@ The codec reads at most 4 MiB and 5,000 positions, checks UTF-8, field types,
 required fields, duplicate fields and duplicate identity slots, and rejects
 unknown versions, fields and reader formats. It validates every record before
 returning any; decoding does not modify the database. A store snapshot contains
-all known positions in one query and fails on malformed or unknown records rather
-than silently omitting them. Encoding also enforces limits and can fail after a
+all known positions in one transaction and fails on malformed or unknown records
+rather than silently omitting them. It also bounds the total locator bytes held
+while gathering the snapshot; final JSON overhead can still exceed the file limit.
+Encoding enforces the file limit and can fail after a
 partial write: a future export must stage the entire validated file privately
 before sending it to a user-selected destination, and report any copy failure.
 Neither stream is closed by the codec. Run these synchronous operations off the
