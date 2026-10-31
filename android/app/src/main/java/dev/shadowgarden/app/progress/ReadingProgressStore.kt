@@ -2,6 +2,7 @@ package dev.shadowgarden.app.progress
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
@@ -10,7 +11,7 @@ import java.io.Closeable
 
 /**
  * App-private position storage. Call from an I/O thread and close when no longer needed.
- * This store does not parse locators, validate EPUBs, sync with the website, or export backups.
+ * This store does not parse locators, validate EPUBs, sync with the website, or restore backups.
  */
 internal class ReadingProgressStore(
     context: Context,
@@ -87,6 +88,39 @@ internal class ReadingProgressStore(
             }
             db.setTransactionSuccessful()
             return ProgressSaveResult.Saved(next)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    /** A consistent position-only snapshot. Unknown or damaged rows fail rather than being omitted. */
+    @Synchronized
+    fun snapshotPositions(): List<ReadingPosition> {
+        val positions = mutableListOf<ReadingPosition>()
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            db.rawQuery(
+                "SELECT book_id, edition_sha256, edition_bytes, locator_format, locator, recorded_at, revision " +
+                    "FROM reading_positions ORDER BY book_id, edition_sha256, edition_bytes, locator_format LIMIT ?",
+                arrayOf((ReadingPositionBackup.MAX_POSITIONS + 1).toString())
+            ).use { cursor ->
+                while (cursor.moveToNext()) {
+                    if (positions.size == ReadingPositionBackup.MAX_POSITIONS) throw SQLiteException("Too many positions for backup")
+                    if (listOf(0, 1, 3, 4).any { cursor.getType(it) != Cursor.FIELD_TYPE_STRING } ||
+                        listOf(2, 5, 6).any { cursor.getType(it) != Cursor.FIELD_TYPE_INTEGER }) {
+                        throw SQLiteException("Invalid stored position type")
+                    }
+                    val format = LocatorFormat.entries.firstOrNull { it.storageId == cursor.getString(3) }
+                        ?: throw SQLiteException("Unsupported stored reader format")
+                    val position = ReadingPosition(CatalogBookId(cursor.getString(0)),
+                        EditionFingerprint(cursor.getString(1), cursor.getLong(2)), format, cursor.getString(4), cursor.getLong(5))
+                    StoredReadingPosition(position, cursor.getLong(6)) // Validate revision; do not export it.
+                    positions.add(position)
+                }
+            }
+            db.setTransactionSuccessful()
+            return positions
         } finally {
             db.endTransaction()
         }

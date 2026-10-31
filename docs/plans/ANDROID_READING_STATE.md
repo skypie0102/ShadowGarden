@@ -42,10 +42,41 @@ This does not provide repair or guarantee recovery from every storage failure.
 The future reader must surface failures, preserve the last good location, and
 handle concurrent updates, removed books, editions and reader migrations explicitly.
 
-There is no backup or restore format yet. Future manual exports must be versioned,
-validated, user-selected and independent of website progress, and must not include
-EPUB files or Keeper credentials. Bookmark, finished-state, pin and preference
-storage also remain separate work.
+## Experimental position interchange
+
+An internal position-only JSON format is under development. It is not yet a
+personal-data backup feature: the app does not expose an export or restore
+screen, and the format does not include bookmarks, finished state, pins or
+preferences. It has not been tested across devices and is not a commitment to a
+final public format. Future manual backups must be user-selected and independent
+of website progress; EPUB files and Keeper credentials are outside their scope.
+
+The initial envelope has `kind` equal to `shadowgarden-android-positions`,
+integer `version` 1 and a `positions` array. Each entry contains `bookId`,
+`editionSha256`, `editionBytes`, `locatorFormat`, `locator` and
+`recordedAtMillis`. It contains no database revision, EPUB bytes, browser data
+or explicit credential fields. Locators are opaque: future reader integrations
+must avoid placing credentials or other secrets in them. A timestamp is advisory,
+not a conflict-resolution rule. Edition fingerprints match exact bytes, not a
+guarantee that different downloads represent the same work.
+
+The codec reads at most 4 MiB and 5,000 positions, checks UTF-8, field types,
+required fields, duplicate fields and duplicate identity slots, and rejects
+unknown versions, fields and reader formats. It validates every record before
+returning any; decoding does not modify the database. A store snapshot contains
+all known positions in one query and fails on malformed or unknown records rather
+than silently omitting them. Encoding also enforces limits and can fail after a
+partial write: a future export must stage the entire validated file privately
+before sending it to a user-selected destination, and report any copy failure.
+Neither stream is closed by the codec. Run these synchronous operations off the
+UI thread.
+
+The format has no restore implementation. A future restore needs an explicit
+preview and user-confirmed merge/replace policy, atomic database updates,
+concurrent-edit handling and tests for interrupted file-picker operations. It
+must preserve unknown or unavailable books and editions and explain mismatches;
+validating a locator's syntax or meaning is the reader's responsibility. Manual
+backup retention, uninstall behavior and cross-device recovery remain open.
 
 ## Verification
 
