@@ -1,8 +1,9 @@
 # ShadowGarden for Android
 
-This directory contains the initial Android scaffold. The app currently opens a
-placeholder screen; it does not yet connect to ShadowGarden, read EPUBs, save or
-restore progress, or provide Keeper. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
+The Android app is in development. It offers an early, position-only backup and
+restore screen, but does not yet connect to ShadowGarden, read EPUBs, record
+reading progress, or provide Keeper. Until the reader is integrated, this device
+will have no newly recorded positions to export. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
 ## Development
@@ -25,10 +26,11 @@ direct APK download; the current ID, API 26 minimum and version are development
 values. Final release identity, support range, signing and hosting still need
 decisions before distribution.
 
-Android automatic system backup is disabled in the scaffold, with extraction
-rules excluding app data from cloud backup and device transfer. The planned
-explicit progress export/restore is not implemented yet. Keep signing keys,
-local SDK paths, Keeper tokens, real book files and personal backups out of Git.
+Android automatic system backup is disabled, with extraction rules excluding app
+data from cloud backup and device transfer. The early manual backup covers reading
+positions only; bookmarks, preferences and other personal data are not included.
+Keep signing keys, local SDK paths, Keeper tokens, real book files and personal
+backups out of Git.
 
 ## Manual emulator smoke test
 
@@ -49,6 +51,8 @@ data, saves generated selected-passage and current-page locations, force-stops
 also checks test progress records across the stop. The probe removes only its
 test fixtures, preferences and test database. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
+Backup-screen tests simulate document-picker results and use a private debug-only
+document provider; they do not exercise a real file manager or cloud provider.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
 To include the isolated real-handler fixture, use `bash accesslab/run-emulator-tests.sh`
@@ -63,12 +67,12 @@ are packaged only into the test APK. It does not implement the application reade
 save user progress or prove the website's reader extensions work on Android.
 
 The Readium comparison is a non-exported debug-only test host using the same
-generated EPUB. It does not provide an app reader or implement progress backup.
+generated EPUB. It does not provide an app reader.
 An internal [reading-position foundation](../docs/plans/ANDROID_READING_STATE.md)
 now stores app-private locations by book, exact EPUB edition and reader format,
-but is not yet connected to the placeholder or available to users. An experimental
-position-only backup codec and restore-preview component are also internal; they
-have no export or restore UI and do not cover the rest of a person's reading data.
+but is not yet connected to a reader. The early backup screen can export and
+restore positions already in that store; it does not cover the rest of a person's
+reading data.
 The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
 prototype constraints and results.
 

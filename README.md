@@ -37,8 +37,9 @@ maintenance, Website refactor and the October codebase audit are complete.
 Their dated release and verification records are in the [archive](docs/archive/README.md).
 
 The [Android roadmap](docs/plans/ANDROID_ROADMAP.md) is the current repository
-development cycle. The app is a scaffold: offline reading, local progress,
-backup and Keeper are planned, not yet implemented. The completed [UI/UX
+development cycle. The app is an early scaffold with a position-only backup
+and restore screen. Offline reading, automatic reading progress, a complete
+personal-data backup and Keeper are still planned. The completed [UI/UX
 roadmap](docs/archive/plans/UI_UX_ROADMAP.md) retains its delivery history and
 the [follow-ups](docs/plans/FOLLOW_UPS.md) retain unresolved acceptance limits.
 Keeper uploads explain destinations and

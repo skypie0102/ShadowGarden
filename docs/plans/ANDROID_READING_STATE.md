@@ -1,9 +1,9 @@
 # Android reading-position foundation
 
-This is an internal app component under development, not a user-facing reader,
-progress screen, or backup feature. The [Android roadmap](ANDROID_ROADMAP.md)
-remains the current development plan. The placeholder app does not yet call this
-store; progress will not be saved for users until a reader is integrated.
+This is an Android app component under development, not a user-facing reader or
+complete personal-data backup. The [Android roadmap](ANDROID_ROADMAP.md) remains
+the current development plan. The early position-only backup screen uses the
+store; progress will not be recorded until a reader is integrated.
 
 ## Identity and safe resume
 
@@ -44,12 +44,12 @@ handle concurrent updates, removed books, editions and reader migrations explici
 
 ## Experimental position interchange
 
-An internal position-only JSON format is under development. It is not yet a
-personal-data backup feature: the app does not expose an export or restore
-screen, and the format does not include bookmarks, finished state, pins or
-preferences. It has not been tested across devices and is not a commitment to a
-final public format. Future manual backups must be user-selected and independent
-of website progress; EPUB files and Keeper credentials are outside their scope.
+An early position-only JSON format and manual backup screen are under development.
+This is not a complete personal-data backup: the format does not include
+bookmarks, finished state, pins or preferences. It has not been tested across
+devices. Future format changes must retain a way to read version 1 files or
+provide an explicit migration path. Backups are user-selected and independent of
+website progress; EPUB files and Keeper credentials are outside their scope.
 
 The initial envelope has `kind` equal to `shadowgarden-android-positions`,
 integer `version` 1 and a `positions` array. Each entry contains `bookId`,
@@ -68,8 +68,8 @@ all known positions in one transaction and fails on malformed or unknown records
 rather than silently omitting them. It also bounds the total locator bytes held
 while gathering the snapshot; final JSON overhead can still exceed the file limit.
 Encoding enforces the file limit and can fail after a
-partial write: a future export must stage the entire validated file privately
-before sending it to a user-selected destination, and report any copy failure.
+partial write: an export must stage the entire validated backup privately before
+sending it to a user-selected destination, and report any copy failure.
 Neither stream is closed by the codec. Run these synchronous operations off the
 UI thread.
 
@@ -92,11 +92,23 @@ entire transaction. Changed editions, other reader formats and unavailable books
 remain as separate slots. A locator's syntax and meaning remain the owning
 reader's responsibility.
 
-This is not yet a user-facing restore. The future UI must show the preview,
-obtain confirmation before overwrite, handle stale previews and errors, and
-explain edition mismatches. File-picker operations, a full personal-data format,
-interrupted transfers, backup retention, uninstall behavior and actual
-cross-device recovery remain open. No user-facing screen calls this component.
+The early screen uses Android's system document picker. Export first prepares a
+bounded backup in memory, then asks the user for a destination; an empty store
+does not create a file. A provider error may still leave the selected file
+incomplete, and the screen reports that possibility. Restore validates the entire
+selected file, displays new, unchanged and conflicting counts with book IDs,
+edition fingerprint prefixes and reader formats for conflicts, and requires an extra
+confirmation before overwriting. Stale previews require the user to select and
+review the file again. Only `content:` document URIs are accepted, and access is
+used only for the chosen operation. If the
+process dies while the export picker is open, the in-memory backup is lost and
+the user must retry; an old picker result cannot write without prepared data.
+
+A full personal-data format, actual cross-device recovery, interrupted transfers
+with real document providers, backup retention, uninstall behavior and reader
+handling of changed editions remain open. Book titles are not yet available in
+the restore preview. The reader must later record positions and validate restored
+locators before users can resume a book.
 
 ## Verification
 
@@ -137,3 +149,18 @@ stage and the known Readium reflow test. The retained report could not be
 downloaded in this environment; the run log reports six more app tests started
 than the previous successful run and no failures. Separate databases on one
 emulator do not establish real cross-device recovery or file-picker behavior.
+
+The early backup screen was exercised in the
+[API 28 emulator run 41224001650](https://github.com/skypie0102/ShadowGarden/actions/runs/41224001650)
+at source `5aabd76`. The seven screen tests simulate system-picker results with
+a private debug-only document provider. They cover export, restore preview and
+overwrite confirmation, invalid input, a failing output, empty and interrupted
+exports, a stale preview, picker cancellation and rejection of a non-document URI.
+A separate test checks that a closed store cannot reopen; the launch test checks
+the controls after activity recreation. The app suite and staged process-recovery
+invocations passed, with the manual-only stage and known Readium reflow test
+skipped in the ordinary suite. The run log reports eight additional app tests and
+no failures; the retained detailed report could not be downloaded from this
+environment. A local release build excluded the debug provider and did not add
+Internet permission. These results do not verify a real file-manager UI, cloud
+provider, low-storage interruption, physical device or cross-device restore.
