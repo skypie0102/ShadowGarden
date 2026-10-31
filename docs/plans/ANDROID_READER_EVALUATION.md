@@ -238,9 +238,37 @@ skipped the manual staged entry and the previously documented Readium
 current-location reflow case.
 
 Paragraph intersection does not identify an exact character or guarantee that no
-text was skipped within the paragraph. This is one synthetic fixture and layout,
-not production progress storage, backup, changed-edition handling, font reflow or
-a low-memory eviction test.
+text was skipped within the paragraph. That run used one synthetic fixture and
+layout; it did not test production progress storage, backup, changed editions,
+font reflow or low-memory eviction.
+
+## Current-page reflow after process termination
+
+The staged probe also reopens the saved automatically captured locations after
+force-stop with a 220 × 260 viewport and 160% text, compared with the original
+280 × 340 and 100% text. Viewport dimensions are CSS pixels in the EPUB.js
+harness and dp in the Readium harness. The probe verifies the viewport and a larger
+computed font, waits for stable visible generated paragraphs and records their
+numbers. The changed-layout observation is diagnostic: the probe logs whether
+the originally first visible paragraph remains visible but does not assert it.
+Both prototypes run without app network permission against unchanged generated
+files. Only generated fixture text and positions are logged.
+
+The [API 28 emulator run 41214749974](https://github.com/skypie0102/ShadowGarden/actions/runs/41214749974)
+at source `d024701` passed the Android suites and both staged invocations. For
+EPUB.js, paragraph 4 was first visible before the stop, paragraphs 4–6 were
+visible after reopening at the original layout, and paragraphs 3–4 intersected
+the changed viewport. For Readium, paragraph 39 was first visible before the
+stop, paragraphs 39–41 were visible at the original layout, and paragraph 39
+intersected the changed viewport. Thus, some part of the earlier first paragraph
+was visible in both changed-layout samples. The ordinary suite skipped the
+manual-only stage and the previously documented strict Readium reflow test.
+
+Paragraph intersection does not identify the exact character or establish that
+no text was skipped within a paragraph. This is one generated EPUB, one initial
+location and one layout change on one emulator; it does not prove behavior with
+real books, other layouts, production integration, system eviction or backup.
+The strict Readium test and a reader choice remain open.
 
 ## Prototype protocol
 
