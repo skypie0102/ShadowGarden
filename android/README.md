@@ -42,6 +42,13 @@ HTTPS access test, with `connectedDebugAndroidTest`. Instrumentation reports
 are retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
 
+The script also runs a two-stage reader process-recovery experiment on emulators.
+It reinstalls the debug app and its test APK on the emulator without clearing
+data, saves generated fixture locations, force-stops `dev.shadowgarden.app`, and
+restores in a separate instrumentation process.
+The probe removes only its test fixtures and preferences. It is skipped on
+physical devices; the ordinary instrumentation suite skips its staged entry.
+
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
 To include the isolated real-handler fixture, use `bash accesslab/run-emulator-tests.sh`
 from `android/` with Node 24, `curl` and `adb` available. The fixture is not

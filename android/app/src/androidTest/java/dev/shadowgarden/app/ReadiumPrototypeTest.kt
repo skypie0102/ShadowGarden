@@ -202,7 +202,7 @@ class ReadiumPrototypeTest {
         }
     }
 
-    private fun awaitChapter(
+    internal fun awaitChapter(
         scenario: ActivityScenario<ReadiumPrototypeActivity>, href: String, text: String, requireImage: Boolean = false
     ): Locator {
         val deadline = SystemClock.elapsedRealtime() + 45_000
@@ -237,7 +237,7 @@ class ReadiumPrototypeTest {
         throw AssertionError("Readium did not render $href: $lastState")
     }
 
-    private fun awaitVisiblePassage(
+    internal fun awaitVisiblePassage(
         scenario: ActivityScenario<ReadiumPrototypeActivity>, minimumFontSize: Double, widthDp: Int, heightDp: Int
     ): Double {
         val deadline = SystemClock.elapsedRealtime() + 45_000
