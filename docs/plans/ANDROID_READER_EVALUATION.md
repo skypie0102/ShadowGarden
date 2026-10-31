@@ -229,10 +229,18 @@ emulator force-stops the test app, the restore stage checks the same fixture
 fingerprints and compares the first visible paragraph in the new process with the
 captured sample at the same layout. The existing selected-passage checks remain.
 
-Emulator verification is pending. Paragraph intersection does not identify an
-exact character or guarantee that no text was skipped within the paragraph. This
-is a synthetic fixture at one layout, not production progress storage, backup,
-changed-edition handling, font reflow or a low-memory eviction test.
+The [API 28 emulator run 41185553752](https://github.com/skypie0102/ShadowGarden/actions/runs/41185553752)
+at source `e68f7a1` passed the existing suites and both staged process-probe
+invocations. After the force-stop and a new process, EPUB.js returned to generated
+paragraph 4 and Readium to paragraph 39, matching each reader's captured first
+visible paragraph. The selected-passage checks also passed. The normal suite
+skipped the manual staged entry and the previously documented Readium
+current-location reflow case.
+
+Paragraph intersection does not identify an exact character or guarantee that no
+text was skipped within the paragraph. This is one synthetic fixture and layout,
+not production progress storage, backup, changed-edition handling, font reflow or
+a low-memory eviction test.
 
 ## Prototype protocol
 

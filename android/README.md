@@ -44,8 +44,8 @@ GitHub-hosted runner; a setup failure does not establish app behavior.
 
 The script also runs a two-stage reader process-recovery experiment on emulators.
 It reinstalls the debug app and its test APK on the emulator without clearing
-data, saves generated fixture locations, force-stops `dev.shadowgarden.app`, and
-restores in a separate instrumentation process.
+data, saves generated selected-passage and current-page locations, force-stops
+`dev.shadowgarden.app`, and restores in a separate instrumentation process.
 The probe removes only its test fixtures and preferences. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
 
