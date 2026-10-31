@@ -26,12 +26,12 @@ device and evidence limits are tracked in [follow-ups](FOLLOW_UPS.md).
 | --- | --- | --- |
 | 0. Scaffold and discovery | In progress | Buildable Android shell, current roadmap and a feature inventory |
 | 1. Reader and access prototypes | In discovery | Compare approaches, then prove offline locations and protected access |
-| 2. Library and offline reader | Planned | Reader-facing library, protected downloads, EPUB reader and local state |
+| 2. Library and offline reader | In progress | Reader-facing library, protected downloads, EPUB reader and local state; early Main catalog browsing available |
 | 3. Progress backup and restore | In progress | Portable, validated Android reading-data export and restore; early position-only flow available |
 | 4. Keeper | Planned | All website Keeper workflows usable and protected on Android |
 | 5. Parity and release | Planned | Complete feature parity, accessibility, device acceptance and release preparation |
 
-The app is an early scaffold with a position-only backup screen. A roadmap item is complete only after its
+The app is an early scaffold with a read-only Main catalog and a position-only backup screen. A roadmap item is complete only after its
 acceptance evidence is recorded; source changes, CI, real-device verification
 and production acceptance are distinct.
 
@@ -98,7 +98,7 @@ network access must not prevent reading an already downloaded book.
 
 ## Phase 2 — Library and offline reader
 
-- [ ] Implement main and age-gated libraries, series and volume details, search, filters, sorting, pins, recently added and reading-state actions.
+- [ ] Implement main and age-gated libraries, series and volume details, search, filters, sorting, pins, recently added and reading-state actions. An early [read-only Main catalog](ANDROID_MAIN_CATALOG.md) provides title/author/volume-title search and volume listings; the remaining features are open.
 - [ ] Implement background-capable downloads, progress, retry/cancel, ticket expiry handling, integrity checks and private storage. Provide storage management and removal without deleting reading state.
 - [ ] Implement offline reading, table of contents, in-book search, bookmarks, paginated/continuous layouts, typography, themes, image focus and accessible navigation.
 - [ ] Persist location, bookmarks, finished state, pins and preferences locally. Show save failures and retain data across app restarts; no website sync.

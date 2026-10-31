@@ -2,8 +2,8 @@
 
 Baseline: repository source at `92f14c6` (website v2.30.0). This inventory
 maps existing website behavior to proposed Android surfaces and observable
-acceptance cases. It is a development checklist, not a claim that any Android
-feature exists. Reader and Keeper behavior may use a different mobile layout;
+acceptance cases. Statuses distinguish implemented pieces from remaining work.
+Reader and Keeper behavior may use a different mobile layout;
 the interaction and security outcomes remain the target. Check the current
 website and update this inventory if its behavior changes.
 
@@ -18,8 +18,8 @@ and [API contracts](../guides/API_CONTRACTS.md).
 | Status | Website behavior | Proposed Android surface | Acceptance cases |
 | --- | --- | --- | --- |
 | Planned | Main and separately age-gated Adult catalogs, acknowledgement/reset and scope-specific presentation | Library switch and adult gate | Decline returns to Main; entering and resetting acknowledgement affect only Android; correct scope and age warning remain on navigation. |
-| Planned | Catalog loading, errors, series covers/metadata, volume counts, grid/compact views | Library | Main and Adult load independently; errors and empty results are distinguishable and retryable; layouts retain selection. |
-| Planned | Search by title, author, tag and volume; author, translator, genre, year, volume-count, status and exact-tag filters; popular tags, reset and sort options | Search and filter sheet | Combined filters match website results on a shared fixture; removing/resetting filters and each sort produce expected results. |
+| Partial | Catalog loading, errors, series covers/metadata, volume counts, grid/compact views | Library | Early Main catalog loading, errors and volume counts exist. Adult scope, covers, full metadata and layouts remain open. Main and Adult must load independently; errors and empty results are distinguishable and retryable. |
+| Partial | Search by title, author, tag and volume; author, translator, genre, year, volume-count, status and exact-tag filters; popular tags, reset and sort options | Search and filter sheet | Early Main search covers titles, authors and volume titles. Filters, tags and sort remain open; combined filters must match website results on a shared fixture. |
 | Planned | Pinned series and pinned-only navigation; Recently Added and newest view | Library and pins | Pin/unpin survives restart; pinned-only and recently added use correct series, scope and ordering. |
 | Planned | Continue reading, reading status, progress context and next-volume suggestions | Library and series | Unread, in-progress, finished, out-of-order completion and unavailable EPUB cases select the correct volume; no fabricated percentage for unknown progress. |
 | Planned | Series synopsis, credits and links, volume order, grid/list, cover badges and Read/Continue/Read Again/Download | Series and volume details | Metadata and order match catalog; read-again confirmation clears only the selected progress/finished state and preserves bookmarks; unavailable files cannot be opened. |

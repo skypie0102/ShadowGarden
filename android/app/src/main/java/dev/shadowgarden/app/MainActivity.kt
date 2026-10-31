@@ -1,6 +1,7 @@
 package dev.shadowgarden.app
 
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -40,29 +41,41 @@ import androidx.lifecycle.ViewModelProvider
 import dev.shadowgarden.app.progress.PositionBackupEvent
 import dev.shadowgarden.app.progress.PositionBackupViewModel
 import dev.shadowgarden.app.progress.PositionRestoreMode
+import dev.shadowgarden.app.catalog.LibraryViewModel
+import dev.shadowgarden.app.catalog.MainLibraryScreen
 
 class MainActivity : ComponentActivity() {
-    private val backup by lazy {
-        ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                require(modelClass == PositionBackupViewModel::class.java)
-                return PositionBackupViewModel(application) as T
-            }
-        })[PositionBackupViewModel::class.java]
+    private val factory = object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = when (modelClass) {
+            PositionBackupViewModel::class.java -> PositionBackupViewModel(application) as T
+            LibraryViewModel::class.java -> LibraryViewModel() as T
+            else -> throw IllegalArgumentException("Unknown view model")
+        }
     }
+    private val backup by lazy {
+        ViewModelProvider(this, factory)[PositionBackupViewModel::class.java]
+    }
+    private val library by lazy { ViewModelProvider(this, factory)[LibraryViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { ShadowGardenApp(backup) }
+        setContent { ShadowGardenApp(backup, library) }
     }
 }
 
 @Composable
-internal fun ShadowGardenApp(backup: PositionBackupViewModel) {
+internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryViewModel) {
+    var showBackup by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = showBackup) { showBackup = false }
     MaterialTheme(colorScheme = darkColorScheme()) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            PositionBackupScreen(backup)
+            if (showBackup) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    TextButton(onClick = { showBackup = false }) { Text("Back to Main library") }
+                    PositionBackupScreen(backup)
+                }
+            } else MainLibraryScreen(library, onBackup = { showBackup = true })
         }
     }
 }
@@ -99,7 +112,7 @@ internal fun PositionBackupScreen(backup: PositionBackupViewModel) {
     ) {
         Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium)
         Text("Android app in development", style = MaterialTheme.typography.titleMedium)
-        Text("The library, offline reader, and Keeper are still in development. Reading positions will be saved on this device when the reader is ready.")
+        Text("The offline reader and Keeper are still in development. Reading positions will be saved on this device when the reader is ready.")
         Text("Reading-position backup", style = MaterialTheme.typography.titleLarge)
         Text("Back up positions saved in this Android app. Browser progress is separate. Backup files contain positions only; they do not include EPUBs, bookmarks, or other reading settings.")
         Text("Uninstalling the app removes its local data. Keep backup files in a separate location.")

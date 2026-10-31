@@ -11,6 +11,10 @@ on:
         description: 'Run the emulator smoke test instead of the regular build'
         type: boolean
         default: false
+      liveCatalog:
+        description: 'Also fetch the live public Main catalog on the emulator'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -60,6 +64,8 @@ jobs:
           sudo chmod a+rw /dev/kvm
       - name: Run launch and recreation smoke test
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          SG_CATALOG_LIVE: ${{ inputs.liveCatalog && '1' || '0' }}
         with:
           api-level: 28
           target: default

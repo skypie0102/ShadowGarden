@@ -34,7 +34,7 @@ CFI are restored. Test data are removed afterward.
 The [manual emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/40836852045)
 passed both the launch smoke test and this EPUB test on Android 9 / API 28
 x86_64 at source `040d165`. The generated book and vendor resources were served
-locally by the test harness; the app declares no Internet permission. This run
+locally by the test harness; that app build declared no Internet permission. This run
 did not toggle airplane mode or use a real book. An earlier run timed out; the
 test page's optional-chaining syntax was removed and diagnostic reporting added
 before the successful run. The earlier timeout was not independently diagnosed.
@@ -50,7 +50,8 @@ before making a reader choice.
 An experimental Readium 3.0.0 host is included in debug builds only, with an
 instrumentation test that uses the same generated EPUB as the EPUB.js test. The
 host is not exported and opens only its fixed, test-generated file in private
-cache. The debug manifest removes Internet permission for the experiment. Its
+cache. The `-PofflineReaderTests=true` debug test configuration removes Internet
+permission for the experiment; normal app builds allow it for the Main catalog. Its
 saved locator lives in test-only preferences; test data are cleaned up afterward.
 The app's release build does not include the Readium dependencies or host.
 
@@ -251,7 +252,7 @@ harness and dp in the Readium harness. The probe verifies the viewport and a lar
 computed font, waits for stable visible generated paragraphs and records their
 numbers. The changed-layout observation is diagnostic: the probe logs whether
 the originally first visible paragraph remains visible but does not assert it.
-Both prototypes run without app network permission against unchanged generated
+In the offline test configuration, both prototypes run without app network permission against unchanged generated
 files. Only generated fixture text and positions are logged.
 
 The [API 28 emulator run 41214749974](https://github.com/skypie0102/ShadowGarden/actions/runs/41214749974)

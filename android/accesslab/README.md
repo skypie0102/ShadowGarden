@@ -10,8 +10,9 @@ TLS, authentication or signing. The CA's private key was discarded.
 The instrumentation APK uses the fixture server key to host a mock HTTPS
 service. No production credentials or content are used. The mock emulates only
 specific responses needed for the experiment; it does not run the real server
-or Turnstile. The main ShadowGarden app and its release manifest do not inherit
-this module's permission or CA.
+or Turnstile. The main ShadowGarden app does not inherit this module's test CA.
+It separately requests Internet permission for the public Main catalog; the
+offline reader-test configuration removes that permission during the fixture run.
 
 The optional `fixture/server.mjs` binds only to loopback and executes the actual
 access handlers with an in-memory SQLite-backed D1 substitute, a generated catalog
