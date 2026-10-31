@@ -44,3 +44,9 @@ report could not be downloaded in this environment; the run log reports the
 suite and each separately invoked probe passing. The live probe exercised the
 client, while the screen tests used synthetic data; this is not a real-device
 or end-to-end live UI acceptance test.
+
+The follow-up [offline API 28 run 41227620084](https://github.com/skypie0102/ShadowGarden/actions/runs/41227620084)
+at source `766eacc` passed the suite and staged reader process probe after adding
+a screen test for a selected series while a new catalog model loads. It did not
+repeat the optional live request. The ordinary suite again skipped the live-only
+test, manual process stage and known strict Readium reflow case.
