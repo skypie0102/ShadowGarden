@@ -1,7 +1,9 @@
 package dev.shadowgarden.app.catalog
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertDoesNotExist
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -14,6 +16,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import dev.shadowgarden.app.progress.CatalogBookId
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -72,6 +76,25 @@ class MainLibraryScreenTest {
         composeRule.waitUntil(20_000) { model.state.value.series != null }
         scrollTo("The Main library is empty.")
         composeRule.onNodeWithText("The Main library is empty.").assertIsDisplayed()
+    }
+
+    @Test fun selectedSeriesShowsLoadingWhileANewModelLoads() {
+        val current = mutableStateOf(model(CatalogSource { fixture }))
+        composeRule.setContent { MaterialTheme { MainLibraryScreen(current.value) {} } }
+        composeRule.waitUntil(20_000) { current.value.state.value.series != null }
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+        composeRule.onNodeWithText("First Series").assertIsDisplayed()
+        val gate = CountDownLatch(1)
+        try {
+            val reloading = model(CatalogSource { gate.await(30, TimeUnit.SECONDS); fixture })
+            composeRule.runOnUiThread { current.value = reloading }
+            composeRule.onNodeWithText("Loading Main library…").assertIsDisplayed()
+            composeRule.onNodeWithText("This series is no longer available in the loaded library.").assertDoesNotExist()
+            gate.countDown()
+            composeRule.waitUntil(20_000) { reloading.state.value.series != null }
+            composeRule.onNodeWithText("First Series").assertIsDisplayed()
+        } finally { gate.countDown() }
     }
 
     private fun model(source: CatalogSource): LibraryViewModel {

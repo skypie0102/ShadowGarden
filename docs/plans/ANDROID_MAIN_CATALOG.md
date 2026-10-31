@@ -32,3 +32,15 @@ probe installs the network-enabled debug app after the offline suite and makes
 one read-only request to the live public Main catalog; it is off by default.
 Different Android versions and physical-device behavior require separate
 evidence before treating this as complete library acceptance.
+
+The [API 28 emulator run 41226805876](https://github.com/skypie0102/ShadowGarden/actions/runs/41226805876)
+at source `fbbfede` passed the synthetic catalog and UI tests, the existing
+offline reader/access suite and the two staged process-recovery invocations.
+After installing the normal network-enabled debug app, the optional live probe
+successfully fetched and parsed the deployed public Main catalog. The ordinary
+suite skipped that live-only test, its separate process probe and the previously
+documented strict Readium reflow case. The retained detailed instrumentation
+report could not be downloaded in this environment; the run log reports the
+suite and each separately invoked probe passing. The live probe exercised the
+client, while the screen tests used synthetic data; this is not a real-device
+or end-to-end live UI acceptance test.

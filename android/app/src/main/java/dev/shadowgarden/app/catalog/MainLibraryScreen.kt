@@ -36,8 +36,16 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { TextButton(onClick = { selectedId = null }) { Text("Back to Main library") } }
-            if (selected == null) item { Text("This series is no longer available in the loaded library.") }
-            else {
+            if (selected == null) {
+                when {
+                    state.loading -> item { Text("Loading Main library…") }
+                    state.series == null -> {
+                        item { Text(state.error ?: "The Main library has not loaded yet.") }
+                        item { Button(onClick = model::refresh) { Text("Retry library") } }
+                    }
+                    else -> item { Text("This series is no longer available in the loaded library.") }
+                }
+            } else {
                 item { Text(selected.title, style = MaterialTheme.typography.headlineMedium) }
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
