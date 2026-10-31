@@ -67,8 +67,8 @@ generated EPUB. It does not provide an app reader or implement progress backup.
 An internal [reading-position foundation](../docs/plans/ANDROID_READING_STATE.md)
 now stores app-private locations by book, exact EPUB edition and reader format,
 but is not yet connected to the placeholder or available to users. An experimental
-position-only backup codec is also internal; it has no export or restore UI and
-does not yet cover the rest of a person's reading data.
+position-only backup codec and restore-preview component are also internal; they
+have no export or restore UI and do not cover the rest of a person's reading data.
 The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
 prototype constraints and results.
 

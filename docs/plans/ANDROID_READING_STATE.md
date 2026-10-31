@@ -73,12 +73,30 @@ before sending it to a user-selected destination, and report any copy failure.
 Neither stream is closed by the codec. Run these synchronous operations off the
 UI thread.
 
-The format has no restore implementation. A future restore needs an explicit
-preview and user-confirmed merge/replace policy, atomic database updates,
-concurrent-edit handling and tests for interrupted file-picker operations. It
-must preserve unknown or unavailable books and editions and explain mismatches;
-validating a locator's syntax or meaning is the reader's responsibility. Manual
-backup retention, uninstall behavior and cross-device recovery remain open.
+## Experimental position restore
+
+The store can preview already validated position records without writing. Each
+exact book/edition/reader slot is classified as new, unchanged or conflicting;
+the preview is bound to the store instance that created it. It checks duplicate
+slots and bounds the number and total size of both incoming and existing
+locators. Preview and apply are synchronous and belong on an I/O thread.
+
+Applying a preview requires the caller to choose either **keep existing** or
+**overwrite conflicts**. Both insert new slots and leave unchanged slots alone;
+the first preserves conflicts and the second updates them with a new local
+revision. Neither mode deletes entries absent from the backup or infers a winner
+from timestamps. A single SQLite transaction compares every slot to the state
+seen during preview before applying any changes. If a slot changed, it returns a
+stale-preview result and writes nothing; database errors also roll back the
+entire transaction. Changed editions, other reader formats and unavailable books
+remain as separate slots. A locator's syntax and meaning remain the owning
+reader's responsibility.
+
+This is not yet a user-facing restore. The future UI must show the preview,
+obtain confirmation before overwrite, handle stale previews and errors, and
+explain edition mismatches. File-picker operations, a full personal-data format,
+interrupted transfers, backup retention, uninstall behavior and actual
+cross-device recovery remain open. No user-facing screen calls this component.
 
 ## Verification
 
