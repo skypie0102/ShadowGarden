@@ -204,8 +204,16 @@ own test data are cleaned up.
 The [first emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41184076932)
 passed the existing instrumentation suite but could not start the staged probe:
 Gradle had removed the instrumentation APK. The script now reinstalls the debug
-and test APKs on the emulator without clearing data. Verification of the staged
-probe is pending.
+and test APKs on the emulator without clearing data.
+
+The [API 28 emulator run 41184559212](https://github.com/skypie0102/ShadowGarden/actions/runs/41184559212)
+at source `db4caf5` passed the existing suites and both staged probe invocations.
+The preparation and restoration ran in different app processes, the two generated
+files matched their saved SHA-256 fingerprints, and both selected passages were
+visible at the unchanged layout after the force-stop. The normal suite skipped
+the manual-only staged entry and the previously documented Readium current-location
+case. The first staged attempt failed before testing a reader because the test APK
+had been removed; it does not indicate a reader failure.
 
 This checks explicitly selected test locations,
 not automatically captured page position, changed editions, font reflow, a real
