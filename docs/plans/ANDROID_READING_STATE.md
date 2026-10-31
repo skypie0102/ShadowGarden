@@ -95,3 +95,15 @@ and the previously documented Readium current-location reflow test.
 These tests do not establish real-book compatibility, automatic page capture,
 reader integration, backup, disk-full handling, physical-device behavior or
 production acceptance.
+
+The experimental position codec and snapshot were exercised in the
+[API 28 emulator run 41217839215](https://github.com/skypie0102/ShadowGarden/actions/runs/41217839215)
+at source `54ffbfe`. The six new Android cases cover round trips, malformed and
+ambiguous files, size and record limits, stream failures, complete snapshots and
+rejection without deleting stored positions. The app instrumentation suite and
+both process-recovery stages passed; the ordinary suite skipped the manual-only
+stage and the previously documented Readium reflow test. This does not test a
+file picker, restore, interruption during export, cross-device use or a complete
+personal-data backup. The retained report could not be downloaded from this
+environment; the run log reports six more app tests started than the preceding
+successful run and no failures.
