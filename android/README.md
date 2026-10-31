@@ -51,6 +51,8 @@ data, saves generated selected-passage and current-page locations, force-stops
 also checks test progress records across the stop. The probe removes only its
 test fixtures, preferences and test database. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
+Backup-screen tests simulate document-picker results and use a private debug-only
+document provider; they do not exercise a real file manager or cloud provider.
 
 For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
 To include the isolated real-handler fixture, use `bash accesslab/run-emulator-tests.sh`

@@ -149,3 +149,18 @@ stage and the known Readium reflow test. The retained report could not be
 downloaded in this environment; the run log reports six more app tests started
 than the previous successful run and no failures. Separate databases on one
 emulator do not establish real cross-device recovery or file-picker behavior.
+
+The early backup screen was exercised in the
+[API 28 emulator run 41224001650](https://github.com/skypie0102/ShadowGarden/actions/runs/41224001650)
+at source `5aabd76`. The seven screen tests simulate system-picker results with
+a private debug-only document provider. They cover export, restore preview and
+overwrite confirmation, invalid input, a failing output, empty and interrupted
+exports, a stale preview, picker cancellation and rejection of a non-document URI.
+A separate test checks that a closed store cannot reopen; the launch test checks
+the controls after activity recreation. The app suite and staged process-recovery
+invocations passed, with the manual-only stage and known Readium reflow test
+skipped in the ordinary suite. The run log reports eight additional app tests and
+no failures; the retained detailed report could not be downloaded from this
+environment. A local release build excluded the debug provider and did not add
+Internet permission. These results do not verify a real file-manager UI, cloud
+provider, low-storage interruption, physical device or cross-device restore.
