@@ -189,6 +189,23 @@ the resized page: the probe incorrectly required paragraph labels to be visible.
 The follow-up checks the full text range instead. Other layout and lifecycle
 scenarios, real books, and an accurate production capture policy remain open.
 
+## Reader process-recovery experiment
+
+A manual-only, two-stage instrumentation probe saves an explicitly selected
+passage in the generated long EPUB for each test reader. It records each test
+fixture's SHA-256 and saves an EPUB.js range CFI and Readium text locator in
+test-only preferences. The emulator script force-stops the debug app without
+clearing its data, then starts a separate instrumentation process. The recovery
+stage checks that the process ID changed, the fixtures are unchanged, the app has
+no Internet permission, and each selected passage is visible after restoration
+at the same font and viewport. The probe is skipped on physical devices and its
+own test data are cleaned up.
+
+Emulator verification is pending. This checks explicitly selected test locations,
+not automatically captured page position, changed editions, font reflow, a real
+book, personal progress persistence or backup. A force-stop and separate process
+are not a test of low-memory system eviction or general crash durability.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated

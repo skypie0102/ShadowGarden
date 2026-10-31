@@ -116,7 +116,7 @@ class EpubPrototypeTest {
         }
     }
 
-    private fun openHarness(
+    internal fun openHarness(
         scenario: ActivityScenario<MainActivity>, fixture: File, cfi: String?, href: String, marker: String,
         template: String = "epub-prototype.html", width: Int = 0, height: Int = 0, fontSize: Int = 100
     ): WebView {
@@ -165,7 +165,7 @@ class EpubPrototypeTest {
         "text/plain", "utf-8", 403, "Blocked", emptyMap(), "Blocked".byteInputStream()
     )
 
-    private fun awaitResult(view: WebView): JSONObject {
+    internal fun awaitResult(view: WebView): JSONObject {
         val deadline = SystemClock.elapsedRealtime() + 30_000
         var lastResponse = "unavailable"
         while (SystemClock.elapsedRealtime() < deadline) {
@@ -190,7 +190,7 @@ class EpubPrototypeTest {
         throw AssertionError("The EPUB prototype did not finish loading: $lastResponse; console: $consoleMessages")
     }
 
-    private fun closeHarness(scenario: ActivityScenario<MainActivity>, view: WebView) {
+    internal fun closeHarness(scenario: ActivityScenario<MainActivity>, view: WebView) {
         scenario.onActivity {
             (view.parent as? ViewGroup)?.removeView(view)
             view.destroy()
