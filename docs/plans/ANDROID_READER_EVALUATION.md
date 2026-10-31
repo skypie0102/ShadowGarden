@@ -201,7 +201,13 @@ no Internet permission, and each selected passage is visible after restoration
 at the same font and viewport. The probe is skipped on physical devices and its
 own test data are cleaned up.
 
-Emulator verification is pending. This checks explicitly selected test locations,
+The [first emulator run](https://github.com/skypie0102/ShadowGarden/actions/runs/41184076932)
+passed the existing instrumentation suite but could not start the staged probe:
+Gradle had removed the instrumentation APK. The script now reinstalls the debug
+and test APKs on the emulator without clearing data. Verification of the staged
+probe is pending.
+
+This checks explicitly selected test locations,
 not automatically captured page position, changed editions, font reflow, a real
 book, personal progress persistence or backup. A force-stop and separate process
 are not a test of low-memory system eviction or general crash durability.

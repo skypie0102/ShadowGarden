@@ -56,7 +56,13 @@ run_probe() {
 }
 if [[ "$result" == 0 ]]; then
   if [[ "$(adb shell getprop ro.kernel.qemu | tr -d '\r')" == 1 ]]; then
-    if run_probe prepare; then
+    # Gradle removes its instrumentation APK after connected tests finish.
+    # Reinstall only on an emulator and preserve any existing app data.
+    if ! adb install -r -t "$android_dir/app/build/outputs/apk/debug/app-debug.apk" ||
+      ! adb install -r -t "$android_dir/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk"; then
+      printf '%s\n' 'Could not install the debug app and instrumentation APK.' >&2
+      result=1
+    elif run_probe prepare; then
       probe_needs_cleanup=1
       # Only the disposable debug test app is stopped. No app data is cleared.
       if adb shell am force-stop dev.shadowgarden.app &&
