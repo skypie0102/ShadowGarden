@@ -73,12 +73,30 @@ before sending it to a user-selected destination, and report any copy failure.
 Neither stream is closed by the codec. Run these synchronous operations off the
 UI thread.
 
-The format has no restore implementation. A future restore needs an explicit
-preview and user-confirmed merge/replace policy, atomic database updates,
-concurrent-edit handling and tests for interrupted file-picker operations. It
-must preserve unknown or unavailable books and editions and explain mismatches;
-validating a locator's syntax or meaning is the reader's responsibility. Manual
-backup retention, uninstall behavior and cross-device recovery remain open.
+## Experimental position restore
+
+The store can preview already validated position records without writing. Each
+exact book/edition/reader slot is classified as new, unchanged or conflicting;
+the preview is bound to the store instance that created it. It checks duplicate
+slots and bounds the number and total size of both incoming and existing
+locators. Preview and apply are synchronous and belong on an I/O thread.
+
+Applying a preview requires the caller to choose either **keep existing** or
+**overwrite conflicts**. Both insert new slots and leave unchanged slots alone;
+the first preserves conflicts and the second updates them with a new local
+revision. Neither mode deletes entries absent from the backup or infers a winner
+from timestamps. A single SQLite transaction compares every slot to the state
+seen during preview before applying any changes. If a slot changed, it returns a
+stale-preview result and writes nothing; database errors also roll back the
+entire transaction. Changed editions, other reader formats and unavailable books
+remain as separate slots. A locator's syntax and meaning remain the owning
+reader's responsibility.
+
+This is not yet a user-facing restore. The future UI must show the preview,
+obtain confirmation before overwrite, handle stale previews and errors, and
+explain edition mismatches. File-picker operations, a full personal-data format,
+interrupted transfers, backup retention, uninstall behavior and actual
+cross-device recovery remain open. No user-facing screen calls this component.
 
 ## Verification
 
@@ -107,3 +125,15 @@ file picker, restore, interruption during export, cross-device use or a complete
 personal-data backup. The retained report could not be downloaded from this
 environment; the run log reports six more app tests started than the preceding
 successful run and no failures.
+
+The position-restore foundation was exercised in the
+[API 28 emulator run 41221272423](https://github.com/skypie0102/ShadowGarden/actions/runs/41221272423)
+at source `6a5bb58`. The six new instrumentation cases cover conflict choices,
+unchanged and separate edition/reader slots, changes after preview, an injected
+SQLite failure and rollback, a backup transferred between two independent test
+databases, and duplicate or foreign previews. The app suite and both staged
+process-recovery invocations passed; the regular suite skipped the manual-only
+stage and the known Readium reflow test. The retained report could not be
+downloaded in this environment; the run log reports six more app tests started
+than the previous successful run and no failures. Separate databases on one
+emulator do not establish real cross-device recovery or file-picker behavior.

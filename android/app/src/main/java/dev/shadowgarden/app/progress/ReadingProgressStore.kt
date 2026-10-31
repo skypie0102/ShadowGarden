@@ -11,13 +11,14 @@ import java.io.Closeable
 
 /**
  * App-private position storage. Call from an I/O thread and close when no longer needed.
- * This store does not parse locators, validate EPUBs, sync with the website, or restore backups.
+ * This store does not parse locators, validate EPUBs, or sync with the website.
  */
 internal class ReadingProgressStore(
     context: Context,
     databaseName: String = DATABASE_NAME
 ) : Closeable {
     private val helper: Database
+    private val previewOwner = Any()
 
     init {
         require(DATABASE_FILE.matches(databaseName)) { "Invalid database name" }
@@ -128,6 +129,111 @@ internal class ReadingProgressStore(
             db.endTransaction()
         }
     }
+
+    /** Preview validated position records without writing. The caller must obtain user confirmation. */
+    @Synchronized
+    fun previewRestore(positions: List<ReadingPosition>): PositionRestorePreview {
+        require(positions.size <= ReadingPositionBackup.MAX_POSITIONS) { "Too many positions" }
+        val input = positions.toList()
+        val keys = mutableSetOf<Triple<CatalogBookId, EditionFingerprint, LocatorFormat>>()
+        var inputBytes = 0L
+        input.forEach { position ->
+            require(keys.add(Triple(position.bookId, position.edition, position.format))) { "Duplicate position" }
+            inputBytes += position.locator.toByteArray(Charsets.UTF_8).size
+            require(inputBytes <= ReadingPositionBackup.MAX_BYTES) { "Positions exceed backup size limit" }
+        }
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            var existingBytes = 0L
+            val entries = input.map { incoming ->
+                val existing = readExact(db, incoming)
+                if (existing != null) {
+                    existingBytes += existing.position.locator.toByteArray(Charsets.UTF_8).size
+                    if (existingBytes > ReadingPositionBackup.MAX_BYTES) throw SQLiteException("Existing positions exceed preview size limit")
+                }
+                val disposition = when {
+                    existing == null -> PositionRestoreDisposition.NEW
+                    existing.position == incoming -> PositionRestoreDisposition.UNCHANGED
+                    else -> PositionRestoreDisposition.CONFLICT
+                }
+                PositionRestoreEntry(incoming, disposition, existing)
+            }
+            db.setTransactionSuccessful()
+            return PositionRestorePreview(previewOwner, entries)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    /** Apply only a previously reviewed preview. A changed slot aborts every write. */
+    @Synchronized
+    fun restore(preview: PositionRestorePreview, mode: PositionRestoreMode): PositionRestoreResult {
+        require(preview.owner === previewOwner) { "Preview belongs to another store" }
+        val db = helper.writableDatabase
+        db.beginTransactionNonExclusive()
+        try {
+            for (entry in preview.entries) {
+                if (readExact(db, entry.incoming) != entry.expected) return PositionRestoreResult.StalePreview
+            }
+            var inserted = 0
+            var overwritten = 0
+            var unchanged = 0
+            var kept = 0
+            for (entry in preview.entries) {
+                when (entry.disposition) {
+                    PositionRestoreDisposition.UNCHANGED -> unchanged++
+                    PositionRestoreDisposition.CONFLICT -> {
+                        if (mode == PositionRestoreMode.KEEP_EXISTING) kept++
+                        else {
+                            val revision = requireNotNull(entry.expected).revision
+                            if (revision == Long.MAX_VALUE) throw SQLiteException("Progress revision exhausted")
+                            val position = entry.incoming
+                            val values = ContentValues().apply {
+                                put("locator", position.locator)
+                                put("recorded_at", position.recordedAtMillis)
+                                put("revision", revision + 1)
+                            }
+                            val changed = db.update("reading_positions", values,
+                                "book_id=? AND edition_sha256=? AND edition_bytes=? AND locator_format=? AND revision=?",
+                                keyArgs(position.bookId, position.edition, position.format) + revision.toString())
+                            if (changed != 1) throw SQLiteException("Position restore update was not applied")
+                            overwritten++
+                        }
+                    }
+                    PositionRestoreDisposition.NEW -> {
+                        val position = entry.incoming
+                        val values = ContentValues().apply {
+                            put("book_id", position.bookId.value)
+                            put("edition_sha256", position.edition.sha256)
+                            put("edition_bytes", position.edition.byteCount)
+                            put("locator_format", position.format.storageId)
+                            put("locator", position.locator)
+                            put("recorded_at", position.recordedAtMillis)
+                            put("revision", 1L)
+                        }
+                        db.insertOrThrow("reading_positions", null, values)
+                        inserted++
+                    }
+                }
+            }
+            db.setTransactionSuccessful()
+            return PositionRestoreResult.Applied(inserted, overwritten, unchanged, kept)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    private fun readExact(db: SQLiteDatabase, position: ReadingPosition): StoredReadingPosition? =
+        db.rawQuery(
+            "SELECT locator, recorded_at, revision FROM reading_positions WHERE book_id=? AND edition_sha256=? AND edition_bytes=? AND locator_format=?",
+            keyArgs(position.bookId, position.edition, position.format)
+        ).use { cursor ->
+            if (!cursor.moveToFirst()) return@use null
+            if (cursor.getType(0) != Cursor.FIELD_TYPE_STRING || cursor.getType(1) != Cursor.FIELD_TYPE_INTEGER ||
+                cursor.getType(2) != Cursor.FIELD_TYPE_INTEGER) throw SQLiteException("Invalid stored position type")
+            StoredReadingPosition(position.copy(locator = cursor.getString(0), recordedAtMillis = cursor.getLong(1)), cursor.getLong(2))
+        }
 
     @Synchronized
     override fun close() = helper.close()
