@@ -52,8 +52,13 @@ storage also remain separate work.
 JVM tests cover stream hashing, size and I/O failures, same-size changed EPUBs and
 input validation. Android instrumentation covers private SQLite persistence,
 edition/reader mismatch handling, stale and concurrent writes, and corruption
-preservation. The manual process-recovery experiment additionally exercises the
-store across an app force-stop with generated books; emulator evidence is pending.
+preservation. The [API 28 emulator run 41189346274](https://github.com/skypie0102/ShadowGarden/actions/runs/41189346274)
+at source `7cac2bd` passed all seven storage instrumentation tests and both stages
+of the generated-book process-recovery experiment. The latter reopened the test
+database in a new process after a force-stop and checked both reader-format
+records and mismatch decisions. The ordinary suite skipped its manual-only stage
+and the previously documented Readium current-location reflow test.
+
 These tests do not establish real-book compatibility, automatic page capture,
 reader integration, backup, disk-full handling, physical-device behavior or
 production acceptance.
