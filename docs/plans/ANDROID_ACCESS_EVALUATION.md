@@ -171,6 +171,30 @@ persistence or live-site verification. Do not rely on sharing the WebView cookie
 jar with native downloads based on this experiment; the separate signed-URL
 fixture experiment does not settle a production architecture.
 
+A further test varies Strict, Lax, None and unspecified SameSite attributes,
+checks an HttpOnly control, compares native lookup URL variants with and without
+the loopback port, and sets a separate Lax cookie through Android's native API.
+It records only cookie-presence booleans and the WebView version. The fixture uses
+public disposable values and never changes production cookie attributes.
+
+The [API 28 emulator run 41183004506](https://github.com/skypie0102/ShadowGarden/actions/runs/41183004506)
+at source `ee7a442` passed all five access-lab instrumentation tests and the Node
+fixture test. Its WebView was version `66.0.3359.158`. Page scripts saw the
+readable Strict, Lax and unspecified-SameSite controls, while native `getCookie`
+returned the unspecified control but not the Strict or Lax controls. The native
+API reported that it accepted the separate Lax cookie; page scripts saw it, but
+native lookups on the test and main threads did not. Lookup URL variants with and
+without the port did not return the Strict control. Neither the page nor native
+lookup reported the None control, so the test does not establish why that control
+was absent. Native `hasCookies` returned true. The previously documented Readium
+reflow test remained skipped.
+
+The pattern associates the discrepancy with the explicit Strict and Lax controls
+on this emulator; it does not establish the underlying cause or behavior on other
+Android or WebView versions. The real book cookie remains Strict. Do not weaken
+server cookie attributes to make this test pass, and do not assume native
+`getCookie` provides the complete WebView cookie jar for production downloads.
+
 ## Next integration evidence
 
 Use an isolated HTTPS test environment and test credentials with the real

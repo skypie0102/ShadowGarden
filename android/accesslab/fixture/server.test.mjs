@@ -60,4 +60,13 @@ test('real access handlers enforce verification, tickets and revocable Keeper se
   assert.equal((await call('/admin-access','DELETE')).status,200);
   cookies.set('__Host-sg_admin',revokedSession);
   assert.equal((await call('/admin-api/status','POST',{},bearer)).status,401);
+  const controls=await call('/cookie-probe/attributes');
+  assert.equal(controls.status,200);
+  assert.deepEqual(controls.setCookie,[
+    {name:'sg_attr_strict',attributes:['Path=/','Max-Age=900','Secure','SameSite=Strict']},
+    {name:'sg_attr_lax',attributes:['Path=/','Max-Age=900','Secure','SameSite=Lax']},
+    {name:'sg_attr_none',attributes:['Path=/','Max-Age=900','Secure','SameSite=None']},
+    {name:'sg_attr_default',attributes:['Path=/','Max-Age=900','Secure']},
+    {name:'sg_attr_httponly',attributes:['Path=/','Max-Age=900','Secure','HttpOnly','SameSite=None']}
+  ]);
 });
