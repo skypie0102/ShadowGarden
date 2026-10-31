@@ -57,6 +57,12 @@ class ReaderProcessRecoveryTest {
             assertTrue("Selected EPUB.js passage must be visible", result.getBoolean("visible"))
             val cfi = result.getString("cfi")
             assertTrue(cfi.startsWith("epubcfi("))
+            val currentWeb = epubHelper.openHarness(epubScenario, epubFile, null, "", "", "epub-current-location.html", 280, 340, 100)
+            val current = try { epubHelper.awaitResult(currentWeb) } finally { epubHelper.closeHarness(epubScenario, currentWeb) }
+            val currentCfi = current.getString("cfi")
+            val currentParagraph = current.getInt("paragraph")
+            assertTrue("EPUB.js must capture a current-page CFI", currentCfi.startsWith("epubcfi("))
+            assertTrue("The EPUB.js sample should be inside the chapter", currentParagraph in 2..80)
 
             assertTrue(readiumPreferences.edit().clear()
                 .putInt(ReadiumPrototypeActivity.VIEWPORT_WIDTH, 280)
@@ -64,19 +70,32 @@ class ReaderProcessRecoveryTest {
                 .putFloat(ReadiumPrototypeActivity.FONT_SIZE, 1f).commit())
             val readiumHelper = ReadiumPrototypeTest()
             val readiumScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+            val selectedReadium: String
+            val currentReadium: String
+            val readiumParagraph: Int
             try {
                 readiumHelper.awaitChapter(readiumScenario, "chapter1.xhtml", "Chapter 1 paragraph 1.")
                 readiumScenario.onActivity { assertTrue("Readium must navigate to the selected passage", it.goToPassage()) }
                 readiumHelper.awaitVisiblePassage(readiumScenario, 0.0, 280, 340)
                 readiumScenario.onActivity { assertTrue("Readium passage locator must be saved", it.savePassage()) }
+                selectedReadium = readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null)
+                    ?: throw AssertionError("Readium selected locator was not saved")
+                assertEquals(ReadiumPrototypeActivity.PASSAGE, Locator.fromJSON(JSONObject(selectedReadium))?.text?.highlight)
+                val sample = readiumHelper.awaitStableViewport(readiumScenario, 0.0, 280, 340)
+                readiumParagraph = sample.paragraph
+                readiumScenario.onActivity { assertTrue("Readium current locator must be saved", it.saveLocation()) }
+                currentReadium = readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null)
+                    ?: throw AssertionError("Readium current locator was not saved")
+                val savedLocator = Locator.fromJSON(JSONObject(currentReadium)) ?: throw AssertionError("Invalid current locator")
+                assertEquals(sample.locator.href, savedLocator.href)
+                assertEquals(sample.locator.locations.progression, savedLocator.locations.progression)
             } finally {
                 readiumScenario.close()
             }
-            val saved = readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null)
-                ?: throw AssertionError("Readium selected locator was not saved")
-            assertEquals(ReadiumPrototypeActivity.PASSAGE, Locator.fromJSON(JSONObject(saved))?.text?.highlight)
             assertTrue(probe.edit().putInt("pid", Process.myPid()).putString("cfi", cfi)
-                .putString("readium", saved).putString("epub_sha256", sha256(epubFile))
+                .putString("epub_current_cfi", currentCfi).putInt("epub_paragraph", currentParagraph)
+                .putString("readium_selected", selectedReadium).putString("readium_current", currentReadium)
+                .putInt("readium_paragraph", readiumParagraph).putString("epub_sha256", sha256(epubFile))
                 .putString("readium_sha256", sha256(readiumFile)).commit())
             prepared = true
             Log.i("SGReaderProbe", "Process recovery: preparation complete")
@@ -94,9 +113,13 @@ class ReaderProcessRecoveryTest {
             assertNotEquals("Recovery must occur in a new app process", oldPid, Process.myPid())
             assertEquals("The EPUB.js fixture must be unchanged", probe.getString("epub_sha256", null), sha256(epubFile))
             assertEquals("The Readium fixture must be unchanged", probe.getString("readium_sha256", null), sha256(readiumFile))
-            val cfi = probe.getString("cfi", null) ?: throw AssertionError("Missing saved CFI")
-            val expectedReadium = probe.getString("readium", null) ?: throw AssertionError("Missing saved Readium locator")
-            assertEquals(expectedReadium, readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null))
+            val cfi = probe.getString("cfi", null) ?: throw AssertionError("Missing selected CFI")
+            val currentCfi = probe.getString("epub_current_cfi", null) ?: throw AssertionError("Missing current CFI")
+            val expectedEpubParagraph = probe.getInt("epub_paragraph", 0)
+            val selectedReadium = probe.getString("readium_selected", null) ?: throw AssertionError("Missing selected Readium locator")
+            val currentReadium = probe.getString("readium_current", null) ?: throw AssertionError("Missing current Readium locator")
+            val expectedReadiumParagraph = probe.getInt("readium_paragraph", 0)
+            assertEquals(currentReadium, readiumPreferences.getString(ReadiumPrototypeActivity.LOCATION, null))
 
             val epubHelper = EpubPrototypeTest()
             val epubScenario = ActivityScenario.launch(MainActivity::class.java)
@@ -106,16 +129,29 @@ class ReaderProcessRecoveryTest {
                 assertEquals(cfi, result.getString("cfi"))
                 assertEquals(ReadiumPrototypeActivity.PASSAGE, result.getString("text"))
                 assertTrue("Saved EPUB.js passage must be visible after process termination", result.getBoolean("visible"))
+                val currentWeb = epubHelper.openHarness(epubScenario, epubFile, currentCfi, "", "", "epub-current-location.html", 280, 340, 100)
+                val current = try { epubHelper.awaitResult(currentWeb) } finally { epubHelper.closeHarness(epubScenario, currentWeb) }
+                assertEquals("EPUB.js current location must restore the observed paragraph", expectedEpubParagraph, current.getInt("paragraph"))
             } finally {
                 epubScenario.close()
             }
+            val readiumHelper = ReadiumPrototypeTest()
             val readiumScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
             try {
-                ReadiumPrototypeTest().awaitVisiblePassage(readiumScenario, 0.0, 280, 340)
+                val current = readiumHelper.awaitStableViewport(readiumScenario, 0.0, 280, 340)
+                assertEquals("Readium current locator must restore the observed paragraph", expectedReadiumParagraph, current.paragraph)
             } finally {
                 readiumScenario.close()
             }
-            Log.i("SGReaderProbe", "Process recovery: both selected passages restored in a new process")
+            assertTrue(readiumPreferences.edit().putString(ReadiumPrototypeActivity.LOCATION, selectedReadium).commit())
+            val selectedScenario = ActivityScenario.launch(ReadiumPrototypeActivity::class.java)
+            try {
+                readiumHelper.awaitVisiblePassage(selectedScenario, 0.0, 280, 340)
+            } finally {
+                selectedScenario.close()
+            }
+            Log.i("SGReaderProbe", "Process recovery: selected passages and current-page paragraphs restored; " +
+                "EPUB.js=$expectedEpubParagraph Readium=$expectedReadiumParagraph")
         } finally {
             cleanup()
         }

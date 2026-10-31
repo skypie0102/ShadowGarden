@@ -303,9 +303,9 @@ class ReadiumPrototypeTest {
         throw AssertionError("Passage not visible at expected layout: $lastState")
     }
 
-    private data class ViewportSample(val locator: Locator, val paragraph: Int, val fontSize: Double)
+    internal data class ViewportSample(val locator: Locator, val paragraph: Int, val fontSize: Double)
 
-    private fun awaitStableViewport(
+    internal fun awaitStableViewport(
         scenario: ActivityScenario<ReadiumPrototypeActivity>, minimumFontSize: Double, widthDp: Int, heightDp: Int
     ): ViewportSample {
         val deadline = SystemClock.elapsedRealtime() + 45_000
