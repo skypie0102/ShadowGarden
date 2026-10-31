@@ -1,8 +1,9 @@
 # ShadowGarden for Android
 
-The Android app is in development. It offers an early, position-only backup and
-restore screen, but does not yet connect to ShadowGarden, read EPUBs, record
-reading progress, or provide Keeper. Until the reader is integrated, this device
+The Android app is in development. It offers a read-only Main catalog with basic
+search and volume listings, plus an early position-only backup and restore screen.
+It does not yet read or download EPUBs, record reading progress, show the Adult
+library, or provide Keeper. Until the reader is integrated, this device
 will have no newly recorded positions to export. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
@@ -43,6 +44,10 @@ the experimental offline EPUB.js and Readium harnesses, plus the separate local
 HTTPS access test, with `connectedDebugAndroidTest`. Instrumentation reports
 are retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
+The optional **Also fetch the live public Main catalog on the emulator** setting
+installs a network-enabled debug app after the offline tests and makes one
+read-only request to the deployed Main catalog. It is off by default and does not
+exercise book access, verification or Keeper.
 
 The script also runs a two-stage reader process-recovery experiment on emulators.
 It reinstalls the debug app and its test APK on the emulator without clearing
@@ -54,7 +59,11 @@ physical devices; the ordinary instrumentation suite skips its staged entry.
 Backup-screen tests simulate document-picker results and use a private debug-only
 document provider; they do not exercise a real file manager or cloud provider.
 
-For a local emulator or attached device, run `./gradlew connectedDebugAndroidTest`.
+For a local emulator or attached device, run
+`./gradlew -PofflineReaderTests=true connectedDebugAndroidTest`. This property
+removes the app's Internet permission for the generated-reader experiments; a
+normal debug build has Internet access for the Main catalog. Do not use the
+offline test build to assess real catalog networking.
 To include the isolated real-handler fixture, use `bash accesslab/run-emulator-tests.sh`
 from `android/` with Node 24, `curl` and `adb` available. The fixture is not
 started by normal Android builds. Physical-device testing is reserved for milestones that require it, such as

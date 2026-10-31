@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -17,7 +18,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.core.app.ActivityOptionsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import dev.shadowgarden.app.ShadowGardenApp
+import dev.shadowgarden.app.PositionBackupScreen
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
@@ -161,7 +162,7 @@ class PositionBackupScreenTest {
     }
 
     private fun showScreen() = composeRule.setContent {
-        CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner) { ShadowGardenApp(model) }
+        CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner) { MaterialTheme { PositionBackupScreen(model) } }
     }
     private fun waitForMessage(message: String) {
         composeRule.waitUntil(20_000) { model.state.value.message == message }

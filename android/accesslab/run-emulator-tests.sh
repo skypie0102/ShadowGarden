@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs only isolated fixture services; never connects to production.
+# Runs isolated fixtures. The optional catalog probe performs one public GET.
 set -euo pipefail
 accesslab_dir="$(cd "$(dirname "$0")" && pwd)"
 android_dir="$(cd "$accesslab_dir/.." && pwd)"
@@ -40,7 +40,7 @@ if [[ "$ready" != 1 ]]; then
 fi
 adb reverse tcp:18443 tcp:18443
 cd "$android_dir"
-if ./gradlew --no-daemon connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.accessBackend=true; then
+if ./gradlew --no-daemon connectedDebugAndroidTest -PofflineReaderTests=true -Pandroid.testInstrumentationRunnerArguments.accessBackend=true; then
   result=0
 else
   result=$?
@@ -76,6 +76,20 @@ if [[ "$result" == 0 ]]; then
     fi
   else
     printf '%s\n' 'Process-recovery probe skipped: an emulator is required.'
+  fi
+fi
+if [[ "$result" == 0 && "${SG_CATALOG_LIVE:-0}" == 1 ]]; then
+  if [[ "$(adb shell getprop ro.kernel.qemu | tr -d '\r')" != 1 ]]; then
+    printf '%s\n' 'Live catalog probe requires an emulator.' >&2
+    result=1
+  elif ! ./gradlew --no-daemon :app:assembleDebug ||
+    ! adb install -r -t "$android_dir/app/build/outputs/apk/debug/app-debug.apk"; then
+    printf '%s\n' 'Could not install the network-enabled debug app.' >&2
+    result=1
+  else
+    live_output="$(adb shell am instrument -w -r -e class dev.shadowgarden.app.catalog.LiveCatalogTest -e catalogLive true "$probe_component" 2>&1)" || result=1
+    printf '%s\n' "$live_output"
+    if [[ "$live_output" != *"OK (1 test)"* || "$live_output" != *"INSTRUMENTATION_CODE: -1"* ]]; then result=1; fi
   fi
 fi
 adb logcat -d -s SGReaderProbe:I '*:S' || true

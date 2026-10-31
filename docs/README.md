@@ -12,7 +12,8 @@ release evidence live in the archive.
 | [Android roadmap](plans/ANDROID_ROADMAP.md) | Current repository development cycle: reader, offline library, local progress backup and Keeper | Validate reader and access prototypes before committing to the integration approach |
 | [Android parity inventory](plans/ANDROID_PARITY_INVENTORY.md) | Existing Library, Reader and Keeper workflows mapped to Android screens and acceptance cases | Use to track implementation and acceptance through later phases |
 | [Android reader evaluation](plans/ANDROID_READER_EVALUATION.md) | Preliminary reader candidates, integration constraints and prototype protocol | Validate both approaches before choosing the reader |
-| [Android reading-position foundation](plans/ANDROID_READING_STATE.md) | App-private progress storage, edition matching and current limitations | Integrate with the selected reader and design manual backup |
+| [Android Main catalog](plans/ANDROID_MAIN_CATALOG.md) | Early read-only Main library, network constraints and limits | Verify real Android networking and expand library parity |
+| [Android reading-position foundation](plans/ANDROID_READING_STATE.md) | App-private progress storage, position-only manual backup and current limitations | Integrate with the selected reader and complete personal-data backup |
 | [Follow-ups and acceptance limits](plans/FOLLOW_UPS.md) | Work that needs a separate reproduction, design decision or physical device | Keep these limits visible without reopening completed refactors |
 
 ## Maintained guides

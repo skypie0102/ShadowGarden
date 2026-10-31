@@ -50,8 +50,10 @@ unsigned release APK's three DEX files did not contain the prototype class.
 The separate `android/accesslab` test application hosts a fake service on
 localhost using a disposable certificate and tests real Android WebView HTTPS,
 request origins, HttpOnly cookie handling, ticket renewal and Keeper logout.
-Its network permission and localhost test CA are confined to that app's debug
-variant. The fixture server key, password, responses, Keeper key and tokens are
+The lab's localhost test CA is confined to that app's debug variant. The main app
+separately requests Internet permission for its public catalog; the offline
+reader-test configuration removes it during the fixture run. The fixture server
+key, password, responses, Keeper key and tokens are
 public test data; the test does not contact the deployed site. The WebView
 cancels TLS errors and blocks requests outside its local test server.
 
