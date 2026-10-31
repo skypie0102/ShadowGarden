@@ -48,6 +48,14 @@ and production acceptance are distinct.
 - [ ] Decide final application ID, supported minimum Android version, release signing/key custody and APK hosting before publishing; do not treat the scaffold ID as a release commitment.
 - [x] Select Android-aware CI without weakening website checks or publishing for Android-only changes. Backend changes also run the Android build; actual cross-platform contract tests remain future work once consumers exist.
 
+The separate Git-connected `shadowgarden-test` Pages project has build-watch
+exclusions for `android/*`, `docs/*`, `README.md` and
+`.github/workflows/android.yml`. This avoids automatic test previews for pushes
+containing only those paths while still allowing a preview when a push also
+changes a watched website path. These settings live in Cloudflare, not in the
+repository workflows. Cloudflare can bypass path matching for empty or very
+large pushes; the production project's deployment settings are separate.
+
 Scaffold verification on 2026-10-28: `assembleDebug` and `lintDebug` passed
 with JDK 17 and SDK 35; `testDebugUnitTest` had no sources at that time. No Android device
 was attached to the development environment. Its 4.9 GiB filesystem and lack of
