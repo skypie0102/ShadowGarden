@@ -220,6 +220,20 @@ not automatically captured page position, changed editions, font reflow, a real
 book, personal progress persistence or backup. A force-stop and separate process
 are not a test of low-memory system eviction or general crash durability.
 
+## Current-page location after process termination
+
+The two-stage process probe also samples each prototype's current location after
+navigation, waits for the reported location and first visible generated paragraph
+to remain stable, and saves those values in test-only preferences. After the
+emulator force-stops the test app, the restore stage checks the same fixture
+fingerprints and compares the first visible paragraph in the new process with the
+captured sample at the same layout. The existing selected-passage checks remain.
+
+Emulator verification is pending. Paragraph intersection does not identify an
+exact character or guarantee that no text was skipped within the paragraph. This
+is a synthetic fixture at one layout, not production progress storage, backup,
+changed-edition handling, font reflow or a low-memory eviction test.
+
 ## Prototype protocol
 
 Use generated or otherwise authorized EPUBs only. Keep both prototypes isolated

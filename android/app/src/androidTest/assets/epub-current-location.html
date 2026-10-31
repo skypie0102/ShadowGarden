@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline current-location experiment</title>
+  <style>html,body { margin: 0; } #viewer { width: __WIDTH__px; height: __HEIGHT__px; overflow: hidden; }</style>
+  <script src="/jszip.min.js"></script>
+  <script src="/epub.min.js"></script>
+</head>
+<body><div id="viewer"></div>
+<script>
+window.prototypeResult={state:'opening'};
+(async function() {
+  const response=await fetch('/fixture.epub');
+  if (!response.ok) throw new Error('Fixture could not be loaded');
+  const book=ePub(await response.arrayBuffer());
+  await book.ready;
+  const rendition=book.renderTo('viewer',{
+    width:__WIDTH__,height:__HEIGHT__,flow:'paginated',spread:'none',allowScriptedContent:false
+  });
+  rendition.themes.fontSize('__FONT_SIZE__%');
+  const restored=__RESTORED_CFI__;
+  if(restored){
+    await rendition.display(restored);
+  }else{
+    await rendition.display('chapter12.xhtml');
+    for(let turn=0;turn<3;turn++)await rendition.next();
+  }
+  function sampleParagraph() {
+    const content=rendition.getContents()[0];
+    if(!content || !content.document || !content.window.frameElement)return 0;
+    const frame=content.window.frameElement.getBoundingClientRect();
+    const viewport=document.getElementById('viewer').getBoundingClientRect();
+    for(const paragraph of Array.from(content.document.querySelectorAll('p'))){
+      const match=/^Chapter 12 paragraph (\d+)\./.exec(paragraph.textContent);
+      if(!match)continue;
+      const range=content.document.createRange();range.selectNodeContents(paragraph);
+      const visible=Array.from(range.getClientRects()).some(function(rect){
+        return frame.left+rect.right>viewport.left && frame.left+rect.left<viewport.right &&
+          frame.top+rect.bottom>viewport.top && frame.top+rect.top<viewport.bottom;
+      });
+      if(visible)return Number(match[1]);
+    }
+    return 0;
+  }
+  let previous='',stableSince=0;
+  const deadline=Date.now()+15000;
+  while(Date.now()<deadline){
+    const location=await rendition.currentLocation();
+    const paragraph=sampleParagraph();
+    const cfi=location && location.start && location.start.cfi || '';
+    const href=location && location.start && location.start.href || '';
+    const key=cfi+'|'+paragraph;
+    if(cfi && href.indexOf('chapter12.xhtml')>=0 && paragraph>0){
+      if(key!==previous){previous=key;stableSince=Date.now();}
+      else if(Date.now()-stableSince>=600){
+        const viewport=document.getElementById('viewer').getBoundingClientRect();
+        window.prototypeResult={state:'ready',cfi:cfi,href:href,paragraph:paragraph,
+          width:viewport.width,height:viewport.height};return;
+      }
+    }else{previous='';stableSince=0;}
+    await new Promise(function(resolve){setTimeout(resolve,100);});
+  }
+  throw new Error('Current location or visible paragraph did not stabilize');
+})().catch(function(error){window.prototypeResult={state:'error',message:String((error && error.message)||error)};});
+</script></body></html>
