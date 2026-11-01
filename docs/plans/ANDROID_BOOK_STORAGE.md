@@ -62,3 +62,15 @@ case; both process stages passed separately. The detailed instrumentation report
 could not be downloaded in this environment; the run log records the suite and
 both stages passing. This is not a protected production download, EPUB safety,
 power-loss, real disk-exhaustion or physical-device acceptance test.
+
+The [offline API 28 emulator run 41315790488](https://github.com/skypie0102/ShadowGarden/actions/runs/41315790488)
+at source `7e20da3` passed an Android test accepting an original generated,
+illustrated EPUB and preserving it when a later invalid replacement is rejected.
+The separate force-stop probe stored the generated EPUB through the checked path
+and reopened it without Internet permission. Local JVM tests exercised missing
+entries, unsafe paths, altered headers, size declarations, truncation and
+cancellation. The ordinary suite skipped the live-only test, manual process stage
+and known strict Readium reflow case; both process stages passed separately. The
+detailed report could not be downloaded in this environment; the run log records
+the suite and both stages passing. Real-world EPUB compatibility and full reader,
+security and physical-device acceptance remain open.
