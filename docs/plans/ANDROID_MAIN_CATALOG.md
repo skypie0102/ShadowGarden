@@ -63,3 +63,15 @@ at source `766eacc` passed the suite and staged reader process probe after addin
 a screen test for a selected series while a new catalog model loads. It did not
 repeat the optional live request. The ordinary suite again skipped the live-only
 test, manual process stage and known strict Readium reflow case.
+
+The [offline API 28 run 41264933696](https://github.com/skypie0102/ShadowGarden/actions/runs/41264933696)
+at source `72eae51` passed the suite with ten additional app tests covering
+snapshot persistence, corruption, interrupted replacement, concurrent access,
+offline display and search, refresh, retry and storage errors. Its two-stage
+probe saved a generated catalog, force-stopped the app, and loaded that snapshot
+through the library model in a new process without Internet permission. The
+ordinary suite skipped the live-only test, manual process stage and known strict
+Readium reflow case. The retained detailed report could not be downloaded in this
+environment; the run log reports the suite and both separately invoked stages
+passing. This does not establish behavior under real disk exhaustion, system
+eviction, actual network toggling, or on physical devices.
