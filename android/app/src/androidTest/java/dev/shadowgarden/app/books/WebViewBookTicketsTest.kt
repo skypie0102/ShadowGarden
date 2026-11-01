@@ -116,6 +116,19 @@ class WebViewBookTicketsTest {
                 web.loadDataWithBaseURL(base, html, "text/html", "utf-8", null)
             }
             assertTrue("Synthetic page did not load", loaded.await(20, TimeUnit.SECONDS))
+            if (base.startsWith("https://shadowgarden-bon.pages.dev")) scenario.onActivity {
+                val web = view.get()
+                val uri = android.net.Uri.parse(web.url)
+                assertEquals("Synthetic WebView URL", base, web.url)
+                assertEquals("Synthetic page path", "/series.html", uri.encodedPath)
+                assertEquals("Synthetic page host", "shadowgarden-bon.pages.dev", uri.host)
+                assertTrue("JavaScript must be enabled", web.settings.javaScriptEnabled)
+                assertFalse("File access must be disabled", web.settings.allowFileAccess)
+                assertFalse("Content access must be disabled", web.settings.allowContentAccess)
+                assertTrue("Synthetic URL userinfo: ${uri.userInfo}", uri.userInfo == null)
+                assertTrue("Synthetic URL port: ${uri.port}", uri.port == -1 || uri.port == 443)
+                assertTrue("Synthetic URL fragment: ${uri.fragment}", uri.fragment == null)
+            }
             block(view.get())
         } finally {
             view.get()?.let { web -> scenario.onActivity { (web.parent as? ViewGroup)?.removeView(web); web.destroy() } }
