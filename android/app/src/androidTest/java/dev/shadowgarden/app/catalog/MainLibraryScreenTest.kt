@@ -17,6 +17,12 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.shadowgarden.app.progress.CatalogBookId
+import dev.shadowgarden.app.progress.LocatorFormat
+import dev.shadowgarden.app.progress.ProgressLookup
+import dev.shadowgarden.app.progress.ProgressSaveResult
+import dev.shadowgarden.app.progress.ReadingPosition
+import dev.shadowgarden.app.progress.ReadingProgressStore
+import dev.shadowgarden.app.progress.StoredReadingPosition
 import dev.shadowgarden.app.books.PrivateBookStore
 import java.io.File
 import java.util.UUID
@@ -27,6 +33,8 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -88,6 +96,58 @@ class MainLibraryScreenTest {
             composeRule.onNodeWithText("Read offline").performClick()
             assertEquals(fixture[0].volumes[0], read)
         } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun removingDownloadRequiresConfirmationAndPreservesProgress() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val suffix = UUID.randomUUID().toString()
+        val directory = File(context.noBackupFilesDir, "library-removal-test-$suffix")
+        val databaseName = "library-removal-test-$suffix.db"
+        val books = PrivateBookStore(directory)
+        val volume = fixture[0].volumes[0]
+        val originalBytes = "generated original edition".toByteArray()
+        val original = books.replace(volume.id, originalBytes.inputStream())
+        val position = ReadingPosition(volume.id, original, LocatorFormat.EPUBJS_CFI, "epubcfi(/6/2)", 1_000)
+        val model = model(CatalogSource { fixture })
+        try {
+            ReadingProgressStore(context, databaseName).use { progress ->
+                assertEquals(ProgressSaveResult.Saved(1), progress.save(position, null))
+                composeRule.setContent { MaterialTheme { MainLibraryScreen(model, {}, books, onDownload = { _, _ -> }) } }
+                composeRule.waitUntil(20_000) { model.state.value.series != null }
+                scrollTo("First Series · An Author · 2 volumes")
+                composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+                scrollDetailTo("Special Volume")
+                composeRule.waitUntil(20_000) { composeRule.onAllNodesWithText("Remove download").fetchSemanticsNodes().isNotEmpty() }
+                scrollDetailTo("Remove download")
+                composeRule.onNodeWithText("Remove download").performClick()
+                composeRule.waitUntil(20_000) { composeRule.onAllNodesWithText("Remove downloaded EPUB?").fetchSemanticsNodes().isNotEmpty() }
+                composeRule.onNodeWithText("Cancel").performClick()
+                assertTrue(books.contains(volume.id))
+
+                composeRule.onNodeWithText("Remove download").performClick()
+                composeRule.waitUntil(20_000) { composeRule.onAllNodesWithText("Remove downloaded EPUB?").fetchSemanticsNodes().isNotEmpty() }
+                val replacement = books.replace(volume.id, "generated replacement edition".byteInputStream())
+                val generation = model.state.value.bookGeneration
+                composeRule.onNodeWithText("Remove EPUB").performClick()
+                composeRule.waitUntil(20_000) { model.state.value.bookGeneration > generation }
+                composeRule.onNodeWithText("The downloaded EPUB changed. Nothing was removed; review it and try again.").assertIsDisplayed()
+                books.open(volume.id)!!.use { assertEquals(replacement, it.edition) }
+                assertEquals(ProgressLookup.Exact(StoredReadingPosition(position, 1)), progress.lookup(volume.id, original, LocatorFormat.EPUBJS_CFI))
+
+                scrollDetailTo("Remove download")
+                composeRule.onNodeWithText("Remove download").performClick()
+                composeRule.waitUntil(20_000) { composeRule.onAllNodesWithText("Remove downloaded EPUB?").fetchSemanticsNodes().isNotEmpty() }
+                composeRule.onNodeWithText("Remove EPUB").performClick()
+                composeRule.waitUntil(20_000) { !books.contains(volume.id) }
+                assertFalse(books.contains(volume.id))
+                assertEquals(ProgressLookup.Exact(StoredReadingPosition(position, 1)), progress.lookup(volume.id, original, LocatorFormat.EPUBJS_CFI))
+                composeRule.waitUntil(20_000) { model.state.value.bookGeneration > generation + 1 }
+                scrollDetailTo("Download EPUB")
+                composeRule.onAllNodesWithText("Download EPUB").onFirst().assertIsDisplayed()
+                books.replace(volume.id, originalBytes.inputStream(), original)
+                assertEquals(ProgressLookup.Exact(StoredReadingPosition(position, 1)), progress.lookup(volume.id, original, LocatorFormat.EPUBJS_CFI))
+            }
+        } finally { directory.deleteRecursively(); context.deleteDatabase(databaseName) }
     }
 
     @Test fun offlineFiltersAndSortSurviveDetailNavigationAndCanBeCleared() {
