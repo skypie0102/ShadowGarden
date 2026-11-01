@@ -42,10 +42,21 @@ Cover responses are limited to supported image types, 2 MiB of encoded data,
 to a small display size and held in an 8 MiB in-memory cache, with at most four
 loads in flight per library instance. After one hour, a new request tries to reload
 the image and keeps the old in-memory image as a fallback if that fails. Canceling a visible-item load cancels its
-HTTP call; refreshing the library retries previously failed covers. A failed, unsafe or missing cover
-shows a placeholder without blocking the library. Image bytes are not yet stored
-on disk, so covers not already in memory require network access even when the
-catalog snapshot is available.
+HTTP call; refreshing the library retries previously failed covers. A failed,
+unsafe or missing cover shows a placeholder without blocking the library.
+
+Successfully decoded public covers are also stored in a private, disposable
+Android cache directory. The app shows a saved image while an expired one is
+refreshed, and retains the saved image if the network fails. Files use hashes of
+the validated paths as names; a temporary file is synced and renamed before a
+replacement is used. Committed cache entries are trimmed by oldest write time to
+24 MiB and 96 files; individual files remain bounded to 2 MiB. The temporary
+replacement can briefly require additional space, and a failed deletion may leave
+extra files until Android clears the cache. Cached bytes are bounded and decoded
+again before display. Android may remove this cache at any time, so an uncached
+or evicted image still shows a placeholder offline. This cache contains no EPUBs
+or reading progress and is not included in personal backups. File coordination
+currently assumes a single app process.
 
 Reader experiments use the explicit `-PofflineReaderTests=true` Gradle property,
 which selects a debug manifest without Internet permission. The manual emulator
@@ -99,3 +110,15 @@ manual process stage and known strict Readium reflow case. The retained detailed
 report could not be downloaded in this environment; the run log reports the
 suite and separately invoked probes passing. Screen tests used synthetic images;
 this is not a real-device visual acceptance or an offline image-storage test.
+
+The [offline API 28 run 41271221942](https://github.com/skypie0102/ShadowGarden/actions/runs/41271221942)
+at source `f4dbd45` passed the Android suite with nine additional tests for
+private cover storage, eviction, interrupted and concurrent writes, corrupt or
+unavailable storage, and immediate display during refresh. Its staged probe
+saved a generated cover, force-stopped the app, and restored the image in a new
+process without Internet permission. The ordinary suite skipped the live-only
+test, manual process stage and known strict Readium reflow case; the two manual
+stages passed separately. The detailed report could not be downloaded in this
+environment, but the run log records the suite and both stages passing. This run
+did not repeat the live probe or establish behavior on a physical device, under
+real storage exhaustion, or after system cache eviction.

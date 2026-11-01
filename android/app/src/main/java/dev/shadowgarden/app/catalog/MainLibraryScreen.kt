@@ -120,7 +120,11 @@ private fun CoverThumbnail(path: CoverPath?, generation: Long, model: LibraryVie
     var loading by remember(path) { mutableStateOf(path != null) }
     LaunchedEffect(path, generation, model) {
         loading = path != null
-        bitmap = path?.let { model.cover(it) }
+        if (path == null) bitmap = null else {
+            model.cachedCover(path)?.let { bitmap = it }
+            val loaded = model.cover(path)
+            if (loaded != null || bitmap == null) bitmap = loaded
+        }
         loading = false
     }
     val image = bitmap

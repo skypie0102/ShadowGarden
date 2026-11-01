@@ -2,7 +2,11 @@ package dev.shadowgarden.app.catalog
 
 import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
@@ -33,11 +37,15 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.After
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class PublicCoverLoaderTest {
     private val path = CoverPath("/media/shadow-garden/covers/fixture/cover-thumb.png")
+    private val directory = File(InstrumentationRegistry.getInstrumentation().targetContext.cacheDir, "cover-loader-test-${UUID.randomUUID()}")
+
+    @After fun cleanUp() { directory.deleteRecursively() }
 
     @Test fun acceptsOnlySafeSameOriginCoverPaths() {
         assertEquals(path, CoverPath.from(path.value))
@@ -166,6 +174,59 @@ class PublicCoverLoaderTest {
             assertTrue(jobs.awaitAll().all { it != null })
             assertTrue(peak.get() <= 4)
         } finally { release.countDown() }
+    }
+
+    @Test fun downloadedCoverReopensOfflineWithoutAnotherRequest() = runBlocking {
+        val bytes = png(80, 120)
+        val disk = PrivateCoverDiskCache(directory)
+        val first = PublicCoverLoader(client { chain -> response(chain, 200, "image/png", bytes.toResponseBody("image/png".toMediaType())) }, disk = disk)
+        assertNotNull(first.load(path))
+        val calls = AtomicInteger()
+        val offline = PublicCoverLoader(client { chain ->
+            calls.incrementAndGet()
+            response(chain, 503, "image/png", ByteArray(0).toResponseBody("image/png".toMediaType()))
+        }, disk = PrivateCoverDiskCache(directory))
+        val saved = offline.cached(path)
+        assertNotNull(saved)
+        assertSame(saved, offline.load(path))
+        assertEquals(0, calls.get())
+    }
+
+    @Test fun staleDiskCoverAppearsBeforeFailedNetworkRefresh() = runBlocking {
+        val disk = PrivateCoverDiskCache(directory)
+        disk.write(path, png(2, 2))
+        assertTrue(directory.listFiles()!!.single().setLastModified(System.currentTimeMillis() - 2 * 60 * 60 * 1_000L))
+        val entered = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val loader = PublicCoverLoader(client { chain ->
+            entered.countDown()
+            release.await(10, TimeUnit.SECONDS)
+            response(chain, 503, "image/png", ByteArray(0).toResponseBody("image/png".toMediaType()))
+        }, disk = disk)
+        try {
+            val saved = loader.cached(path)
+            assertNotNull(saved)
+            val request = async { loader.load(path) }
+            assertTrue(withContext(Dispatchers.IO) { entered.await(5, TimeUnit.SECONDS) })
+            release.countDown()
+            assertSame(saved, request.await())
+        } finally { release.countDown() }
+    }
+
+    @Test fun invalidDiskImageAndStorageFailuresDoNotBlockNetworkCover() = runBlocking {
+        val disk = PrivateCoverDiskCache(directory)
+        disk.write(path, "not an image".toByteArray())
+        val bytes = png(2, 2)
+        val http = client { chain -> response(chain, 200, "image/png", bytes.toResponseBody("image/png".toMediaType())) }
+        val loader = PublicCoverLoader(http, disk = disk)
+        assertNull(loader.cached(path))
+        assertNotNull(loader.load(path))
+        assertNotNull(PublicCoverLoader(http, disk = PrivateCoverDiskCache(directory)).cached(path))
+        val failing = object : CoverDiskCache {
+            override fun read(path: CoverPath): StoredCover? = throw IOException("read failure")
+            override fun write(path: CoverPath, bytes: ByteArray) { throw IOException("write failure") }
+        }
+        assertNotNull(PublicCoverLoader(http, disk = failing).load(path))
     }
 
     private fun png(width: Int, height: Int): ByteArray {

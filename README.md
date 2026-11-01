@@ -38,7 +38,7 @@ Their dated release and verification records are in the [archive](docs/archive/R
 
 The [Android roadmap](docs/plans/ANDROID_ROADMAP.md) is the current repository
 development cycle. The app has an early read-only Main library with cover thumbnails,
-an offline catalog snapshot and a position-only
+an offline catalog snapshot, a disposable cover cache and a position-only
 backup and restore screen. Offline reading, automatic reading progress, a complete
 personal-data backup and Keeper are still planned. The completed [UI/UX
 roadmap](docs/archive/plans/UI_UX_ROADMAP.md) retains its delivery history and

@@ -1,7 +1,9 @@
 # ShadowGarden for Android
 
 The Android app is in development. It offers a read-only Main catalog with cover
-thumbnails, basic search, volume listings and a saved offline snapshot, plus an early position-only
+thumbnails, basic search, volume listings and a saved offline snapshot. Previously
+loaded covers may also be available offline until Android clears the disposable
+cache. The app also has an early position-only
 backup and restore screen.
 It does not yet read or download EPUBs, record reading progress, show the Adult
 library, or provide Keeper. Until the reader is integrated, this device
@@ -54,9 +56,10 @@ The script also runs a two-stage reader process-recovery experiment on emulators
 It reinstalls the debug app and its test APK on the emulator without clearing
 data, saves generated selected-passage and current-page locations, force-stops
 `dev.shadowgarden.app`, and restores in a separate instrumentation process. It
-also checks test progress records and a generated catalog snapshot across the stop.
+also checks test progress records, a generated catalog snapshot and a generated
+cached cover across the stop.
 The probe removes only its test fixtures, preferences, test database and test
-catalog. It is skipped on
+catalog and test cover cache. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
 Backup-screen tests simulate document-picker results and use a private debug-only
 document provider; they do not exercise a real file manager or cloud provider.
