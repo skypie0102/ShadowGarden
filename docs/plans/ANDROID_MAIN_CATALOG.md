@@ -87,3 +87,15 @@ Readium reflow case. The retained detailed report could not be downloaded in thi
 environment; the run log reports the suite and both separately invoked stages
 passing. This does not establish behavior under real disk exhaustion, system
 eviction, actual network toggling, or on physical devices.
+
+The [API 28 emulator run 41268523144](https://github.com/skypie0102/ShadowGarden/actions/runs/41268523144)
+at source `4ca0d2f` passed the Android suite with ten additional app tests for
+cover-path validation, image bounds, cancellation, retry, cache expiry,
+concurrency, catalog-cache compatibility and screen fallback. The offline
+reader and staged process-recovery tests also passed. After installing the normal
+network-enabled debug app, the opt-in live probe fetched the public Main catalog
+and decoded an actual public cover. The ordinary suite skipped the live-only test,
+manual process stage and known strict Readium reflow case. The retained detailed
+report could not be downloaded in this environment; the run log reports the
+suite and separately invoked probes passing. Screen tests used synthetic images;
+this is not a real-device visual acceptance or an offline image-storage test.
