@@ -35,3 +35,19 @@ and bounded renewal, background work and progress, verify EPUB compatibility
 with the chosen reader, and test real network interruption, storage exhaustion,
 physical devices and the live protected flow with authorized test content. The
 component does not share browser progress or carry Keeper credentials.
+
+## Verification
+
+Local JVM tests use synthetic OkHttp responses to cover ticket/path rejection,
+HTTP failures, media type, content length, oversized and unknown-length bodies,
+invalid EPUBs, cancellation and preservation of an existing file. The
+[offline API 28 emulator run 41318204653](https://github.com/skypie0102/ShadowGarden/actions/runs/41318204653)
+at source `13e6511` passed an Android synthetic-response transfer and rejected
+ticket test. Its staged probe transferred a generated EPUB through an interceptor,
+force-stopped the app and reopened the stored bytes in a new process without
+Internet permission. The ordinary suite skipped the live-only test, manual process
+stage and known strict Readium reflow case; both process stages passed separately.
+The detailed report could not be downloaded here; the run log records the suite
+and both stages passing. Interceptors bypass the real network and TLS: this is
+not a live ticket, server authorization, real interruption, low-storage or
+physical-device test.
