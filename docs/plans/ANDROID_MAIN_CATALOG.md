@@ -42,10 +42,21 @@ Cover responses are limited to supported image types, 2 MiB of encoded data,
 to a small display size and held in an 8 MiB in-memory cache, with at most four
 loads in flight per library instance. After one hour, a new request tries to reload
 the image and keeps the old in-memory image as a fallback if that fails. Canceling a visible-item load cancels its
-HTTP call; refreshing the library retries previously failed covers. A failed, unsafe or missing cover
-shows a placeholder without blocking the library. Image bytes are not yet stored
-on disk, so covers not already in memory require network access even when the
-catalog snapshot is available.
+HTTP call; refreshing the library retries previously failed covers. A failed,
+unsafe or missing cover shows a placeholder without blocking the library.
+
+Successfully decoded public covers are also stored in a private, disposable
+Android cache directory. The app shows a saved image while an expired one is
+refreshed, and retains the saved image if the network fails. Files use hashes of
+the validated paths as names; a temporary file is synced and renamed before a
+replacement is used. Committed cache entries are trimmed by oldest write time to
+24 MiB and 96 files; individual files remain bounded to 2 MiB. The temporary
+replacement can briefly require additional space, and a failed deletion may leave
+extra files until Android clears the cache. Cached bytes are bounded and decoded
+again before display. Android may remove this cache at any time, so an uncached
+or evicted image still shows a placeholder offline. This cache contains no EPUBs
+or reading progress and is not included in personal backups. File coordination
+currently assumes a single app process.
 
 Reader experiments use the explicit `-PofflineReaderTests=true` Gradle property,
 which selects a debug manifest without Internet permission. The manual emulator

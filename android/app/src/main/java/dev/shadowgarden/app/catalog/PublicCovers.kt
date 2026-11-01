@@ -9,9 +9,11 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import okhttp3.Call
 import okhttp3.Callback
@@ -38,12 +40,19 @@ internal data class CoverPath(val value: String) {
     }
 }
 
-internal fun interface CoverSource { suspend fun load(path: CoverPath): Bitmap? }
+internal const val MAX_COVER_BYTES = 2 * 1024 * 1024
 
-/** Public covers only. Results are memory-cached; failures never block the library. */
+internal fun interface CoverSource {
+    suspend fun load(path: CoverPath): Bitmap?
+    suspend fun cached(path: CoverPath): Bitmap? = null
+}
+
+/** Public covers only. Cache and network failures never block the library. */
 internal class PublicCoverLoader(
     private val http: OkHttpClient = defaultClient(),
-    private val now: () -> Long = { SystemClock.elapsedRealtime() }
+    private val now: () -> Long = { SystemClock.elapsedRealtime() },
+    private val disk: CoverDiskCache? = null,
+    private val wallNow: () -> Long = { System.currentTimeMillis() }
 ) : CoverSource {
     private val permits = Semaphore(4)
     private data class CachedCover(val bitmap: Bitmap, val savedAt: Long)
@@ -51,16 +60,47 @@ internal class PublicCoverLoader(
         override fun sizeOf(key: String, value: CachedCover): Int = value.bitmap.byteCount.coerceAtLeast(1)
     }
 
+    override suspend fun cached(path: CoverPath): Bitmap? {
+        cache.get(path.value)?.let { return it.bitmap }
+        val storage = disk ?: return null
+        return try {
+            permits.withPermit {
+                cache.get(path.value)?.bitmap ?: run {
+                    val loaded = withContext(Dispatchers.IO) {
+                        val stored = storage.read(path) ?: return@withContext null
+                        val bitmap = decodeBytes(stored.bytes) ?: return@withContext null
+                        val wall = wallNow()
+                        val age = if (stored.writtenAtMillis <= 0 || stored.writtenAtMillis > wall) CACHE_MILLIS
+                            else (wall - stored.writtenAtMillis).coerceAtMost(CACHE_MILLIS)
+                        CachedCover(bitmap, now() - age)
+                    }
+                    if (loaded == null) null else synchronized(cache) {
+                        val existing = cache.get(path.value)
+                        if (existing != null) { loaded.bitmap.recycle(); existing.bitmap }
+                        else { cache.put(path.value, loaded); loaded.bitmap }
+                    }
+                }
+            }
+        } catch (error: CancellationException) { throw error }
+        catch (_: Exception) { null }
+    }
+
     override suspend fun load(path: CoverPath): Bitmap? {
+        if (cache.get(path.value) == null) cached(path)
         val previous = cache.get(path.value)
         if (previous != null && fresh(previous)) return previous.bitmap
         return try {
             permits.withPermit {
                 val current = cache.get(path.value)
                 if (current != null && fresh(current)) current.bitmap else {
-                    val image = fetch(path)
-                    if (image != null) cache.put(path.value, CachedCover(image, now()))
-                    image ?: current?.bitmap ?: previous?.bitmap
+                    val fetched = fetch(path)
+                    if (fetched != null) {
+                        cache.put(path.value, CachedCover(fetched.bitmap, now()))
+                        try { withContext(Dispatchers.IO) { disk?.write(path, fetched.bytes) } }
+                        catch (error: CancellationException) { throw error }
+                        catch (_: Exception) { /* The in-memory cover remains usable. */ }
+                    }
+                    fetched?.bitmap ?: current?.bitmap ?: previous?.bitmap
                 }
             }
         } catch (error: CancellationException) { throw error }
@@ -72,7 +112,9 @@ internal class PublicCoverLoader(
         return age >= 0 && age < CACHE_MILLIS
     }
 
-    private suspend fun fetch(path: CoverPath): Bitmap? = suspendCancellableCoroutine { continuation ->
+    private data class FetchedCover(val bitmap: Bitmap, val bytes: ByteArray)
+
+    private suspend fun fetch(path: CoverPath): FetchedCover? = suspendCancellableCoroutine { continuation ->
         val request = Request.Builder().url(ORIGIN + path.value).header("Accept", "image/webp,image/png,image/jpeg,image/gif").get().build()
         val call = http.newCall(request)
         continuation.invokeOnCancellation { call.cancel() }
@@ -81,19 +123,25 @@ internal class PublicCoverLoader(
                 if (continuation.isActive) continuation.resume(null)
             }
             override fun onResponse(call: Call, response: Response) {
-                val bitmap = try { response.use { decode(it) } } catch (_: Exception) { null }
-                if (continuation.isActive) continuation.resume(bitmap) else bitmap?.recycle()
+                val result = try { response.use { decode(it) } } catch (_: Exception) { null }
+                if (continuation.isActive) continuation.resume(result) else result?.bitmap?.recycle()
             }
         })
     }
 
-    private fun decode(response: Response): Bitmap? {
+    private fun decode(response: Response): FetchedCover? {
         if (response.code != 200) return null
         val contentType = response.header("Content-Type")?.substringBefore(';')?.trim()?.lowercase()
         if (contentType !in IMAGE_TYPES) return null
         val body = response.body ?: return null
-        if (body.contentLength() > MAX_BYTES) return null
+        if (body.contentLength() > MAX_COVER_BYTES) return null
         val bytes = readBounded(body.byteStream())
+        val bitmap = decodeBytes(bytes) ?: return null
+        return FetchedCover(bitmap, bytes)
+    }
+
+    private fun decodeBytes(bytes: ByteArray): Bitmap? {
+        if (bytes.isEmpty() || bytes.size > MAX_COVER_BYTES) return null
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
         val width = bounds.outWidth
@@ -121,10 +169,10 @@ internal class PublicCoverLoader(
             if (count == 0) {
                 val byte = input.read()
                 if (byte < 0) break
-                if (++total > MAX_BYTES) throw IOException("Cover is too large")
+                if (++total > MAX_COVER_BYTES) throw IOException("Cover is too large")
                 output.write(byte)
             } else {
-                if (count > MAX_BYTES - total) throw IOException("Cover is too large")
+                if (count > MAX_COVER_BYTES - total) throw IOException("Cover is too large")
                 total += count
                 output.write(buffer, 0, count)
             }
@@ -134,7 +182,6 @@ internal class PublicCoverLoader(
 
     companion object {
         private const val ORIGIN = "https://shadowgarden-bon.pages.dev"
-        private const val MAX_BYTES = 2 * 1024 * 1024
         private const val MAX_DIMENSION = 8_192
         private const val MAX_PIXELS = 32_000_000L
         private const val TARGET_DIMENSION = 384

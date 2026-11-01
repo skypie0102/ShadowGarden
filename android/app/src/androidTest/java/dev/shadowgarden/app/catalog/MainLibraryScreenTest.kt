@@ -19,6 +19,8 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -194,6 +196,31 @@ class MainLibraryScreenTest {
         composeRule.waitUntil(20_000) {
             composeRule.onAllNodesWithTag("cover-placeholder", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
+    }
+
+    @Test fun savedCoverIsShownWhileItsRefreshIsStillWaiting() {
+        val valid = CoverPath("/media/shadow-garden/covers/cached.png")
+        val bitmap = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888)
+        val entered = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val covers = object : CoverSource {
+            override suspend fun cached(path: CoverPath): Bitmap? = bitmap
+            override suspend fun load(path: CoverPath): Bitmap? = withContext(Dispatchers.IO) {
+                entered.countDown()
+                release.await(20, TimeUnit.SECONDS)
+                null
+            }
+        }
+        try {
+            val model = model(CatalogSource { listOf(fixture[0].copy(cover = valid)) }, covers = covers)
+            show(model)
+            composeRule.waitUntil(20_000) { model.state.value.series != null }
+            scrollTo("First Series · An Author · 2 volumes")
+            composeRule.waitUntil(20_000) {
+                composeRule.onAllNodesWithTag("cover-loaded", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+            }
+            assertEquals(true, entered.await(5, TimeUnit.SECONDS))
+        } finally { release.countDown() }
     }
 
     private fun model(source: CatalogSource, cache: MainCatalogCache = NoTestCache,

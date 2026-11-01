@@ -31,6 +31,7 @@ internal class LibraryViewModel(
     fun search(query: String) { mutableState.value = state.value.copy(query = query) }
 
     suspend fun cover(path: CoverPath) = covers.load(path)
+    suspend fun cachedCover(path: CoverPath) = covers.cached(path)
 
     fun refresh() {
         if (state.value.loading) return

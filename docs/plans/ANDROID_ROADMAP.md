@@ -99,7 +99,8 @@ network access must not prevent reading an already downloaded book.
 ## Phase 2 — Library and offline reader
 
 - [x] Keep the last validated Main catalog available after an offline process restart, with stale-data and save-failure feedback. See [emulator evidence](ANDROID_MAIN_CATALOG.md).
-- [x] Show bounded public Main cover thumbnails with safe-path validation and a placeholder. See [emulator evidence](ANDROID_MAIN_CATALOG.md); offline image storage remains open.
+- [x] Show bounded public Main cover thumbnails with safe-path validation and a placeholder. See [emulator evidence](ANDROID_MAIN_CATALOG.md).
+- [ ] Keep previously loaded Main thumbnails in a bounded disposable offline cache; physical-device and low-storage acceptance remain open.
 - [ ] Implement main and age-gated libraries, series and volume details, search, filters, sorting, pins, recently added and reading-state actions. An early [read-only Main catalog](ANDROID_MAIN_CATALOG.md) provides cover thumbnails, title/author/volume-title search, volume listings and a saved offline snapshot; the remaining features are open.
 - [ ] Implement background-capable downloads, progress, retry/cancel, ticket expiry handling, integrity checks and private storage. Provide storage management and removal without deleting reading state.
 - [ ] Implement offline reading, table of contents, in-book search, bookmarks, paginated/continuous layouts, typography, themes, image focus and accessible navigation.
