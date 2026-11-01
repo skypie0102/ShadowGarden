@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -77,9 +79,8 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         return
     }
     val query = state.query.trim()
-    val filtered = state.series?.filter { series ->
-        query.isEmpty() || series.title.contains(query, true) || series.author.contains(query, true) ||
-            series.volumes.any { it.title.contains(query, true) }
+    val filtered = remember(state.series, query, state.volumeFilter, state.sort) {
+        state.series?.let { selectSeries(it, query, state.volumeFilter, state.sort) }
     }
     LazyColumn(modifier = Modifier.fillMaxSize().testTag("main-library-list"), contentPadding = PaddingValues(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -92,12 +93,17 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
             OutlinedTextField(value = state.query, onValueChange = model::search,
                 label = { Text("Search titles, authors, and volumes") }, singleLine = true, modifier = Modifier.fillMaxWidth())
         }
+        item { LibraryMenu("Volumes: ${state.volumeFilter.label}", VolumeFilter.entries, { it.label }, model::filterVolumes) }
+        item { LibraryMenu("Sort: ${state.sort.label}", LibrarySort.entries, { it.label }, model::sortBy) }
         item { Button(onClick = model::refresh, enabled = !state.loading) { Text("Refresh library") } }
         if (state.loading) item { Text("Loading Main library…", modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
         if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
         state.error?.let { error -> item { Text(error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) } }
         if (filtered != null && filtered.isEmpty() && !state.loading) {
-            item { Text(if (query.isEmpty()) "The Main library is empty." else "No matching series.") }
+            item { Text(if (query.isEmpty() && state.volumeFilter == VolumeFilter.ALL) "The Main library is empty." else "No matching series.") }
+            if (query.isNotEmpty() || state.volumeFilter != VolumeFilter.ALL) {
+                item { TextButton(onClick = model::clearFilters) { Text("Clear filters") } }
+            }
         }
         if (filtered != null) items(filtered, key = { it.id }) { series ->
             OutlinedButton(onClick = { selectedId = series.id }, modifier = Modifier.fillMaxWidth()) {
@@ -109,6 +115,19 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
                         append(" · ").append(series.volumes.size).append(if (series.volumes.size == 1) " volume" else " volumes")
                     }, modifier = Modifier.weight(1f))
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun <T> LibraryMenu(label: String, options: List<T>, optionLabel: (T) -> String, onSelect: (T) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) { Text(label) }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach { option ->
+                DropdownMenuItem(text = { Text(optionLabel(option)) }, onClick = { expanded = false; onSelect(option) })
             }
         }
     }

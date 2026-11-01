@@ -3,7 +3,12 @@
 The early Android library reads the public Main catalog from the fixed HTTPS URL
 `https://shadowgarden-bon.pages.dev/media/shadow-garden/data/catalog.json`.
 It shows series and volume covers when available, author, status and volume titles,
-and searches series titles, authors and volume titles. The website currently obtains this same route through
+and searches series titles, authors and volume titles. Volume-count filters and
+title, author and volume-count sorting operate on the current live or saved list.
+Catalog order remains the default; selecting a series and returning preserves the
+current controls during the app session. Search and filter can be cleared from an
+empty result; sorting remains selected. These choices are not saved across app
+process restarts. The website currently obtains this same route through
 `/data/source.json`; the app does not yet read that configuration dynamically.
 If the website changes its catalog source, update and test the Android client.
 
@@ -122,3 +127,13 @@ stages passed separately. The detailed report could not be downloaded in this
 environment, but the run log records the suite and both stages passing. This run
 did not repeat the live probe or establish behavior on a physical device, under
 real storage exhaustion, or after system cache eviction.
+
+The [offline API 28 run 41307193203](https://github.com/skypie0102/ShadowGarden/actions/runs/41307193203)
+at source `24e23b6` passed the Android suite, including a synthetic saved-catalog
+screen test for filtering, sorting, returning from series details and clearing an
+empty search. The local JVM tests cover range boundaries and sort orders. The
+ordinary emulator suite skipped the live-only test, manual process stage and
+known strict Readium reflow case; both manual process stages passed separately.
+The detailed report could not be downloaded in this environment; the run log
+records the suite and both stages passing. This is not physical-device, live UI
+or complete website filter-parity acceptance.

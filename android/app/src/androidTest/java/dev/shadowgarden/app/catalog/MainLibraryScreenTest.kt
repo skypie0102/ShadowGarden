@@ -55,6 +55,34 @@ class MainLibraryScreenTest {
         assertEquals("Special Volume", model.state.value.query)
     }
 
+    @Test fun offlineFiltersAndSortSurviveDetailNavigationAndCanBeCleared() {
+        val model = model(CatalogSource { throw IOException("offline") }, FakeCache(fixture))
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading && model.state.value.fromCache }
+        scrollTo("Volumes: All")
+        composeRule.onNodeWithText("Volumes: All").performClick()
+        composeRule.onNodeWithText("2–5 volumes").performClick()
+        scrollTo("Sort: Catalog order")
+        composeRule.onNodeWithText("Sort: Catalog order").performClick()
+        composeRule.onNodeWithText("Title Z–A").performClick()
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+        composeRule.onNodeWithText("Back to Main library").performClick()
+        assertEquals(VolumeFilter.TWO_TO_FIVE, model.state.value.volumeFilter)
+        assertEquals(LibrarySort.TITLE_DESC, model.state.value.sort)
+        scrollTo("Search titles, authors, and volumes")
+        composeRule.onNodeWithText("Search titles, authors, and volumes").performTextInput("no match")
+        scrollTo("No matching series.")
+        composeRule.onNodeWithText("No matching series.").assertIsDisplayed()
+        scrollTo("Clear filters")
+        composeRule.onNodeWithText("Clear filters").performClick()
+        assertEquals("", model.state.value.query)
+        assertEquals(VolumeFilter.ALL, model.state.value.volumeFilter)
+        assertEquals(LibrarySort.TITLE_DESC, model.state.value.sort)
+        scrollTo("Second Series · Other Author · 0 volumes")
+        composeRule.onNodeWithText("Second Series · Other Author · 0 volumes").assertIsDisplayed()
+    }
+
     @Test fun failedRefreshKeepsLastSuccessfulCatalog() {
         val model = model(CatalogSource {
             if (calls.incrementAndGet() == 1) fixture else throw IOException("offline fixture")
