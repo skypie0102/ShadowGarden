@@ -9,12 +9,17 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.shadowgarden.app.progress.CatalogBookId
+import dev.shadowgarden.app.books.PrivateBookStore
+import java.io.File
+import java.util.UUID
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.CountDownLatch
@@ -53,6 +58,32 @@ class MainLibraryScreenTest {
         scrollDetailTo("Back to Main library")
         composeRule.onNodeWithText("Back to Main library").performClick()
         assertEquals("Special Volume", model.state.value.query)
+    }
+
+    @Test fun volumeDownloadActionAndSavedStateAreAvailable() {
+        val directory = File(InstrumentationRegistry.getInstrumentation().targetContext.noBackupFilesDir, "library-books-test-${UUID.randomUUID()}")
+        val books = PrivateBookStore(directory)
+        val model = model(CatalogSource { fixture })
+        var chosen: CatalogVolume? = null
+        try {
+            composeRule.setContent { MaterialTheme { MainLibraryScreen(model, {}, books) { _, volume -> chosen = volume } } }
+            composeRule.waitUntil(20_000) { model.state.value.series != null }
+            scrollTo("First Series · An Author · 2 volumes")
+            composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+            scrollDetailTo("Special Volume")
+            scrollDetailTo("Download EPUB")
+            composeRule.onAllNodesWithText("Download EPUB").onFirst().performClick()
+            assertEquals(fixture[0].volumes[0], chosen)
+            books.replace(fixture[0].volumes[0].id, "generated fixture".byteInputStream())
+            composeRule.runOnIdle { model.refreshLocalBooks() }
+            composeRule.waitUntil(20_000) {
+                composeRule.onAllNodesWithText("Saved on this device").fetchSemanticsNodes().isNotEmpty()
+            }
+            scrollDetailTo("Saved on this device")
+            composeRule.onNodeWithText("Saved on this device").assertIsDisplayed()
+            scrollDetailTo("Download again")
+            composeRule.onNodeWithText("Download again").assertIsDisplayed()
+        } finally { directory.deleteRecursively() }
     }
 
     @Test fun offlineFiltersAndSortSurviveDetailNavigationAndCanBeCleared() {
@@ -114,7 +145,7 @@ class MainLibraryScreenTest {
 
     @Test fun selectedSeriesShowsLoadingWhileANewModelLoads() {
         val current = mutableStateOf(model(CatalogSource { fixture }))
-        composeRule.setContent { MaterialTheme { MainLibraryScreen(current.value) {} } }
+        composeRule.setContent { MaterialTheme { MainLibraryScreen(current.value, onBackup = {}) } }
         composeRule.waitUntil(20_000) { current.value.state.value.series != null }
         scrollTo("First Series · An Author · 2 volumes")
         composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
@@ -271,7 +302,7 @@ class MainLibraryScreenTest {
             data = series
         }
     }
-    private fun show(model: LibraryViewModel) = composeRule.setContent { MaterialTheme { MainLibraryScreen(model) {} } }
+    private fun show(model: LibraryViewModel) = composeRule.setContent { MaterialTheme { MainLibraryScreen(model, onBackup = {}) } }
     private fun scrollTo(text: String) {
         composeRule.onNodeWithTag("main-library-list").performScrollToNode(hasText(text))
     }

@@ -14,6 +14,7 @@ internal data class LibraryState(
     val series: List<CatalogSeries>? = null,
     val fromCache: Boolean = false,
     val coverGeneration: Long = 0,
+    val bookGeneration: Long = 0,
     val query: String = "",
     val volumeFilter: VolumeFilter = VolumeFilter.ALL,
     val sort: LibrarySort = LibrarySort.CATALOG,
@@ -34,6 +35,7 @@ internal class LibraryViewModel(
     fun filterVolumes(filter: VolumeFilter) { mutableState.value = state.value.copy(volumeFilter = filter) }
     fun sortBy(sort: LibrarySort) { mutableState.value = state.value.copy(sort = sort) }
     fun clearFilters() { mutableState.value = state.value.copy(query = "", volumeFilter = VolumeFilter.ALL) }
+    fun refreshLocalBooks() { mutableState.value = state.value.copy(bookGeneration = state.value.bookGeneration + 1) }
 
     suspend fun cover(path: CoverPath) = covers.load(path)
     suspend fun cachedCover(path: CoverPath) = covers.cached(path)

@@ -1,7 +1,7 @@
 # Android private book storage foundation
 
 The app contains an internal storage component and a [ticketed transfer foundation](ANDROID_BOOK_TRANSFER.md)
-for future book downloads. Neither is connected to a reader or user interface. Production access,
+for the experimental foreground download flow. The reader, live protected access,
 full EPUB validation, background work and storage-management UI remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
 
@@ -27,7 +27,7 @@ extract the archive, decompress and verify every entry, parse the container or
 package XML, verify CRCs or validate EPUB semantics. Its checks are not EPUBCheck,
 a malicious-content sandbox, or proof that a reader will open the file. The raw
 byte-storage entry point remains available for infrastructure tests; future
-download integration must use the checked EPUB path and additional reader checks.
+download integration uses the checked EPUB path; additional reader checks remain open.
 
 Failed, cancelled, empty, oversized or mismatched writes leave the old book in
 place. An interrupted temporary file is removed on the next replacement attempt
@@ -41,10 +41,10 @@ require space for both editions. Callers must surface failures and must not assu
 that an open file is valid EPUB content or that the reader can safely render it.
 
 This storage is separate from the disposable cover cache and the position-only
-backup format. The future integration must use a no-backup directory, retain
-server-side authorization, perform reader validation and handle integrity metadata, retries,
-interruptions, concurrent access, editions and real storage exhaustion before it
-is presented as a download feature. No website browser progress or Keeper
+backup format. The experimental flow uses a no-backup directory and retains
+server-side authorization. Reader validation, trusted integrity metadata,
+background retries, interruptions, concurrent access, editions and real storage
+exhaustion remain open before release. No website browser progress or Keeper
 credentials are involved.
 
 ## Verification

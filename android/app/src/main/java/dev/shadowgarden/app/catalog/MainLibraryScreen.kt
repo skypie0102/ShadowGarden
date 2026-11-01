@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -35,12 +36,18 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import dev.shadowgarden.app.books.PrivateBookStore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withContext
 
 @Composable
-internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
+internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
+                               books: PrivateBookStore? = null, onDownload: ((CatalogSeries, CatalogVolume) -> Unit)? = null) {
     val state by model.state.collectAsState()
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     BackHandler(enabled = selectedId != null) { selectedId = null }
@@ -66,12 +73,28 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
                 item { Text("Volumes", style = MaterialTheme.typography.titleLarge) }
-                item { Text("Reading and downloads are still in development.") }
+                item { Text("EPUB downloads are experimental. Reading in the app is still in development.") }
                 if (selected.volumes.isEmpty()) item { Text("No volumes are currently listed.") }
                 items(selected.volumes, key = { it.id.value }) { volume ->
+                    var saved by remember(volume.id, books) { mutableStateOf<Boolean?>(null) }
+                    LaunchedEffect(volume.id, state.bookGeneration, books) {
+                        saved = if (books == null) false else try {
+                            withContext(Dispatchers.IO) { books.contains(volume.id) }
+                        } catch (error: CancellationException) { throw error }
+                        catch (_: Exception) { null }
+                    }
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         CoverThumbnail(volume.cover ?: selected.cover, state.coverGeneration, model, Modifier.size(56.dp, 80.dp))
-                        Text(volume.title, modifier = Modifier.weight(1f))
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(volume.title)
+                            if (saved == true) Text("Saved on this device", style = MaterialTheme.typography.labelMedium)
+                            if (onDownload != null) OutlinedButton(onClick = { onDownload(selected, volume) },
+                                modifier = Modifier.semantics {
+                                    contentDescription = if (saved == true) "Download ${volume.title} again" else "Download ${volume.title}"
+                                }) {
+                                Text(if (saved == true) "Download again" else "Download EPUB")
+                            }
+                        }
                     }
                 }
             }
@@ -87,7 +110,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         item { Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium) }
         item { Text("Android app in development", style = MaterialTheme.typography.titleMedium) }
         item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
-        item { Text("The Main library saves its latest catalog on this device. The reader, downloads, Adult library, and Keeper are in development.") }
+        item { Text("The Main library saves its latest catalog on this device. EPUB downloads are experimental; the reader, Adult library, and Keeper are in development.") }
         item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
         item {
             OutlinedTextField(value = state.query, onValueChange = model::search,
