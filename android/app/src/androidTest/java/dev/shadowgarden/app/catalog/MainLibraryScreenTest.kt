@@ -130,7 +130,6 @@ class MainLibraryScreenTest {
                 val generation = model.state.value.bookGeneration
                 composeRule.onNodeWithText("Remove EPUB").performClick()
                 composeRule.waitUntil(20_000) { model.state.value.bookGeneration > generation }
-                scrollDetailTo("The downloaded EPUB changed. Nothing was removed; review it and try again.")
                 composeRule.onNodeWithText("The downloaded EPUB changed. Nothing was removed; review it and try again.").assertIsDisplayed()
                 books.open(volume.id)!!.use { assertEquals(replacement, it.edition) }
                 assertEquals(ProgressLookup.Exact(StoredReadingPosition(position, 1)), progress.lookup(volume.id, original, LocatorFormat.EPUBJS_CFI))
