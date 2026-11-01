@@ -2,7 +2,7 @@
 
 The app contains an internal storage component for future book downloads. It is
 not yet connected to a downloader, reader or user interface. Production access,
-EPUB validation, background work and storage-management UI remain open in the
+full EPUB validation, background work and storage-management UI remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
 
 The caller must choose an app-private, no-backup directory and run the blocking
@@ -17,6 +17,18 @@ edition identity, not proof of integrity or EPUB validity. A cancellation callba
 is checked during copying and immediately before replacement; the caller remains
 responsible for interrupting a blocked input or network request.
 
+The EPUB-specific write path checks the temporary file before replacement. It
+requires the first stored ZIP entry to contain the EPUB mimetype, a container
+entry and at least one `.opf` entry; bounds the archive, entry count and declared
+uncompressed total; rejects unsafe paths, duplicate names, encrypted or
+unsupported entries, inconsistent headers, overlapping entry regions and ZIP64;
+and supports stored and deflated entries. Names must be valid UTF-8. It does not
+extract the archive, decompress and verify every entry, parse the container or
+package XML, verify CRCs or validate EPUB semantics. Its checks are not EPUBCheck,
+a malicious-content sandbox, or proof that a reader will open the file. The raw
+byte-storage entry point remains available for infrastructure tests; future
+download integration must use the checked EPUB path and additional reader checks.
+
 Failed, cancelled, empty, oversized or mismatched writes leave the old book in
 place. An interrupted temporary file is removed on the next replacement attempt
 for that ID. An opened file is fingerprinted through the same descriptor used for
@@ -30,7 +42,7 @@ that an open file is valid EPUB content or that the reader can safely render it.
 
 This storage is separate from the disposable cover cache and the position-only
 backup format. The future integration must use a no-backup directory, retain
-server-side authorization, validate EPUBs and handle integrity metadata, retries,
+server-side authorization, perform reader validation and handle integrity metadata, retries,
 interruptions, concurrent access, editions and real storage exhaustion before it
 is presented as a download feature. No website browser progress or Keeper
 credentials are involved.
