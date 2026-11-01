@@ -53,13 +53,15 @@ class OfflineReaderActivityTest {
                 val view = awaitReader(scenario)
                 val ready = awaitState(view) { it.optString("state") == "ready" && it.optString("cfi").isNotBlank() }
                 assertTrue(ready.getString("href").contains("chapter1.xhtml"))
-                val initial = evaluate(view, "JSON.stringify({count:document.getElementById('contents').options.length, warning:document.getElementById('status').textContent, executed:window.sgReader.unsafeExecuted===true})")
+                val initial = evaluate(view, "JSON.stringify({count:document.getElementById('contents').options.length, warning:document.getElementById('status').textContent, executed:window.sgReader.unsafeExecuted===true, text:(document.querySelector('#viewer iframe').contentDocument.body.textContent || '').includes('Chapter 1 paragraph 1.')})")
                 val details = JSONObject(JSONTokener(initial).nextValue() as String)
                 assertEquals(13, details.getInt("count"))
                 assertTrue(details.getString("warning").contains("not saved"))
                 assertFalse("Book scripts must not run", details.getBoolean("executed"))
+                assertTrue("The first chapter text must be present", details.getBoolean("text"))
                 evaluate(view, "(function(){const c=document.getElementById('contents');c.selectedIndex=12;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
                 val last = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optString("cfi").isNotBlank() }
+                assertTrue("The generated illustration must decode", awaitBoolean(view, "(function(){const f=document.querySelector('#viewer iframe');const i=f && f.contentDocument && f.contentDocument.querySelector('img');return !!(i && i.complete && i.naturalWidth>0);})()"))
                 evaluate(view, "document.getElementById('next').click(); 'ok'")
                 val next = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optString("cfi").isNotBlank() && it.optString("cfi") != last.optString("cfi") }
                 assertNotEquals(last.getString("cfi"), next.getString("cfi"))
@@ -71,6 +73,10 @@ class OfflineReaderActivityTest {
                     assertTrue(client.shouldOverrideUrlLoading(view, external))
                     assertEquals(403, client.shouldInterceptRequest(view, external)!!.statusCode)
                 }
+                scenario.recreate()
+                val reopened = awaitReader(scenario)
+                val restart = awaitState(reopened) { it.optString("state") == "ready" && it.optString("href").contains("chapter1.xhtml") }
+                assertTrue(restart.getString("href").contains("chapter1.xhtml"))
             } finally { scenario.close() }
         } finally {
             if (stored) store.remove(id)
@@ -112,6 +118,14 @@ class OfflineReaderActivityTest {
         instrumentation.runOnMainSync { view.evaluateJavascript(script) { result.set(it); latch.countDown() } }
         assertTrue("WebView evaluation timed out", latch.await(5, TimeUnit.SECONDS))
         return result.get()
+    }
+    private fun awaitBoolean(view: WebView, script: String): Boolean {
+        val deadline = SystemClock.elapsedRealtime() + 15_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            if (evaluate(view, script) == "true") return true
+            SystemClock.sleep(100)
+        }
+        return false
     }
     private fun request(value: String, main: Boolean) = object : WebResourceRequest {
         override fun getUrl(): Uri = Uri.parse(value)
