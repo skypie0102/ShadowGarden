@@ -2,7 +2,7 @@
 
 An internal transfer component accepts a server-issued book ticket and streams
 the response into the checked [private book store](ANDROID_BOOK_STORAGE.md).
-It is not connected to a user interface, ticket acquisition or Garden Pass.
+It is not connected to a user interface or a complete Garden Pass flow.
 There is no background queue, transfer-progress UI or automatic ticket renewal.
 Users cannot yet download or read books in the app.
 
@@ -17,6 +17,25 @@ for ticket signature, scope, expiry, active-catalog and access checks. Ticket
 values are kept in memory, omitted from object and error messages, and must not
 be logged or included in backups.
 
+An internal WebView ticket requester can call the website's existing
+`ShadowGardenBookAccess.resolve(bookId, {force: true})` function from its HTTPS
+`/series.html` page. The website owns the same-origin request and any Garden Pass
+dialog; no JavaScript interface or native access to HttpOnly cookies is added.
+The requester checks the page before and after each evaluation and validates the
+returned ID, relative signed URL and expiry with the same rules as the transfer.
+It keeps ticket values in memory and clears its transient page slot on completion.
+It does not construct or display the WebView, verify server signatures locally,
+or establish that the live page, widget and cookies work on Android.
+
+The future UI must supply a visible WebView with JavaScript enabled, file and
+content access disabled, no JavaScript interfaces and top-level navigation locked
+to the trusted page, and must own its lifecycle. A page-origin check alone is not
+a navigation lock. The website's `resolve` function has no cancellation API:
+after timeout or cancellation the UI must dismiss and destroy the WebView, since
+the website's verification or request could still be running and change cookies.
+Session isolation, lifecycle, repeat attempts and live Turnstile behavior require
+their own validation before exposing this flow to users.
+
 The client uses platform HTTPS, bounded timeouts, no cookie jar, no HTTP cache,
 no automatic redirects or retry, and requests an identity-encoded EPUB response.
 Only a full 200 response with the expected media type is accepted. A 403 is
@@ -30,7 +49,7 @@ checked during storage; cancellation racing the final file rename cannot undo a
 replacement that has already committed. A future download manager must report
 that outcome and coordinate concurrent operations and app lifecycle.
 
-Before release, integrate Garden Pass and ticket issuance, handle session expiry
+Before release, integrate and validate Garden Pass and ticket issuance, handle session expiry
 and bounded renewal, background work and progress, verify EPUB compatibility
 with the chosen reader, and test real network interruption, storage exhaustion,
 physical devices and the live protected flow with authorized test content. The

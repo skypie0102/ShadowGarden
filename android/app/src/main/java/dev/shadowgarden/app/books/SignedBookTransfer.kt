@@ -39,7 +39,7 @@ internal class SignedBookTransfer(
 
     /** Caller owns ticket acquisition and renewal. Cancellation cancels the HTTP call. */
     suspend fun download(bookId: CatalogBookId, ticket: BookTicket, expected: EditionFingerprint? = null): EditionFingerprint {
-        val path = checkedPath(bookId, ticket)
+        val path = BookTicketPolicy.checkedPath(bookId, ticket, nowSeconds())
         return suspendCancellableCoroutine { continuation ->
             val request = Request.Builder().url(ORIGIN + path).header("Accept", "application/epub+zip")
                 .header("Accept-Encoding", "identity").get().build()
@@ -86,20 +86,6 @@ internal class SignedBookTransfer(
         }
     }
 
-    private fun checkedPath(bookId: CatalogBookId, ticket: BookTicket): String {
-        val url = ticket.relativeUrl
-        if (ticket.bookId != bookId || url.length > 9_300 || !SIGNED_PATH.matches(url))
-            throw BookTransferException(TransferFailure.INVALID_TICKET)
-        val path = url.substringBefore('?')
-        val key = path.removePrefix("/media/")
-        val signature = url.substringAfter("?sig=")
-        if (key.length > 1_024 || signature.length > 8_192 ||
-            key.split('/').any { it.isEmpty() || it == "." || it == ".." })
-            throw BookTransferException(TransferFailure.INVALID_TICKET)
-        if (ticket.expiresAtSeconds <= nowSeconds()) throw BookTransferException(TransferFailure.EXPIRED_TICKET)
-        return url
-    }
-
     private class LengthCheckedInput(private val input: InputStream, private val expectedLength: Long) : InputStream() {
         private var count = 0L
         override fun read(): Int {
@@ -123,6 +109,21 @@ internal class SignedBookTransfer(
 
     private companion object {
         const val ORIGIN = "https://shadowgarden-bon.pages.dev"
-        val SIGNED_PATH = Regex("^/media/shadow-garden/books/[A-Za-z0-9_./-]+\\.epub\\?sig=[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$")
+    }
+}
+
+internal object BookTicketPolicy {
+    private val SIGNED_PATH = Regex("^/media/shadow-garden/books/[A-Za-z0-9_./-]+\\.epub\\?sig=[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$")
+    fun checkedPath(bookId: CatalogBookId, ticket: BookTicket, nowSeconds: Long): String {
+        val url = ticket.relativeUrl
+        if (ticket.bookId != bookId || url.length > 9_300 || !SIGNED_PATH.matches(url))
+            throw BookTransferException(TransferFailure.INVALID_TICKET)
+        val key = url.substringBefore('?').removePrefix("/media/")
+        val signature = url.substringAfter("?sig=")
+        if (key.length > 1_024 || signature.length > 8_192 ||
+            key.split('/').any { it.isEmpty() || it == "." || it == ".." })
+            throw BookTransferException(TransferFailure.INVALID_TICKET)
+        if (ticket.expiresAtSeconds <= nowSeconds) throw BookTransferException(TransferFailure.EXPIRED_TICKET)
+        return url
     }
 }
