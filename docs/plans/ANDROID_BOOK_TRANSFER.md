@@ -3,8 +3,9 @@
 An experimental foreground download action obtains a book ticket through an
 app-owned WebView and streams the response into the checked [private book store](ANDROID_BOOK_STORAGE.md).
 The live Garden Pass and real protected download remain unverified. There is no
-background queue, transfer-progress UI or automatic ticket renewal. Users cannot
-yet read books in the app.
+background queue, transfer-progress UI or automatic ticket renewal. A basic
+[offline reader](ANDROID_OFFLINE_READER.md) can open saved books but does not yet
+save reading positions.
 
 The caller supplies the expected catalog book ID, a ticket containing the same
 ID, the server's relative signed URL and expiry in Unix seconds, and optionally

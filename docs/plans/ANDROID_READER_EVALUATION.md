@@ -4,6 +4,9 @@ Status: preliminary source review and reader prototypes, 2026-10-29.
 Neither prototype is a production reader and the comparison remains incomplete.
 The [Android roadmap](ANDROID_ROADMAP.md)
 tracks the required experiments and acceptance criteria.
+An early [offline EPUB.js reader](ANDROID_OFFLINE_READER.md) now opens saved
+books without saving positions; this does not resolve the comparison or reflow
+acceptance work described below.
 
 ## Candidates
 

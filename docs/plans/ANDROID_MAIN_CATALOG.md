@@ -13,9 +13,11 @@ process restarts. The website currently obtains this same route through
 If the website changes its catalog source, update and test the Android client.
 
 Only the Main catalog is requested by the library. There is no Adult catalog,
-age-gate flow, complete website search/filter parity, reader or Keeper access.
+age-gate flow, complete website search/filter parity or Keeper access.
 The early foreground EPUB download action is experimental and live protected
-access remains unverified; see [download design](ANDROID_BOOK_TRANSFER.md).
+access remains unverified. Saved EPUBs can be opened in a basic experimental
+[reader](ANDROID_OFFLINE_READER.md) without saved positions; see also the
+[download design](ANDROID_BOOK_TRANSFER.md).
 After the first successful fetch, the app stores a validated snapshot of those
 display fields in private app storage. It loads that snapshot while trying to
 refresh, including after an offline restart, and labels it as potentially out of

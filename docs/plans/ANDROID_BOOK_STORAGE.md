@@ -1,7 +1,7 @@
 # Android private book storage foundation
 
 The app contains an internal storage component and a [ticketed transfer foundation](ANDROID_BOOK_TRANSFER.md)
-for the experimental foreground download flow. The reader, live protected access,
+for the experimental foreground download flow and basic local reader. Live protected access,
 full EPUB validation, background work and storage-management UI remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
 
