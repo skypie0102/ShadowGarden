@@ -11,7 +11,8 @@ will have no newly recorded positions to export. See the [Android roadmap](../do
 for scope, sequence and acceptance criteria.
 
 An internal [private book storage foundation](../docs/plans/ANDROID_BOOK_STORAGE.md)
-is under development; it is not yet a user-facing download or reader.
+and [signed transfer foundation](../docs/plans/ANDROID_BOOK_TRANSFER.md) are
+under development; they are not yet a user-facing download or reader.
 
 ## Development
 
