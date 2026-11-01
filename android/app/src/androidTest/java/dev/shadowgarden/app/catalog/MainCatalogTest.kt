@@ -68,6 +68,18 @@ class MainCatalogTest {
         assertTrue(series.volumes.isEmpty())
     }
 
+    @Test fun coverFallbackIgnoresUnsafeUrlsWithoutRejectingCatalog() {
+        val safeFull = "/media/shadow-garden/covers/series.webp"
+        val safeThumb = "/media/shadow-garden/covers/volume-thumb.png"
+        val json = """{"series":[{"id":"s","title":"Title","coverThumb":"https://evil.example/a.png","cover":"$safeFull","volumes":[{"bookId":"$one","title":"One","coverThumb":"$safeThumb"},{"bookId":"$two","title":"Two","cover":"/media/shadow-garden/covers/../bad.png"}]}]}"""
+        val series = CatalogParser.read(json.byteInputStream()).single()
+        assertEquals(CoverPath(safeFull), series.cover)
+        assertEquals(CoverPath(safeThumb), series.volumes[0].cover)
+        assertNull(series.volumes[1].cover)
+        val fallback = """{"series":[{"id":"s","title":"Title","volumes":[{"bookId":"$one","title":"One","cover":"$safeFull"},{"bookId":"$two","title":"Two","coverThumb":"$safeThumb"}]}]}"""
+        assertEquals(CoverPath(safeThumb), CatalogParser.read(fallback.byteInputStream()).single().cover)
+    }
+
     @Test fun rejectedOrRedirectedRequestsDoNotReturnAList() {
         for (code in listOf(302, 403, 503)) {
             val http = client { chain -> response(chain, code, "{}") }

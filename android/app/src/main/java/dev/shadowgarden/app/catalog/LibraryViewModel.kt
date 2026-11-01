@@ -13,13 +13,15 @@ internal data class LibraryState(
     val loading: Boolean = false,
     val series: List<CatalogSeries>? = null,
     val fromCache: Boolean = false,
+    val coverGeneration: Long = 0,
     val query: String = "",
     val error: String? = null
 )
 
 internal class LibraryViewModel(
     private val source: CatalogSource = MainCatalogClient(),
-    private val cache: MainCatalogCache
+    private val cache: MainCatalogCache,
+    private val covers: CoverSource = PublicCoverLoader()
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(LibraryState())
     val state = mutableState.asStateFlow()
@@ -28,10 +30,12 @@ internal class LibraryViewModel(
 
     fun search(query: String) { mutableState.value = state.value.copy(query = query) }
 
+    suspend fun cover(path: CoverPath) = covers.load(path)
+
     fun refresh() {
         if (state.value.loading) return
         val readCache = state.value.series == null
-        mutableState.value = state.value.copy(loading = true, error = null)
+        mutableState.value = state.value.copy(loading = true, error = null, coverGeneration = state.value.coverGeneration + 1)
         viewModelScope.launch {
             var cacheReadFailed = false
             if (readCache) {
@@ -49,6 +53,7 @@ internal class LibraryViewModel(
                 } catch (error: CancellationException) { throw error }
                 catch (_: Exception) { false }
                 mutableState.value = state.value.copy(loading = false, series = series, fromCache = false,
+                    coverGeneration = state.value.coverGeneration + 1,
                     error = if (saved) null else "Loaded the Main library, but could not save it for offline use.")
             } catch (error: CancellationException) { throw error }
             catch (_: Exception) {

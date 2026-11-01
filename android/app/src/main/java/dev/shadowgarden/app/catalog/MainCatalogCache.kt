@@ -38,9 +38,11 @@ internal class PrivateMainCatalogCache(private val file: File) : MainCatalogCach
         writer.beginObject().name("series").beginArray()
         for (entry in series) {
             writer.beginObject().name("id").value(entry.id).name("title").value(entry.title)
-                .name("author").value(entry.author).name("status").value(entry.status).name("volumes").beginArray()
+                .name("author").value(entry.author).name("status").value(entry.status)
+                .name("cover").value(entry.cover?.value).name("volumes").beginArray()
             for (volume in entry.volumes) {
-                writer.beginObject().name("bookId").value(volume.id.value).name("title").value(volume.title).endObject()
+                writer.beginObject().name("bookId").value(volume.id.value).name("title").value(volume.title)
+                    .name("cover").value(volume.cover?.value).endObject()
             }
             writer.endArray().endObject()
         }

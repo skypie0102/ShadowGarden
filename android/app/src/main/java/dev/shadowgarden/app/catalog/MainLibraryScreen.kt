@@ -1,10 +1,16 @@
 package dev.shadowgarden.app.catalog
 
 import androidx.activity.compose.BackHandler
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -14,12 +20,17 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -33,7 +44,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
     BackHandler(enabled = selectedId != null) { selectedId = null }
     val selected = state.series?.firstOrNull { it.id == selectedId }
     if (selectedId != null) {
-        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(24.dp),
+        LazyColumn(modifier = Modifier.fillMaxSize().testTag("series-detail-list"), contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { TextButton(onClick = { selectedId = null }) { Text("Back to Main library") } }
             if (selected == null) {
@@ -49,12 +60,18 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
                 item { Text(selected.title, style = MaterialTheme.typography.headlineMedium) }
                 if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
                 state.error?.let { error -> item { Text(error) } }
+                item { CoverThumbnail(selected.cover, state.coverGeneration, model, Modifier.size(120.dp, 170.dp)) }
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
                 item { Text("Volumes", style = MaterialTheme.typography.titleLarge) }
                 item { Text("Reading and downloads are still in development.") }
                 if (selected.volumes.isEmpty()) item { Text("No volumes are currently listed.") }
-                items(selected.volumes, key = { it.id.value }) { volume -> Text(volume.title) }
+                items(selected.volumes, key = { it.id.value }) { volume ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        CoverThumbnail(volume.cover ?: selected.cover, state.coverGeneration, model, Modifier.size(56.dp, 80.dp))
+                        Text(volume.title, modifier = Modifier.weight(1f))
+                    }
+                }
             }
         }
         return
@@ -84,12 +101,36 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         }
         if (filtered != null) items(filtered, key = { it.id }) { series ->
             OutlinedButton(onClick = { selectedId = series.id }, modifier = Modifier.fillMaxWidth()) {
-                Text(buildString {
-                    append(series.title)
-                    if (series.author.isNotBlank()) append(" · ").append(series.author)
-                    append(" · ").append(series.volumes.size).append(if (series.volumes.size == 1) " volume" else " volumes")
-                })
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    CoverThumbnail(series.cover, state.coverGeneration, model, Modifier.size(56.dp, 80.dp))
+                    Text(buildString {
+                        append(series.title)
+                        if (series.author.isNotBlank()) append(" · ").append(series.author)
+                        append(" · ").append(series.volumes.size).append(if (series.volumes.size == 1) " volume" else " volumes")
+                    }, modifier = Modifier.weight(1f))
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun CoverThumbnail(path: CoverPath?, generation: Long, model: LibraryViewModel, modifier: Modifier = Modifier) {
+    var bitmap by remember(path) { mutableStateOf<Bitmap?>(null) }
+    var loading by remember(path) { mutableStateOf(path != null) }
+    LaunchedEffect(path, generation, model) {
+        loading = path != null
+        bitmap = path?.let { model.cover(it) }
+        loading = false
+    }
+    val image = bitmap
+    if (image == null) {
+        Box(modifier = modifier.background(MaterialTheme.colorScheme.surfaceVariant).testTag("cover-placeholder"),
+            contentAlignment = Alignment.Center) {
+            Text(if (loading) "Loading cover" else "Cover unavailable", style = MaterialTheme.typography.labelSmall)
+        }
+    } else {
+        Image(bitmap = image.asImageBitmap(), contentDescription = null, contentScale = ContentScale.Crop,
+            modifier = modifier.testTag("cover-loaded"))
     }
 }

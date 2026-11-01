@@ -13,8 +13,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONTokener
 
-internal data class CatalogVolume(val id: CatalogBookId, val title: String)
-internal data class CatalogSeries(val id: String, val title: String, val author: String, val status: String, val volumes: List<CatalogVolume>)
+internal data class CatalogVolume(val id: CatalogBookId, val title: String, val cover: CoverPath? = null)
+internal data class CatalogSeries(val id: String, val title: String, val author: String, val status: String,
+                                  val volumes: List<CatalogVolume>, val cover: CoverPath? = null)
 internal fun interface CatalogSource { fun load(): List<CatalogSeries> }
 
 /** Public Main catalog only; no cookies, redirects, credentials or arbitrary URLs. */
@@ -82,13 +83,17 @@ internal object CatalogParser {
                 val volumes = item.opt("volumes") as? JSONArray ?: throw IOException("Missing volumes")
                 volumeCount += volumes.length()
                 if (volumeCount > MAX_VOLUMES) throw IOException("Too many volumes")
-                val entries = (0 until volumes.length()).map { volumeIndex ->
+                val parts = (0 until volumes.length()).map { volumeIndex ->
                     val volume = volumes.opt(volumeIndex) as? JSONObject ?: throw IOException("Invalid volume")
                     val bookId = volume.requiredText("bookId", 25)
                     if (!bookIds.add(bookId)) throw IOException("Duplicate book")
-                    CatalogVolume(CatalogBookId(bookId), volume.requiredText("title", 4_096))
+                    VolumeParts(CatalogBookId(bookId), volume.requiredText("title", 4_096),
+                        CoverPath.from(volume.opt("coverThumb")), CoverPath.from(volume.opt("cover")))
                 }
-                CatalogSeries(id, title, author, status, entries)
+                val cover = CoverPath.from(item.opt("coverThumb")) ?: CoverPath.from(item.opt("cover"))
+                    ?: parts.firstNotNullOfOrNull { it.thumbnail } ?: parts.firstNotNullOfOrNull { it.full }
+                val entries = parts.map { CatalogVolume(it.id, it.title, it.thumbnail ?: it.full) }
+                CatalogSeries(id, title, author, status, entries, cover)
             }
         } catch (error: IOException) {
             throw error
@@ -96,6 +101,8 @@ internal object CatalogParser {
             throw IOException("Invalid catalog", error)
         }
     }
+
+    private data class VolumeParts(val id: CatalogBookId, val title: String, val thumbnail: CoverPath?, val full: CoverPath?)
 
     private fun checkDepth(text: String) {
         var depth = 0
