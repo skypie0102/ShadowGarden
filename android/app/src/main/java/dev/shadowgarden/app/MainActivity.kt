@@ -50,6 +50,7 @@ import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
 import dev.shadowgarden.app.books.DownloadActivity
 import dev.shadowgarden.app.books.PrivateBookStore
+import dev.shadowgarden.app.books.OfflineReaderActivity
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -94,6 +95,7 @@ internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryVi
                     PositionBackupScreen(backup)
                 }
             } else MainLibraryScreen(library, onBackup = { showBackup = true }, books = books,
+                onRead = { volume -> context.startActivity(OfflineReaderActivity.intent(context, volume)) },
                 onDownload = { series, volume -> context.startActivity(DownloadActivity.intent(context, series, volume)) })
         }
     }

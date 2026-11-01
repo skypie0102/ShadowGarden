@@ -65,8 +65,9 @@ class MainLibraryScreenTest {
         val books = PrivateBookStore(directory)
         val model = model(CatalogSource { fixture })
         var chosen: CatalogVolume? = null
+        var read: CatalogVolume? = null
         try {
-            composeRule.setContent { MaterialTheme { MainLibraryScreen(model, {}, books) { _, volume -> chosen = volume } } }
+            composeRule.setContent { MaterialTheme { MainLibraryScreen(model, {}, books, onRead = { read = it }) { _, volume -> chosen = volume } } }
             composeRule.waitUntil(20_000) { model.state.value.series != null }
             scrollTo("First Series · An Author · 2 volumes")
             composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
@@ -83,6 +84,9 @@ class MainLibraryScreenTest {
             composeRule.onNodeWithText("Saved on this device").assertIsDisplayed()
             scrollDetailTo("Download again")
             composeRule.onNodeWithText("Download again").assertIsDisplayed()
+            scrollDetailTo("Read offline")
+            composeRule.onNodeWithText("Read offline").performClick()
+            assertEquals(fixture[0].volumes[0], read)
         } finally { directory.deleteRecursively() }
     }
 

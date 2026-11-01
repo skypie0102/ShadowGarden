@@ -47,7 +47,8 @@ import kotlinx.coroutines.withContext
 
 @Composable
 internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
-                               books: PrivateBookStore? = null, onDownload: ((CatalogSeries, CatalogVolume) -> Unit)? = null) {
+                               books: PrivateBookStore? = null, onRead: ((CatalogVolume) -> Unit)? = null,
+                               onDownload: ((CatalogSeries, CatalogVolume) -> Unit)? = null) {
     val state by model.state.collectAsState()
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     BackHandler(enabled = selectedId != null) { selectedId = null }
@@ -73,7 +74,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
                 item { Text("Volumes", style = MaterialTheme.typography.titleLarge) }
-                item { Text("EPUB downloads are experimental. Reading in the app is still in development.") }
+                item { Text("Offline reading and downloads are experimental. Reading position is not saved yet.") }
                 if (selected.volumes.isEmpty()) item { Text("No volumes are currently listed.") }
                 items(selected.volumes, key = { it.id.value }) { volume ->
                     var saved by remember(volume.id, books) { mutableStateOf<Boolean?>(null) }
@@ -88,6 +89,10 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(volume.title)
                             if (saved == true) Text("Saved on this device", style = MaterialTheme.typography.labelMedium)
+                            if (saved == true && onRead != null) Button(onClick = { onRead(volume) },
+                                modifier = Modifier.semantics { contentDescription = "Read ${volume.title} offline" }) {
+                                Text("Read offline")
+                            }
                             if (onDownload != null) OutlinedButton(onClick = { onDownload(selected, volume) },
                                 modifier = Modifier.semantics {
                                     contentDescription = if (saved == true) "Download ${volume.title} again" else "Download ${volume.title}"
@@ -110,7 +115,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
         item { Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium) }
         item { Text("Android app in development", style = MaterialTheme.typography.titleMedium) }
         item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
-        item { Text("The Main library saves its latest catalog on this device. EPUB downloads are experimental; the reader, Adult library, and Keeper are in development.") }
+        item { Text("The Main library saves its latest catalog on this device. Offline reading and downloads are experimental; the Adult library and Keeper are in development.") }
         item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
         item {
             OutlinedTextField(value = state.query, onValueChange = model::search,

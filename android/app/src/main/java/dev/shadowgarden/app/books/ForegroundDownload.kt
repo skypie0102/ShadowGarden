@@ -11,7 +11,7 @@ internal suspend fun runForegroundDownload(
     val ticket = requestTicket()
     onDownloading()
     transfer(ticket)
-    DownloadState(DownloadPhase.SAVED, "Saved on this device. Reading in the app is still in development; uninstalling the app removes saved books.")
+    DownloadState(DownloadPhase.SAVED, "Saved on this device. You can read it offline; reading position is not saved yet. Uninstalling the app removes saved books.")
 } catch (error: CancellationException) { throw error }
 catch (error: BookTransferException) {
     DownloadState(DownloadPhase.FAILED, when (error.failure) {
