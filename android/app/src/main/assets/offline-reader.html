@@ -24,11 +24,15 @@
     <button id="next" type="button" disabled aria-label="Next page">Next</button>
   </div>
   <div id="status" role="status" aria-live="polite">Opening book…</div>
+  <button id="start-over" type="button" hidden>Start from beginning</button>
   <div id="viewer"></div>
   <script>
-  window.sgReader = {state:'opening', href:'', cfi:''};
+  window.sgReader = {state:'opening', href:'', cfi:'', saveCfi:'', seq:0, pending:false};
   (async function() {
     const status = document.getElementById('status');
+    const resumeResponse = await fetch('/resume.json');
+    if (!resumeResponse.ok) throw new Error('Position unavailable');
+    const resume = await resumeResponse.json();
     const response = await fetch('/book.epub');
     if (!response.ok) throw new Error('Book unavailable');
     const book = ePub(await response.arrayBuffer());
@@ -40,14 +44,27 @@
     const previous = document.getElementById('previous');
     const next = document.getElementById('next');
     const contents = document.getElementById('contents');
+    const startOver = document.getElementById('start-over');
+    let contentsAvailable = false;
     let busy = false;
+    async function captureUserLocation() {
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const location = await rendition.currentLocation();
+      const start = location && location.start;
+      if (!start || !start.cfi) throw new Error('Location unavailable');
+      window.sgReader.href = start.href || '';
+      window.sgReader.cfi = start.cfi;
+      window.sgReader.saveCfi = start.cfi;
+      window.sgReader.seq++;
+    }
     async function move(action) {
       if (busy) return;
       busy = true;
+      window.sgReader.pending = true;
       previous.disabled = next.disabled = true;
-      try { await action(); }
-      catch (_) { status.textContent = 'Could not navigate to that location.'; }
-      finally { busy = false; previous.disabled = next.disabled = false; }
+      try { await action(); await captureUserLocation(); }
+      catch (_) { window.sgReader.saveCfi = ''; window.sgReader.seq++; status.textContent = 'Could not navigate to that location.'; }
+      finally { busy = false; window.sgReader.pending = false; previous.disabled = next.disabled = false; }
     }
     previous.addEventListener('click', function(){ void move(function(){ return rendition.prev(); }); });
     next.addEventListener('click', function(){ void move(function(){ return rendition.next(); }); });
@@ -80,11 +97,34 @@
         }
       }
       append(navigation && navigation.toc, 0);
-      contents.disabled = count === 0;
-    } catch (_) { contents.disabled = true; }
-    await rendition.display();
+      contentsAvailable = count > 0;
+    } catch (_) { contentsAvailable = false; }
+    if (resume && resume.cfi) {
+      try { await rendition.display(resume.cfi); }
+      catch (_) {
+        status.textContent = 'Could not restore the saved position. You can start from the beginning.';
+        window.sgReader.state = 'restore-error';
+        startOver.hidden = false;
+        startOver.addEventListener('click', async function(){
+          startOver.disabled = true;
+          window.sgReader.pending = true;
+          try {
+            await rendition.display();
+            await captureUserLocation();
+            startOver.hidden = true;
+            status.textContent = '';
+            previous.disabled = next.disabled = false;
+            contents.disabled = !contentsAvailable;
+            window.sgReader.state = 'ready';
+          } catch (_) { status.textContent = 'Could not open this EPUB.'; window.sgReader.state = 'error'; }
+          finally { window.sgReader.pending = false; }
+        }, {once:true});
+        return;
+      }
+    } else await rendition.display();
     previous.disabled = next.disabled = false;
-    status.textContent = 'Reading position is not saved yet.';
+    contents.disabled = !contentsAvailable;
+    status.textContent = '';
     window.sgReader.state = 'ready';
   })().catch(function(){
     document.getElementById('status').textContent = 'Could not open this EPUB.';

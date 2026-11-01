@@ -8,10 +8,10 @@ app-owned WebView and stores an EPUB privately; live verification has not yet
 been accepted. Downloads stop when the app leaves the screen. Saved books are
 removed on uninstall and are not included in position backups. The app also has
 an early position-only backup and restore screen. A basic experimental reader
-opens saved EPUBs offline with page and contents controls, but does not yet save
-reading positions. The app does not yet show the Adult library or provide Keeper.
-This device will have no newly recorded positions to export until reader progress
-is integrated. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
+opens saved EPUBs offline with page and contents controls and saves reading
+positions on this device. These positions can be manually backed up; they are
+separate from website progress. The app does not yet show the Adult library or
+provide Keeper. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
 See the [storage](../docs/plans/ANDROID_BOOK_STORAGE.md) and
@@ -65,7 +65,9 @@ It reinstalls the debug app and its test APK on the emulator without clearing
 data, saves generated selected-passage and current-page locations, force-stops
 `dev.shadowgarden.app`, and restores in a separate instrumentation process. It
 also checks test progress records, a generated catalog snapshot and a generated
-cached cover across the stop.
+cached cover across the stop. The app-reader probe saves and resumes a generated
+book's position after the stop; it removes only that generated book and its
+test position from the app's regular storage.
 The probe removes only its test fixtures, preferences, test database and test
 catalog and test cover cache. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
@@ -90,11 +92,10 @@ save user progress or prove the website's reader extensions work on Android.
 
 The Readium comparison is a non-exported debug-only test host using the same
 generated EPUB. It does not provide an app reader.
-An internal [reading-position foundation](../docs/plans/ANDROID_READING_STATE.md)
-now stores app-private locations by book, exact EPUB edition and reader format,
-but is not yet connected to a reader. The early backup screen can export and
-restore positions already in that store; it does not cover the rest of a person's
-reading data.
+The [reading-position store](../docs/plans/ANDROID_READING_STATE.md) saves
+app-private locations by book, exact EPUB edition and reader format. The early
+backup screen can export and restore those positions; it does not cover the
+rest of a person's reading data.
 The [reader evaluation](../docs/plans/ANDROID_READER_EVALUATION.md) records the
 prototype constraints and results.
 

@@ -39,10 +39,9 @@ Their dated release and verification records are in the [archive](docs/archive/R
 The [Android roadmap](docs/plans/ANDROID_ROADMAP.md) is the current repository
 development cycle. The app has an early read-only Main library with cover thumbnails,
 an offline catalog snapshot, a disposable cover cache, an experimental foreground
-EPUB download flow, a basic offline reader and a position-only backup and restore
-screen. Live download verification remains untested, and the reader does not yet
-save positions. Automatic reading progress, a complete
-personal-data backup and Keeper are still planned. The completed [UI/UX
+EPUB download flow, a basic offline reader with app-local position saving, and a
+position-only backup and restore screen. Live download verification remains
+untested; complete personal-data backup and Keeper are still planned. The completed [UI/UX
 roadmap](docs/archive/plans/UI_UX_ROADMAP.md) retains its delivery history and
 the [follow-ups](docs/plans/FOLLOW_UPS.md) retain unresolved acceptance limits.
 Keeper uploads explain destinations and

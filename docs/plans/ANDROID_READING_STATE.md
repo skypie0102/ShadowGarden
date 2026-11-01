@@ -1,9 +1,8 @@
 # Android reading-position foundation
 
-This is an Android app component under development, not a user-facing reader or
-complete personal-data backup. The [Android roadmap](ANDROID_ROADMAP.md) remains
-the current development plan. The early position-only backup screen uses the
-store; progress will not be recorded until a reader is integrated.
+The experimental [offline reader](ANDROID_OFFLINE_READER.md) and position-only
+backup screen use this Android app-private store. It is not a complete personal-data
+backup. The [Android roadmap](ANDROID_ROADMAP.md) remains the current development plan.
 
 ## Identity and safe resume
 
@@ -12,15 +11,15 @@ edition fingerprint, and an explicitly identified reader-location format. The
 fingerprint is the SHA-256 and byte count of the exact EPUB bytes, calculated from
 a bounded stream without loading the whole file. It identifies bytes; it does
 not validate an EPUB, authenticate its publisher, or prevent the file changing
-after hashing. A future downloader/reader must fingerprint the finalized private
-file and guard against changes between verification and use.
+after hashing. The reader fingerprints and keeps open the finalized private file
+while reading.
 
 An exact match returns the saved location. If the current edition cannot be
 fingerprinted, differs from the saved edition, or only another reader's format is
 available, lookup reports that condition without returning an incompatible
 location. Old edition and reader-format records are retained when another slot is
 saved. Byte-for-byte changes, including harmless EPUB repackaging, are treated as
-a different edition; a future UI must explain and resolve that conservatively.
+a different edition; the reader reports this and retains the older position.
 Reader locators remain opaque and are not interchangeable or validated by this
 store. It accepts the two currently evaluated format identifiers, not a decision
 that either reader has been selected.
@@ -39,8 +38,8 @@ Invalid data and database errors are surfaced to the caller. Unsupported schema
 upgrades fail rather than deleting stored positions; the SQLite corruption handler
 preserves the damaged file instead of using Android's default deletion behavior.
 This does not provide repair or guarantee recovery from every storage failure.
-The future reader must surface failures, preserve the last good location, and
-handle concurrent updates, removed books, editions and reader migrations explicitly.
+The reader reports save failures and concurrent updates and preserves the last
+good location. Further handling of removed books and reader migrations remains open.
 
 ## Experimental position interchange
 

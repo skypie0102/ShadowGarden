@@ -2,6 +2,7 @@ package dev.shadowgarden.app
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.os.Process
 import android.os.SystemClock
@@ -18,6 +19,8 @@ import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
 import dev.shadowgarden.app.books.PrivateBookStore
+import dev.shadowgarden.app.books.OfflineReaderActivity
+import dev.shadowgarden.app.books.OfflineReaderActivityTest
 import dev.shadowgarden.app.books.BookTicket
 import dev.shadowgarden.app.books.SignedBookTransfer
 import dev.shadowgarden.app.progress.CatalogBookId
@@ -31,6 +34,7 @@ import java.io.File
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.security.MessageDigest
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
@@ -151,6 +155,23 @@ class ReaderProcessRecoveryTest {
                 assertEquals(ProgressSaveResult.Saved(1), store.save(epubPosition, null))
                 assertEquals(ProgressSaveResult.Saved(1), store.save(readiumPosition, null))
             }
+            val appBookId = CatalogBookId("bk_" + UUID.randomUUID().toString().replace("-", "").take(22))
+            val appBooks = PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1"))
+            assertFalse(appBooks.contains(appBookId))
+            ReadingProgressStore(context).use { assertEquals(ProgressLookup.NoProgress, it.lookup(appBookId, null, LocatorFormat.EPUBJS_CFI)) }
+            assertTrue(probe.edit().putString("app_book_id", appBookId.value).commit())
+            val appEdition = epubFile.inputStream().use { appBooks.replaceEpub(appBookId, it) }
+            val appHelper = OfflineReaderActivityTest()
+            val appScenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, CatalogVolume(appBookId, "Process fixture")))
+            try {
+                val view = appHelper.awaitReader(appScenario)
+                appHelper.awaitState(view) { it.optString("state") == "ready" }
+                appHelper.evaluate(view, "(function(){const c=document.getElementById('contents');c.selectedIndex=12;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+                val location = appHelper.awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 1 && !it.optBoolean("pending") }
+                val appCfi = location.getString("saveCfi")
+                appHelper.awaitSaved(appBookId, appEdition, appCfi)
+                assertTrue(probe.edit().putString("app_cfi", appCfi).commit())
+            } finally { appScenario.close() }
             assertTrue(probe.edit().putInt("pid", Process.myPid()).putString("cfi", cfi)
                 .putString("epub_current_cfi", currentCfi).putInt("epub_paragraph", currentParagraph)
                 .putString("readium_selected", selectedReadium).putString("readium_current", currentReadium)
@@ -191,6 +212,15 @@ class ReaderProcessRecoveryTest {
             }
             assertEquals("The EPUB.js fixture must be unchanged", probe.getString("epub_sha256", null), sha256(epubFile))
             assertEquals("The Readium fixture must be unchanged", probe.getString("readium_sha256", null), sha256(readiumFile))
+            val appBookId = CatalogBookId(probe.getString("app_book_id", null) ?: throw AssertionError("Missing app book ID"))
+            val appCfi = probe.getString("app_cfi", null) ?: throw AssertionError("Missing app reader CFI")
+            val appHelper = OfflineReaderActivityTest()
+            val appScenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, CatalogVolume(appBookId, "Process fixture")))
+            try {
+                val view = appHelper.awaitReader(appScenario)
+                appHelper.awaitState(view) { it.optString("state") == "ready" && it.optString("href").contains("chapter12.xhtml") }
+                appHelper.awaitSaved(appBookId, fingerprint(epubFile), appCfi)
+            } finally { appScenario.close() }
             val cfi = probe.getString("cfi", null) ?: throw AssertionError("Missing selected CFI")
             val currentCfi = probe.getString("epub_current_cfi", null) ?: throw AssertionError("Missing current CFI")
             val expectedEpubParagraph = probe.getInt("epub_paragraph", 0)
@@ -272,6 +302,14 @@ class ReaderProcessRecoveryTest {
     }
 
     private fun cleanup() {
+        val appBookId = probe.getString("app_book_id", null)?.let { runCatching { CatalogBookId(it) }.getOrNull() }
+        if (appBookId != null) {
+            PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1")).remove(appBookId)
+            val database = context.getDatabasePath("reading-progress.db")
+            if (database.exists()) SQLiteDatabase.openDatabase(database.path, null, SQLiteDatabase.OPEN_READWRITE).use {
+                it.delete("reading_positions", "book_id=?", arrayOf(appBookId.value))
+            }
+        }
         probe.edit().clear().commit()
         readiumPreferences.edit().clear().commit()
         epubFile.delete()

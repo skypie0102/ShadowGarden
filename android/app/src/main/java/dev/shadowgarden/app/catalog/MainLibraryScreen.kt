@@ -74,7 +74,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
                 item { Text("Volumes", style = MaterialTheme.typography.titleLarge) }
-                item { Text("Offline reading and downloads are experimental. Reading position is not saved yet.") }
+                item { Text("Offline reading and downloads are experimental. Reading positions are saved on this device.") }
                 if (selected.volumes.isEmpty()) item { Text("No volumes are currently listed.") }
                 items(selected.volumes, key = { it.id.value }) { volume ->
                     var saved by remember(volume.id, books) { mutableStateOf<Boolean?>(null) }
