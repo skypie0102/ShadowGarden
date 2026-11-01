@@ -38,7 +38,7 @@ internal class MainCatalogClient(private val http: OkHttpClient = defaultClient(
 
 /** Decodes the public catalog, keeping only the fields needed by the early library. */
 internal object CatalogParser {
-    private const val MAX_BYTES = 2 * 1024 * 1024
+    const val MAX_BYTES = 2 * 1024 * 1024
     private const val MAX_SERIES = 5_000
     private const val MAX_VOLUMES = 30_000
 

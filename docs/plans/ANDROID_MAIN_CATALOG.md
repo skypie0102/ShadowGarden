@@ -9,10 +9,13 @@ If the website changes its catalog source, update and test the Android client.
 
 Only the Main endpoint is requested. There is no Adult catalog, age-gate flow,
 cover loading, website search/filter parity, download, reader or Keeper access.
-Catalog results are held in memory only; after a process restart an Internet
-connection is needed to reload them. A refresh failure retains the last successful
-in-memory list and shows an error; an empty catalog and a failed request are
-separate states. Browser progress and Android reading positions are not involved.
+After the first successful fetch, the app stores a validated snapshot of those
+display fields in private app storage. It loads that snapshot while trying to
+refresh, including after an offline restart, and labels it as potentially out of
+date until a live fetch succeeds. A refresh failure retains the displayed list and
+shows an error; an empty catalog and a failed request are separate states. The
+snapshot contains no EPUBs or reading positions and is removed with the app.
+Browser progress and Android reading positions are not involved.
 
 The client allows HTTPS only, uses the fixed origin and path, sends no credentials
 or app cookies, refuses redirects, and has connection, read and total timeouts.
@@ -20,7 +23,17 @@ It requires a full 200 response, limits the decoded body to 2 MiB and nesting to
 64 levels, and validates the identities and fields it displays before showing
 any series. The app does not open catalog-provided URLs or request covers. The
 normal debug and release apps request Internet permission; cleartext traffic is
-disabled. No catalog is written to backup files or persisted for offline use.
+disabled. No catalog is written to personal backup files.
+
+The cache stores only validated series and volume identities, titles, author and
+status. It does not persist source URLs, cookies, credentials, descriptions or
+other catalog fields. It serializes and revalidates a bounded replacement before
+using Android `AtomicFile` to replace the previous snapshot. Invalid responses or
+failed replacement do not intentionally discard the last good snapshot; errors
+are shown, and corrupt cached data are not silently presented. Writes are
+serialized within the app process. A future multi-process design must revisit
+that coordination. A stale listing does not authorize a book download: the
+server's current access and active-catalog checks still apply.
 
 Reader experiments use the explicit `-PofflineReaderTests=true` Gradle property,
 which selects a debug manifest without Internet permission. The manual emulator

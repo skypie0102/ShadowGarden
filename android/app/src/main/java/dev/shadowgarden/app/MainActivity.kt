@@ -43,13 +43,15 @@ import dev.shadowgarden.app.progress.PositionBackupViewModel
 import dev.shadowgarden.app.progress.PositionRestoreMode
 import dev.shadowgarden.app.catalog.LibraryViewModel
 import dev.shadowgarden.app.catalog.MainLibraryScreen
+import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     private val factory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T = when (modelClass) {
             PositionBackupViewModel::class.java -> PositionBackupViewModel(application) as T
-            LibraryViewModel::class.java -> LibraryViewModel() as T
+            LibraryViewModel::class.java -> LibraryViewModel(cache = PrivateMainCatalogCache(File(filesDir, "main-catalog-v1.json"))) as T
             else -> throw IllegalArgumentException("Unknown view model")
         }
     }
