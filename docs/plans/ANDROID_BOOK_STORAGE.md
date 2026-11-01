@@ -34,3 +34,19 @@ server-side authorization, validate EPUBs and handle integrity metadata, retries
 interruptions, concurrent access, editions and real storage exhaustion before it
 is presented as a download feature. No website browser progress or Keeper
 credentials are involved.
+
+## Verification
+
+Local JVM tests cover exact-byte reopening, size and fingerprint rejection,
+interrupted and cancelled writes, temporary-file cleanup, replacement and
+removal while an earlier file is open. Debug and release builds and lint passed.
+The [offline API 28 emulator run 41313634601](https://github.com/skypie0102/ShadowGarden/actions/runs/41313634601)
+at source `ef76e29` passed two Android storage tests covering replacement,
+open descriptors and retained reading positions. Its separate staged probe
+stored a generated EPUB, force-stopped the app and reopened the same bytes and
+fingerprint in a new process without Internet permission. The ordinary suite
+skipped the live-only test, manual process stage and known strict Readium reflow
+case; both process stages passed separately. The detailed instrumentation report
+could not be downloaded in this environment; the run log records the suite and
+both stages passing. This is not a protected production download, EPUB safety,
+power-loss, real disk-exhaustion or physical-device acceptance test.
