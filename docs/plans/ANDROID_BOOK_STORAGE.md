@@ -1,7 +1,7 @@
 # Android private book storage foundation
 
-The app contains an internal storage component for future book downloads. It is
-not yet connected to a downloader, reader or user interface. Production access,
+The app contains an internal storage component and a [ticketed transfer foundation](ANDROID_BOOK_TRANSFER.md)
+for future book downloads. Neither is connected to a reader or user interface. Production access,
 full EPUB validation, background work and storage-management UI remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
 

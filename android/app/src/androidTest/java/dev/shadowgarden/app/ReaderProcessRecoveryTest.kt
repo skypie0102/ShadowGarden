@@ -18,6 +18,8 @@ import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
 import dev.shadowgarden.app.books.PrivateBookStore
+import dev.shadowgarden.app.books.BookTicket
+import dev.shadowgarden.app.books.SignedBookTransfer
 import dev.shadowgarden.app.progress.CatalogBookId
 import dev.shadowgarden.app.progress.EditionFingerprint
 import dev.shadowgarden.app.progress.LocatorFormat
@@ -42,6 +44,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.readium.r2.shared.publication.Locator
 import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 /** Two-stage test-only experiment; the shell stops the app between invocations. */
 @RunWith(AndroidJUnit4::class)
@@ -89,7 +95,15 @@ class ReaderProcessRecoveryTest {
                 output.toByteArray()
             } } finally { image.recycle() }
             PrivateCoverDiskCache(coverDirectory).write(COVER_PATH, bytes)
-            epubFile.inputStream().use { PrivateBookStore(bookDirectory).replaceEpub(BOOK_ID, it, fingerprint(epubFile)) }
+            val generated = epubFile.readBytes()
+            val fakeHttp = OkHttpClient.Builder().addInterceptor { chain ->
+                Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("generated fixture")
+                    .header("Content-Type", "application/epub+zip").body(generated.toResponseBody()).build()
+            }.build()
+            val ticket = BookTicket(BOOK_ID, "/media/shadow-garden/books/generated.epub?sig=fixture.token", 2_000)
+            val transferred = runBlocking { SignedBookTransfer(PrivateBookStore(bookDirectory), fakeHttp, { 1_000 })
+                .download(BOOK_ID, ticket, fingerprint(epubFile)) }
+            assertEquals(fingerprint(epubFile), transferred)
             val web = epubHelper.openHarness(epubScenario, epubFile, null, "", "", "epub-layout-restore.html", 280, 340, 100)
             val result = try { epubHelper.awaitResult(web) } finally { epubHelper.closeHarness(epubScenario, web) }
             assertEquals(ReadiumPrototypeActivity.PASSAGE, result.getString("text"))
