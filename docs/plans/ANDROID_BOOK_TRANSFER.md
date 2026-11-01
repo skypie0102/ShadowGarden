@@ -84,3 +84,20 @@ not test the actual site script, live Turnstile, real HTTPS, production
 navigation locking or physical-device behavior. Two earlier emulator runs failed
 because the synthetic `loadDataWithBaseURL` page reported `about:blank`; the
 passing test uses an intercepted normal HTTPS navigation instead.
+
+The [offline API 28 emulator run 41334585522](https://github.com/skypie0102/ShadowGarden/actions/runs/41334585522)
+at source `3051657` passed screen tests for the Main-volume download action,
+saved indicator, download status and retry controls, plus WebView policy tests
+for trusted and untrusted navigation, resource blocking and the non-exported
+download activity. Local JVM tests cover the foreground ticket-to-transfer
+sequence, failure messages and cancellation propagation. The ordinary suite
+skipped the live-only test, manual process stage and known strict Readium reflow
+case; both offline process stages passed separately. The detailed report could
+not be downloaded in this environment; the run log records the suite and stages
+passing. A read-only fetch confirmed the deployed series page still references
+the book-access script and that it exposes `resolve`.
+
+The screen, live verification and network transfer were not exercised together
+in this run. This is not acceptance of live Garden Pass, background/rotation
+lifecycle behavior, actual network interruption, low storage, EPUB reading or
+physical devices. Those remain open before release.
