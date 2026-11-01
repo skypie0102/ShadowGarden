@@ -55,7 +55,21 @@ process stages passed. The detailed report could not be downloaded in this
 environment, but the run log records the suite and stages passing. The unsigned
 release APK was also checked for the reader shell and both pinned vendor scripts.
 
-This is one synthetic EPUB on one emulator. It does not establish exact visible
-passage placement, saved progress, real network isolation with Internet enabled,
-force-stop restoration of this reader, real-book compatibility, a comprehensive
-EPUB security review or physical-device acceptance.
+That earlier run used one synthetic EPUB on one emulator and did not establish
+saved progress or force-stop restoration. Exact visible passage placement, real
+network isolation with Internet enabled, real-book compatibility, a comprehensive
+EPUB security review and physical-device acceptance remain open.
+
+The [API 28 offline emulator run 41338936949](https://github.com/skypie0102/ShadowGarden/actions/runs/41338936949)
+at source `ef40f57` exercised the experimental reader with the generated EPUB.
+It saved a location reached through contents and next-page navigation, included
+it in a position backup, and resumed its chapter after activity recreation. It
+also checked that a competing position update is preserved and reported, and
+that a replacement EPUB starts separately while the old edition's position is
+retained. A separate two-stage test saved an app-reader position, force-stopped
+the app, and resumed the saved chapter in a new process without Internet
+permission. This checks chapter-level recovery for one generated book; it does
+not prove the exact visible passage after reflow, a real-book backup restore, or
+physical-device behavior. The ordinary suite skipped its manual process stage,
+the live-catalog test and the known strict Readium reflow case; both explicit
+process stages passed separately.

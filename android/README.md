@@ -65,7 +65,9 @@ It reinstalls the debug app and its test APK on the emulator without clearing
 data, saves generated selected-passage and current-page locations, force-stops
 `dev.shadowgarden.app`, and restores in a separate instrumentation process. It
 also checks test progress records, a generated catalog snapshot and a generated
-cached cover across the stop.
+cached cover across the stop. The app-reader probe saves and resumes a generated
+book's position after the stop; it removes only that generated book and its
+test position from the app's regular storage.
 The probe removes only its test fixtures, preferences, test database and test
 catalog and test cover cache. It is skipped on
 physical devices; the ordinary instrumentation suite skips its staged entry.
