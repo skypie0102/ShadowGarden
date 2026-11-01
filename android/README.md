@@ -3,16 +3,18 @@
 The Android app is in development. It offers a read-only Main catalog with cover
 thumbnails, basic search, volume-count filters, sorting, volume listings and a saved offline snapshot. Previously
 loaded covers may also be available offline until Android clears the disposable
-cache. The app also has an early position-only
-backup and restore screen.
-It does not yet read or download EPUBs, record reading progress, show the Adult
+cache. An experimental foreground download action requests Garden Pass in an
+app-owned WebView and stores an EPUB privately; live verification has not yet
+been accepted. Downloads stop when the app leaves the screen. Saved books are
+removed on uninstall and are not included in position backups. The app also has
+an early position-only backup and restore screen.
+It does not yet read EPUBs, record reading progress, show the Adult
 library, or provide Keeper. Until the reader is integrated, this device
 will have no newly recorded positions to export. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
-An internal [private book storage foundation](../docs/plans/ANDROID_BOOK_STORAGE.md)
-and [signed transfer foundation](../docs/plans/ANDROID_BOOK_TRANSFER.md) are
-under development; they are not yet a user-facing download or reader.
+See the [storage](../docs/plans/ANDROID_BOOK_STORAGE.md) and
+[download](../docs/plans/ANDROID_BOOK_TRANSFER.md) plans for current limits.
 
 ## Development
 

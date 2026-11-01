@@ -23,7 +23,7 @@ and [API contracts](../guides/API_CONTRACTS.md).
 | Planned | Pinned series and pinned-only navigation; Recently Added and newest view | Library and pins | Pin/unpin survives restart; pinned-only and recently added use correct series, scope and ordering. |
 | Planned | Continue reading, reading status, progress context and next-volume suggestions | Library and series | Unread, in-progress, finished, out-of-order completion and unavailable EPUB cases select the correct volume; no fabricated percentage for unknown progress. |
 | Planned | Series synopsis, credits and links, volume order, grid/list, cover badges and Read/Continue/Read Again/Download | Series and volume details | Metadata and order match catalog; read-again confirmation clears only the selected progress/finished state and preserves bookmarks; unavailable files cannot be opened. |
-| Planned | Garden Pass human verification and ticket-protected book access | Access prompt and download/open flow | Verification and expiry follow the server contract; errors/retry are clear; tickets or cookies are not stored in backups or logs. |
+| Partial | Garden Pass human verification and ticket-protected book access | Access prompt and download/open flow | An experimental foreground Main download uses the site's verification page and private storage. Live verification and expiry acceptance remain open; errors/retry must be clear and tickets or cookies must not be stored in backups or logs. |
 | Planned | External links, navigation back to the correct library/series | App navigation and external-link confirmation | Return paths retain Main/Adult scope and selected series; external destination requires informed action. |
 
 ## Reader

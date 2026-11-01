@@ -1,10 +1,10 @@
 # Android signed-book transfer foundation
 
-An internal transfer component accepts a server-issued book ticket and streams
-the response into the checked [private book store](ANDROID_BOOK_STORAGE.md).
-It is not connected to a user interface or a complete Garden Pass flow.
-There is no background queue, transfer-progress UI or automatic ticket renewal.
-Users cannot yet download or read books in the app.
+An experimental foreground download action obtains a book ticket through an
+app-owned WebView and streams the response into the checked [private book store](ANDROID_BOOK_STORAGE.md).
+The live Garden Pass and real protected download remain unverified. There is no
+background queue, transfer-progress UI or automatic ticket renewal. Users cannot
+yet read books in the app.
 
 The caller supplies the expected catalog book ID, a ticket containing the same
 ID, the server's relative signed URL and expiry in Unix seconds, and optionally
@@ -24,17 +24,18 @@ dialog; no JavaScript interface or native access to HttpOnly cookies is added.
 The requester checks the page before and after each evaluation and validates the
 returned ID, relative signed URL and expiry with the same rules as the transfer.
 It keeps ticket values in memory and clears its transient page slot on completion.
-It does not construct or display the WebView, verify server signatures locally,
-or establish that the live page, widget and cookies work on Android.
+The requester itself does not verify server signatures locally or establish that
+the live page, widget and cookies work on Android.
 
-The future UI must supply a visible WebView with JavaScript enabled, file and
+The download screen supplies a visible WebView with JavaScript enabled, file and
 content access disabled, no JavaScript interfaces and top-level navigation locked
-to the trusted page, and must own its lifecycle. A page-origin check alone is not
-a navigation lock. The website's `resolve` function has no cancellation API:
-after timeout or cancellation the UI must dismiss and destroy the WebView, since
-the website's verification or request could still be running and change cookies.
-Session isolation, lifecycle, repeat attempts and live Turnstile behavior require
-their own validation before exposing this flow to users.
+to the trusted Main page. HTTPS resources are limited to the site and the
+Turnstile host; the website's current Adult catalog paths are blocked. TLS errors
+are cancelled. Changes to website catalog routing require another review.
+The website's `resolve` function has no cancellation API, so the screen destroys
+the WebView after completion, failure or cancellation. Leaving the screen stops
+the foreground operation; retry starts again. Session isolation, lifecycle edge
+cases, repeat attempts and live Turnstile behavior require further validation.
 
 The client uses platform HTTPS, bounded timeouts, no cookie jar, no HTTP cache,
 no automatic redirects or retry, and requests an identity-encoded EPUB response.
@@ -49,7 +50,7 @@ checked during storage; cancellation racing the final file rename cannot undo a
 replacement that has already committed. A future download manager must report
 that outcome and coordinate concurrent operations and app lifecycle.
 
-Before release, integrate and validate Garden Pass and ticket issuance, handle session expiry
+Before release, validate Garden Pass and ticket issuance, handle session expiry
 and bounded renewal, background work and progress, verify EPUB compatibility
 with the chosen reader, and test real network interruption, storage exhaustion,
 physical devices and the live protected flow with authorized test content. The
@@ -83,3 +84,20 @@ not test the actual site script, live Turnstile, real HTTPS, production
 navigation locking or physical-device behavior. Two earlier emulator runs failed
 because the synthetic `loadDataWithBaseURL` page reported `about:blank`; the
 passing test uses an intercepted normal HTTPS navigation instead.
+
+The [offline API 28 emulator run 41334585522](https://github.com/skypie0102/ShadowGarden/actions/runs/41334585522)
+at source `3051657` passed screen tests for the Main-volume download action,
+saved indicator, download status and retry controls, plus WebView policy tests
+for trusted and untrusted navigation, resource blocking and the non-exported
+download activity. Local JVM tests cover the foreground ticket-to-transfer
+sequence, failure messages and cancellation propagation. The ordinary suite
+skipped the live-only test, manual process stage and known strict Readium reflow
+case; both offline process stages passed separately. The detailed report could
+not be downloaded in this environment; the run log records the suite and stages
+passing. A read-only fetch confirmed the deployed series page still references
+the book-access script and that it exposes `resolve`.
+
+The screen, live verification and network transfer were not exercised together
+in this run. This is not acceptance of live Garden Pass, background/rotation
+lifecycle behavior, actual network interruption, low storage, EPUB reading or
+physical devices. Those remain open before release.

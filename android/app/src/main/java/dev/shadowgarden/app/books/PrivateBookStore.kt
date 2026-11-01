@@ -97,6 +97,12 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
         }
     }
 
+    /** A lightweight presence check; opening the book still verifies its fingerprint. */
+    fun contains(bookId: CatalogBookId): Boolean = synchronized(LOCK) {
+        val target = file(bookId, ".epub")
+        target.isFile && target.length() in 1..maxBytes
+    }
+
     /** Removes only this book's file; reading positions are stored separately. */
     fun remove(bookId: CatalogBookId): Boolean = synchronized(LOCK) {
         val target = file(bookId, ".epub")

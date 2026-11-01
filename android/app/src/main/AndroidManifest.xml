@@ -8,6 +8,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="false"
         android:theme="@style/Theme.ShadowGarden">
+        <activity android:name=".books.DownloadActivity" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -30,8 +30,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -46,6 +48,8 @@ import dev.shadowgarden.app.catalog.MainLibraryScreen
 import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
+import dev.shadowgarden.app.books.DownloadActivity
+import dev.shadowgarden.app.books.PrivateBookStore
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -69,11 +73,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent { ShadowGardenApp(backup, library) }
     }
+
+    override fun onResume() {
+        super.onResume()
+        library.refreshLocalBooks()
+    }
 }
 
 @Composable
 internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryViewModel) {
     var showBackup by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+    val books = remember(context) { PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1")) }
     BackHandler(enabled = showBackup) { showBackup = false }
     MaterialTheme(colorScheme = darkColorScheme()) {
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -82,7 +93,8 @@ internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryVi
                     TextButton(onClick = { showBackup = false }) { Text("Back to Main library") }
                     PositionBackupScreen(backup)
                 }
-            } else MainLibraryScreen(library, onBackup = { showBackup = true })
+            } else MainLibraryScreen(library, onBackup = { showBackup = true }, books = books,
+                onDownload = { series, volume -> context.startActivity(DownloadActivity.intent(context, series, volume)) })
         }
     }
 }
