@@ -1,7 +1,7 @@
 # ShadowGarden for Android
 
 The Android app is in development. It offers a read-only Main catalog with cover
-thumbnails, basic search, volume listings and a saved offline snapshot. Previously
+thumbnails, basic search, volume-count filters, sorting, volume listings and a saved offline snapshot. Previously
 loaded covers may also be available offline until Android clears the disposable
 cache. The app also has an early position-only
 backup and restore screen.

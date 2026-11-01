@@ -3,7 +3,12 @@
 The early Android library reads the public Main catalog from the fixed HTTPS URL
 `https://shadowgarden-bon.pages.dev/media/shadow-garden/data/catalog.json`.
 It shows series and volume covers when available, author, status and volume titles,
-and searches series titles, authors and volume titles. The website currently obtains this same route through
+and searches series titles, authors and volume titles. Volume-count filters and
+title, author and volume-count sorting operate on the current live or saved list.
+Catalog order remains the default; selecting a series and returning preserves the
+current controls during the app session. Search and filter can be cleared from an
+empty result; sorting remains selected. These choices are not saved across app
+process restarts. The website currently obtains this same route through
 `/data/source.json`; the app does not yet read that configuration dynamically.
 If the website changes its catalog source, update and test the Android client.
 

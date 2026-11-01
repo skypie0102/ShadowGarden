@@ -15,6 +15,8 @@ internal data class LibraryState(
     val fromCache: Boolean = false,
     val coverGeneration: Long = 0,
     val query: String = "",
+    val volumeFilter: VolumeFilter = VolumeFilter.ALL,
+    val sort: LibrarySort = LibrarySort.CATALOG,
     val error: String? = null
 )
 
@@ -29,6 +31,9 @@ internal class LibraryViewModel(
     init { refresh() }
 
     fun search(query: String) { mutableState.value = state.value.copy(query = query) }
+    fun filterVolumes(filter: VolumeFilter) { mutableState.value = state.value.copy(volumeFilter = filter) }
+    fun sortBy(sort: LibrarySort) { mutableState.value = state.value.copy(sort = sort) }
+    fun clearFilters() { mutableState.value = state.value.copy(query = "", volumeFilter = VolumeFilter.ALL) }
 
     suspend fun cover(path: CoverPath) = covers.load(path)
     suspend fun cachedCover(path: CoverPath) = covers.cached(path)
