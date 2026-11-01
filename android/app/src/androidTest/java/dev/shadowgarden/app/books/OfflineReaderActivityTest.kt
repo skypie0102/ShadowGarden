@@ -1,6 +1,7 @@
 package dev.shadowgarden.app.books
 
 import android.content.ComponentName
+import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.os.SystemClock
 import android.webkit.WebResourceRequest
@@ -11,6 +12,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import dev.shadowgarden.app.EpubFixture
 import dev.shadowgarden.app.catalog.CatalogVolume
 import dev.shadowgarden.app.progress.CatalogBookId
+import dev.shadowgarden.app.progress.EditionFingerprint
+import dev.shadowgarden.app.progress.LocatorFormat
+import dev.shadowgarden.app.progress.ProgressLookup
+import dev.shadowgarden.app.progress.ProgressSaveResult
+import dev.shadowgarden.app.progress.ReadingPositionBackup
+import dev.shadowgarden.app.progress.ReadingProgressStore
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.CountDownLatch
@@ -45,7 +53,8 @@ class OfflineReaderActivityTest {
         var stored = false
         try {
             assertFalse("Test must not overwrite a saved book", store.contains(id))
-            altered.inputStream().use { store.replaceEpub(id, it) }
+            ReadingProgressStore(context).use { assertEquals(ProgressLookup.NoProgress, it.lookup(id, null, LocatorFormat.EPUBJS_CFI)) }
+            val edition = altered.inputStream().use { store.replaceEpub(id, it) }
             stored = true
             val volume = CatalogVolume(id, "Generated volume")
             val scenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, volume))
@@ -56,15 +65,19 @@ class OfflineReaderActivityTest {
                 val initial = evaluate(view, "JSON.stringify({count:document.getElementById('contents').options.length, warning:document.getElementById('status').textContent, executed:window.sgReader.unsafeExecuted===true, text:(document.querySelector('#viewer iframe').contentDocument.body.textContent || '').includes('Chapter 1 paragraph 1.')})")
                 val details = JSONObject(JSONTokener(initial).nextValue() as String)
                 assertEquals(13, details.getInt("count"))
-                assertTrue(details.getString("warning").contains("not saved"))
+                assertEquals("", details.getString("warning"))
                 assertFalse("Book scripts must not run", details.getBoolean("executed"))
                 assertTrue("The first chapter text must be present", details.getBoolean("text"))
                 evaluate(view, "(function(){const c=document.getElementById('contents');c.selectedIndex=12;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
-                val last = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optString("cfi").isNotBlank() }
+                val last = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 1 && !it.optBoolean("pending") }
                 assertTrue("The generated illustration must decode", awaitBoolean(view, "(function(){const f=document.querySelector('#viewer iframe');const i=f && f.contentDocument && f.contentDocument.querySelector('img');return !!(i && i.complete && i.naturalWidth>0);})()"))
                 evaluate(view, "document.getElementById('next').click(); 'ok'")
-                val next = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optString("cfi").isNotBlank() && it.optString("cfi") != last.optString("cfi") }
+                val next = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 2 && !it.optBoolean("pending") && it.optString("cfi") != last.optString("cfi") }
                 assertNotEquals(last.getString("cfi"), next.getString("cfi"))
+                val saved = awaitSaved(id, edition, next.getString("saveCfi"))
+                val backup = ByteArrayOutputStream()
+                ReadingPositionBackup.write(backup, ReadingProgressStore(context).use { it.snapshotPositions() })
+                assertTrue(ReadingPositionBackup.read(backup.toByteArray().inputStream()).contains(saved.position))
                 instrumentation.runOnMainSync {
                     assertFalse(view.settings.allowFileAccess)
                     assertFalse(view.settings.allowContentAccess)
@@ -75,14 +88,53 @@ class OfflineReaderActivityTest {
                 }
                 scenario.recreate()
                 val reopened = awaitReader(scenario)
-                val restart = awaitState(reopened) { it.optString("state") == "ready" && it.optString("href").contains("chapter1.xhtml") }
-                assertTrue(restart.getString("href").contains("chapter1.xhtml"))
+                val restart = awaitState(reopened) { it.optString("state") == "ready" && it.optString("href").contains("chapter12.xhtml") }
+                assertTrue(restart.getString("href").contains("chapter12.xhtml"))
+                assertEquals("Opening must not overwrite saved progress", saved, (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+                val newer = saved.position.copy(locator = "epubcfi(/6/2!/4/2:1)", recordedAtMillis = saved.position.recordedAtMillis + 1)
+                ReadingProgressStore(context).use { assertEquals(ProgressSaveResult.Saved(saved.revision + 1), it.save(newer, saved.revision)) }
+                evaluate(reopened, "(function(){const c=document.getElementById('contents');c.selectedIndex=1;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+                awaitState(reopened) { it.optLong("seq") >= 1 && !it.optBoolean("pending") }
+                val noticeDeadline = SystemClock.elapsedRealtime() + 15_000
+                var notice = ""
+                while (!notice.contains("changed elsewhere") && SystemClock.elapsedRealtime() < noticeDeadline) {
+                    scenario.onActivity { notice = it.progressNotice() }
+                    SystemClock.sleep(100)
+                }
+                assertTrue("The reader must report a conflicting update", notice.contains("changed elsewhere"))
+                assertEquals(newer, (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored.position)
             } finally { scenario.close() }
+            val replacement = fixture.inputStream().use { store.replaceEpub(id, it) }
+            assertNotEquals(edition, replacement)
+            val replacedScenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, volume))
+            try {
+                val replacedView = awaitReader(replacedScenario)
+                awaitState(replacedView) { it.optString("state") == "ready" && it.optString("href").contains("chapter1.xhtml") }
+                replacedScenario.onActivity { assertTrue(it.progressNotice().contains("different edition")) }
+                evaluate(replacedView, "(function(){const c=document.getElementById('contents');c.selectedIndex=12;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+                val changed = awaitState(replacedView) { it.optLong("seq") >= 1 && !it.optBoolean("pending") }
+                awaitSaved(id, replacement, changed.getString("saveCfi"))
+                assertTrue(ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } is ProgressLookup.Exact)
+            } finally { replacedScenario.close() }
         } finally {
             if (stored) store.remove(id)
+            val database = context.getDatabasePath("reading-progress.db")
+            if (stored && database.exists()) SQLiteDatabase.openDatabase(database.path, null, SQLiteDatabase.OPEN_READWRITE).use {
+                it.delete("reading_positions", "book_id=?", arrayOf(id.value))
+            }
             fixture.delete()
             altered.delete()
         }
+    }
+
+    internal fun awaitSaved(id: CatalogBookId, edition: EditionFingerprint, cfi: String): dev.shadowgarden.app.progress.StoredReadingPosition {
+        val deadline = SystemClock.elapsedRealtime() + 15_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val found = ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) }
+            if (found is ProgressLookup.Exact && found.stored.position.locator == cfi) return found.stored
+            SystemClock.sleep(100)
+        }
+        throw AssertionError("Reader did not save its current location")
     }
 
     @Test fun readerActivityIsNotExported() {
@@ -91,7 +143,7 @@ class OfflineReaderActivityTest {
         assertFalse(info.exported)
     }
 
-    private fun awaitReader(scenario: ActivityScenario<OfflineReaderActivity>): WebView {
+    internal fun awaitReader(scenario: ActivityScenario<OfflineReaderActivity>): WebView {
         val deadline = SystemClock.elapsedRealtime() + 30_000
         val found = AtomicReference<WebView>()
         while (SystemClock.elapsedRealtime() < deadline) {
@@ -101,7 +153,7 @@ class OfflineReaderActivityTest {
         }
         throw AssertionError("Reader WebView did not start")
     }
-    private fun awaitState(view: WebView, predicate: (JSONObject) -> Boolean): JSONObject {
+    internal fun awaitState(view: WebView, predicate: (JSONObject) -> Boolean): JSONObject {
         val deadline = SystemClock.elapsedRealtime() + 45_000
         while (SystemClock.elapsedRealtime() < deadline) {
             val raw = evaluate(view, "JSON.stringify(window.sgReader || {})")
@@ -112,7 +164,7 @@ class OfflineReaderActivityTest {
         }
         throw AssertionError("Reader state did not reach the expected location")
     }
-    private fun evaluate(view: WebView, script: String): String {
+    internal fun evaluate(view: WebView, script: String): String {
         val result = AtomicReference<String>()
         val latch = CountDownLatch(1)
         instrumentation.runOnMainSync { view.evaluateJavascript(script) { result.set(it); latch.countDown() } }

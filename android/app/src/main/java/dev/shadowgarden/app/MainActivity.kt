@@ -133,7 +133,7 @@ internal fun PositionBackupScreen(backup: PositionBackupViewModel) {
     ) {
         Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium)
         Text("Android app in development", style = MaterialTheme.typography.titleMedium)
-        Text("The offline reader and Keeper are still in development. Reading positions will be saved on this device when the reader is ready.")
+        Text("The offline reader is experimental. Reading positions saved on this device can be backed up here. Keeper is still in development.")
         Text("Reading-position backup", style = MaterialTheme.typography.titleLarge)
         Text("Back up positions saved in this Android app. Browser progress is separate. Backup files contain positions only; they do not include EPUBs, bookmarks, or other reading settings.")
         Text("Uninstalling the app removes its local data. Keep backup files in a separate location.")

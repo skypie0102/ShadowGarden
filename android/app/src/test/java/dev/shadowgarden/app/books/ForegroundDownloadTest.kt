@@ -23,7 +23,7 @@ class ForegroundDownloadTest {
         )
         assertEquals(listOf("ticket", "downloading", "transfer"), events)
         assertEquals(DownloadPhase.SAVED, result.phase)
-        assertTrue(result.message.contains("reading position is not saved"))
+        assertTrue(result.message.contains("save your reading position locally"))
     }
 
     @Test fun verificationAndTransferFailuresGiveSafeRetryMessages() = runBlocking {
