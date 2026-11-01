@@ -110,3 +110,15 @@ manual process stage and known strict Readium reflow case. The retained detailed
 report could not be downloaded in this environment; the run log reports the
 suite and separately invoked probes passing. Screen tests used synthetic images;
 this is not a real-device visual acceptance or an offline image-storage test.
+
+The [offline API 28 run 41271221942](https://github.com/skypie0102/ShadowGarden/actions/runs/41271221942)
+at source `f4dbd45` passed the Android suite with nine additional tests for
+private cover storage, eviction, interrupted and concurrent writes, corrupt or
+unavailable storage, and immediate display during refresh. Its staged probe
+saved a generated cover, force-stopped the app, and restored the image in a new
+process without Internet permission. The ordinary suite skipped the live-only
+test, manual process stage and known strict Readium reflow case; the two manual
+stages passed separately. The detailed report could not be downloaded in this
+environment, but the run log records the suite and both stages passing. This run
+did not repeat the live probe or establish behavior on a physical device, under
+real storage exhaustion, or after system cache eviction.
