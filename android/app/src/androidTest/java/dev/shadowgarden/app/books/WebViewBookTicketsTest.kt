@@ -34,7 +34,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Synthetic HTML loaded with a base URL; no live site or real verification. */
+/** An intercepted synthetic HTTPS page; no live site or real verification. */
 @RunWith(AndroidJUnit4::class)
 class WebViewBookTicketsTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
@@ -108,12 +108,14 @@ class WebViewBookTicketsTest {
                 web.settings.allowContentAccess = false
                 web.webViewClient = object : WebViewClient() {
                     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse =
-                        WebResourceResponse("text/plain", "utf-8", 403, "Blocked", emptyMap(), ByteArray(0).inputStream())
+                        if (request.isForMainFrame && request.url.toString() == base)
+                            WebResourceResponse("text/html", "utf-8", html.byteInputStream())
+                        else WebResourceResponse("text/plain", "utf-8", 403, "Blocked", emptyMap(), ByteArray(0).inputStream())
                     override fun onPageFinished(view: WebView, url: String) { if (url == base) loaded.countDown() }
                 }
                 activity.setContentView(web)
                 view.set(web)
-                web.loadDataWithBaseURL(base, html, "text/html", "utf-8", null)
+                web.loadUrl(base)
             }
             assertTrue("Synthetic page did not load", loaded.await(20, TimeUnit.SECONDS))
             if (base.startsWith("https://shadowgarden-bon.pages.dev")) scenario.onActivity {

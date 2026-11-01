@@ -40,7 +40,7 @@ jobs:
       - name: Build and check Android app
         run: ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest lintDebug testDebugUnitTest
   emulator:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.emulator }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.emulator) || (github.event_name == 'pull_request' && github.head_ref == 'android/webview-book-tickets') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
