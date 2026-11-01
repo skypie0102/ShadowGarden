@@ -109,7 +109,7 @@ class WebViewBookTicketsTest {
                 web.webViewClient = object : WebViewClient() {
                     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse =
                         WebResourceResponse("text/plain", "utf-8", 403, "Blocked", emptyMap(), ByteArray(0).inputStream())
-                    override fun onPageFinished(view: WebView, url: String) { loaded.countDown() }
+                    override fun onPageFinished(view: WebView, url: String) { if (url == base) loaded.countDown() }
                 }
                 activity.setContentView(web)
                 view.set(web)
