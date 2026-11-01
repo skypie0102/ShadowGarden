@@ -1,11 +1,13 @@
 package dev.shadowgarden.app.catalog
 
 import androidx.compose.material3.MaterialTheme
+import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
@@ -42,8 +44,11 @@ class MainLibraryScreenTest {
         scrollTo("First Series · An Author · 2 volumes")
         composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
         composeRule.onNodeWithText("First Series").assertIsDisplayed()
+        scrollDetailTo("Special Volume")
         composeRule.onNodeWithText("Special Volume").assertIsDisplayed()
+        scrollDetailTo("Another Volume")
         composeRule.onNodeWithText("Another Volume").assertIsDisplayed()
+        scrollDetailTo("Back to Main library")
         composeRule.onNodeWithText("Back to Main library").performClick()
         assertEquals("Special Volume", model.state.value.query)
     }
@@ -164,9 +169,37 @@ class MainLibraryScreenTest {
         composeRule.onNodeWithText("First Series · An Author · 2 volumes").assertIsDisplayed()
     }
 
-    private fun model(source: CatalogSource, cache: MainCatalogCache = NoTestCache): LibraryViewModel {
+    @Test fun coverAndFallbackRemainUsableInTheLibrary() {
+        val valid = CoverPath("/media/shadow-garden/covers/fixture.png")
+        val unavailable = CoverPath("/media/shadow-garden/covers/unavailable.png")
+        val image = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888)
+        val entries = listOf(fixture[0].copy(cover = valid), fixture[1].copy(cover = unavailable))
+        val model = model(CatalogSource { entries }, covers = CoverSource { path -> if (path == valid) image else null })
+        show(model)
+        composeRule.waitUntil(20_000) { model.state.value.series != null }
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.waitUntil(20_000) {
+            composeRule.onAllNodesWithTag("cover-loaded", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+        composeRule.onNodeWithText("First Series").assertIsDisplayed()
+        composeRule.waitUntil(20_000) {
+            composeRule.onAllNodesWithTag("cover-loaded", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        scrollDetailTo("Back to Main library")
+        composeRule.onNodeWithText("Back to Main library").performClick()
+        scrollTo("Second Series · Other Author · 0 volumes")
+        composeRule.onNodeWithText("Second Series · Other Author · 0 volumes").performClick()
+        composeRule.onNodeWithText("Second Series").assertIsDisplayed()
+        composeRule.waitUntil(20_000) {
+            composeRule.onAllNodesWithTag("cover-placeholder", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun model(source: CatalogSource, cache: MainCatalogCache = NoTestCache,
+                      covers: CoverSource = CoverSource { null }): LibraryViewModel {
         lateinit var model: LibraryViewModel
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { model = LibraryViewModel(source, cache) }
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { model = LibraryViewModel(source, cache, covers) }
         return model
     }
     private object NoTestCache : MainCatalogCache {
@@ -186,5 +219,8 @@ class MainLibraryScreenTest {
     private fun show(model: LibraryViewModel) = composeRule.setContent { MaterialTheme { MainLibraryScreen(model) {} } }
     private fun scrollTo(text: String) {
         composeRule.onNodeWithTag("main-library-list").performScrollToNode(hasText(text))
+    }
+    private fun scrollDetailTo(text: String) {
+        composeRule.onNodeWithTag("series-detail-list").performScrollToNode(hasText(text))
     }
 }

@@ -1,7 +1,7 @@
 # ShadowGarden for Android
 
-The Android app is in development. It offers a read-only Main catalog with basic
-search, volume listings and a saved offline snapshot, plus an early position-only
+The Android app is in development. It offers a read-only Main catalog with cover
+thumbnails, basic search, volume listings and a saved offline snapshot, plus an early position-only
 backup and restore screen.
 It does not yet read or download EPUBs, record reading progress, show the Adult
 library, or provide Keeper. Until the reader is integrated, this device
@@ -45,9 +45,9 @@ the experimental offline EPUB.js and Readium harnesses, plus the separate local
 HTTPS access test, with `connectedDebugAndroidTest`. Instrumentation reports
 are retained for seven days when generated. KVM must be available on the
 GitHub-hosted runner; a setup failure does not establish app behavior.
-The optional **Also fetch the live public Main catalog on the emulator** setting
+The optional **Also check the live Main catalog and one public cover** setting
 installs a network-enabled debug app after the offline tests and makes one
-read-only request to the deployed Main catalog. It is off by default and does not
+read-only requests to the deployed Main catalog and one available cover. It is off by default and does not
 exercise book access, verification or Keeper.
 
 The script also runs a two-stage reader process-recovery experiment on emulators.

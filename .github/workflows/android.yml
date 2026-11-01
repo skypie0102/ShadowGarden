@@ -12,7 +12,7 @@ on:
         type: boolean
         default: false
       liveCatalog:
-        description: 'Also fetch the live public Main catalog on the emulator'
+        description: 'Also check the live Main catalog and one public cover'
         type: boolean
         default: false
 permissions:

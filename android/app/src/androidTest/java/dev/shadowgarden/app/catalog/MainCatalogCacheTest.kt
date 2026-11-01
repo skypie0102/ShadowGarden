@@ -52,6 +52,17 @@ class MainCatalogCacheTest {
         assertEquals(original, cache.read())
     }
 
+    @Test fun safeCoverPathsSurviveCacheAndOlderSnapshotsRemainReadable() {
+        val seriesCover = CoverPath("/media/shadow-garden/covers/series.webp")
+        val volumeCover = CoverPath("/media/shadow-garden/covers/volume.png")
+        val withCovers = original.map { it.copy(cover = seriesCover, volumes = it.volumes.map { volume -> volume.copy(cover = volumeCover) }) }
+        cache.write(withCovers)
+        assertEquals(withCovers, PrivateMainCatalogCache(file).read())
+        val old = """{"series":[{"id":"s1","title":"Original","author":"Author","status":"Complete","volumes":[{"bookId":"${book.value}","title":"Volume"}]}]}"""
+        file.writeText(old)
+        assertEquals(original, cache.read())
+    }
+
     @Test fun corruptSnapshotIsReportedAndPreservedForInspection() {
         file.writeText("{broken")
         assertTrue(runCatching { cache.read() }.isFailure)

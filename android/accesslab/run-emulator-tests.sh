@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs isolated fixtures. The optional catalog probe performs one public GET.
+# Runs isolated fixtures. The optional live probe reads the public catalog and one cover.
 set -euo pipefail
 accesslab_dir="$(cd "$(dirname "$0")" && pwd)"
 android_dir="$(cd "$accesslab_dir/.." && pwd)"
@@ -92,5 +92,5 @@ if [[ "$result" == 0 && "${SG_CATALOG_LIVE:-0}" == 1 ]]; then
     if [[ "$live_output" != *"OK (1 test)"* || "$live_output" != *"INSTRUMENTATION_CODE: -1"* ]]; then result=1; fi
   fi
 fi
-adb logcat -d -s SGReaderProbe:I '*:S' || true
+adb logcat -d -s SGReaderProbe:I SGCoverProbe:I '*:S' || true
 exit "$result"
