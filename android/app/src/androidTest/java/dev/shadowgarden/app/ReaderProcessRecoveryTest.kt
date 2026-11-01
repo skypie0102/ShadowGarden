@@ -17,6 +17,7 @@ import dev.shadowgarden.app.catalog.LibraryViewModel
 import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
+import dev.shadowgarden.app.books.PrivateBookStore
 import dev.shadowgarden.app.progress.CatalogBookId
 import dev.shadowgarden.app.progress.EditionFingerprint
 import dev.shadowgarden.app.progress.LocatorFormat
@@ -52,6 +53,7 @@ class ReaderProcessRecoveryTest {
     private val readiumFile by lazy { File(context.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME) }
     private val catalogFile by lazy { File(context.filesDir, "main-catalog-process-test.json") }
     private val coverDirectory by lazy { File(context.cacheDir, "main-cover-process-test") }
+    private val bookDirectory by lazy { File(context.noBackupFilesDir, "book-store-process-test") }
     private val catalogFixture by lazy {
         listOf(CatalogSeries("process-series", "Generated Series", "Fixture Author", "Ongoing",
             listOf(CatalogVolume(BOOK_ID, "Generated Volume"))))
@@ -87,6 +89,7 @@ class ReaderProcessRecoveryTest {
                 output.toByteArray()
             } } finally { image.recycle() }
             PrivateCoverDiskCache(coverDirectory).write(COVER_PATH, bytes)
+            epubFile.inputStream().use { PrivateBookStore(bookDirectory).replace(BOOK_ID, it, fingerprint(epubFile)) }
             val web = epubHelper.openHarness(epubScenario, epubFile, null, "", "", "epub-layout-restore.html", 280, 340, 100)
             val result = try { epubHelper.awaitResult(web) } finally { epubHelper.closeHarness(epubScenario, web) }
             assertEquals(ReadiumPrototypeActivity.PASSAGE, result.getString("text"))
@@ -168,6 +171,10 @@ class ReaderProcessRecoveryTest {
             val savedCover = runBlocking { covers.cached(COVER_PATH) }
             assertNotNull("Saved cover must survive a new offline process", savedCover)
             assertSame("Fresh saved cover must load without networking", savedCover, runBlocking { covers.load(COVER_PATH) })
+            PrivateBookStore(bookDirectory).open(BOOK_ID)!!.use { stored ->
+                assertEquals("Stored book must survive a new offline process", fingerprint(epubFile), stored.edition)
+                assertEquals(fingerprint(epubFile), EditionFingerprint.calculate(stored.input, 8_000_000))
+            }
             assertEquals("The EPUB.js fixture must be unchanged", probe.getString("epub_sha256", null), sha256(epubFile))
             assertEquals("The Readium fixture must be unchanged", probe.getString("readium_sha256", null), sha256(readiumFile))
             val cfi = probe.getString("cfi", null) ?: throw AssertionError("Missing selected CFI")
@@ -258,6 +265,7 @@ class ReaderProcessRecoveryTest {
         context.deleteDatabase(PROCESS_DATABASE)
         android.util.AtomicFile(catalogFile).delete()
         coverDirectory.deleteRecursively()
+        bookDirectory.deleteRecursively()
     }
 
     private fun fingerprint(file: File): EditionFingerprint =

@@ -10,6 +10,9 @@ library, or provide Keeper. Until the reader is integrated, this device
 will have no newly recorded positions to export. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
+An internal [private book storage foundation](../docs/plans/ANDROID_BOOK_STORAGE.md)
+is under development; it is not yet a user-facing download or reader.
+
 ## Development
 
 Install Android Studio with a JDK 17 or newer, Android SDK Platform 35 and the
