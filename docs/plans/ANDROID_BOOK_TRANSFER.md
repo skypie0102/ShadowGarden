@@ -70,3 +70,16 @@ The detailed report could not be downloaded here; the run log records the suite
 and both stages passing. Interceptors bypass the real network and TLS: this is
 not a live ticket, server authorization, real interruption, low-storage or
 physical-device test.
+
+The [API 28 pull-request emulator run 41322107663](https://github.com/skypie0102/ShadowGarden/actions/runs/41322107663)
+at source `bed60e9` passed four WebView requester tests for valid and invalid
+tickets, an untrusted page, timeout, cancellation and a synthetic transfer into
+private storage. A test-only interceptor served the synthetic HTTPS page and
+blocked all other WebView requests; the transfer also used a synthetic response.
+The ordinary suite skipped the live-only test, manual process stage and known
+strict Readium reflow case; both offline process stages passed separately. The
+run log and retained instrumentation report record the suite passing. This does
+not test the actual site script, live Turnstile, real HTTPS, production
+navigation locking or physical-device behavior. Two earlier emulator runs failed
+because the synthetic `loadDataWithBaseURL` page reported `about:blank`; the
+passing test uses an intercepted normal HTTPS navigation instead.
