@@ -15,6 +15,8 @@ internal class OpenBook internal constructor(val input: FileInputStream, val edi
     override fun close() = input.close()
 }
 
+internal enum class BookRemovalResult { REMOVED, NOT_FOUND, EDITION_CHANGED }
+
 /**
  * App-private byte storage foundation. The caller supplies a private no-backup
  * directory and runs these blocking methods off the UI thread. The EPUB entry
@@ -107,6 +109,15 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
     fun remove(bookId: CatalogBookId): Boolean = synchronized(LOCK) {
         val target = file(bookId, ".epub")
         if (!target.exists()) false else if (target.delete()) true else throw IOException("Could not remove book")
+    }
+
+    /** Remove only the edition the user reviewed, even if a download replaced it meanwhile. */
+    fun removeIfEdition(bookId: CatalogBookId, expected: EditionFingerprint): BookRemovalResult = synchronized(LOCK) {
+        val opened = open(bookId) ?: return@synchronized BookRemovalResult.NOT_FOUND
+        val actual = opened.use { it.edition }
+        if (actual != expected) return@synchronized BookRemovalResult.EDITION_CHANGED
+        if (!file(bookId, ".epub").delete()) throw IOException("Could not remove book")
+        BookRemovalResult.REMOVED
     }
 
     private fun file(bookId: CatalogBookId, extension: String): File {

@@ -1,9 +1,19 @@
 # Android private book storage foundation
 
 The app contains an internal storage component and a [ticketed transfer foundation](ANDROID_BOOK_TRANSFER.md)
-for the experimental foreground download flow and basic local reader. Live protected access,
-full EPUB validation, background work and storage-management UI remain open in the
+for the experimental foreground download flow and basic local reader. A volume's
+details allow removing its downloaded EPUB while keeping its reading positions.
+Live protected access, full EPUB validation, background work and broader storage management remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
+
+Removal requires confirmation. The app fingerprints the saved file before the
+prompt and checks the edition again before deleting; if another in-process
+download has replaced it, the newer file is kept and the user is told to review
+it again. The operation does not modify the position database or existing backup
+files. Re-downloading the exact same edition allows the reader to use its saved
+position. Failures are reported, and the UI refreshes the local saved state.
+This early action is available from listed Main volumes; a storage overview,
+bulk removal and management of books missing from the catalog remain open.
 
 The caller must choose an app-private, no-backup directory and run the blocking
 operations off the UI thread. A validated catalog book ID determines each file

@@ -83,4 +83,14 @@ class PrivateBookStoreTest {
         store.open(id)!!.use { assertArrayEquals(old, it.input.readBytes()) }
         assertFalse(directory.resolve(id.value + ".part").exists())
     }
+
+    @Test fun confirmedRemovalDoesNotDeleteAChangedEdition() {
+        val store = PrivateBookStore(files.newFolder())
+        val original = store.replace(id, old.inputStream())
+        val replacement = store.replace(id, fresh.inputStream())
+        assertEquals(BookRemovalResult.EDITION_CHANGED, store.removeIfEdition(id, original))
+        store.open(id)!!.use { assertArrayEquals(fresh, it.input.readBytes()) }
+        assertEquals(BookRemovalResult.REMOVED, store.removeIfEdition(id, replacement))
+        assertEquals(BookRemovalResult.NOT_FOUND, store.removeIfEdition(id, replacement))
+    }
 }
