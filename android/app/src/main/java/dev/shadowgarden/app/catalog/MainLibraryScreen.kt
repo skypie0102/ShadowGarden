@@ -47,6 +47,8 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
                 }
             } else {
                 item { Text(selected.title, style = MaterialTheme.typography.headlineMedium) }
+                if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
+                state.error?.let { error -> item { Text(error) } }
                 if (selected.author.isNotBlank()) item { Text("By ${selected.author}") }
                 item { Text(selected.status) }
                 item { Text("Volumes", style = MaterialTheme.typography.titleLarge) }
@@ -67,7 +69,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         item { Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium) }
         item { Text("Android app in development", style = MaterialTheme.typography.titleMedium) }
         item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
-        item { Text("The Main library needs an internet connection. The reader, downloads, Adult library, and Keeper are in development.") }
+        item { Text("The Main library saves its latest catalog on this device. The reader, downloads, Adult library, and Keeper are in development.") }
         item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
         item {
             OutlinedTextField(value = state.query, onValueChange = model::search,
@@ -75,6 +77,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit) {
         }
         item { Button(onClick = model::refresh, enabled = !state.loading) { Text("Refresh library") } }
         if (state.loading) item { Text("Loading Main library…", modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+        if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
         state.error?.let { error -> item { Text(error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) } }
         if (filtered != null && filtered.isEmpty() && !state.loading) {
             item { Text(if (query.isEmpty()) "The Main library is empty." else "No matching series.") }

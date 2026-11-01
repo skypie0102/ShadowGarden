@@ -96,10 +96,92 @@ class MainLibraryScreenTest {
         } finally { gate.countDown() }
     }
 
-    private fun model(source: CatalogSource): LibraryViewModel {
+    @Test fun savedCatalogIsVisibleOfflineAndMarkedAsPotentiallyOutdated() {
+        val cache = FakeCache(fixture)
+        val model = model(CatalogSource { throw IOException("offline fixture") }, cache)
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading && model.state.value.fromCache }
+        scrollTo("Showing saved Main library; it may be out of date.")
+        composeRule.onNodeWithText("Showing saved Main library; it may be out of date.").assertIsDisplayed()
+        scrollTo("Search titles, authors, and volumes")
+        composeRule.onNodeWithText("Search titles, authors, and volumes").performTextInput("Special Volume")
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").performClick()
+        composeRule.onNodeWithText("Showing saved Main library; it may be out of date.").assertIsDisplayed()
+        assertEquals(fixture, model.state.value.series)
+    }
+
+    @Test fun successfulRefreshReplacesSavedCatalog() {
+        val gate = CountDownLatch(1)
+        val cache = FakeCache(fixture)
+        val replacement = listOf(CatalogSeries("new", "Fresh Series", "", "Ongoing", emptyList()))
+        try {
+            val model = model(CatalogSource { gate.await(30, TimeUnit.SECONDS); replacement }, cache)
+            show(model)
+            composeRule.waitUntil(20_000) { model.state.value.fromCache }
+            scrollTo("Showing saved Main library; it may be out of date.")
+            composeRule.onNodeWithText("Showing saved Main library; it may be out of date.").assertIsDisplayed()
+            gate.countDown()
+            composeRule.waitUntil(20_000) { !model.state.value.loading }
+            assertEquals(replacement, cache.data)
+            assertEquals(replacement, model.state.value.series)
+            assertEquals(false, model.state.value.fromCache)
+        } finally { gate.countDown() }
+    }
+
+    @Test fun saveFailureKeepsLiveResultsAndReportsOfflineLimitation() {
+        val cache = FakeCache(fixture, failWrite = true)
+        val fresh = listOf(CatalogSeries("new", "Fresh Series", "", "Ongoing", emptyList()))
+        val model = model(CatalogSource { fresh }, cache)
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading }
+        scrollTo("Loaded the Main library, but could not save it for offline use.")
+        composeRule.onNodeWithText("Loaded the Main library, but could not save it for offline use.").assertIsDisplayed()
+        assertEquals(fresh, model.state.value.series)
+        assertEquals(fixture, cache.data)
+    }
+
+    @Test fun corruptSavedCatalogAndOfflineNetworkAreReported() {
+        val model = model(CatalogSource { throw IOException("offline") }, FakeCache(null, failRead = true))
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading }
+        scrollTo("Could not load the Main library or read its saved copy. Check your connection and try again.")
+        composeRule.onNodeWithText("Could not load the Main library or read its saved copy. Check your connection and try again.").assertIsDisplayed()
+        assertEquals(null, model.state.value.series)
+    }
+
+    @Test fun refreshRetriesASavedCatalogAfterATemporaryReadFailure() {
+        val cache = FakeCache(fixture, failRead = true)
+        val model = model(CatalogSource { throw IOException("offline") }, cache)
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading }
+        assertEquals(null, model.state.value.series)
+        cache.failRead = false
+        scrollTo("Refresh library")
+        composeRule.onNodeWithText("Refresh library").performClick()
+        composeRule.waitUntil(20_000) { !model.state.value.loading && model.state.value.fromCache }
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").assertIsDisplayed()
+    }
+
+    private fun model(source: CatalogSource, cache: MainCatalogCache = NoTestCache): LibraryViewModel {
         lateinit var model: LibraryViewModel
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { model = LibraryViewModel(source) }
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { model = LibraryViewModel(source, cache) }
         return model
+    }
+    private object NoTestCache : MainCatalogCache {
+        override fun read(): List<CatalogSeries>? = null
+        override fun write(series: List<CatalogSeries>) = Unit
+    }
+    private class FakeCache(var data: List<CatalogSeries>?, @Volatile var failRead: Boolean = false, val failWrite: Boolean = false) : MainCatalogCache {
+        override fun read(): List<CatalogSeries>? {
+            if (failRead) throw IOException("damaged fixture")
+            return data
+        }
+        override fun write(series: List<CatalogSeries>) {
+            if (failWrite) throw IOException("storage failure")
+            data = series
+        }
     }
     private fun show(model: LibraryViewModel) = composeRule.setContent { MaterialTheme { MainLibraryScreen(model) {} } }
     private fun scrollTo(text: String) {

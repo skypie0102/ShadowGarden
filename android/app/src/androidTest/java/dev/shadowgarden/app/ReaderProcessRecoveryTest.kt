@@ -3,10 +3,16 @@ package dev.shadowgarden.app
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Process
+import android.os.SystemClock
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.shadowgarden.app.catalog.CatalogSeries
+import dev.shadowgarden.app.catalog.CatalogSource
+import dev.shadowgarden.app.catalog.CatalogVolume
+import dev.shadowgarden.app.catalog.LibraryViewModel
+import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.progress.CatalogBookId
 import dev.shadowgarden.app.progress.EditionFingerprint
 import dev.shadowgarden.app.progress.LocatorFormat
@@ -15,7 +21,9 @@ import dev.shadowgarden.app.progress.ProgressSaveResult
 import dev.shadowgarden.app.progress.ReadingPosition
 import dev.shadowgarden.app.progress.ReadingProgressStore
 import java.io.File
+import java.io.IOException
 import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicReference
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -34,6 +42,11 @@ class ReaderProcessRecoveryTest {
     private val probe by lazy { context.getSharedPreferences(PROBE_PREFS, Context.MODE_PRIVATE) }
     private val epubFile by lazy { File(context.cacheDir, EPUB_FIXTURE) }
     private val readiumFile by lazy { File(context.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME) }
+    private val catalogFile by lazy { File(context.filesDir, "main-catalog-process-test.json") }
+    private val catalogFixture by lazy {
+        listOf(CatalogSeries("process-series", "Generated Series", "Fixture Author", "Ongoing",
+            listOf(CatalogVolume(BOOK_ID, "Generated Volume"))))
+    }
     private val readiumPreferences by lazy {
         context.getSharedPreferences(ReadiumPrototypeActivity.PREFERENCES, Context.MODE_PRIVATE)
     }
@@ -58,6 +71,7 @@ class ReaderProcessRecoveryTest {
         val epubScenario = ActivityScenario.launch(MainActivity::class.java)
         var prepared = false
         try {
+            PrivateMainCatalogCache(catalogFile).write(catalogFixture)
             val web = epubHelper.openHarness(epubScenario, epubFile, null, "", "", "epub-layout-restore.html", 280, 340, 100)
             val result = try { epubHelper.awaitResult(web) } finally { epubHelper.closeHarness(epubScenario, web) }
             assertEquals(ReadiumPrototypeActivity.PASSAGE, result.getString("text"))
@@ -124,6 +138,17 @@ class ReaderProcessRecoveryTest {
             val oldPid = probe.getInt("pid", -1)
             assertTrue("The preparation phase must save its process identity", oldPid > 0)
             assertNotEquals("Recovery must occur in a new app process", oldPid, Process.myPid())
+            assertEquals("Saved catalog must survive a new offline process", catalogFixture,
+                PrivateMainCatalogCache(catalogFile).read())
+            val model = AtomicReference<LibraryViewModel>()
+            instrumentation.runOnMainSync {
+                model.set(LibraryViewModel(CatalogSource { throw IOException("offline fixture") }, PrivateMainCatalogCache(catalogFile)))
+            }
+            val deadline = SystemClock.elapsedRealtime() + 15_000
+            while (model.get().state.value.loading && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(50)
+            assertFalse("Offline catalog loading must finish", model.get().state.value.loading)
+            assertEquals("Offline library must show the saved catalog", catalogFixture, model.get().state.value.series)
+            assertTrue("Offline library must identify saved data", model.get().state.value.fromCache)
             assertEquals("The EPUB.js fixture must be unchanged", probe.getString("epub_sha256", null), sha256(epubFile))
             assertEquals("The Readium fixture must be unchanged", probe.getString("readium_sha256", null), sha256(readiumFile))
             val cfi = probe.getString("cfi", null) ?: throw AssertionError("Missing selected CFI")
@@ -212,6 +237,7 @@ class ReaderProcessRecoveryTest {
         epubFile.delete()
         readiumFile.delete()
         context.deleteDatabase(PROCESS_DATABASE)
+        android.util.AtomicFile(catalogFile).delete()
     }
 
     private fun fingerprint(file: File): EditionFingerprint =
