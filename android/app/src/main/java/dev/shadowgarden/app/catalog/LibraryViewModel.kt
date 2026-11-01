@@ -23,7 +23,6 @@ internal class LibraryViewModel(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(LibraryState())
     val state = mutableState.asStateFlow()
-    private var cacheChecked = false
 
     init { refresh() }
 
@@ -31,8 +30,7 @@ internal class LibraryViewModel(
 
     fun refresh() {
         if (state.value.loading) return
-        val readCache = !cacheChecked
-        cacheChecked = true
+        val readCache = state.value.series == null
         mutableState.value = state.value.copy(loading = true, error = null)
         viewModelScope.launch {
             var cacheReadFailed = false

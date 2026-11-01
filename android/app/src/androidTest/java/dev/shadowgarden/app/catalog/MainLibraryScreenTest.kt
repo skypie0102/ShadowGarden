@@ -150,6 +150,20 @@ class MainLibraryScreenTest {
         assertEquals(null, model.state.value.series)
     }
 
+    @Test fun refreshRetriesASavedCatalogAfterATemporaryReadFailure() {
+        val cache = FakeCache(fixture, failRead = true)
+        val model = model(CatalogSource { throw IOException("offline") }, cache)
+        show(model)
+        composeRule.waitUntil(20_000) { !model.state.value.loading }
+        assertEquals(null, model.state.value.series)
+        cache.failRead = false
+        scrollTo("Refresh library")
+        composeRule.onNodeWithText("Refresh library").performClick()
+        composeRule.waitUntil(20_000) { !model.state.value.loading && model.state.value.fromCache }
+        scrollTo("First Series · An Author · 2 volumes")
+        composeRule.onNodeWithText("First Series · An Author · 2 volumes").assertIsDisplayed()
+    }
+
     private fun model(source: CatalogSource, cache: MainCatalogCache = NoTestCache): LibraryViewModel {
         lateinit var model: LibraryViewModel
         InstrumentationRegistry.getInstrumentation().runOnMainSync { model = LibraryViewModel(source, cache) }
@@ -159,7 +173,7 @@ class MainLibraryScreenTest {
         override fun read(): List<CatalogSeries>? = null
         override fun write(series: List<CatalogSeries>) = Unit
     }
-    private class FakeCache(var data: List<CatalogSeries>?, val failRead: Boolean = false, val failWrite: Boolean = false) : MainCatalogCache {
+    private class FakeCache(var data: List<CatalogSeries>?, @Volatile var failRead: Boolean = false, val failWrite: Boolean = false) : MainCatalogCache {
         override fun read(): List<CatalogSeries>? {
             if (failRead) throw IOException("damaged fixture")
             return data
