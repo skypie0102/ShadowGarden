@@ -89,7 +89,7 @@ class ReaderProcessRecoveryTest {
                 output.toByteArray()
             } } finally { image.recycle() }
             PrivateCoverDiskCache(coverDirectory).write(COVER_PATH, bytes)
-            epubFile.inputStream().use { PrivateBookStore(bookDirectory).replace(BOOK_ID, it, fingerprint(epubFile)) }
+            epubFile.inputStream().use { PrivateBookStore(bookDirectory).replaceEpub(BOOK_ID, it, fingerprint(epubFile)) }
             val web = epubHelper.openHarness(epubScenario, epubFile, null, "", "", "epub-layout-restore.html", 280, 340, 100)
             val result = try { epubHelper.awaitResult(web) } finally { epubHelper.closeHarness(epubScenario, web) }
             assertEquals(ReadiumPrototypeActivity.PASSAGE, result.getString("text"))

@@ -17,7 +17,8 @@ internal class OpenBook internal constructor(val input: FileInputStream, val edi
 
 /**
  * App-private byte storage foundation. The caller supplies a private no-backup
- * directory, runs these blocking methods off the UI thread and validates EPUBs.
+ * directory and runs these blocking methods off the UI thread. The EPUB entry
+ * point checks only ZIP structure; reader validation remains necessary.
  * Coordination is limited to one app process. This class does not download,
  * authorize, parse, or render books and does not change reading progress.
  */
@@ -29,7 +30,14 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
      * incomplete or altered transfer. checkCancelled may throw to abort safely.
      */
     fun replace(bookId: CatalogBookId, input: InputStream, expected: EditionFingerprint? = null,
-                checkCancelled: () -> Unit = {}): EditionFingerprint = synchronized(LOCK) {
+                checkCancelled: () -> Unit = {}): EditionFingerprint = replaceInternal(bookId, input, expected, checkCancelled, false)
+
+    /** Rejects malformed ZIP structures before replacing an existing book. */
+    fun replaceEpub(bookId: CatalogBookId, input: InputStream, expected: EditionFingerprint? = null,
+                    checkCancelled: () -> Unit = {}): EditionFingerprint = replaceInternal(bookId, input, expected, checkCancelled, true)
+
+    private fun replaceInternal(bookId: CatalogBookId, input: InputStream, expected: EditionFingerprint?,
+                                checkCancelled: () -> Unit, validateEpub: Boolean): EditionFingerprint = synchronized(LOCK) {
         if (expected != null && (expected.byteCount <= 0 || expected.byteCount > maxBytes)) throw IOException("Invalid expected book size")
         if (!directory.isDirectory && !directory.mkdirs()) throw IOException("Could not create book directory")
         val target = file(bookId, ".epub")
@@ -65,6 +73,8 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
                 output.fd.sync()
                 fingerprint
             }
+            checkCancelled()
+            if (validateEpub) EpubStructureCheck.validate(temporary, checkCancelled)
             checkCancelled()
             if (!temporary.renameTo(target)) throw IOException("Could not replace book")
             fingerprint

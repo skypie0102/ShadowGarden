@@ -2,6 +2,7 @@ package dev.shadowgarden.app.books
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.shadowgarden.app.EpubFixture
 import dev.shadowgarden.app.progress.CatalogBookId
 import dev.shadowgarden.app.progress.LocatorFormat
 import dev.shadowgarden.app.progress.ProgressLookup
@@ -63,5 +64,17 @@ class PrivateBookStoreAndroidTest {
                 assertArrayEquals(second, it.input.readBytes())
             }
         }
+    }
+
+    @Test fun generatedEpubIsAcceptedAndInvalidReplacementPreservesIt() {
+        directory.mkdirs()
+        val fixture = File(directory, "fixture.epub")
+        EpubFixture.create(fixture, true)
+        val bytes = fixture.readBytes()
+        val books = PrivateBookStore(directory)
+        val edition = bytes.inputStream().use { books.replaceEpub(book, it) }
+        assertTrue(EpubStructureCheck.validate(fixture).entries >= 15)
+        assertTrue(runCatching { books.replaceEpub(book, "invalid".byteInputStream()) }.isFailure)
+        books.open(book)!!.use { assertEquals(edition, it.edition); assertArrayEquals(bytes, it.input.readBytes()) }
     }
 }
