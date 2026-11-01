@@ -29,3 +29,23 @@ zoom, external links, reliable position restoration or read aloud. The existing
 and reflow cases; this early EPUB.js integration does not close that comparison.
 Real-world books, network-enabled isolation, lifecycle behavior, accessibility
 and physical-device acceptance remain open.
+
+## Verification
+
+The [API 28 offline emulator run 41337006453](https://github.com/skypie0102/ShadowGarden/actions/runs/41337006453)
+at source `945ca15` passed an instrumentation test that opens a generated
+12-chapter illustrated EPUB from private storage, checks chapter text, navigates
+with the contents selector and next-page button, verifies the illustration
+decodes, and reopens the activity at the beginning after recreation. The fixture
+contains a script that was not observed running; the test also calls the WebView
+navigation and resource-blocking policy for an external URL. The app under test
+had no Internet permission. The ordinary suite skipped the live-only test, manual
+process stage and known strict Readium reflow case; both separate prototype
+process stages passed. The detailed report could not be downloaded in this
+environment, but the run log records the suite and stages passing. The unsigned
+release APK was also checked for the reader shell and both pinned vendor scripts.
+
+This is one synthetic EPUB on one emulator. It does not establish exact visible
+passage placement, saved progress, real network isolation with Internet enabled,
+force-stop restoration of this reader, real-book compatibility, a comprehensive
+EPUB security review or physical-device acceptance.
