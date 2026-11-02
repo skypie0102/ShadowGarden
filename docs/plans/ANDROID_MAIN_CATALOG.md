@@ -152,3 +152,13 @@ known strict Readium reflow case; both manual process stages passed separately.
 The detailed report could not be downloaded in this environment; the run log
 records the suite and both stages passing. This is not physical-device, live UI
 or complete website filter-parity acceptance.
+
+The [offline API 28 run 41383208303](https://github.com/skypie0102/ShadowGarden/actions/runs/41383208303)
+at source `33810cd` passed settings tests covering filter and sort restoration,
+session-only search, unreadable-file preservation, retry after read or write
+failure, and rapid or early changes. Its separately staged probe saved settings
+to an isolated file, force-stopped the app and restored them in a new process
+without Internet permission. The ordinary suite skipped the live-catalog test,
+manual process probe and known strict Readium reflow case; both explicit process
+stages passed. The run does not establish physical-device behavior, actual
+storage exhaustion or cross-window conflict handling.
