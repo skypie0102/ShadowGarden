@@ -66,6 +66,7 @@ class DownloadedBooksScreenTest {
             composeRule.onNodeWithText("Catalog titles are unavailable; saved books can still be opened.").assertIsDisplayed()
             val unknownTitle = "Downloaded book · ${known.value}"
             composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText(unknownTitle))
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasContentDescription("Read $unknownTitle offline"))
             composeRule.onNodeWithContentDescription("Read $unknownTitle offline").performClick()
             assertEquals(known, selected?.id)
 
@@ -75,10 +76,12 @@ class DownloadedBooksScreenTest {
             composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Named volume"))
             composeRule.onNodeWithText("Named volume").assertIsDisplayed()
             composeRule.onNodeWithText("Generated series").assertIsDisplayed()
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasContentDescription("Read Named volume offline"))
             composeRule.onNodeWithContentDescription("Read Named volume offline").performClick()
             assertEquals(known, selected?.id)
             composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Downloaded book · ${orphan.value}"))
             composeRule.onNodeWithText("Downloaded book · ${orphan.value}").assertIsDisplayed()
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasContentDescription("Read Downloaded book · ${orphan.value} offline"))
             composeRule.onNodeWithContentDescription("Read Downloaded book · ${orphan.value} offline").performClick()
             assertEquals(orphan, selected?.id)
             store.remove(orphan)
