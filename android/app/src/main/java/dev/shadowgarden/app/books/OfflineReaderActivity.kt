@@ -53,6 +53,7 @@ internal class OfflineReaderActivity : ComponentActivity() {
     private var progress: ReaderProgressSession? = null
     private var savedSequence = 0L
     private var closing = false
+    private var handlingBack = false
     private var conflicted = false
     private val saveMutex = Mutex()
 
@@ -67,7 +68,7 @@ internal class OfflineReaderActivity : ComponentActivity() {
         content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         content.addView(Button(this).apply { text = "Back to series"; setOnClickListener { saveAndFinish() } })
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = saveAndFinish()
+            override fun handleOnBackPressed() = closeSearchOrFinish()
         })
         content.addView(TextView(this).apply { text = title; textSize = 18f })
         status = TextView(this).apply { text = "Opening saved EPUB…"; textSize = 16f }
@@ -159,6 +160,27 @@ internal class OfflineReaderActivity : ComponentActivity() {
             val json = JSONObject(encoded)
             ReaderSnapshot(json.optString("state"), json.optLong("seq", 0), json.optString("saveCfi"), json.optBoolean("pending"))
         } catch (_: Exception) { null }
+    }
+
+    private fun closeSearchOrFinish() {
+        if (handlingBack || closing) return
+        val web = readerView ?: return saveAndFinish()
+        handlingBack = true
+        lifecycleScope.launch {
+            val closed = withTimeoutOrNull(1_500) {
+                suspendCancellableCoroutine<String> { continuation ->
+                    try {
+                        web.evaluateJavascript("Boolean(window.sgReader && window.sgReader.searchOpen && window.sgCloseSearch && (window.sgCloseSearch(), true))") { value ->
+                            if (continuation.isActive) continuation.resume(value ?: "false")
+                        }
+                    } catch (_: RuntimeException) {
+                        if (continuation.isActive) continuation.resume("false")
+                    }
+                }
+            } == "true"
+            handlingBack = false
+            if (!closed && !isFinishing && !isDestroyed) saveAndFinish()
+        }
     }
 
     private suspend fun saveSnapshot(snapshot: ReaderSnapshot): ReaderSaveResult = saveMutex.withLock {
@@ -260,7 +282,7 @@ internal class OfflineReaderActivity : ComponentActivity() {
                     return try {
                         when (uri.path) {
                             "/index.html" -> WebResourceResponse("text/html", "utf-8", assets.open("offline-reader.html"))
-                            "/jszip.min.js", "/epub.min.js" -> WebResourceResponse("text/javascript", "utf-8", assets.open(uri.path!!.removePrefix("/")))
+                            "/jszip.min.js", "/epub.min.js", "/offline-search.js" -> WebResourceResponse("text/javascript", "utf-8", assets.open(uri.path!!.removePrefix("/")))
                             "/resume.json" -> WebResourceResponse("application/json", "utf-8",
                                 JSONObject().put("cfi", resumeCfi ?: JSONObject.NULL).toString().byteInputStream())
                             "/book.epub" -> if (claimed.compareAndSet(false, true)) WebResourceResponse("application/epub+zip", null, book.input) else blocked()
