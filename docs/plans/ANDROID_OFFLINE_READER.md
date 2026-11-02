@@ -67,6 +67,15 @@ and physical-device acceptance remain open.
 
 ## Verification
 
+The [offline API 28 emulator run 41461206690](https://github.com/skypie0102/ShadowGarden/actions/runs/41461206690)
+at source `c1eca82` tested all four color choices on a generated EPUB. It
+checked the visible paragraph and saved position after changing colors, retained
+night colors on a different chapter, and reset the choice after activity
+recreation without changing the saved position. The ordinary suite skipped the
+live-catalog test, staged process probe and known strict Readium reflow case;
+both explicit process stages passed separately. Real books, contrast in complex
+publication styling and physical-device behavior remain open.
+
 The [offline API 28 emulator run 41434638940](https://github.com/skypie0102/ShadowGarden/actions/runs/41434638940)
 at source `18be615` searched a generated EPUB for a case-insensitive phrase
 split across inline elements, including the middle of a word, and extra
