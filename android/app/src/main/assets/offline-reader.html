@@ -37,8 +37,8 @@
   <button id="start-over" type="button" hidden>Start from beginning</button>
   <div id="viewer"></div>
   <section id="search-panel" hidden aria-label="Search book text" data-state="idle">
-    <form id="search-form" role="search">
-      <input id="search-query" type="search" maxlength="128" aria-label="Search book text" placeholder="Search book text">
+    <form id="search-form" role="search" autocomplete="off">
+      <input id="search-query" type="search" maxlength="128" autocomplete="off" aria-label="Search book text" placeholder="Search book text">
       <button type="submit">Search</button>
       <button id="search-close" type="button">Close</button>
     </form>

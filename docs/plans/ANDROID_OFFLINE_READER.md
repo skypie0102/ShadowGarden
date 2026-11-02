@@ -56,6 +56,19 @@ and physical-device acceptance remain open.
 
 ## Verification
 
+The [offline API 28 emulator run 41387542517](https://github.com/skypie0102/ShadowGarden/actions/runs/41387542517)
+at source `b6b0f4e` searched a generated 12-chapter EPUB without Internet
+permission. A case-insensitive result opened a visibly checked paragraph and
+saved its location; activity recreation reopened the same chapter. The test also
+checked the minimum query length, search without a position write, excluded
+script text, the result cap, rapid replacement of a query, session-only
+search input and Android Back closing the overlay. Its fixture's scripted EPUB
+content was not observed executing. The ordinary suite skipped the live-catalog
+test, staged process probe and known strict Readium reflow case; both explicit
+process stages passed separately. This does not establish exact placement after
+reflow, search coverage across formatted text nodes, real-book compatibility,
+security against all malformed EPUBs or physical-device behavior.
+
 The [API 28 offline emulator run 41337006453](https://github.com/skypie0102/ShadowGarden/actions/runs/41337006453)
 at source `945ca15` passed an instrumentation test that opens a generated
 12-chapter illustrated EPUB from private storage, checks chapter text, navigates
