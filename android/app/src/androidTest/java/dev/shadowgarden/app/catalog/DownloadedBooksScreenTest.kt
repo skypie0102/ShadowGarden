@@ -14,6 +14,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.shadowgarden.app.books.PrivateBookStore
@@ -102,6 +104,55 @@ class DownloadedBooksScreenTest {
             composeRule.onNodeWithText("No downloaded books yet.").assertDoesNotExist()
             composeRule.onNodeWithText("Retry downloads list").assertIsDisplayed()
         } finally { file.delete() }
+    }
+
+    @Test fun searchesSavedBooksWithOrWithoutCatalogTitles() {
+        val directory = File(context.noBackupFilesDir, "downloaded-shelf-search-test-${UUID.randomUUID()}")
+        val store = PrivateBookStore(directory)
+        store.replace(known, "generated known book".byteInputStream())
+        store.replace(orphan, "generated unlisted book".byteInputStream())
+        val online = AtomicBoolean(false)
+        val catalog = listOf(CatalogSeries("series", "Generated series", "", "Ongoing", listOf(CatalogVolume(known, "Named volume"))))
+        val model = model(CatalogSource { if (online.get()) catalog else throw IOException("offline fixture") })
+        var selected: CatalogVolume? = null
+        try {
+            composeRule.setContent { MaterialTheme { DownloadedBooksScreen(model, store, {}, { selected = it }) } }
+            composeRule.waitUntil(20_000) { composeRule.onAllNodesWithText("2 saved EPUBs", substring = true).fetchSemanticsNodes().isNotEmpty() }
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Search downloaded books"))
+            val search = composeRule.onNodeWithText("Search downloaded books")
+            search.performTextInput("GeNeRaTeD")
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("No downloaded books match this search."))
+            composeRule.onNodeWithText("No downloaded books match this search.").assertIsDisplayed()
+
+            online.set(true)
+            composeRule.runOnIdle { model.refresh() }
+            composeRule.waitUntil(20_000) { model.state.value.series != null && !model.state.value.loading }
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("1 matching EPUB."))
+            composeRule.onNodeWithText("1 matching EPUB.").assertIsDisplayed()
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Named volume"))
+            composeRule.onNodeWithText("Named volume").assertIsDisplayed()
+            composeRule.onNodeWithText("Downloaded book · ${orphan.value}").assertDoesNotExist()
+
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Search downloaded books"))
+            search.performTextClearance()
+            search.performTextInput("BBBBBBBB")
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("1 matching EPUB."))
+            composeRule.onNodeWithText("1 matching EPUB.").assertIsDisplayed()
+            val orphanTitle = "Downloaded book · ${orphan.value}"
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasContentDescription("Read $orphanTitle offline"))
+            composeRule.onNodeWithContentDescription("Read $orphanTitle offline").performClick()
+            assertEquals(orphan, selected?.id)
+            assertTrue(store.contains(known))
+            assertTrue(store.contains(orphan))
+
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Search downloaded books"))
+            search.performTextClearance()
+            search.performTextInput("named VOLUME")
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("1 matching EPUB."))
+            composeRule.onNodeWithText("1 matching EPUB.").assertIsDisplayed()
+            composeRule.onNodeWithTag("downloaded-books-list").performScrollToNode(hasText("Named volume"))
+            composeRule.onNodeWithText("Named volume").assertIsDisplayed()
+        } finally { directory.deleteRecursively() }
     }
 
     @Test fun removesUnmatchedDownloadOnlyAfterConfirmationAndKeepsProgress() {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +57,7 @@ internal fun DownloadedBooksScreen(model: LibraryViewModel, books: PrivateBookSt
     var removalBusy by remember(books) { mutableStateOf(false) }
     var removalMessage by remember(books) { mutableStateOf<String?>(null) }
     var confirmation by remember(books) { mutableStateOf<ShelfRemoval?>(null) }
+    var query by rememberSaveable(books) { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     BackHandler(enabled = removalBusy || confirmation != null) { if (!removalBusy) confirmation = null }
     LaunchedEffect(books, state.bookGeneration, retry) {
@@ -93,7 +96,24 @@ internal fun DownloadedBooksScreen(model: LibraryViewModel, books: PrivateBookSt
                 if (saved.books.isNotEmpty()) {
                     val total = saved.books.sumOf { it.byteCount }
                     item { Text("${saved.books.size} saved EPUB${if (saved.books.size == 1) "" else "s"} · ${Formatter.formatFileSize(context, total)}") }
-                    items(saved.books, key = { it.id.value }) { book ->
+                    item {
+                        OutlinedTextField(value = query, onValueChange = { query = it.take(128) },
+                            label = { Text("Search downloaded books") }, singleLine = true,
+                            modifier = Modifier.fillMaxWidth())
+                    }
+                    val term = query.trim()
+                    val matches = saved.books.filter { book ->
+                        val match = catalog[book.id]
+                        term.isEmpty() || book.id.value.contains(term, ignoreCase = true) ||
+                            match?.first?.contains(term, ignoreCase = true) == true ||
+                            match?.second?.title?.contains(term, ignoreCase = true) == true
+                    }
+                    if (term.isNotEmpty()) item {
+                        Text(if (matches.isEmpty()) "No downloaded books match this search."
+                            else "${matches.size} matching EPUB${if (matches.size == 1) "" else "s"}.",
+                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                    }
+                    items(matches, key = { it.id.value }) { book ->
                         val match = catalog[book.id]
                         val volume = match?.second ?: CatalogVolume(book.id, "Downloaded book · ${book.id.value}")
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

@@ -20,7 +20,11 @@ management of files excluded from the shelf as unavailable remain open.
 The downloaded-books shelf lists private EPUB files independently of catalog
 availability. It shows catalog series and volume titles when known, otherwise a
 book ID, and can open either kind in the offline reader. Its displayed size is
-the total of the listed files. Enumeration considers regular, non-symlink files
+the total of the listed files. Shelf search matches the catalog series title,
+volume title or book ID case-insensitively, using any catalog currently available;
+an unmatched book remains searchable by ID. Results update when catalog data or
+the local listing changes. Search is temporary and does not alter downloaded
+files or reading positions. Enumeration considers regular, non-symlink files
 with valid book IDs and sizes within the storage limit; it reports unavailable
 recognized files, ignores unrelated and temporary files, and fails visibly if
 the directory cannot be read or contains more than 50,000 entries. It does not
