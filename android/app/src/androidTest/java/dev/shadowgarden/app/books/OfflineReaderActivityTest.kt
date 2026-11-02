@@ -143,6 +143,89 @@ class OfflineReaderActivityTest {
         assertFalse(info.exported)
     }
 
+    @Test fun colorThemesApplyAcrossChaptersWithoutChangingSavedProgress() {
+        val id = CatalogBookId("bk_" + UUID.randomUUID().toString().replace("-", "").take(22))
+        val store = PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1"))
+        val fixture = File(context.cacheDir, "reader-colors-${UUID.randomUUID()}.epub")
+        EpubFixture.create(fixture, true)
+        var stored = false
+        try {
+            assertFalse(store.contains(id))
+            val edition = fixture.inputStream().use { store.replaceEpub(id, it) }
+            stored = true
+            val scenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, CatalogVolume(id, "Generated colors volume")))
+            try {
+                val view = awaitReader(scenario)
+                awaitState(view) { it.optString("state") == "ready" && it.optString("cfi").isNotBlank() }
+                evaluate(view, "(function(){const c=document.getElementById('contents');c.selectedIndex=12;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+                val chapter = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 1 && !it.optBoolean("pending") }
+                var saved = awaitSaved(id, edition, chapter.getString("saveCfi"))
+                val visibleText = evaluate(view, """(function(){
+                    const f=document.querySelector('#viewer iframe'),v=document.getElementById('viewer');
+                    const fr=f.getBoundingClientRect(),vr=v.getBoundingClientRect();
+                    const p=Array.from(f.contentDocument.querySelectorAll('p')).find(function(x){
+                        const r=f.contentDocument.createRange();r.selectNodeContents(x);
+                        return Array.from(r.getClientRects()).some(function(b){return fr.left+b.right>vr.left && fr.left+b.left<vr.right && fr.top+b.bottom>vr.top && fr.top+b.top<vr.bottom;});
+                    });return p ? p.textContent : '';
+                })()""")
+                assertNotEquals("A paragraph must be visible before changing colors", "\"\"", visibleText)
+
+                selectAppearance(view, "night")
+                assertTrue("Night colors must be applied", awaitBoolean(view, appearanceIs("rgb(16, 21, 33)", "rgb(228, 233, 242)")))
+                assertEquals(visibleText, evaluate(view, """(function(){
+                    const f=document.querySelector('#viewer iframe'),v=document.getElementById('viewer');
+                    const fr=f.getBoundingClientRect(),vr=v.getBoundingClientRect();
+                    const p=Array.from(f.contentDocument.querySelectorAll('p')).find(function(x){
+                        const r=f.contentDocument.createRange();r.selectNodeContents(x);
+                        return Array.from(r.getClientRects()).some(function(b){return fr.left+b.right>vr.left && fr.left+b.left<vr.right && fr.top+b.bottom>vr.top && fr.top+b.top<vr.bottom;});
+                    });return p ? p.textContent : '';
+                })()"""))
+                assertEquals(chapter.getLong("seq"), awaitState(view) { it.optString("appearance") == "night" }.getLong("seq"))
+                SystemClock.sleep(1_200)
+                assertEquals(saved, (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+
+                evaluate(view, "(function(){const c=document.getElementById('contents');c.selectedIndex=1;c.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+                val first = awaitState(view) { it.optString("href").contains("chapter1.xhtml") && it.optLong("seq") >= 2 && !it.optBoolean("pending") }
+                saved = awaitSaved(id, edition, first.getString("saveCfi"))
+                assertTrue("The next chapter must keep night colors", awaitBoolean(view, appearanceIs("rgb(16, 21, 33)", "rgb(228, 233, 242)")))
+                selectAppearance(view, "paper")
+                assertTrue(awaitBoolean(view, appearanceIs("rgb(255, 255, 255)", "rgb(41, 42, 37)")))
+                selectAppearance(view, "sepia")
+                assertTrue(awaitBoolean(view, appearanceIs("rgb(241, 229, 205)", "rgb(55, 42, 32)")))
+                selectAppearance(view, "original")
+                assertTrue(awaitBoolean(view, "!document.querySelector('#viewer iframe').contentDocument.querySelector('style[data-sg-reader-colors]')"))
+                SystemClock.sleep(1_200)
+                assertEquals(saved, (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+
+                selectAppearance(view, "night")
+                scenario.recreate()
+                val reopened = awaitReader(scenario)
+                val initial = awaitState(reopened) { it.optString("state") == "ready" && it.optString("href").contains("chapter1.xhtml") }
+                assertEquals("original", initial.getString("appearance"))
+                assertEquals(saved, (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+            } finally { scenario.close() }
+        } finally {
+            if (stored) store.remove(id)
+            val database = context.getDatabasePath("reading-progress.db")
+            if (stored && database.exists()) SQLiteDatabase.openDatabase(database.path, null, SQLiteDatabase.OPEN_READWRITE).use {
+                it.delete("reading_positions", "book_id=?", arrayOf(id.value))
+            }
+            fixture.delete()
+        }
+    }
+
+    private fun selectAppearance(view: WebView, value: String) {
+        evaluate(view, "(function(){const a=document.getElementById('appearance');a.value=${JSONObject.quote(value)};" +
+            "a.dispatchEvent(new Event('change',{bubbles:true}));return 'ok';})()")
+    }
+
+    private fun appearanceIs(background: String, text: String) = """(function(){
+        const f=document.querySelector('#viewer iframe');if(!f||!f.contentDocument||!f.contentDocument.body)return false;
+        const d=f.contentDocument,p=d.querySelector('p');if(!p)return false;
+        return f.contentWindow.getComputedStyle(d.body).backgroundColor===${JSONObject.quote(background)} &&
+            f.contentWindow.getComputedStyle(p).color===${JSONObject.quote(text)};
+    })()"""
+
     @Test fun searchesOfflineAndSavesOnlyAnOpenedResult() {
         val id = CatalogBookId("bk_" + UUID.randomUUID().toString().replace("-", "").take(22))
         val store = PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1"))

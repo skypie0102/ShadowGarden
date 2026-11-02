@@ -8,9 +8,11 @@
   <style>
     html,body { height:100%; margin:0; color:#eee; background:#15121a; font:16px sans-serif; }
     body { display:flex; flex-direction:column; }
-    #controls { display:flex; gap:.5rem; padding:.5rem; align-items:center; }
+    #controls { display:flex; flex-wrap:wrap; gap:.5rem; padding:.5rem; align-items:center; }
     button,select { min-height:44px; font:inherit; max-width:100%; }
     select { flex:1; min-width:0; }
+    #contents { min-width:100px; }
+    #appearance { flex:0 1 120px; }
     #status { padding:0 .6rem .4rem; font-size:.85rem; }
     #viewer { flex:1; min-height:0; background:#fff; color:#111; }
     [hidden] { display:none !important; }
@@ -32,6 +34,12 @@
     <select id="contents" disabled aria-label="Table of contents"><option value="">Contents</option></select>
     <button id="next" type="button" disabled aria-label="Next page">Next</button>
     <button id="open-search" type="button" disabled aria-label="Search book text">Find</button>
+    <select id="appearance" disabled aria-label="Book colors, reset when reader is reopened">
+      <option value="original">Original colors</option>
+      <option value="paper">Paper</option>
+      <option value="night">Night</option>
+      <option value="sepia">Sepia</option>
+    </select>
   </div>
   <div id="status" role="status" aria-live="polite">Opening book…</div>
   <button id="start-over" type="button" hidden>Start from beginning</button>
@@ -47,7 +55,7 @@
     <div id="search-results" aria-label="Book text search results"></div>
   </section>
   <script>
-  window.sgReader = {state:'opening', href:'', cfi:'', saveCfi:'', seq:0, pending:false, searchOpen:false};
+  window.sgReader = {state:'opening', href:'', cfi:'', saveCfi:'', seq:0, pending:false, searchOpen:false, appearance:'original'};
   (async function() {
     const status = document.getElementById('status');
     const resumeResponse = await fetch('/resume.json');
@@ -68,6 +76,7 @@
     const startOver = document.getElementById('start-over');
     const controls = document.getElementById('controls');
     const viewer = document.getElementById('viewer');
+    const appearance = document.getElementById('appearance');
     const openSearch = document.getElementById('open-search');
     const searchPanel = document.getElementById('search-panel');
     const searchQuery = document.getElementById('search-query');
@@ -78,6 +87,40 @@
     let searchJumping = false;
     let contentsAvailable = false;
     let busy = false;
+    const appearances = {
+      original: null,
+      paper: {background:'#ffffff', text:'#292a25', link:'#385a3c'},
+      night: {background:'#101521', text:'#e4e9f2', link:'#b8caff'},
+      sepia: {background:'#f1e5cd', text:'#372a20', link:'#694a2c'}
+    };
+    const appearanceStyles = new WeakMap();
+    function applyAppearance(contents) {
+      const doc = contents && contents.document;
+      if (!doc || !doc.documentElement) return;
+      let style = appearanceStyles.get(doc);
+      const colors = appearances[window.sgReader.appearance];
+      if (!colors) {
+        if (style) style.remove();
+        appearanceStyles.delete(doc);
+        return;
+      }
+      if (!style) {
+        style = doc.createElementNS('http://www.w3.org/1999/xhtml', 'style');
+        style.setAttribute('data-sg-reader-colors', '');
+        (doc.head || doc.documentElement).appendChild(style);
+        appearanceStyles.set(doc, style);
+      }
+      style.textContent = 'html,body{background-color:' + colors.background + ' !important;}' +
+        'body,p,li,dt,dd,blockquote,h1,h2,h3,h4,h5,h6,td,th,span,em,strong{color:' + colors.text + ' !important;}' +
+        'a{color:' + colors.link + ' !important;}';
+    }
+    rendition.hooks.content.register(applyAppearance);
+    appearance.addEventListener('change', function () {
+      const choice = Object.prototype.hasOwnProperty.call(appearances, appearance.value) ? appearance.value : 'original';
+      window.sgReader.appearance = choice;
+      viewer.style.backgroundColor = appearances[choice] ? appearances[choice].background : '#ffffff';
+      rendition.getContents().forEach(applyAppearance);
+    });
     async function captureUserLocation() {
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const location = await rendition.currentLocation();
@@ -92,11 +135,11 @@
       if (busy) return false;
       busy = true;
       window.sgReader.pending = true;
-      previous.disabled = next.disabled = contents.disabled = openSearch.disabled = true;
+      previous.disabled = next.disabled = contents.disabled = openSearch.disabled = appearance.disabled = true;
       let succeeded = false;
       try { await action(); await captureUserLocation(); succeeded = true; }
       catch (_) { window.sgReader.saveCfi = ''; window.sgReader.seq++; status.textContent = 'Could not navigate to that location.'; }
-      finally { busy = false; window.sgReader.pending = false; previous.disabled = next.disabled = openSearch.disabled = false; contents.disabled = !contentsAvailable; }
+      finally { busy = false; window.sgReader.pending = false; previous.disabled = next.disabled = openSearch.disabled = appearance.disabled = false; contents.disabled = !contentsAvailable; }
       return succeeded;
     }
     function clearSearchResults() { while (searchResults.firstChild) searchResults.removeChild(searchResults.firstChild); }
@@ -211,7 +254,7 @@
             await captureUserLocation();
             startOver.hidden = true;
             status.textContent = '';
-            previous.disabled = next.disabled = openSearch.disabled = false;
+            previous.disabled = next.disabled = openSearch.disabled = appearance.disabled = false;
             contents.disabled = !contentsAvailable;
             window.sgReader.state = 'ready';
           } catch (_) { status.textContent = 'Could not open this EPUB.'; window.sgReader.state = 'error'; }
@@ -220,7 +263,7 @@
         return;
       }
     } else await rendition.display();
-    previous.disabled = next.disabled = openSearch.disabled = false;
+    previous.disabled = next.disabled = openSearch.disabled = appearance.disabled = false;
     contents.disabled = !contentsAvailable;
     status.textContent = '';
     window.sgReader.state = 'ready';
