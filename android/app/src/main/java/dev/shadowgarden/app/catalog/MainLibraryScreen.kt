@@ -56,6 +56,7 @@ private data class PendingBookRemoval(val volume: CatalogVolume, val edition: Ed
 @Composable
 internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
                                books: PrivateBookStore? = null, onRead: ((CatalogVolume) -> Unit)? = null,
+                               onDownloaded: (() -> Unit)? = null,
                                onDownload: ((CatalogSeries, CatalogVolume) -> Unit)? = null) {
     val state by model.state.collectAsState()
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -176,6 +177,7 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
         item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
         item { Text("The Main library saves its latest catalog on this device. Offline reading and downloads are experimental; the Adult library and Keeper are in development.") }
         item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
+        if (onDownloaded != null) item { OutlinedButton(onClick = onDownloaded, modifier = Modifier.fillMaxWidth()) { Text("Downloaded books") } }
         item {
             OutlinedTextField(value = state.query, onValueChange = model::search,
                 label = { Text("Search titles, authors, and volumes") }, singleLine = true, modifier = Modifier.fillMaxWidth())

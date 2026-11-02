@@ -41,7 +41,8 @@ development cycle. The app has an early read-only Main library with cover thumbn
 an offline catalog snapshot, a disposable cover cache, an experimental foreground
 EPUB download flow, a basic offline reader with app-local position saving, and a
 position-only backup and restore screen. Saved EPUBs can be removed from volume
-details without deleting their positions. Live download verification remains
+details without deleting their positions, and a downloaded-books shelf remains
+accessible without the catalog. Live download verification remains
 untested; complete personal-data backup and Keeper are still planned. The completed [UI/UX
 roadmap](docs/archive/plans/UI_UX_ROADMAP.md) retains its delivery history and
 the [follow-ups](docs/plans/FOLLOW_UPS.md) retain unresolved acceptance limits.

@@ -12,8 +12,18 @@ download has replaced it, the newer file is kept and the user is told to review
 it again. The operation does not modify the position database or existing backup
 files. Re-downloading the exact same edition allows the reader to use its saved
 position. Failures are reported, and the UI refreshes the local saved state.
-This early action is available from listed Main volumes; a storage overview,
-bulk removal and management of books missing from the catalog remain open.
+This early removal action is available from listed Main volumes; bulk removal
+and removal of books missing from the catalog remain open.
+
+The downloaded-books shelf lists private EPUB files independently of catalog
+availability. It shows catalog series and volume titles when known, otherwise a
+book ID, and can open either kind in the offline reader. Its displayed size is
+the total of the listed files. Enumeration considers regular, non-symlink files
+with valid book IDs and sizes within the storage limit; it reports unavailable
+recognized files, ignores unrelated and temporary files, and fails visibly if
+the directory cannot be read or contains more than 50,000 entries. It does not
+validate EPUB contents or delete anything. Listing reflects a snapshot and the
+reader still handles files removed or changed before they are opened.
 
 The caller must choose an app-private, no-backup directory and run the blocking
 operations off the UI thread. A validated catalog book ID determines each file

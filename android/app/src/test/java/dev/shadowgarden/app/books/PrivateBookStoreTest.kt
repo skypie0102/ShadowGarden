@@ -4,6 +4,7 @@ import dev.shadowgarden.app.progress.CatalogBookId
 import dev.shadowgarden.app.progress.EditionFingerprint
 import java.io.IOException
 import java.io.InputStream
+import java.nio.file.Files
 import java.util.concurrent.CancellationException
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -92,5 +93,31 @@ class PrivateBookStoreTest {
         store.open(id)!!.use { assertArrayEquals(fresh, it.input.readBytes()) }
         assertEquals(BookRemovalResult.REMOVED, store.removeIfEdition(id, replacement))
         assertEquals(BookRemovalResult.NOT_FOUND, store.removeIfEdition(id, replacement))
+    }
+
+    @Test fun savedShelfListsOnlyValidOwnedFilesAndReportsUnavailableOnes() {
+        val directory = files.newFolder()
+        val store = PrivateBookStore(directory, maxBytes = 64)
+        store.replace(id, old.inputStream())
+        store.replace(other, fresh.inputStream())
+        directory.resolve("not-a-book.epub").writeText("ignored")
+        directory.resolve(id.value + ".part").writeText("partial")
+        val emptyId = CatalogBookId("bk_zzzzzzzzzzzzzzzzzzzzzz")
+        directory.resolve(emptyId.value + ".epub").writeBytes(byteArrayOf())
+        val linkId = CatalogBookId("bk_yyyyyyyyyyyyyyyyyyyyyy")
+        Files.createSymbolicLink(directory.resolve(linkId.value + ".epub").toPath(), directory.resolve(id.value + ".epub").toPath())
+        val list = store.listSaved()
+        assertEquals(listOf(SavedBook(other, fresh.size.toLong()), SavedBook(id, old.size.toLong())), list.books)
+        assertEquals(2, list.unavailableCount)
+        assertTrue(directory.resolve(emptyId.value + ".epub").exists())
+        assertTrue(Files.isSymbolicLink(directory.resolve(linkId.value + ".epub").toPath()))
+    }
+
+    @Test fun savedShelfDistinguishesMissingDirectoryFromBrokenStorage() {
+        val parent = files.newFolder()
+        val directory = parent.resolve("books")
+        assertEquals(SavedBooks(emptyList(), 0), PrivateBookStore(directory).listSaved())
+        directory.writeText("not a directory")
+        assertTrue(runCatching { PrivateBookStore(directory).listSaved() }.exceptionOrNull() is IOException)
     }
 }

@@ -45,6 +45,7 @@ import dev.shadowgarden.app.progress.PositionBackupViewModel
 import dev.shadowgarden.app.progress.PositionRestoreMode
 import dev.shadowgarden.app.catalog.LibraryViewModel
 import dev.shadowgarden.app.catalog.MainLibraryScreen
+import dev.shadowgarden.app.catalog.DownloadedBooksScreen
 import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
@@ -84,9 +85,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryViewModel) {
     var showBackup by rememberSaveable { mutableStateOf(false) }
+    var showDownloaded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val books = remember(context) { PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1")) }
     BackHandler(enabled = showBackup) { showBackup = false }
+    BackHandler(enabled = showDownloaded) { showDownloaded = false }
     MaterialTheme(colorScheme = darkColorScheme()) {
         Surface(modifier = Modifier.fillMaxSize()) {
             if (showBackup) {
@@ -94,8 +97,12 @@ internal fun ShadowGardenApp(backup: PositionBackupViewModel, library: LibraryVi
                     TextButton(onClick = { showBackup = false }) { Text("Back to Main library") }
                     PositionBackupScreen(backup)
                 }
+            } else if (showDownloaded) {
+                DownloadedBooksScreen(library, books, onBack = { showDownloaded = false },
+                    onRead = { volume -> context.startActivity(OfflineReaderActivity.intent(context, volume)) })
             } else MainLibraryScreen(library, onBackup = { showBackup = true }, books = books,
                 onRead = { volume -> context.startActivity(OfflineReaderActivity.intent(context, volume)) },
+                onDownloaded = { showDownloaded = true },
                 onDownload = { series, volume -> context.startActivity(DownloadActivity.intent(context, series, volume)) })
         }
     }

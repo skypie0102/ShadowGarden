@@ -8,6 +8,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.security.MessageDigest
 
 /** An open file and fingerprint of the same bytes. Close when finished. */
@@ -16,6 +18,8 @@ internal class OpenBook internal constructor(val input: FileInputStream, val edi
 }
 
 internal enum class BookRemovalResult { REMOVED, NOT_FOUND, EDITION_CHANGED }
+internal data class SavedBook(val id: CatalogBookId, val byteCount: Long)
+internal data class SavedBooks(val books: List<SavedBook>, val unavailableCount: Int)
 
 /**
  * App-private byte storage foundation. The caller supplies a private no-backup
@@ -105,6 +109,30 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
         target.isFile && target.length() in 1..maxBytes
     }
 
+    /** List readable-sized app-owned EPUB files without depending on the catalog or opening their contents. */
+    fun listSaved(): SavedBooks = synchronized(LOCK) {
+        val root = directory.toPath()
+        if (Files.notExists(root, LinkOption.NOFOLLOW_LINKS)) return@synchronized SavedBooks(emptyList(), 0)
+        if (!Files.isDirectory(root)) throw IOException("Book storage is unavailable")
+        val books = mutableListOf<SavedBook>()
+        var unavailable = 0
+        var entries = 0
+        Files.newDirectoryStream(root).use { paths ->
+            for (path in paths) {
+                if (++entries > MAX_DIRECTORY_ENTRIES) throw IOException("Too many book storage entries")
+                val name = path.fileName.toString()
+                if (!name.endsWith(".epub")) continue
+                val id = try { CatalogBookId(name.removeSuffix(".epub")) }
+                    catch (_: IllegalArgumentException) { continue }
+                if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) { unavailable++; continue }
+                val size = Files.size(path)
+                if (size !in 1..maxBytes) { unavailable++; continue }
+                books.add(SavedBook(id, size))
+            }
+        }
+        SavedBooks(books.sortedBy { it.id.value }, unavailable)
+    }
+
     /** Removes only this book's file; reading positions are stored separately. */
     fun remove(bookId: CatalogBookId): Boolean = synchronized(LOCK) {
         val target = file(bookId, ".epub")
@@ -129,6 +157,7 @@ internal class PrivateBookStore(private val directory: File, private val maxByte
     companion object {
         // Matches the website's current EPUB upload limit.
         const val MAX_BOOK_BYTES = 50L * 1024 * 1024
+        private const val MAX_DIRECTORY_ENTRIES = 50_000
         private val LOCK = Any()
     }
 }
