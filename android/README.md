@@ -12,8 +12,8 @@ confirmation while its reading positions are kept, even if it is no longer in
 the catalog. Saved books are removed on uninstall and are not included
 in position backups. The app also has
 an early position-only backup and restore screen. A basic experimental reader
-opens saved EPUBs offline with page and contents controls and saves reading
-positions on this device. These positions can be manually backed up; they are
+opens saved EPUBs offline with page and contents controls, bounded book-text
+search, and local reading-position saving. These positions can be manually backed up; they are
 separate from website progress. The downloaded-books shelf lists locally saved
 EPUBs even when the catalog is offline or a volume is no longer listed; an
 unmatched book appears by its ID until a title is available. The app does not yet show the Adult library or

@@ -13,21 +13,41 @@
     select { flex:1; min-width:0; }
     #status { padding:0 .6rem .4rem; font-size:.85rem; }
     #viewer { flex:1; min-height:0; background:#fff; color:#111; }
+    [hidden] { display:none !important; }
+    #search-panel { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column;
+      gap:.5rem; padding:.75rem; background:#15121a; }
+    #search-form { display:flex; gap:.5rem; }
+    #search-query { flex:1; min-width:0; min-height:44px; font:inherit; }
+    #search-results { flex:1; min-height:0; overflow:auto; display:flex; flex-direction:column; gap:.5rem; }
+    #search-results button { text-align:left; padding:.6rem; }
+    #search-status { margin:0; }
   </style>
   <script src="/jszip.min.js"></script>
   <script src="/epub.min.js"></script>
+  <script src="/offline-search.js"></script>
 </head>
 <body>
   <div id="controls">
     <button id="previous" type="button" disabled aria-label="Previous page">Previous</button>
     <select id="contents" disabled aria-label="Table of contents"><option value="">Contents</option></select>
     <button id="next" type="button" disabled aria-label="Next page">Next</button>
+    <button id="open-search" type="button" disabled aria-label="Search book text">Find</button>
   </div>
   <div id="status" role="status" aria-live="polite">Opening book…</div>
   <button id="start-over" type="button" hidden>Start from beginning</button>
   <div id="viewer"></div>
+  <section id="search-panel" hidden aria-label="Search book text" data-state="idle">
+    <form id="search-form" role="search" autocomplete="off">
+      <input id="search-query" type="search" maxlength="128" autocomplete="off" aria-label="Search book text" placeholder="Search book text">
+      <button type="submit">Search</button>
+      <button id="search-close" type="button">Close</button>
+    </form>
+    <p>Search may miss phrases split by formatting.</p>
+    <p id="search-status" role="status" aria-live="polite"></p>
+    <div id="search-results" aria-label="Book text search results"></div>
+  </section>
   <script>
-  window.sgReader = {state:'opening', href:'', cfi:'', saveCfi:'', seq:0, pending:false};
+  window.sgReader = {state:'opening', href:'', cfi:'', saveCfi:'', seq:0, pending:false, searchOpen:false};
   (async function() {
     const status = document.getElementById('status');
     const resumeResponse = await fetch('/resume.json');
@@ -35,7 +55,8 @@
     const resume = await resumeResponse.json();
     const response = await fetch('/book.epub');
     if (!response.ok) throw new Error('Book unavailable');
-    const book = ePub(await response.arrayBuffer());
+    const bytes = await response.arrayBuffer();
+    const book = ePub(bytes);
     await book.ready;
     const rendition = book.renderTo('viewer', {
       width:'100%', height:'100%', flow:'paginated', spread:'none',
@@ -45,6 +66,16 @@
     const next = document.getElementById('next');
     const contents = document.getElementById('contents');
     const startOver = document.getElementById('start-over');
+    const controls = document.getElementById('controls');
+    const viewer = document.getElementById('viewer');
+    const openSearch = document.getElementById('open-search');
+    const searchPanel = document.getElementById('search-panel');
+    const searchQuery = document.getElementById('search-query');
+    const searchStatus = document.getElementById('search-status');
+    const searchResults = document.getElementById('search-results');
+    const searchEngine = window.createOfflineBookSearch(bytes);
+    let searchSerial = 0;
+    let searchJumping = false;
     let contentsAvailable = false;
     let busy = false;
     async function captureUserLocation() {
@@ -58,14 +89,80 @@
       window.sgReader.seq++;
     }
     async function move(action) {
-      if (busy) return;
+      if (busy) return false;
       busy = true;
       window.sgReader.pending = true;
-      previous.disabled = next.disabled = true;
-      try { await action(); await captureUserLocation(); }
+      previous.disabled = next.disabled = contents.disabled = openSearch.disabled = true;
+      let succeeded = false;
+      try { await action(); await captureUserLocation(); succeeded = true; }
       catch (_) { window.sgReader.saveCfi = ''; window.sgReader.seq++; status.textContent = 'Could not navigate to that location.'; }
-      finally { busy = false; window.sgReader.pending = false; previous.disabled = next.disabled = false; }
+      finally { busy = false; window.sgReader.pending = false; previous.disabled = next.disabled = openSearch.disabled = false; contents.disabled = !contentsAvailable; }
+      return succeeded;
     }
+    function clearSearchResults() { while (searchResults.firstChild) searchResults.removeChild(searchResults.firstChild); }
+    function closeSearch() {
+      searchSerial++;
+      searchEngine.cancel();
+      searchPanel.hidden = true;
+      searchPanel.setAttribute('data-state', 'idle');
+      window.sgReader.searchOpen = false;
+      controls.removeAttribute('aria-hidden');
+      viewer.removeAttribute('aria-hidden');
+      clearSearchResults();
+      searchStatus.textContent = '';
+      openSearch.focus();
+    }
+    window.sgCloseSearch = closeSearch;
+    openSearch.addEventListener('click', function () {
+      searchPanel.hidden = false;
+      window.sgReader.searchOpen = true;
+      controls.setAttribute('aria-hidden', 'true');
+      viewer.setAttribute('aria-hidden', 'true');
+      searchQuery.focus();
+    });
+    document.getElementById('search-close').addEventListener('click', closeSearch);
+    document.getElementById('search-form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (searchJumping) return;
+      const job = ++searchSerial;
+      clearSearchResults();
+      searchPanel.setAttribute('data-state', 'searching');
+      searchStatus.textContent = 'Searching book text…';
+      try {
+        const result = await searchEngine.search(searchQuery.value, function (section, total) {
+          if (job === searchSerial) searchStatus.textContent = 'Searching section ' + section + ' of ' + total + '…';
+        });
+        if (job !== searchSerial || result.cancelled) return;
+        searchPanel.setAttribute('data-state', 'complete');
+        if (result.tooShort) { searchStatus.textContent = 'Enter at least 3 characters.'; return; }
+        if (result.tooLong) { searchStatus.textContent = 'Enter at most 128 characters.'; return; }
+        const count = result.hits.length;
+        if (!count) searchStatus.textContent = 'No matching book text.';
+        else searchStatus.textContent = count + (count === 1 ? ' match.' : ' matches.');
+        if (result.limited || result.skipped) searchStatus.textContent += ' Search was limited or some sections could not be searched.';
+        result.hits.forEach(function (hit) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Section ' + hit.section + ' · ' + hit.excerpt;
+          button.addEventListener('click', async function () {
+            if (searchJumping) return;
+            searchJumping = true;
+            const selectedJob = searchSerial;
+            searchStatus.textContent = 'Opening search result…';
+            try {
+              const opened = await move(function () { return rendition.display(hit.cfi); });
+              if (selectedJob !== searchSerial) return;
+              if (opened) closeSearch(); else searchStatus.textContent = 'Could not open that search result.';
+            } finally { searchJumping = false; }
+          });
+          searchResults.appendChild(button);
+        });
+      } catch (_) {
+        if (job !== searchSerial) return;
+        searchPanel.setAttribute('data-state', 'error');
+        searchStatus.textContent = 'Could not search this EPUB.';
+      }
+    });
     previous.addEventListener('click', function(){ void move(function(){ return rendition.prev(); }); });
     next.addEventListener('click', function(){ void move(function(){ return rendition.next(); }); });
     contents.addEventListener('change', function(){
@@ -113,7 +210,7 @@
             await captureUserLocation();
             startOver.hidden = true;
             status.textContent = '';
-            previous.disabled = next.disabled = false;
+            previous.disabled = next.disabled = openSearch.disabled = false;
             contents.disabled = !contentsAvailable;
             window.sgReader.state = 'ready';
           } catch (_) { status.textContent = 'Could not open this EPUB.'; window.sgReader.state = 'error'; }
@@ -122,7 +219,7 @@
         return;
       }
     } else await rendition.display();
-    previous.disabled = next.disabled = false;
+    previous.disabled = next.disabled = openSearch.disabled = false;
     contents.disabled = !contentsAvailable;
     status.textContent = '';
     window.sgReader.state = 'ready';
