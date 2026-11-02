@@ -75,6 +75,15 @@ credentials are involved.
 
 ## Verification
 
+The [offline API 28 emulator run 41442783280](https://github.com/skypie0102/ShadowGarden/actions/runs/41442783280)
+at source `0b82f01` passed the shelf search test with generated downloads. It
+checked a title search before and after a catalog refresh, case-insensitive
+series and volume matches, an unmatched book found by ID, and opening that book
+without deleting either download. The ordinary suite skipped the live-catalog
+test, staged process probe and known strict Readium reflow case; both explicit
+process stages passed separately. Real books and physical-device behavior
+remain unverified.
+
 The [offline API 28 emulator run 41379499064](https://github.com/skypie0102/ShadowGarden/actions/runs/41379499064)
 at source `905fb49` passed shelf removal tests with an unmatched generated book
 and an isolated position database. They cover the availability warning,
