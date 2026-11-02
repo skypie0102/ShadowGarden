@@ -22,13 +22,16 @@ contain positions, not EPUB files, and matching EPUB bytes are needed to resume.
 Find opens a search overlay without resizing the reader. Searches are local to
 the open EPUB and are not saved by the app. A result opens its location and uses
 the normal local position-saving path; opening or dismissing search alone does
-not save a new position. Android Back closes search first. The initial search
-matches case-insensitive text within individual text nodes, so phrases split by
-formatting can be missed. It requires 3–128 characters and reports incomplete
+not save a new position. Android Back closes search first. Search matches text
+case-insensitively across inline formatting within a spine section, normalizes
+whitespace, and treats block elements and line breaks as separators. It requires
+3–128 characters and reports incomplete
 results when it encounters a limit or an unsearchable section. Search inspects at
 most 1,000 spine sections, 4 MiB of declared uncompressed data per section,
-32 MiB total, 100,000 text nodes and 256 Ki characters per text node, and shows
-at most 100 matches. It uses an independent EPUB instance so searching cannot
+32 MiB total, 100,000 DOM nodes and 256 Ki UTF-16 code units per text node. It
+also caps scanned text at 4 Mi code units per section and 16 Mi total, and shows
+at most 100 matches. Omitted text is separated so it cannot create a false match.
+It uses an independent EPUB instance so searching cannot
 unload the currently displayed reader section. These bounds use declared archive
 sizes and do not constitute complete protection against malformed EPUBs.
 
@@ -55,6 +58,15 @@ Real-world books, network-enabled isolation, lifecycle behavior, accessibility
 and physical-device acceptance remain open.
 
 ## Verification
+
+The [offline API 28 emulator run 41434638940](https://github.com/skypie0102/ShadowGarden/actions/runs/41434638940)
+at source `18be615` searched a generated EPUB for a case-insensitive phrase
+split across inline elements, including the middle of a word, and extra
+whitespace. The selected passage was visibly checked and its local position was
+saved. The ordinary suite skipped the live-catalog test, staged process probe and
+known strict Readium reflow case; both explicit process stages passed separately.
+Real books, complex layouts, exact placement after reflow and physical devices
+remain to be tested.
 
 The [offline API 28 emulator run 41387542517](https://github.com/skypie0102/ShadowGarden/actions/runs/41387542517)
 at source `b6b0f4e` searched a generated 12-chapter EPUB without Internet

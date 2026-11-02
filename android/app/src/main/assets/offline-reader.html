@@ -42,7 +42,7 @@
       <button type="submit">Search</button>
       <button id="search-close" type="button">Close</button>
     </form>
-    <p>Search may miss phrases split by formatting.</p>
+    <p>Search matches across inline formatting within a section.</p>
     <p id="search-status" role="status" aria-live="polite"></p>
     <div id="search-results" aria-label="Book text search results"></div>
   </section>
@@ -136,6 +136,7 @@
         searchPanel.setAttribute('data-state', 'complete');
         if (result.tooShort) { searchStatus.textContent = 'Enter at least 3 characters.'; return; }
         if (result.tooLong) { searchStatus.textContent = 'Enter at most 128 characters.'; return; }
+        if (result.invalid) { searchStatus.textContent = 'Enter searchable text.'; return; }
         const count = result.hits.length;
         if (!count) searchStatus.textContent = 'No matching book text.';
         else searchStatus.textContent = count + (count === 1 ? ' match.' : ' matches.');

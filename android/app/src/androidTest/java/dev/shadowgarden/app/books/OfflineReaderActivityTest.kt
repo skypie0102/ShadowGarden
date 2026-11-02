@@ -173,11 +173,28 @@ class OfflineReaderActivityTest {
                 assertEquals(ProgressLookup.NoProgress, ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) })
                 evaluate(view, "document.querySelector('#search-results button').click(); 'ok'")
                 val selected = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 1 && !it.optBoolean("pending") && !it.optBoolean("searchOpen") }
-                val saved = awaitSaved(id, edition, selected.getString("saveCfi"))
+                var saved = awaitSaved(id, edition, selected.getString("saveCfi"))
                 assertTrue("The selected paragraph must be visible", awaitBoolean(view, """(function(){
                     const f=document.querySelector('#viewer iframe'),v=document.getElementById('viewer');
                     if(!f || !f.contentDocument)return false;
                     const p=Array.from(f.contentDocument.querySelectorAll('p')).find(function(x){return x.textContent.indexOf('Chapter 12 paragraph 73.')>=0;});
+                    if(!p)return false; const r=f.contentDocument.createRange();r.selectNodeContents(p);
+                    const frame=f.getBoundingClientRect(),viewport=v.getBoundingClientRect();
+                    return Array.from(r.getClientRects()).some(function(b){return frame.left+b.right>viewport.left && frame.left+b.left<viewport.right && frame.top+b.bottom>viewport.top && frame.top+b.top<viewport.bottom;});
+                })()"""))
+
+                evaluate(view, "document.getElementById('open-search').click(); 'ok'")
+                submitSearch(view, "jade    moonlit \n garden marker.")
+                val formatted = awaitSearch(view) { it.optString("state") == "complete" }
+                assertEquals(1, formatted.getInt("count"))
+                assertTrue(formatted.getString("first").contains("Jade moonlit garden marker."))
+                evaluate(view, "document.querySelector('#search-results button').click(); 'ok'")
+                val formattedLocation = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 2 && !it.optBoolean("pending") && !it.optBoolean("searchOpen") }
+                saved = awaitSaved(id, edition, formattedLocation.getString("saveCfi"))
+                assertTrue("The formatted match must be visible", awaitBoolean(view, """(function(){
+                    const f=document.querySelector('#viewer iframe'),v=document.getElementById('viewer');
+                    if(!f || !f.contentDocument)return false;
+                    const p=Array.from(f.contentDocument.querySelectorAll('p')).find(function(x){return x.textContent.replace(/\s+/g,' ').trim().indexOf('Jade moonlit garden marker.')>=0;});
                     if(!p)return false; const r=f.contentDocument.createRange();r.selectNodeContents(p);
                     const frame=f.getBoundingClientRect(),viewport=v.getBoundingClientRect();
                     return Array.from(r.getClientRects()).some(function(b){return frame.left+b.right>viewport.left && frame.left+b.left<viewport.right && frame.top+b.bottom>viewport.top && frame.top+b.top<viewport.bottom;});
@@ -292,6 +309,10 @@ class OfflineReaderActivityTest {
                     if (entry.name == "chapter1.xhtml") {
                         val content = bytes.toString(Charsets.UTF_8).replace("<h1>",
                             "<script><![CDATA[window.parent.sgReader.unsafeExecuted=true;]]></script><img src=\"https://example.invalid/pixel.png\"/><h1>")
+                        bytes = content.toByteArray(Charsets.UTF_8)
+                    } else if (entry.name == "chapter12.xhtml") {
+                        val content = bytes.toString(Charsets.UTF_8).replace("</body>",
+                            "<p>Jade <em>moon</em><strong>lit</strong>   garden marker.</p></body>")
                         bytes = content.toByteArray(Charsets.UTF_8)
                     }
                     val copy = ZipEntry(entry.name)
