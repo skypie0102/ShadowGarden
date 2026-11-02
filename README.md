@@ -38,6 +38,7 @@ Their dated release and verification records are in the [archive](docs/archive/R
 
 The [Android roadmap](docs/plans/ANDROID_ROADMAP.md) is the current repository
 development cycle. The app has an early read-only Main library with cover thumbnails,
+locally saved filter and sort choices,
 an offline catalog snapshot, a disposable cover cache, an experimental foreground
 EPUB download flow, a basic offline reader with app-local position saving, and a
 position-only backup and restore screen. Saved EPUBs can be removed from volume

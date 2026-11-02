@@ -3,7 +3,8 @@
 The Android app is in development. It offers a read-only Main catalog with cover
 thumbnails, basic search, volume-count filters, sorting, volume listings and a saved offline snapshot. Previously
 loaded covers may also be available offline until Android clears the disposable
-cache. An experimental foreground download action requests Garden Pass in an
+cache. Volume-count filter and sort choices are saved locally; search text is
+session-only, and the position backup does not include these settings. An experimental foreground download action requests Garden Pass in an
 app-owned WebView and stores an EPUB privately; live verification has not yet
 been accepted. Downloads stop when the app leaves the screen. From a volume's
 details or the downloaded-books shelf, a saved EPUB can be removed after
