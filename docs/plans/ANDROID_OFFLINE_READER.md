@@ -59,6 +59,15 @@ and physical-device acceptance remain open.
 
 ## Verification
 
+The [offline API 28 emulator run 41434638940](https://github.com/skypie0102/ShadowGarden/actions/runs/41434638940)
+at source `18be615` searched a generated EPUB for a case-insensitive phrase
+split across inline elements, including the middle of a word, and extra
+whitespace. The selected passage was visibly checked and its local position was
+saved. The ordinary suite skipped the live-catalog test, staged process probe and
+known strict Readium reflow case; both explicit process stages passed separately.
+Real books, complex layouts, exact placement after reflow and physical devices
+remain to be tested.
+
 The [offline API 28 emulator run 41387542517](https://github.com/skypie0102/ShadowGarden/actions/runs/41387542517)
 at source `b6b0f4e` searched a generated 12-chapter EPUB without Internet
 permission. A case-insensitive result opened a visibly checked paragraph and
