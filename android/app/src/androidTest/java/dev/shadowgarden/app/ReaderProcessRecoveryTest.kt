@@ -214,6 +214,9 @@ class ReaderProcessRecoveryTest {
             assertEquals("The Readium fixture must be unchanged", probe.getString("readium_sha256", null), sha256(readiumFile))
             val appBookId = CatalogBookId(probe.getString("app_book_id", null) ?: throw AssertionError("Missing app book ID"))
             val appCfi = probe.getString("app_cfi", null) ?: throw AssertionError("Missing app reader CFI")
+            val appBooks = PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1"))
+            assertTrue("Downloaded shelf must find the generated book after process termination",
+                appBooks.listSaved().books.any { it.id == appBookId && it.byteCount == epubFile.length() })
             val appHelper = OfflineReaderActivityTest()
             val appScenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, CatalogVolume(appBookId, "Process fixture")))
             try {

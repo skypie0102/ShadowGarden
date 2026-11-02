@@ -12,7 +12,9 @@ in position backups. The app also has
 an early position-only backup and restore screen. A basic experimental reader
 opens saved EPUBs offline with page and contents controls and saves reading
 positions on this device. These positions can be manually backed up; they are
-separate from website progress. The app does not yet show the Adult library or
+separate from website progress. The downloaded-books shelf lists locally saved
+EPUBs even when the catalog is offline or a volume is no longer listed; an
+unmatched book appears by its ID until a title is available. The app does not yet show the Adult library or
 provide Keeper. See the [Android roadmap](../docs/plans/ANDROID_ROADMAP.md)
 for scope, sequence and acceptance criteria.
 
