@@ -170,39 +170,50 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
     val filtered = remember(state.series, query, state.volumeFilter, state.sort) {
         state.series?.let { selectSeries(it, query, state.volumeFilter, state.sort) }
     }
-    LazyColumn(modifier = Modifier.fillMaxSize().testTag("main-library-list"), contentPadding = PaddingValues(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        item { Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium) }
-        item { Text("Android app in development", style = MaterialTheme.typography.titleMedium) }
-        item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
-        item { Text("The Main library saves its latest catalog on this device. Offline reading and downloads are experimental; the Adult library and Keeper are in development.") }
-        item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
-        if (onDownloaded != null) item { OutlinedButton(onClick = onDownloaded, modifier = Modifier.fillMaxWidth()) { Text("Downloaded books") } }
-        item {
-            OutlinedTextField(value = state.query, onValueChange = model::search,
-                label = { Text("Search titles, authors, and volumes") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+    Column(modifier = Modifier.fillMaxSize()) {
+        val preferenceNotice = when {
+            state.preferencesLoading -> "Loading library settings…"
+            else -> state.preferencesError
         }
-        item { LibraryMenu("Volumes: ${state.volumeFilter.label}", VolumeFilter.entries, { it.label }, model::filterVolumes) }
-        item { LibraryMenu("Sort: ${state.sort.label}", LibrarySort.entries, { it.label }, model::sortBy) }
-        item { Button(onClick = model::refresh, enabled = !state.loading) { Text("Refresh library") } }
-        if (state.loading) item { Text("Loading Main library…", modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
-        if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
-        state.error?.let { error -> item { Text(error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) } }
-        if (filtered != null && filtered.isEmpty() && !state.loading) {
-            item { Text(if (query.isEmpty() && state.volumeFilter == VolumeFilter.ALL) "The Main library is empty." else "No matching series.") }
-            if (query.isNotEmpty() || state.volumeFilter != VolumeFilter.ALL) {
-                item { TextButton(onClick = model::clearFilters) { Text("Clear filters") } }
+        preferenceNotice?.let { message -> Text(message, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
+            .semantics { liveRegion = LiveRegionMode.Polite }) }
+        if (state.preferencesError != null) TextButton(onClick = model::retryPreferences, modifier = Modifier.padding(horizontal = 16.dp)) {
+            Text("Retry library settings")
+        }
+        LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth().testTag("main-library-list"), contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item { Text("Shadow Garden", style = MaterialTheme.typography.headlineMedium) }
+            item { Text("Android app in development", style = MaterialTheme.typography.titleMedium) }
+            item { Text("Main library", style = MaterialTheme.typography.titleLarge) }
+            item { Text("The Main library saves its latest catalog on this device. Offline reading and downloads are experimental; the Adult library and Keeper are in development.") }
+            item { OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) { Text("Reading-position backup") } }
+            if (onDownloaded != null) item { OutlinedButton(onClick = onDownloaded, modifier = Modifier.fillMaxWidth()) { Text("Downloaded books") } }
+            item {
+                OutlinedTextField(value = state.query, onValueChange = model::search,
+                    label = { Text("Search titles, authors, and volumes") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
-        }
-        if (filtered != null) items(filtered, key = { it.id }) { series ->
-            OutlinedButton(onClick = { selectedId = series.id }, modifier = Modifier.fillMaxWidth()) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    CoverThumbnail(series.cover, state.coverGeneration, model, Modifier.size(56.dp, 80.dp))
-                    Text(buildString {
-                        append(series.title)
-                        if (series.author.isNotBlank()) append(" · ").append(series.author)
-                        append(" · ").append(series.volumes.size).append(if (series.volumes.size == 1) " volume" else " volumes")
-                    }, modifier = Modifier.weight(1f))
+            item { LibraryMenu("Volumes: ${state.volumeFilter.label}", VolumeFilter.entries, { it.label }, model::filterVolumes, !state.preferencesLoading) }
+            item { LibraryMenu("Sort: ${state.sort.label}", LibrarySort.entries, { it.label }, model::sortBy, !state.preferencesLoading) }
+            item { Button(onClick = model::refresh, enabled = !state.loading) { Text("Refresh library") } }
+            if (state.loading) item { Text("Loading Main library…", modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
+            if (state.fromCache) item { Text("Showing saved Main library; it may be out of date.") }
+            state.error?.let { error -> item { Text(error, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) } }
+            if (filtered != null && filtered.isEmpty() && !state.loading) {
+                item { Text(if (query.isEmpty() && state.volumeFilter == VolumeFilter.ALL) "The Main library is empty." else "No matching series.") }
+                if (query.isNotEmpty() || state.volumeFilter != VolumeFilter.ALL) {
+                    item { TextButton(onClick = model::clearFilters) { Text("Clear filters") } }
+                }
+            }
+            if (filtered != null) items(filtered, key = { it.id }) { series ->
+                OutlinedButton(onClick = { selectedId = series.id }, modifier = Modifier.fillMaxWidth()) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        CoverThumbnail(series.cover, state.coverGeneration, model, Modifier.size(56.dp, 80.dp))
+                        Text(buildString {
+                            append(series.title)
+                            if (series.author.isNotBlank()) append(" · ").append(series.author)
+                            append(" · ").append(series.volumes.size).append(if (series.volumes.size == 1) " volume" else " volumes")
+                        }, modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -210,10 +221,10 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
 }
 
 @Composable
-private fun <T> LibraryMenu(label: String, options: List<T>, optionLabel: (T) -> String, onSelect: (T) -> Unit) {
+private fun <T> LibraryMenu(label: String, options: List<T>, optionLabel: (T) -> String, onSelect: (T) -> Unit, enabled: Boolean) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) { Text(label) }
+        OutlinedButton(onClick = { expanded = true }, enabled = enabled, modifier = Modifier.fillMaxWidth()) { Text(label) }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
                 DropdownMenuItem(text = { Text(optionLabel(option)) }, onClick = { expanded = false; onSelect(option) })

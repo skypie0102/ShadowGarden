@@ -7,8 +7,10 @@ and searches series titles, authors and volume titles. Volume-count filters and
 title, author and volume-count sorting operate on the current live or saved list.
 Catalog order remains the default; selecting a series and returning preserves the
 current controls during the app session. Search and filter can be cleared from an
-empty result; sorting remains selected. These choices are not saved across app
-process restarts. The website currently obtains this same route through
+empty result; sorting remains selected. The volume-count filter and sort are saved
+privately on the Android device and restored on restart; search text remains
+session-only. These settings do not sync with the website and are not included
+in the position-only backup. The website currently obtains this same route through
 `/data/source.json`; the app does not yet read that configuration dynamically.
 If the website changes its catalog source, update and test the Android client.
 
@@ -16,7 +18,7 @@ Only the Main catalog is requested by the library. There is no Adult catalog,
 age-gate flow, complete website search/filter parity or Keeper access.
 The early foreground EPUB download action is experimental and live protected
 access remains unverified. Saved EPUBs can be opened in a basic experimental
-[reader](ANDROID_OFFLINE_READER.md) without saved positions; see also the
+[reader](ANDROID_OFFLINE_READER.md) with locally saved positions; see also the
 [download design](ANDROID_BOOK_TRANSFER.md).
 After the first successful fetch, the app stores a validated snapshot of those
 display fields in private app storage. It loads that snapshot while trying to
@@ -25,6 +27,15 @@ date until a live fetch succeeds. A refresh failure retains the displayed list a
 shows an error; an empty catalog and a failed request are separate states. The
 snapshot contains no EPUBs or reading positions and is removed with the app.
 Browser progress and Android reading positions are not involved.
+
+The filter and sort are stored together in a small versioned, bounded atomic
+file. Writes are serialized and the latest selection wins within one view model.
+Loading or saving failures are shown with a retry action; unreadable or unknown
+formats are preserved instead of overwritten. Choices made while loading failed
+stay in use for the session and are merged if a retry succeeds. An abrupt process
+stop before a save finishes can lose the latest selection. Separate app windows
+do not coordinate edits beyond the atomic file write. Uninstall removes these
+settings; automatic Android backup is disabled.
 
 The client allows HTTPS only, uses the fixed origin and path, sends no credentials
 or app cookies, refuses redirects, and has connection, read and total timeouts.
@@ -141,3 +152,13 @@ known strict Readium reflow case; both manual process stages passed separately.
 The detailed report could not be downloaded in this environment; the run log
 records the suite and both stages passing. This is not physical-device, live UI
 or complete website filter-parity acceptance.
+
+The [offline API 28 run 41383208303](https://github.com/skypie0102/ShadowGarden/actions/runs/41383208303)
+at source `33810cd` passed settings tests covering filter and sort restoration,
+session-only search, unreadable-file preservation, retry after read or write
+failure, and rapid or early changes. Its separately staged probe saved settings
+to an isolated file, force-stopped the app and restored them in a new process
+without Internet permission. The ordinary suite skipped the live-catalog test,
+manual process probe and known strict Readium reflow case; both explicit process
+stages passed. The run does not establish physical-device behavior, actual
+storage exhaustion or cross-window conflict handling.

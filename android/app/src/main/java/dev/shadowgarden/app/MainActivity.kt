@@ -47,6 +47,7 @@ import dev.shadowgarden.app.catalog.LibraryViewModel
 import dev.shadowgarden.app.catalog.MainLibraryScreen
 import dev.shadowgarden.app.catalog.DownloadedBooksScreen
 import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
+import dev.shadowgarden.app.catalog.PrivateLibraryPreferencesStore
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
 import dev.shadowgarden.app.books.DownloadActivity
@@ -61,7 +62,8 @@ class MainActivity : ComponentActivity() {
             PositionBackupViewModel::class.java -> PositionBackupViewModel(application) as T
             LibraryViewModel::class.java -> LibraryViewModel(
                 cache = PrivateMainCatalogCache(File(filesDir, "main-catalog-v1.json")),
-                covers = PublicCoverLoader(disk = PrivateCoverDiskCache(File(cacheDir, "main-covers-v1")))
+                covers = PublicCoverLoader(disk = PrivateCoverDiskCache(File(cacheDir, "main-covers-v1"))),
+                preferences = PrivateLibraryPreferencesStore(File(filesDir, "library-preferences-v1"))
             ) as T
             else -> throw IllegalArgumentException("Unknown view model")
         }

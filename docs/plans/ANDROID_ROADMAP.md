@@ -101,7 +101,8 @@ network access must not prevent reading an already downloaded book.
 - [x] Keep the last validated Main catalog available after an offline process restart, with stale-data and save-failure feedback. See [emulator evidence](ANDROID_MAIN_CATALOG.md).
 - [x] Show bounded public Main cover thumbnails with safe-path validation and a placeholder. See [emulator evidence](ANDROID_MAIN_CATALOG.md).
 - [x] Keep previously loaded Main thumbnails in a bounded disposable offline cache. See [emulator evidence](ANDROID_MAIN_CATALOG.md); physical-device and low-storage acceptance remain open.
-- [x] Add Main volume-count filters and title, author and volume-count sorts for live and saved listings. See [emulator evidence](ANDROID_MAIN_CATALOG.md); persistent preferences and other filters remain open.
+- [x] Add Main volume-count filters and title, author and volume-count sorts for live and saved listings. See [emulator evidence](ANDROID_MAIN_CATALOG.md); other filters remain open.
+- [x] Save Main volume-count filter and sort preferences locally, with failure feedback and retry. Search remains session-only; see [catalog details](ANDROID_MAIN_CATALOG.md). Broader preference backup remains open.
 - [x] Establish a private book-byte storage foundation with bounded, replace-safe writes and edition fingerprints. See [storage design and emulator evidence](ANDROID_BOOK_STORAGE.md); broader download and reader acceptance remain open.
 - [x] Check bounded EPUB ZIP structure before replacing a stored book. See [emulator evidence](ANDROID_BOOK_STORAGE.md); full validation and reader acceptance remain open.
 - [x] Stream a signed book response into checked private storage. See [transfer design and emulator evidence](ANDROID_BOOK_TRANSFER.md); live ticket issuance, renewal, background work and reader acceptance remain open.

@@ -15,6 +15,10 @@ import dev.shadowgarden.app.catalog.CatalogSource
 import dev.shadowgarden.app.catalog.CatalogVolume
 import dev.shadowgarden.app.catalog.CoverPath
 import dev.shadowgarden.app.catalog.LibraryViewModel
+import dev.shadowgarden.app.catalog.LibraryPreferences
+import dev.shadowgarden.app.catalog.PrivateLibraryPreferencesStore
+import dev.shadowgarden.app.catalog.LibrarySort
+import dev.shadowgarden.app.catalog.VolumeFilter
 import dev.shadowgarden.app.catalog.PrivateMainCatalogCache
 import dev.shadowgarden.app.catalog.PrivateCoverDiskCache
 import dev.shadowgarden.app.catalog.PublicCoverLoader
@@ -62,6 +66,7 @@ class ReaderProcessRecoveryTest {
     private val epubFile by lazy { File(context.cacheDir, EPUB_FIXTURE) }
     private val readiumFile by lazy { File(context.cacheDir, ReadiumPrototypeActivity.FIXTURE_NAME) }
     private val catalogFile by lazy { File(context.filesDir, "main-catalog-process-test.json") }
+    private val preferencesFile by lazy { File(context.filesDir, "library-preferences-process-test") }
     private val coverDirectory by lazy { File(context.cacheDir, "main-cover-process-test") }
     private val bookDirectory by lazy { File(context.noBackupFilesDir, "book-store-process-test") }
     private val catalogFixture by lazy {
@@ -93,6 +98,24 @@ class ReaderProcessRecoveryTest {
         var prepared = false
         try {
             PrivateMainCatalogCache(catalogFile).write(catalogFixture)
+            val preferenceModel = AtomicReference<LibraryViewModel>()
+            val preferences = PrivateLibraryPreferencesStore(preferencesFile)
+            instrumentation.runOnMainSync {
+                preferenceModel.set(LibraryViewModel(CatalogSource { throw IOException("offline fixture") },
+                    PrivateMainCatalogCache(catalogFile), preferences = preferences))
+            }
+            val preferenceDeadline = SystemClock.elapsedRealtime() + 15_000
+            while (preferenceModel.get().state.value.preferencesLoading && SystemClock.elapsedRealtime() < preferenceDeadline) SystemClock.sleep(50)
+            assertFalse("Preferences must finish loading", preferenceModel.get().state.value.preferencesLoading)
+            instrumentation.runOnMainSync {
+                preferenceModel.get().filterVolumes(VolumeFilter.TWO_TO_FIVE)
+                preferenceModel.get().sortBy(LibrarySort.TITLE_DESC)
+                preferenceModel.get().search("temporary search")
+            }
+            val saveDeadline = SystemClock.elapsedRealtime() + 15_000
+            while (preferenceModel.get().state.value.preferencesSaving && SystemClock.elapsedRealtime() < saveDeadline) SystemClock.sleep(50)
+            assertFalse("Preferences must finish saving", preferenceModel.get().state.value.preferencesSaving)
+            assertEquals(LibraryPreferences(VolumeFilter.TWO_TO_FIVE, LibrarySort.TITLE_DESC), preferences.read())
             val image = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888)
             val bytes = try { ByteArrayOutputStream().use { output ->
                 assertTrue(image.compress(Bitmap.CompressFormat.PNG, 100, output))
@@ -195,13 +218,17 @@ class ReaderProcessRecoveryTest {
                 PrivateMainCatalogCache(catalogFile).read())
             val model = AtomicReference<LibraryViewModel>()
             instrumentation.runOnMainSync {
-                model.set(LibraryViewModel(CatalogSource { throw IOException("offline fixture") }, PrivateMainCatalogCache(catalogFile)))
+                model.set(LibraryViewModel(CatalogSource { throw IOException("offline fixture") }, PrivateMainCatalogCache(catalogFile),
+                    preferences = PrivateLibraryPreferencesStore(preferencesFile)))
             }
             val deadline = SystemClock.elapsedRealtime() + 15_000
-            while (model.get().state.value.loading && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(50)
+            while ((model.get().state.value.loading || model.get().state.value.preferencesLoading) && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(50)
             assertFalse("Offline catalog loading must finish", model.get().state.value.loading)
             assertEquals("Offline library must show the saved catalog", catalogFixture, model.get().state.value.series)
             assertTrue("Offline library must identify saved data", model.get().state.value.fromCache)
+            assertEquals(VolumeFilter.TWO_TO_FIVE, model.get().state.value.volumeFilter)
+            assertEquals(LibrarySort.TITLE_DESC, model.get().state.value.sort)
+            assertEquals("", model.get().state.value.query)
             val covers = PublicCoverLoader(disk = PrivateCoverDiskCache(coverDirectory))
             val savedCover = runBlocking { covers.cached(COVER_PATH) }
             assertNotNull("Saved cover must survive a new offline process", savedCover)
@@ -319,6 +346,7 @@ class ReaderProcessRecoveryTest {
         readiumFile.delete()
         context.deleteDatabase(PROCESS_DATABASE)
         android.util.AtomicFile(catalogFile).delete()
+        android.util.AtomicFile(preferencesFile).delete()
         coverDirectory.deleteRecursively()
         bookDirectory.deleteRecursively()
     }
