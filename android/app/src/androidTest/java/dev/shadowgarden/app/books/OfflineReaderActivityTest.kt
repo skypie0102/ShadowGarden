@@ -143,6 +143,101 @@ class OfflineReaderActivityTest {
         assertFalse(info.exported)
     }
 
+    @Test fun searchesOfflineAndSavesOnlyAnOpenedResult() {
+        val id = CatalogBookId("bk_" + UUID.randomUUID().toString().replace("-", "").take(22))
+        val store = PrivateBookStore(File(context.noBackupFilesDir, "downloaded-books-v1"))
+        val fixture = File(context.cacheDir, "reader-search-source-${UUID.randomUUID()}.epub")
+        val altered = File(context.cacheDir, "reader-search-test-${UUID.randomUUID()}.epub")
+        EpubFixture.create(fixture, true)
+        addUntrustedContent(fixture, altered)
+        var stored = false
+        try {
+            assertFalse("Test must not overwrite a saved book", store.contains(id))
+            ReadingProgressStore(context).use { assertEquals(ProgressLookup.NoProgress, it.lookup(id, null, LocatorFormat.EPUBJS_CFI)) }
+            val edition = altered.inputStream().use { store.replaceEpub(id, it) }
+            stored = true
+            val scenario = ActivityScenario.launch<OfflineReaderActivity>(OfflineReaderActivity.intent(context, CatalogVolume(id, "Generated search volume")))
+            try {
+                val view = awaitReader(scenario)
+                awaitState(view) { it.optString("state") == "ready" && it.optString("cfi").isNotBlank() }
+                evaluate(view, "document.getElementById('open-search').click(); 'ok'")
+                submitSearch(view, "ab")
+                assertEquals("Enter at least 3 characters.", awaitSearch(view) { it.optString("state") == "complete" }.getString("status"))
+                assertEquals(ProgressLookup.NoProgress, ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) })
+
+                submitSearch(view, "chapter 12 paragraph 73.")
+                val found = awaitSearch(view) { it.optString("state") == "complete" }
+                assertEquals(1, found.getInt("count"))
+                assertTrue(found.getString("first").contains("Section 12"))
+                assertTrue(found.getString("first").contains("Chapter 12 paragraph 73."))
+                assertEquals(ProgressLookup.NoProgress, ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) })
+                evaluate(view, "document.querySelector('#search-results button').click(); 'ok'")
+                val selected = awaitState(view) { it.optString("href").contains("chapter12.xhtml") && it.optLong("seq") >= 1 && !it.optBoolean("pending") && !it.optBoolean("searchOpen") }
+                val saved = awaitSaved(id, edition, selected.getString("saveCfi"))
+                assertTrue("The selected paragraph must be visible", awaitBoolean(view, """(function(){
+                    const f=document.querySelector('#viewer iframe'),v=document.getElementById('viewer');
+                    if(!f || !f.contentDocument)return false;
+                    const p=Array.from(f.contentDocument.querySelectorAll('p')).find(function(x){return x.textContent.indexOf('Chapter 12 paragraph 73.')>=0;});
+                    if(!p)return false; const r=f.contentDocument.createRange();r.selectNodeContents(p);
+                    const frame=f.getBoundingClientRect(),viewport=v.getBoundingClientRect();
+                    return Array.from(r.getClientRects()).some(function(b){return frame.left+b.right>viewport.left && frame.left+b.left<viewport.right && frame.top+b.bottom>viewport.top && frame.top+b.top<viewport.bottom;});
+                })()"""))
+
+                scenario.recreate()
+                val reopened = awaitReader(scenario)
+                awaitState(reopened) { it.optString("state") == "ready" && it.optString("href").contains("chapter12.xhtml") }
+                assertEquals("Opening must not rewrite the search result location", saved,
+                    (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+                evaluate(reopened, "document.getElementById('open-search').click(); 'ok'")
+                assertEquals("\"\"", evaluate(reopened, "document.getElementById('search-query').value"))
+                submitSearch(reopened, "unsafeExecuted")
+                val excluded = awaitSearch(reopened) { it.optString("state") == "complete" }
+                assertEquals(0, excluded.getInt("count"))
+                assertEquals("No matching book text.", excluded.getString("status"))
+                assertEquals("false", evaluate(reopened, "window.sgReader.unsafeExecuted === true"))
+                submitSearch(reopened, "paragraph")
+                val capped = awaitSearch(reopened) { it.optString("state") == "complete" }
+                assertEquals(100, capped.getInt("count"))
+                assertTrue(capped.getString("status").contains("limited"))
+                evaluate(reopened, """(function(){const q=document.getElementById('search-query'),f=document.getElementById('search-form');
+                    q.value='Chapter 1 paragraph 17';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+                    q.value='Final chapter marker.';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));return 'ok';})()""")
+                val latest = awaitSearch(reopened) { it.optString("state") == "complete" }
+                assertEquals(1, latest.getInt("count"))
+                assertTrue(latest.getString("first").contains("Final chapter marker."))
+                scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+                awaitState(reopened) { !it.optBoolean("searchOpen") && it.optString("state") == "ready" }
+                assertEquals("Searching and closing must not rewrite progress", saved,
+                    (ReadingProgressStore(context).use { it.lookup(id, edition, LocatorFormat.EPUBJS_CFI) } as ProgressLookup.Exact).stored)
+            } finally { scenario.close() }
+        } finally {
+            if (stored) store.remove(id)
+            val database = context.getDatabasePath("reading-progress.db")
+            if (stored && database.exists()) SQLiteDatabase.openDatabase(database.path, null, SQLiteDatabase.OPEN_READWRITE).use {
+                it.delete("reading_positions", "book_id=?", arrayOf(id.value))
+            }
+            fixture.delete()
+            altered.delete()
+        }
+    }
+
+    private fun submitSearch(view: WebView, query: String) {
+        evaluate(view, "(function(){document.getElementById('search-query').value=${JSONObject.quote(query)};" +
+            "document.getElementById('search-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));return 'ok';})()")
+    }
+
+    private fun awaitSearch(view: WebView, predicate: (JSONObject) -> Boolean): JSONObject {
+        val deadline = SystemClock.elapsedRealtime() + 45_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val raw = evaluate(view, "JSON.stringify({state:document.getElementById('search-panel').getAttribute('data-state'),status:document.getElementById('search-status').textContent,count:document.querySelectorAll('#search-results button').length,first:(document.querySelector('#search-results button')||{}).textContent||''})")
+            val json = JSONObject(JSONTokener(raw).nextValue() as String)
+            if (json.optString("state") == "error") throw AssertionError("Search failed for generated EPUB")
+            if (predicate(json)) return json
+            SystemClock.sleep(100)
+        }
+        throw AssertionError("Search did not complete")
+    }
+
     internal fun awaitReader(scenario: ActivityScenario<OfflineReaderActivity>): WebView {
         val deadline = SystemClock.elapsedRealtime() + 30_000
         val found = AtomicReference<WebView>()

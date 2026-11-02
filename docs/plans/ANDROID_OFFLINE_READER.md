@@ -2,7 +2,8 @@
 
 Saved Main-library EPUBs can be opened in an early local reader. It uses the
 website's pinned EPUB.js and JSZip files packaged in the app, with previous/next
-buttons and a table-of-contents selector. It saves position after user navigation
+buttons, a table-of-contents selector and experimental offline book-text search.
+It saves position after user navigation
 and resumes an exact matching book, EPUB edition and reader format. The existing
 position-only backup screen can export and restore these app-local positions.
 Website browser progress stays separate. Bookmarks and preferences are not yet
@@ -18,10 +19,23 @@ navigation requires a choice. Saving on backgrounding is best effort: an abrupt
 process stop immediately after navigation can precede the next write. Backups
 contain positions, not EPUB files, and matching EPUB bytes are needed to resume.
 
+Find opens a search overlay without resizing the reader. Searches are local to
+the open EPUB and are not saved by the app. A result opens its location and uses
+the normal local position-saving path; opening or dismissing search alone does
+not save a new position. Android Back closes search first. The initial search
+matches case-insensitive text within individual text nodes, so phrases split by
+formatting can be missed. It requires 3–128 characters and reports incomplete
+results when it encounters a limit or an unsearchable section. Search inspects at
+most 1,000 spine sections, 4 MiB of declared uncompressed data per section,
+32 MiB total, 100,000 text nodes and 256 Ki characters per text node, and shows
+at most 100 matches. It uses an independent EPUB instance so searching cannot
+unload the currently displayed reader section. These bounds use declared archive
+sizes and do not constitute complete protection against malformed EPUBs.
+
 The non-exported reader activity opens only an app-private saved book by catalog
 ID. It fingerprints and retains an open file descriptor, so replacing or removing
 the stored file does not switch the edition being read. The WebView receives only
-a local HTML shell, the two bundled scripts and that open EPUB through an
+a local HTML shell, bundled scripts and that open EPUB through an
 intercepted synthetic HTTPS origin. Other intercepted requests return 403;
 top-level navigation, file access, content access, mixed content, popups and
 JavaScript interfaces are disabled. The shell's content-security policy restricts
@@ -33,7 +47,7 @@ WebView version blocks every possible network or EPUB attack.
 The current reader loads the archive into WebView memory and performs only the
 bounded ZIP structure checks used by the download flow. Large, malformed,
 encrypted or unusual EPUBs may fail, use excessive resources or render
-incorrectly. It does not implement continuous mode, search, typography, image
+incorrectly. Search may require additional memory. It does not implement continuous mode, typography, image
 zoom, external links, proven reliable position restoration or read aloud. The existing
 [reader evaluation](ANDROID_READER_EVALUATION.md) documents unresolved location
 and reflow cases; this early EPUB.js integration does not close that comparison.
