@@ -1,8 +1,9 @@
 # Android private book storage foundation
 
 The app contains an internal storage component and a [ticketed transfer foundation](ANDROID_BOOK_TRANSFER.md)
-for the experimental foreground download flow and basic local reader. A volume's
-details allow removing its downloaded EPUB while keeping its reading positions.
+for the experimental foreground download flow and basic local reader. Volume
+details and the downloaded-books shelf allow removing a downloaded EPUB while
+keeping its reading positions, even if it no longer appears in the catalog.
 Live protected access, full EPUB validation, background work and broader storage management remain open in the
 [Android roadmap](ANDROID_ROADMAP.md).
 
@@ -12,8 +13,9 @@ download has replaced it, the newer file is kept and the user is told to review
 it again. The operation does not modify the position database or existing backup
 files. Re-downloading the exact same edition allows the reader to use its saved
 position. Failures are reported, and the UI refreshes the local saved state.
-This early removal action is available from listed Main volumes; bulk removal
-and removal of books missing from the catalog remain open.
+The shelf identifies an unmatched book by ID and warns that it might no longer
+be available to download before removal. Bulk removal and
+management of files excluded from the shelf as unavailable remain open.
 
 The downloaded-books shelf lists private EPUB files independently of catalog
 availability. It shows catalog series and volume titles when known, otherwise a
@@ -22,7 +24,7 @@ the total of the listed files. Enumeration considers regular, non-symlink files
 with valid book IDs and sizes within the storage limit; it reports unavailable
 recognized files, ignores unrelated and temporary files, and fails visibly if
 the directory cannot be read or contains more than 50,000 entries. It does not
-validate EPUB contents or delete anything. Listing reflects a snapshot and the
+validate EPUB contents or delete anything by itself. Listing reflects a snapshot and the
 reader still handles files removed or changed before they are opened.
 
 The caller must choose an app-private, no-backup directory and run the blocking

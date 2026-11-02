@@ -6,8 +6,9 @@ loaded covers may also be available offline until Android clears the disposable
 cache. An experimental foreground download action requests Garden Pass in an
 app-owned WebView and stores an EPUB privately; live verification has not yet
 been accepted. Downloads stop when the app leaves the screen. From a volume's
-details, a saved EPUB can be removed after confirmation while its reading
-positions are kept. Saved books are removed on uninstall and are not included
+details or the downloaded-books shelf, a saved EPUB can be removed after
+confirmation while its reading positions are kept, even if it is no longer in
+the catalog. Saved books are removed on uninstall and are not included
 in position backups. The app also has
 an early position-only backup and restore screen. A basic experimental reader
 opens saved EPUBs offline with page and contents controls and saves reading
