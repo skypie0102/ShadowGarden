@@ -20,7 +20,11 @@ management of files excluded from the shelf as unavailable remain open.
 The downloaded-books shelf lists private EPUB files independently of catalog
 availability. It shows catalog series and volume titles when known, otherwise a
 book ID, and can open either kind in the offline reader. Its displayed size is
-the total of the listed files. Enumeration considers regular, non-symlink files
+the total of the listed files. Shelf search matches the catalog series title,
+volume title or book ID case-insensitively, using any catalog currently available;
+an unmatched book remains searchable by ID. Results update when catalog data or
+the local listing changes. Search is temporary and does not alter downloaded
+files or reading positions. Enumeration considers regular, non-symlink files
 with valid book IDs and sizes within the storage limit; it reports unavailable
 recognized files, ignores unrelated and temporary files, and fails visibly if
 the directory cannot be read or contains more than 50,000 entries. It does not
@@ -70,6 +74,15 @@ exhaustion remain open before release. No website browser progress or Keeper
 credentials are involved.
 
 ## Verification
+
+The [offline API 28 emulator run 41442783280](https://github.com/skypie0102/ShadowGarden/actions/runs/41442783280)
+at source `0b82f01` passed the shelf search test with generated downloads. It
+checked a title search before and after a catalog refresh, case-insensitive
+series and volume matches, an unmatched book found by ID, and opening that book
+without deleting either download. The ordinary suite skipped the live-catalog
+test, staged process probe and known strict Readium reflow case; both explicit
+process stages passed separately. Real books and physical-device behavior
+remain unverified.
 
 The [offline API 28 emulator run 41379499064](https://github.com/skypie0102/ShadowGarden/actions/runs/41379499064)
 at source `905fb49` passed shelf removal tests with an unmatched generated book
