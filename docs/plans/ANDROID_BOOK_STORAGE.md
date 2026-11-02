@@ -71,6 +71,18 @@ credentials are involved.
 
 ## Verification
 
+The [offline API 28 emulator run 41379499064](https://github.com/skypie0102/ShadowGarden/actions/runs/41379499064)
+at source `905fb49` passed shelf removal tests with an unmatched generated book
+and an isolated position database. They cover the availability warning,
+cancellation, a replacement during confirmation, successful removal, preservation
+of an unrelated book and the saved position, and an open file descriptor remaining
+readable. The same bytes were then saved again and the position remained present.
+An earlier run exposed an existing navigation test tapping a partly off-screen
+button after the shelf row grew; the test now scrolls the target action into view.
+The ordinary suite skipped the live-catalog test, staged process probe and known
+strict Readium reflow case; both explicit process stages passed separately. Live
+re-download and physical-device behavior remain unverified.
+
 The [offline API 28 emulator run 41376565995](https://github.com/skypie0102/ShadowGarden/actions/runs/41376565995)
 at source `e03b38f` passed shelf tests with a simulated catalog failure, fallback
 book IDs, later catalog titles, an unmatched book, list refresh and a storage
