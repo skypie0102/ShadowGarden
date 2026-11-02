@@ -3,12 +3,20 @@
 Saved Main-library EPUBs can be opened in an early local reader. It uses the
 website's pinned EPUB.js and JSZip files packaged in the app, with previous/next
 buttons, a table-of-contents selector and experimental offline book-text search.
+It offers original, paper, night and sepia colors for the current reader session.
 It saves position after user navigation
 and resumes an exact matching book, EPUB edition and reader format. The existing
 position-only backup screen can export and restore these app-local positions.
 Website browser progress stays separate. Bookmarks and preferences are not yet
 saved. Complete website parity remains in the
 [Android roadmap](ANDROID_ROADMAP.md).
+
+Book colors can be changed without deliberately changing text size or writing a
+reading position. They apply to subsequently opened sections and reset to the
+EPUB's original colors when the activity is recreated or reopened. They are not
+included in position-only backups. Publication-specific styles and artwork may
+not follow the selected palette; accessibility and real-book behavior need
+further testing.
 
 Writes are serialized and use revision checks. If another session changes the
 position, the reader preserves the newer record and asks the user to reopen.
@@ -50,7 +58,7 @@ WebView version blocks every possible network or EPUB attack.
 The current reader loads the archive into WebView memory and performs only the
 bounded ZIP structure checks used by the download flow. Large, malformed,
 encrypted or unusual EPUBs may fail, use excessive resources or render
-incorrectly. Search may require additional memory. It does not implement continuous mode, typography, image
+incorrectly. Search may require additional memory. It does not implement continuous mode, typography controls, image
 zoom, external links, proven reliable position restoration or read aloud. The existing
 [reader evaluation](ANDROID_READER_EVALUATION.md) documents unresolved location
 and reflow cases; this early EPUB.js integration does not close that comparison.
@@ -58,6 +66,15 @@ Real-world books, network-enabled isolation, lifecycle behavior, accessibility
 and physical-device acceptance remain open.
 
 ## Verification
+
+The [offline API 28 emulator run 41461206690](https://github.com/skypie0102/ShadowGarden/actions/runs/41461206690)
+at source `c1eca82` tested all four color choices on a generated EPUB. It
+checked the visible paragraph and saved position after changing colors, retained
+night colors on a different chapter, and reset the choice after activity
+recreation without changing the saved position. The ordinary suite skipped the
+live-catalog test, staged process probe and known strict Readium reflow case;
+both explicit process stages passed separately. Real books, contrast in complex
+publication styling and physical-device behavior remain open.
 
 The [offline API 28 emulator run 41434638940](https://github.com/skypie0102/ShadowGarden/actions/runs/41434638940)
 at source `18be615` searched a generated EPUB for a case-insensitive phrase
