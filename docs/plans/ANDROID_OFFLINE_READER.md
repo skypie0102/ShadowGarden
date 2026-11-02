@@ -22,13 +22,16 @@ contain positions, not EPUB files, and matching EPUB bytes are needed to resume.
 Find opens a search overlay without resizing the reader. Searches are local to
 the open EPUB and are not saved by the app. A result opens its location and uses
 the normal local position-saving path; opening or dismissing search alone does
-not save a new position. Android Back closes search first. The initial search
-matches case-insensitive text within individual text nodes, so phrases split by
-formatting can be missed. It requires 3–128 characters and reports incomplete
+not save a new position. Android Back closes search first. Search matches text
+case-insensitively across inline formatting within a spine section, normalizes
+whitespace, and treats block elements and line breaks as separators. It requires
+3–128 characters and reports incomplete
 results when it encounters a limit or an unsearchable section. Search inspects at
 most 1,000 spine sections, 4 MiB of declared uncompressed data per section,
-32 MiB total, 100,000 text nodes and 256 Ki characters per text node, and shows
-at most 100 matches. It uses an independent EPUB instance so searching cannot
+32 MiB total, 100,000 DOM nodes and 256 Ki UTF-16 code units per text node. It
+also caps scanned text at 4 Mi code units per section and 16 Mi total, and shows
+at most 100 matches. Omitted text is separated so it cannot create a false match.
+It uses an independent EPUB instance so searching cannot
 unload the currently displayed reader section. These bounds use declared archive
 sizes and do not constitute complete protection against malformed EPUBs.
 
