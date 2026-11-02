@@ -173,7 +173,6 @@ internal fun MainLibraryScreen(model: LibraryViewModel, onBackup: () -> Unit,
     Column(modifier = Modifier.fillMaxSize()) {
         val preferenceNotice = when {
             state.preferencesLoading -> "Loading library settings…"
-            state.preferencesSaving -> "Saving library settings…"
             else -> state.preferencesError
         }
         preferenceNotice?.let { message -> Text(message, modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)
